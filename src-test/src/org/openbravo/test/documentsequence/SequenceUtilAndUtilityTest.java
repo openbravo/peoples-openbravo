@@ -37,6 +37,8 @@ import org.openbravo.service.db.DalConnectionProvider;
 
 public class SequenceUtilAndUtilityTest extends SequenceTest {
 
+  private static final String DOC_TYPE_ID = "FF8080812C2ABFC6012C2B3BDF4D005A";
+
   /**
    * Test documentNo from sequence with none control digit and no prefix, no suffix, no
    * nextAssignedNo, sequence number length variable
@@ -46,7 +48,6 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
    */
   @Test
   public void sequenceUtilAndUtilityTest_AutoNumbering_ControlDigitNone() {
-
     String assertionMsg = "Sequence Number is not computed correctly for Sequence with AutoNumbering calculation method, "
         + " no Prefix, no Suffix, no nextAssignedNo, ControlDigit - None, Variable Sequence Number Length";
 
@@ -57,18 +58,13 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         null, ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, true);
 
     // Run checks when updateNext is No
-    runAllChecks(sequence, tableName, assertionMsg, "1");
+    checkAllUtilitiesWithoutUpdatingSequence(sequence, tableName, assertionMsg, "1");
 
     // Run checks when updateNext is Yes
-    runChecksWithUtilityADSequencDocTypeWhenUpdating(sequence, assertionMsg, "1");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithSequenceUtilWhenUpdating(sequence, assertionMsg, "2");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithUtilityADSequencDocWhenUpdating(sequence, tableName, assertionMsg, "3");
-
-    runChecksWithADSequencDocumentNoWhenUpdating(sequence, assertionMsg, "4");
+    runADSequenceDocTypeCheck(sequence, assertionMsg, "1", true);
+    runSequenceUtilCheck(sequence, assertionMsg, "2", true);
+    runADSequencDocCheck(sequence, tableName, assertionMsg, "3", true);
+    runADSequenceDocumentNoCheck(sequence, assertionMsg, "4", true);
   }
 
   /**
@@ -80,7 +76,6 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
    */
   @Test
   public void sequenceUtilAndUtilityTest_AutoNumbering_ControlDigitNone_NextAssignedNo() {
-
     String assertionMsg = "Sequence Number is not computed correctly for Sequence with AutoNumbering calculation method, "
         + " no Prefix, no Suffix, valid nextAssignedNo, ControlDigit - None, Variable Sequence Number Length";
 
@@ -91,18 +86,13 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         null, ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, true);
 
     // Run checks with updateNext as No
-    runAllChecks(sequence, tableName, assertionMsg, "1000");
+    checkAllUtilitiesWithoutUpdatingSequence(sequence, tableName, assertionMsg, "1000");
 
     // Run checks when updateNext is Yes
-    runChecksWithUtilityADSequencDocTypeWhenUpdating(sequence, assertionMsg, "1000");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithSequenceUtilWhenUpdating(sequence, assertionMsg, "1001");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithUtilityADSequencDocWhenUpdating(sequence, tableName, assertionMsg, "1002");
-
-    runChecksWithADSequencDocumentNoWhenUpdating(sequence, assertionMsg, "1003");
+    runADSequenceDocTypeCheck(sequence, assertionMsg, "1000", true);
+    runSequenceUtilCheck(sequence, assertionMsg, "1001", true);
+    runADSequencDocCheck(sequence, tableName, assertionMsg, "1002", true);
+    runADSequenceDocumentNoCheck(sequence, assertionMsg, "1003", true);
   }
 
   /**
@@ -114,7 +104,6 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
    */
   @Test
   public void sequenceUtilAndUtilityTest_AutoNumbering_ControlDigitNone_NextAssignedNo_Prefix() {
-
     String assertionMsg = "Sequence Number is not computed correctly for Sequence with AutoNumbering calculation method, "
         + " valid Prefix, no Suffix, valid nextAssignedNo, ControlDigit - None, Variable Sequence Number Length";
 
@@ -125,18 +114,13 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         null, ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, true);
 
     // Run checks when updateNext is No
-    runAllChecks(sequence, tableName, assertionMsg, "A1000");
+    checkAllUtilitiesWithoutUpdatingSequence(sequence, tableName, assertionMsg, "A1000");
 
     // Run checks when updateNext is Yes
-    runChecksWithUtilityADSequencDocTypeWhenUpdating(sequence, assertionMsg, "A1000");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithSequenceUtilWhenUpdating(sequence, assertionMsg, "A1001");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithUtilityADSequencDocWhenUpdating(sequence, tableName, assertionMsg, "A1002");
-
-    runChecksWithADSequencDocumentNoWhenUpdating(sequence, assertionMsg, "A1003");
+    runADSequenceDocTypeCheck(sequence, assertionMsg, "A1000", true);
+    runSequenceUtilCheck(sequence, assertionMsg, "A1001", true);
+    runADSequencDocCheck(sequence, tableName, assertionMsg, "A1002", true);
+    runADSequenceDocumentNoCheck(sequence, assertionMsg, "A1003", true);
   }
 
   /**
@@ -148,7 +132,6 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
    */
   @Test
   public void sequenceUtilAndUtilityTest_AutoNumbering_ControlDigitNone_NextAssignedNo_Suffix() {
-
     String assertionMsg = "Sequence Number is not computed correctly for Sequence with AutoNumbering calculation method, "
         + " no Prefix, valid Suffix, valid nextAssignedNo, ControlDigit - None, Variable Sequence Number Length";
 
@@ -159,18 +142,13 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         "000", ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, true);
 
     // Run checks when updateNext is No
-    runAllChecks(sequence, tableName, assertionMsg, "1000000");
+    checkAllUtilitiesWithoutUpdatingSequence(sequence, tableName, assertionMsg, "1000000");
 
     // Run checks when updateNext is Yes
-    runChecksWithUtilityADSequencDocTypeWhenUpdating(sequence, assertionMsg, "1000000");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithSequenceUtilWhenUpdating(sequence, assertionMsg, "1001000");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithUtilityADSequencDocWhenUpdating(sequence, tableName, assertionMsg, "1002000");
-
-    runChecksWithADSequencDocumentNoWhenUpdating(sequence, assertionMsg, "1003000");
+    runADSequenceDocTypeCheck(sequence, assertionMsg, "1000000", true);
+    runSequenceUtilCheck(sequence, assertionMsg, "1001000", true);
+    runADSequencDocCheck(sequence, tableName, assertionMsg, "1002000", true);
+    runADSequenceDocumentNoCheck(sequence, assertionMsg, "1003000", true);
   }
 
   /**
@@ -182,7 +160,6 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
    */
   @Test
   public void sequenceUtilAndUtilityTest_AutoNumbering_ControlDigitNone_NextAssignedNo_PrefixSuffix() {
-
     String assertionMsg = "Sequence Number is not computed correctly for Sequence with AutoNumbering calculation method, "
         + " valid Prefix, valid Suffix, valid nextAssignedNo, ControlDigit - None, Variable Sequence Number Length";
 
@@ -193,18 +170,13 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         "000", ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, true);
 
     // Run checks when updateNext is No
-    runAllChecks(sequence, tableName, assertionMsg, "A1000000");
+    checkAllUtilitiesWithoutUpdatingSequence(sequence, tableName, assertionMsg, "A1000000");
 
     // Run checks when updateNext is Yes
-    runChecksWithUtilityADSequencDocTypeWhenUpdating(sequence, assertionMsg, "A1000000");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithSequenceUtilWhenUpdating(sequence, assertionMsg, "A1001000");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithUtilityADSequencDocWhenUpdating(sequence, tableName, assertionMsg, "A1002000");
-
-    runChecksWithADSequencDocumentNoWhenUpdating(sequence, assertionMsg, "A1003000");
+    runADSequenceDocTypeCheck(sequence, assertionMsg, "A1000000", true);
+    runSequenceUtilCheck(sequence, assertionMsg, "A1001000", true);
+    runADSequencDocCheck(sequence, tableName, assertionMsg, "A1002000", true);
+    runADSequenceDocumentNoCheck(sequence, assertionMsg, "A1003000", true);
   }
 
   /**
@@ -216,7 +188,6 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
    */
   @Test
   public void sequenceUtilAndUtilityTest_AutoNumbering_ControlDigitNone_NextAssignedNo_PrefixSuffix_FixedLength_GreaterThan_ComputedSequenceLength() {
-
     String assertionMsg = "Sequence Number is not computed correctly for Sequence with AutoNumbering calculation method, "
         + " valid Prefix, valid Suffix, valid nextAssignedNo, ControlDigit - None, Fixed Length 7L";
 
@@ -227,18 +198,13 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         "000", ControlDigit.NONE, SequenceNumberLength.FIXED, 7L, true);
 
     // Run checks when updateNext is No
-    runAllChecks(sequence, tableName, assertionMsg, "A0001000000");
+    checkAllUtilitiesWithoutUpdatingSequence(sequence, tableName, assertionMsg, "A0001000000");
 
     // Run checks when updateNext is Yes
-    runChecksWithUtilityADSequencDocTypeWhenUpdating(sequence, assertionMsg, "A0001000000");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithSequenceUtilWhenUpdating(sequence, assertionMsg, "A0001001000");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithUtilityADSequencDocWhenUpdating(sequence, tableName, assertionMsg, "A0001002000");
-
-    runChecksWithADSequencDocumentNoWhenUpdating(sequence, assertionMsg, "A0001003000");
+    runADSequenceDocTypeCheck(sequence, assertionMsg, "A0001000000", true);
+    runSequenceUtilCheck(sequence, assertionMsg, "A0001001000", true);
+    runADSequencDocCheck(sequence, tableName, assertionMsg, "A0001002000", true);
+    runADSequenceDocumentNoCheck(sequence, assertionMsg, "A0001003000", true);
   }
 
   /**
@@ -250,7 +216,6 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
    */
   @Test
   public void sequenceUtilAndUtilityTest_AutoNumbering_ControlDigitNone_NextAssignedNo_PrefixSuffix_FixedLength_LessThan_ComputedSequenceLength() {
-
     String assertionMsg = "Sequence Number is not computed correctly for Sequence with AutoNumbering calculation method, "
         + " valid Prefix, valid Suffix, valid nextAssignedNo, ControlDigit - None, Fixed Length 4L";
 
@@ -261,18 +226,13 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         "000", ControlDigit.NONE, SequenceNumberLength.FIXED, 4L, true);
 
     // Run checks when updateNext is No
-    runAllChecks(sequence, tableName, assertionMsg, "A1000000");
+    checkAllUtilitiesWithoutUpdatingSequence(sequence, tableName, assertionMsg, "A1000000");
 
     // Run checks when updateNext is Yes
-    runChecksWithUtilityADSequencDocTypeWhenUpdating(sequence, assertionMsg, "A1000000");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithSequenceUtilWhenUpdating(sequence, assertionMsg, "A1001000");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithUtilityADSequencDocWhenUpdating(sequence, tableName, assertionMsg, "A1002000");
-
-    runChecksWithADSequencDocumentNoWhenUpdating(sequence, assertionMsg, "A1003000");
+    runADSequenceDocTypeCheck(sequence, assertionMsg, "A1000000", true);
+    runSequenceUtilCheck(sequence, assertionMsg, "A1001000", true);
+    runADSequencDocCheck(sequence, tableName, assertionMsg, "A1002000", true);
+    runADSequenceDocumentNoCheck(sequence, assertionMsg, "A1003000", true);
   }
 
   /**
@@ -284,7 +244,6 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
    */
   @Test
   public void sequenceUtilAndUtilityTest_ControlDigitMod10_AutoNumbering() {
-
     String assertionMsg = "Sequence Number is not computed correctly for Sequence with AutoNumbering calculation method, "
         + " no Prefix, no Suffix, no nextAssignedNo, ControlDigit - Module 10, Variable Sequence Length";
 
@@ -295,18 +254,13 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
 
     // Run checks when updateNext is No
-    runAllChecks(sequence, tableName, assertionMsg, "17");
+    checkAllUtilitiesWithoutUpdatingSequence(sequence, tableName, assertionMsg, "17");
 
     // Run checks when updateNext is Yes
-    runChecksWithUtilityADSequencDocTypeWhenUpdating(sequence, assertionMsg, "17");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithSequenceUtilWhenUpdating(sequence, assertionMsg, "24");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithUtilityADSequencDocWhenUpdating(sequence, tableName, assertionMsg, "31");
-
-    runChecksWithADSequencDocumentNoWhenUpdating(sequence, assertionMsg, "48");
+    runADSequenceDocTypeCheck(sequence, assertionMsg, "17", true);
+    runSequenceUtilCheck(sequence, assertionMsg, "24", true);
+    runADSequencDocCheck(sequence, tableName, assertionMsg, "31", true);
+    runADSequenceDocumentNoCheck(sequence, assertionMsg, "48", true);
   }
 
   /**
@@ -318,7 +272,6 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
    */
   @Test
   public void sequenceUtilAndUtilityTest_AutoNumbering_ControlDigitMod10_NextAssignedNo() {
-
     String assertionMsg = "Sequence Number is not computed correctly for Sequence with AutoNumbering calculation method, "
         + " no Prefix, no Suffix, valid nextAssignedNo, ControlDigit - Module 10, Variable Sequence Length";
 
@@ -329,18 +282,13 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
 
     // Run checks when updateNext is No
-    runAllChecks(sequence, tableName, assertionMsg, "10009");
+    checkAllUtilitiesWithoutUpdatingSequence(sequence, tableName, assertionMsg, "10009");
 
     // Run checks when updateNext is Yes
-    runChecksWithUtilityADSequencDocTypeWhenUpdating(sequence, assertionMsg, "10009");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithSequenceUtilWhenUpdating(sequence, assertionMsg, "10016");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithUtilityADSequencDocWhenUpdating(sequence, tableName, assertionMsg, "10023");
-
-    runChecksWithADSequencDocumentNoWhenUpdating(sequence, assertionMsg, "10030");
+    runADSequenceDocTypeCheck(sequence, assertionMsg, "10009", true);
+    runSequenceUtilCheck(sequence, assertionMsg, "10016", true);
+    runADSequencDocCheck(sequence, tableName, assertionMsg, "10023", true);
+    runADSequenceDocumentNoCheck(sequence, assertionMsg, "10030", true);
   }
 
   /**
@@ -352,7 +300,6 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
    */
   @Test
   public void sequenceUtilAndUtilityTest_AutoNumbering_ControlDigitMod10_NextAssignedNo_Prefix() {
-
     String assertionMsg = "Sequence Number is not computed correctly for Sequence with AutoNumbering calculation method, "
         + " valid Prefix, no Suffix, valid nextAssignedNo, ControlDigit - Module 10, Variable Sequence Length";
 
@@ -363,18 +310,13 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
 
     // Run checks when updateNext is No
-    runAllChecks(sequence, tableName, assertionMsg, "610001");
+    checkAllUtilitiesWithoutUpdatingSequence(sequence, tableName, assertionMsg, "610001");
 
     // Run checks when updateNext is Yes
-    runChecksWithUtilityADSequencDocTypeWhenUpdating(sequence, assertionMsg, "610001");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithSequenceUtilWhenUpdating(sequence, assertionMsg, "610018");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithUtilityADSequencDocWhenUpdating(sequence, tableName, assertionMsg, "610025");
-
-    runChecksWithADSequencDocumentNoWhenUpdating(sequence, assertionMsg, "610032");
+    runADSequenceDocTypeCheck(sequence, assertionMsg, "610001", true);
+    runSequenceUtilCheck(sequence, assertionMsg, "610018", true);
+    runADSequencDocCheck(sequence, tableName, assertionMsg, "610025", true);
+    runADSequenceDocumentNoCheck(sequence, assertionMsg, "610032", true);
   }
 
   /**
@@ -386,7 +328,6 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
    */
   @Test
   public void sequenceUtilAndUtilityTest_AutoNumbering_ControlDigitMod10_NextAssignedNo_Suffix() {
-
     String assertionMsg = "Sequence Number is not computed correctly for Sequence with AutoNumbering calculation method, "
         + " no Prefix, valid Suffix, valid nextAssignedNo, ControlDigit - Module 10, Variable Sequence Length";
 
@@ -397,18 +338,13 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         "000", ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
 
     // Run checks when updateNext is No
-    runAllChecks(sequence, tableName, assertionMsg, "10000007");
+    checkAllUtilitiesWithoutUpdatingSequence(sequence, tableName, assertionMsg, "10000007");
 
     // Run checks when updateNext is Yes
-    runChecksWithUtilityADSequencDocTypeWhenUpdating(sequence, assertionMsg, "10000007");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithSequenceUtilWhenUpdating(sequence, assertionMsg, "10010006");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithUtilityADSequencDocWhenUpdating(sequence, tableName, assertionMsg, "10020005");
-
-    runChecksWithADSequencDocumentNoWhenUpdating(sequence, assertionMsg, "10030004");
+    runADSequenceDocTypeCheck(sequence, assertionMsg, "10000007", true);
+    runSequenceUtilCheck(sequence, assertionMsg, "10010006", true);
+    runADSequencDocCheck(sequence, tableName, assertionMsg, "10020005", true);
+    runADSequenceDocumentNoCheck(sequence, assertionMsg, "10030004", true);
   }
 
   /**
@@ -420,7 +356,6 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
    */
   @Test
   public void sequenceUtilAndUtilityTest_AutoNumbering_ControlDigitMod10_NextAssignedNo_PrefixSuffix() {
-
     String assertionMsg = "Sequence Number is not computed correctly for Sequence with AutoNumbering calculation method, "
         + " valid Prefix, valid Suffix, valid nextAssignedNo, ControlDigit - Module 10, Variable Sequence Length";
 
@@ -431,18 +366,13 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         "000", ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
 
     // Run checks when updateNext is No
-    runAllChecks(sequence, tableName, assertionMsg, "610000001");
+    checkAllUtilitiesWithoutUpdatingSequence(sequence, tableName, assertionMsg, "610000001");
 
     // Run checks when updateNext is Yes
-    runChecksWithUtilityADSequencDocTypeWhenUpdating(sequence, assertionMsg, "610000001");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithSequenceUtilWhenUpdating(sequence, assertionMsg, "610010000");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithUtilityADSequencDocWhenUpdating(sequence, tableName, assertionMsg, "610020009");
-
-    runChecksWithADSequencDocumentNoWhenUpdating(sequence, assertionMsg, "610030008");
+    runADSequenceDocTypeCheck(sequence, assertionMsg, "610000001", true);
+    runSequenceUtilCheck(sequence, assertionMsg, "610010000", true);
+    runADSequencDocCheck(sequence, tableName, assertionMsg, "610020009", true);
+    runADSequenceDocumentNoCheck(sequence, assertionMsg, "610030008", true);
   }
 
   /**
@@ -454,7 +384,6 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
    */
   @Test
   public void sequenceUtilAndUtilityTest_AutoNumbering_ControlDigitMod10_NextAssignedNo_PrefixSuffix_FixedLength_GreaterThan_ComputedSequenceLength() {
-
     String assertionMsg = "Sequence Number is not computed correctly for Sequence with AutoNumbering calculation method, "
         + " valid Prefix, valid Suffix, valid nextAssignedNo, ControlDigit - Module 10, Fixed Sequence Number Length: 7L";
 
@@ -465,18 +394,13 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         "000", ControlDigit.MODULE10, SequenceNumberLength.FIXED, 7L, true);
 
     // Run checks when updateNext is No
-    runAllChecks(sequence, tableName, assertionMsg, "700010010005");
+    checkAllUtilitiesWithoutUpdatingSequence(sequence, tableName, assertionMsg, "700010010005");
 
     // Run checks when updateNext is Yes
-    runChecksWithUtilityADSequencDocTypeWhenUpdating(sequence, assertionMsg, "700010010005");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithSequenceUtilWhenUpdating(sequence, assertionMsg, "700010020004");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithUtilityADSequencDocWhenUpdating(sequence, tableName, assertionMsg, "700010030003");
-
-    runChecksWithADSequencDocumentNoWhenUpdating(sequence, assertionMsg, "700010040002");
+    runADSequenceDocTypeCheck(sequence, assertionMsg, "700010010005", true);
+    runSequenceUtilCheck(sequence, assertionMsg, "700010020004", true);
+    runADSequencDocCheck(sequence, tableName, assertionMsg, "700010030003", true);
+    runADSequenceDocumentNoCheck(sequence, assertionMsg, "700010040002", true);
   }
 
   /**
@@ -489,7 +413,6 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
    */
   @Test
   public void sequenceUtilAndUtilityTest_AutoNumbering_ControlDigitMod10_NextAssignedNo_PrefixSuffix_FixedLength_LessThan_ComputedSequenceLength() {
-
     String assertionMsg = "Sequence Number is not computed correctly for Sequence with AutoNumbering calculation method, "
         + " valid Prefix, valid Suffix, valid nextAssignedNo, ControlDigit - Module 10, Fixed Sequence Number Length: 7L";
 
@@ -500,18 +423,13 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         "000", ControlDigit.MODULE10, SequenceNumberLength.FIXED, 3L, true);
 
     // Run checks when updateNext is No
-    runAllChecks(sequence, tableName, assertionMsg, "810010008");
+    checkAllUtilitiesWithoutUpdatingSequence(sequence, tableName, assertionMsg, "810010008");
 
     // Run checks when updateNext is Yes
-    runChecksWithUtilityADSequencDocTypeWhenUpdating(sequence, assertionMsg, "810010008");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithSequenceUtilWhenUpdating(sequence, assertionMsg, "810020007");
-
-    OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithUtilityADSequencDocWhenUpdating(sequence, tableName, assertionMsg, "810030006");
-
-    runChecksWithADSequencDocumentNoWhenUpdating(sequence, assertionMsg, "810040005");
+    runADSequenceDocTypeCheck(sequence, assertionMsg, "810010008", true);
+    runSequenceUtilCheck(sequence, assertionMsg, "810020007", true);
+    runADSequencDocCheck(sequence, tableName, assertionMsg, "810030006", true);
+    runADSequenceDocumentNoCheck(sequence, assertionMsg, "810040005", true);
   }
 
   /**
@@ -526,10 +444,8 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
    * Compute and check documentNo using SequenceUtil, Utility - AD_SEQUENCE_DOC,
    * AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOCUMENTNO
    */
-
   @Test
   public void sequenceUtilAndUtilityTest_BaseSequence_AutoNumbering_NextAssignedNo_Level2() {
-
     String assertionMsg = "Sequence Number is not computed correctly for Parent Sequence "
         + " with Based On Sequence calculation method, 2 Level Base Sequence";
 
@@ -545,21 +461,16 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         "000", ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
 
     // Run checks when updateNext is No
-    runAllChecks(parentSequence, tableName, assertionMsg, "601104910282130002");
-
-    // Run checks when updateNext is Yes
-    runChecksWithUtilityADSequencDocTypeWhenUpdating(parentSequence, assertionMsg,
+    checkAllUtilitiesWithoutUpdatingSequence(parentSequence, tableName, assertionMsg,
         "601104910282130002");
 
+    // Run checks when updateNext is Yes
+    runADSequenceDocTypeCheck(parentSequence, assertionMsg, "601104910282130002", true);
     OBDal.getInstance().refresh(baseSequence); // Refresh to get updated sequence
-    runChecksWithSequenceUtilWhenUpdating(parentSequence, assertionMsg, "601104910282200002");
-
+    runSequenceUtilCheck(parentSequence, assertionMsg, "601104910282200002", true);
     OBDal.getInstance().refresh(baseSequence); // Refresh to get updated sequence
-    runChecksWithUtilityADSequencDocWhenUpdating(parentSequence, tableName, assertionMsg,
-        "601104910282370002");
-
-    runChecksWithADSequencDocumentNoWhenUpdating(parentSequence, assertionMsg,
-        "601104910282440002");
+    runADSequencDocCheck(parentSequence, tableName, assertionMsg, "601104910282370002", true);
+    runADSequenceDocumentNoCheck(parentSequence, assertionMsg, "601104910282440002", true);
   }
 
   /**
@@ -578,10 +489,8 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
    * Compute and check documentNo using SequenceUtil, Utility - AD_SEQUENCE_DOC,
    * AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOCUMENTNO
    */
-
   @Test
   public void sequenceUtilAndUtilityTest_BaseSequence_AutoNumbering_NextAssignedNo_PrefixSuffix_Level3() {
-
     String assertionMsg = "Sequence Number is not computed correctly for Parent Sequence "
         + " with Based On Sequence calculation method, 3 Level Base Sequence";
 
@@ -602,106 +511,95 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         "1", ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
 
     // Run checks when updateNext is No
-    runAllChecks(parentSequence, tableName, assertionMsg, "983500072510");
+    checkAllUtilitiesWithoutUpdatingSequence(parentSequence, tableName, assertionMsg,
+        "983500072510");
 
     // Run checks when updateNext is Yes
-    runChecksWithUtilityADSequencDocTypeWhenUpdating(parentSequence, assertionMsg, "983500072510");
-
+    runADSequenceDocTypeCheck(parentSequence, assertionMsg, "983500072510", true);
     OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithSequenceUtilWhenUpdating(parentSequence, assertionMsg, "983500172210");
-
+    runSequenceUtilCheck(parentSequence, assertionMsg, "983500172210", true);
     OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
-    runChecksWithUtilityADSequencDocWhenUpdating(parentSequence, tableName, assertionMsg,
-        "983500272910");
-
-    runChecksWithADSequencDocumentNoWhenUpdating(parentSequence, assertionMsg, "983500372610");
-
+    runADSequencDocCheck(parentSequence, tableName, assertionMsg, "983500272910", true);
+    runADSequenceDocumentNoCheck(parentSequence, assertionMsg, "983500372610", true);
   }
 
   /**
    * Compute documentNo using SequenceUtil, Utility - AD_SEQUENCE_DOC, AD_SEQUENCE_DOCTYPE,
    * AD_SEQUENCE_DOCUMENTNO and compare it with expectedSequenceNumber when updateNext is No
    */
+  private void checkAllUtilitiesWithoutUpdatingSequence(Sequence sequence, String tableName,
+      String assertionMsg, String expectedSequenceNumber) {
+    // Test SequenceUtil.getDocumentNo()
+    runSequenceUtilCheck(sequence, assertionMsg, expectedSequenceNumber, false);
 
-  private void runAllChecks(Sequence sequence, String tableName, String assertionMsg,
-      String expectedSequenceNumber) {
+    // Tests AD_Sequence_Doc
+    runADSequencDocCheck(sequence, tableName, assertionMsg, expectedSequenceNumber, false);
 
-    assertThat(assertionMsg + " , updateNext No using SequenceUtil",
-        SequenceUtil.getDocumentNo(false, sequence), equalTo(expectedSequenceNumber));
+    // Tests AD_Sequence_DocType
+    runADSequenceDocTypeCheck(sequence, assertionMsg, expectedSequenceNumber, false);
 
-    assertThat(assertionMsg + " , updateNext No using Utility - AD_SEQUENCE_DOC",
-        Utility.getDocumentNo(new DalConnectionProvider(false), sequence.getClient().getId(),
-            tableName, false),
-        equalTo(expectedSequenceNumber));
-
-    assertThat(assertionMsg + " , updateNext No using Utility - AD_SEQUENCE_DOCTYPE",
-        Utility.getDocumentNo(new DalConnectionProvider(false),
-            RequestContext.get().getVariablesSecureApp(), "", SequenceTestUtils.TABLE_NAME, "",
-            SequenceTestUtils.createDocumentType(SequenceTestUtils.DOC_TYPE_ID, sequence).getId(),
-            false, false),
-        equalTo(expectedSequenceNumber));
-
-    assertThat(assertionMsg + " , updateNext No using AD_SEQUENCE_DOCUMENTNO",
-        SequenceTestUtils.getDocumentNo(sequence.getId(), false, "AD_SEQUENCE_DOCUMENTNO"),
-        equalTo(expectedSequenceNumber));
-
+    // Tests AD_Sequence_DocumentNo
+    runADSequenceDocumentNoCheck(sequence, assertionMsg, expectedSequenceNumber, false);
   }
 
   /**
-   * Compute documentNo using SequenceUtil and compare it with expectedSequenceNumber when
-   * updateNext is Yes
+   * Compute documentNo using SequenceUtil and compare it with expectedSequenceNumber
    */
-
-  private void runChecksWithSequenceUtilWhenUpdating(Sequence sequence, String assertionMsg,
-      String expectedSequenceNumber) {
-    String documentNo = SequenceUtil.getDocumentNo(true, sequence);
-    // Flush is necessary to update the sequence when using SequenceUtil
-    OBDal.getInstance().flush();
-    assertThat(assertionMsg + ", updateNext Yes using SequenceUtil", documentNo,
+  private void runSequenceUtilCheck(Sequence sequence, String assertionMsg,
+      String expectedSequenceNumber, boolean updateNext) {
+    String documentNo = SequenceUtil.getDocumentNo(updateNext, sequence);
+    if (updateNext) {
+      // Flush is necessary to update the sequence when using SequenceUtil
+      OBDal.getInstance().flush();
+      OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
+    }
+    assertThat(assertionMsg + ", updateNext " + updateNext + " using SequenceUtil", documentNo,
         equalTo(expectedSequenceNumber));
   }
 
   /**
    * Compute documentNo using Utility - AD_SEQUENCE_DOC and compare it with expectedSequenceNumber
-   * when updateNext is Yes
    */
-
-  private void runChecksWithUtilityADSequencDocWhenUpdating(Sequence sequence, String tableName,
-      String assertionMsg, String expectedSequenceNumber) {
-
-    assertThat(assertionMsg + ", updateNext Yes using Utility - AD_SEQUENCE_DOC",
+  private void runADSequencDocCheck(Sequence sequence, String tableName, String assertionMsg,
+      String expectedSequenceNumber, boolean updateNext) {
+    assertThat(assertionMsg + ", updateNext " + updateNext + " using AD_SEQUENCE_DOC",
         Utility.getDocumentNo(new DalConnectionProvider(false), sequence.getClient().getId(),
-            tableName, true),
+            tableName, updateNext),
         equalTo(expectedSequenceNumber));
+    if (updateNext) {
+      OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
+    }
   }
 
   /**
    * Compute documentNo using Utility - AD_SEQUENCE_DOCTYPE and compare it with
-   * expectedSequenceNumber when updateNext is Yes
+   * expectedSequenceNumber
    */
-
-  private void runChecksWithUtilityADSequencDocTypeWhenUpdating(Sequence sequence,
-      String assertionMsg, String expectedSequenceNumber) {
-
-    assertThat(assertionMsg + ", updateNext Yes using Utility - AD_SEQUENCE_DOCTYPE",
+  private void runADSequenceDocTypeCheck(Sequence sequence, String assertionMsg,
+      String expectedSequenceNumber, boolean updateNext) {
+    // C_ORDER_TABLE_NAME is a dummy value to be able to use AD_SEQUENCE_DOCTYPE
+    assertThat(assertionMsg + ", updateNext " + updateNext + " using AD_SEQUENCE_DOCTYPE",
         Utility.getDocumentNo(new DalConnectionProvider(false),
-            RequestContext.get().getVariablesSecureApp(), "", SequenceTestUtils.TABLE_NAME, "",
-            SequenceTestUtils.createDocumentType(SequenceTestUtils.DOC_TYPE_ID, sequence).getId(),
-            false, true),
+            RequestContext.get().getVariablesSecureApp(), "", SequenceTestUtils.C_ORDER_TABLE_NAME,
+            "", SequenceTestUtils.createDocumentType(DOC_TYPE_ID, sequence).getId(), false,
+            updateNext),
         equalTo(expectedSequenceNumber));
+    if (updateNext) {
+      OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
+    }
   }
 
   /**
-   * Compute documentNo using AD_SEQUENCE_DOCUMENTNO and compare it with expectedSequenceNumber when
-   * updateNext is Yes
+   * Compute documentNo using AD_SEQUENCE_DOCUMENTNO and compare it with expectedSequenceNumber
    */
-
-  private void runChecksWithADSequencDocumentNoWhenUpdating(Sequence sequence, String assertionMsg,
-      String expectedSequenceNumber) {
-
-    assertThat(assertionMsg + ", updateNext Yes using AD_SEQUENCE_DOCUMENTNO",
-        SequenceTestUtils.getDocumentNo(sequence.getId(), true, "AD_SEQUENCE_DOCUMENTNO"),
+  private void runADSequenceDocumentNoCheck(Sequence sequence, String assertionMsg,
+      String expectedSequenceNumber, boolean updateNext) {
+    assertThat(assertionMsg + ", updateNext " + updateNext + " using AD_SEQUENCE_DOCUMENTNO",
+        SequenceTestUtils.callADSequenceDocumentNo(sequence.getId(), updateNext),
         equalTo(expectedSequenceNumber));
+    if (updateNext) {
+      OBDal.getInstance().refresh(sequence); // Refresh to get updated sequence
+    }
   }
 
 }

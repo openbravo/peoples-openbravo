@@ -34,22 +34,18 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.CallStoredProcedure;
 
 class SequenceTestUtils {
-  public static final String QA_SPAIN_ORG_ID = "357947E87C284935AD1D783CF6F099A1";
-  public static final String DOC_TYPE_ID = "FF8080812C2ABFC6012C2B3BDF4D005A";
-  public static final String TABLE_NAME = "C_Order";
+  public static final String C_ORDER_TABLE_NAME = "C_Order";
+  private static final String ANY_EXISTING_SEQUENCE_ID = "FF8080812C2ABFC6012C2B3BE4970094";
 
   /*
    * Creates Document Sequence to be used
    */
-
   static Sequence createDocumentSequence(Organization org, String sequenceName,
       CalculationMethod calculationMethod, Sequence baseSequence, String prefix, Long startingNo,
       Long nextAssignedNumber, Long incrementBy, String suffix, ControlDigit controlDigit,
       SequenceNumberLength sequenceNoLength, Long sequenceLength, boolean saveAndflush) {
-    final Sequence anyExistingSequence = OBDal.getInstance()
-        .getProxy(Sequence.class, "FF8080812C2ABFC6012C2B3BE4970094");
-    // Create a Sequence
-    final Sequence sequence = (Sequence) DalUtil.copy(anyExistingSequence);
+    final Sequence sequence = (Sequence) DalUtil
+        .copy(OBDal.getInstance().getProxy(Sequence.class, ANY_EXISTING_SEQUENCE_ID));
     sequence.setOrganization(org);
     sequence.setName(sequenceName);
     sequence.setControlDigit(controlDigit.value);
@@ -72,8 +68,7 @@ class SequenceTestUtils {
   /**
    * Create Document Type with Document Sequence
    */
-
-  public static DocumentType createDocumentType(String docTypeId, Sequence sequence) {
+  static DocumentType createDocumentType(String docTypeId, Sequence sequence) {
     final DocumentType anyExistingDocType = OBDal.getInstance()
         .getProxy(DocumentType.class, docTypeId);
     // Create a document Type
@@ -100,17 +95,15 @@ class SequenceTestUtils {
    *          name of function to be used for computation of sequence and control digit
    * @return computed documentNo using computation of sequence and control digit in PL
    */
-
-  public static String getDocumentNo(String sequenceId, boolean updateNext, String functionName) {
-    String value = "";
+  static String callADSequenceDocumentNo(String sequenceId, boolean updateNext) {
     try {
-      final List<Object> parameters = new ArrayList<Object>();
+      final List<Object> parameters = new ArrayList<>();
       parameters.add(sequenceId);
       parameters.add(updateNext);
-      value = ((String) CallStoredProcedure.getInstance().call(functionName, parameters, null));
+      return ((String) CallStoredProcedure.getInstance()
+          .call("AD_SEQUENCE_DOCUMENTNO", parameters, null));
     } catch (Exception e) {
       throw new IllegalStateException(e);
     }
-    return value;
   }
 }

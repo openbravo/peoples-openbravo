@@ -34,7 +34,7 @@ import org.openbravo.dal.service.OBDal;
 
 class SequenceTest extends WeldBaseTest {
   protected static final Logger log = LogManager.getLogger();
-  public static final String QA_SPAIN_ORG_ID = "357947E87C284935AD1D783CF6F099A1";
+  protected static final String QA_SPAIN_ORG_ID = "357947E87C284935AD1D783CF6F099A1";
 
   @Before
   public void initialize() {

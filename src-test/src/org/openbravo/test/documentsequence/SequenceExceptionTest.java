@@ -472,7 +472,7 @@ public class SequenceExceptionTest extends SequenceTest {
         "Sequence with invalid information is not computed correctly using Utility - AD_SEQUENCE_DOCTYPE",
         "",
         equalTo(Utility.getDocumentNo(new DalConnectionProvider(false),
-            RequestContext.get().getVariablesSecureApp(), "", SequenceTestUtils.TABLE_NAME, "",
+            RequestContext.get().getVariablesSecureApp(), "", SequenceTestUtils.C_ORDER_TABLE_NAME, "",
             UUID.randomUUID().toString(), false, false)));
   }
 }
