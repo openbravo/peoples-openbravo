@@ -101,6 +101,13 @@ public class ReferencedInventoryTypeOrgSequenceTest extends ReferencedInventoryT
         null, "000", ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(parentSequence);
 
+    // Create a document sequence in USA Organization
+    final Sequence usaSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance()
+            .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_USA_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, "6", null, 1000L, null,
+        "000", ControlDigit.MODULE10, SequenceNumberLength.FIXED, 7L, true);
+
     // Create Referenced Inventory Type with Sequence Type as Per Organization in Main Organization
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(
@@ -116,28 +123,20 @@ public class ReferencedInventoryTypeOrgSequenceTest extends ReferencedInventoryT
             .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID),
         parentSequence);
 
+    // Create Referenced Inventory Type Organization Sequence with Sequence created above in USA
+    // Organization
+    ReferencedInventoryTestUtils.createReferencedInventoryTypeOrgSeq(refInvType, OBDal.getInstance()
+        .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_USA_ORG_ID), usaSequence);
+
     // Create Referenced Inventory in Spain Organization
     final ReferencedInventory refInvSpain = ReferencedInventoryTestUtils
         .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
     assertThat("Referenced Inventory Search Key is not computed properly using DAL",
         "601104910382120002", equalTo(refInvSpain.getSearchKey()));
 
-    // Create a document sequence in USA Organization
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
-        OBDal.getInstance()
-            .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_USA_ORG_ID),
-        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, "6", null, 1000L, null,
-        "000", ControlDigit.MODULE10, SequenceNumberLength.FIXED, 7L, true);
-
-    // Create Referenced Inventory Type Organization Sequence with Sequence created above in USA
-    // Organization
-    ReferencedInventoryTestUtils.createReferencedInventoryTypeOrgSeq(refInvType, OBDal.getInstance()
-        .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_USA_ORG_ID), sequence);
-
     // Create Referenced Inventory in USA Organization
     final ReferencedInventory refInvUSA = ReferencedInventoryTestUtils
         .createReferencedInventory(ReferencedInventoryTestUtils.QA_USA_ORG_ID, refInvType);
-
     assertThat("Referenced Inventory Search Key is not computed properly using DAL", "600010000009",
         equalTo(refInvUSA.getSearchKey()));
 
