@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2022 Openbravo SLU
+ * All portions are Copyright (C) 2010-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -37,7 +37,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.LockOptions;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
@@ -58,6 +57,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.SequenceUtil;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -331,69 +331,22 @@ public class FIN_Utility {
       Sequence seq = docType.getDocumentSequence();
       if (seq == null && tableName != null) {
         OBCriteria<Sequence> obcSeq = OBDal.getInstance().createCriteria(Sequence.class);
+        // FIXME this seems to be a wrong implementation of Utility.getDocumentNo(), which searches
+        // by DocumentNo_<tableName>, which are the sequences created by the AD_CLIENT_TRG and
+        // AD_COLUMN_TRG2 triggers.
+        // It is kept because a change here will create an API change in sequence management, which
+        // might be very sensitive for the customers
         obcSeq.add(Restrictions.eq(Sequence.PROPERTY_NAME, tableName));
         obcSeq.setMaxResults(1);
         seq = (Sequence) obcSeq.uniqueResult();
       }
-      return getDocumentNo(updateNext, seq);
+      return SequenceUtil.getDocumentNo(updateNext, seq);
     }
     return null;
   }
 
   public static String getDocumentNo(boolean updateNext, Sequence seqParam) {
-    if (seqParam == null) {
-      return null;
-    }
-    Sequence seq = getSequenceAndLockIfUpdateNext(updateNext, seqParam);
-    return getNextDocNumberAndIncrementSeqIfUpdateNext(updateNext, seq);
-
-  }
-
-  private static Sequence getSequenceAndLockIfUpdateNext(final boolean updateNext,
-      final Sequence seqParam) {
-    if (updateNext) {
-      // We lock the sequence with a select for update to avoid duplicates
-      return lockSequence(seqParam.getId());
-    }
-    return seqParam;
-  }
-
-  private static Sequence lockSequence(String sequenceId) {
-    // @formatter:off
-    final String where = ""
-        + "select s "
-        + "from ADSequence s "
-        + "where id = :id";
-    // @formatter:on
-    final Session session = OBDal.getInstance().getSession();
-    final Query<Sequence> query = session.createQuery(where, Sequence.class);
-    query.setParameter("id", sequenceId);
-    query.setMaxResults(1);
-    query.setLockOptions(LockOptions.UPGRADE);
-    return query.uniqueResult();
-  }
-
-  private static String getNextDocNumberAndIncrementSeqIfUpdateNext(final boolean updateNext,
-      final Sequence seq) {
-    final StringBuilder nextDocNumber = new StringBuilder();
-    if (seq.getPrefix() != null) {
-      nextDocNumber.append(seq.getPrefix());
-    }
-    nextDocNumber.append(seq.getNextAssignedNumber().toString());
-    if (seq.getSuffix() != null) {
-      nextDocNumber.append(seq.getSuffix());
-    }
-
-    incrementSeqIfUpdateNext(updateNext, seq);
-
-    return nextDocNumber.toString();
-  }
-
-  private static void incrementSeqIfUpdateNext(final boolean updateNext, final Sequence seq) {
-    if (updateNext) {
-      seq.setNextAssignedNumber(seq.getNextAssignedNumber() + seq.getIncrementBy());
-      OBDal.getInstance().save(seq);
-    }
+    return SequenceUtil.getDocumentNo(updateNext, seqParam);
   }
 
   /**

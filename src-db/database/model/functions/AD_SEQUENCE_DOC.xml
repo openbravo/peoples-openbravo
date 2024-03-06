@@ -28,35 +28,37 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2018 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2024 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
   *************************************************************************
   * $Id: AD_Sequence_Doc.sql,v 1.6 2003/08/06 06:51:26 jjanke Exp $
   ***
-  * Title: Get the next DocumentNo of TableName
-  * Description:
-  *  store in parameter p_DocumentNo
-  *  if ID < 1000000, use System Doc Sequence
+  * Title: Get the next DocumentNo of Sequence
+  * Description: Gets the next DocumentNo of Sequence
   ************************************************************************/
-  v_NextNo VARCHAR2(32);
-  v_Prefix VARCHAR2(30) ;
-  v_Suffix VARCHAR2(30) ;
+  v_Sequence_ID AD_SEQUENCE.AD_Sequence_ID%TYPE:=NULL; --OBTG:VARCHAR2--
 BEGIN
-  IF p_Update_Next='Y' THEN
-    UPDATE AD_Sequence
-      SET CurrentNext=CurrentNext + IncrementNo, Updated=now()
-    WHERE Name=p_SequenceName
-    AND ad_client_id=p_ad_client_id;
+  BEGIN
+    /* There is unique constraint ad_client_id, ad_org, name
+     * Name could be similar for ad_client_id with different ad_org_id
+     * This is a workaround for Design Defect #54761
+    */
+    SELECT MAX(AD_Sequence_ID)
+    INTO v_Sequence_ID
+    FROM AD_SEQUENCE
+    WHERE Name=p_SequenceName -- parameter
+      AND ad_client_id=p_ad_client_id;
+  EXCEPTION
+  WHEN OTHERS THEN
+    NULL;
+  END;
+  IF(v_Sequence_ID IS NULL) THEN -- No Sequence Number
+    p_DocumentNo:=NULL;
+    RETURN;
   END IF;
-
-  SELECT CurrentNext - (CASE WHEN p_Update_Next='Y' THEN IncrementNo ELSE 0 END), Prefix, Suffix
-  INTO v_NextNo, v_Prefix, v_Suffix
-  FROM AD_Sequence
-  WHERE Name=p_SequenceName  AND IsActive='Y'  AND IsTableID='N'  AND IsAutoSequence='Y'  AND AD_Client_ID=p_AD_Client_ID;
-
-  p_DocumentNo:=COALESCE(v_Prefix, '') || v_NextNo || COALESCE(v_Suffix, '') ;
+  p_DocumentNo:=AD_SEQUENCE_DOCUMENTNO(v_Sequence_ID, p_update_next);
 EXCEPTION
 WHEN NO_DATA_FOUND THEN
   RAISE_APPLICATION_ERROR(-20000, '@DocumentSequenceNotFound@' || p_SequenceName) ;

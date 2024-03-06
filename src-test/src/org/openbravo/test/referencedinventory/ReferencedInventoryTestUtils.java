@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -45,13 +45,17 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.materialmgmt.ReservationUtils;
+import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
+import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
+import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryTypeOrgSequence;
 import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
 import org.openbravo.model.materialmgmt.onhandquantity.ReservationStock;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
@@ -74,7 +78,9 @@ class ReferencedInventoryTestUtils {
   // Reservations preference
   private static final String RESERVATIONS_PREFERENCE = "StockReservations";
 
+  static final String QA_MAIN_ORG_ID = "43D590B4814049C6B85C6545E8264E37";
   static final String QA_SPAIN_ORG_ID = "357947E87C284935AD1D783CF6F099A1";
+  static final String QA_USA_ORG_ID = "5EFF95EB540740A3B10510D9814EFAD5";
   static final String QA_SPAIN_WAREHOUSE_ID = "4028E6C72959682B01295ECFEF4502A0";
   static final String ORG_STAR_ID = "0";
   static final String QA_CLIENT_ID = "4028E6C72959682B01295A070852010D";
@@ -127,11 +133,32 @@ class ReferencedInventoryTestUtils {
     OBDal.getInstance().save(reservationsPreference);
   }
 
-  static ReferencedInventoryType createReferencedInventoryType() {
+  /*
+   * Creates Referenced Inventory Type Organization Sequence when Sequence Type is Per Organization
+   */
+
+  static void createReferencedInventoryTypeOrgSeq(ReferencedInventoryType refInvType,
+      Organization org, Sequence parentSequence) {
+    final ReferencedInventoryTypeOrgSequence refInvTypeOrgSeq = OBProvider.getInstance()
+        .get(ReferencedInventoryTypeOrgSequence.class);
+    refInvTypeOrgSeq.setClient(OBContext.getOBContext().getCurrentClient());
+    refInvTypeOrgSeq.setOrganization(org);
+    refInvTypeOrgSeq.setReferencedInventoryType(refInvType);
+    refInvTypeOrgSeq.setSequence(parentSequence);
+    OBDal.getInstance().save(refInvTypeOrgSeq);
+    assertThat("Referenced Inventory Type Organization Sequence is successfully created",
+        refInvTypeOrgSeq, notNullValue());
+    OBDal.getInstance().flush();
+  }
+
+  static ReferencedInventoryType createReferencedInventoryType(Organization org,
+      SequenceType sequenceType, Sequence sequence) {
     final ReferencedInventoryType refInvType = OBProvider.getInstance()
         .get(ReferencedInventoryType.class);
     refInvType.setClient(OBContext.getOBContext().getCurrentClient());
-    refInvType.setOrganization(OBDal.getInstance().getProxy(Organization.class, "0"));
+    refInvType.setOrganization(org);
+    refInvType.setSequenceType(sequenceType.value);
+    refInvType.setSequence(sequence);
     refInvType.setName(UUID.randomUUID().toString());
     refInvType.setShared(true);
     OBDal.getInstance().save(refInvType);
@@ -141,13 +168,15 @@ class ReferencedInventoryTestUtils {
 
   static ReferencedInventory createReferencedInventory(final String orgId,
       final ReferencedInventoryType refInvType) {
+    String strSequence = ReferencedInventoryUtil.getProposedValueFromSequence(refInvType.getId(),
+        orgId, true);
     final ReferencedInventory refInv = OBProvider.getInstance().get(ReferencedInventory.class);
     refInv.setClient(OBContext.getOBContext().getCurrentClient());
     refInv.setOrganization(OBDal.getInstance().getProxy(Organization.class, orgId));
     refInv.setReferencedInventoryType(refInvType);
-    refInv.setSearchKey(
-        refInvType.getSequence() == null ? StringUtils.left(UUID.randomUUID().toString(), 30)
-            : "<to be replaced>");
+    refInv.setSearchKey(strSequence == null || StringUtils.isEmpty(strSequence)
+        ? StringUtils.left(UUID.randomUUID().toString(), 30)
+        : strSequence);
     OBDal.getInstance().save(refInv);
     assertThat("Referenced Inventory is successfully created", refInv, notNullValue());
     assertThat("Referenced Inventory is empty", refInv.getMaterialMgmtStorageDetailList(), empty());

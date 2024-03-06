@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2023 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,7 +30,6 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
-import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.util.Check;
@@ -39,12 +38,14 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
+import org.openbravo.erpCommon.utility.SequenceUtil;
 import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
+import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryTypeOrgSequence;
 import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.InternalMovement;
@@ -57,6 +58,16 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
 public class ReferencedInventoryUtil {
   public static final String REFERENCEDINVENTORYPREFIX = "[";
   public static final String REFERENCEDINVENTORYSUFFIX = "]";
+
+  public enum SequenceType {
+    GLOBAL("G"), NONE("N"), PER_ORGANIZATION("P");
+
+    public final String value;
+
+    SequenceType(String value) {
+      this.value = value;
+    }
+  }
 
   /**
    * Create and return a new AttributeSetInstance from the given originalAttributeSetInstance and
@@ -144,23 +155,81 @@ public class ReferencedInventoryUtil {
    *          Referenced Inventory Type Id used to get its sequence
    * @param updateNext
    *          if true updates the sequence's next value in database
+   * 
+   * @deprecated this method doesn't support the Sequence Type combo, so the new "Per Organization"
+   *             feature is not supported. Please use instead
+   *             {@link #getProposedValueFromSequence(String, String, boolean)}
    */
+  @Deprecated
   public static String getProposedValueFromSequenceOrNull(final String referencedInventoryTypeId,
       final boolean updateNext) {
     if (StringUtils.isBlank(referencedInventoryTypeId)) {
       return null;
     } else {
-      return FIN_Utility.getDocumentNo(updateNext, getSequence(referencedInventoryTypeId));
+      return SequenceUtil.getDocumentNo(updateNext,
+          OBDal.getInstance()
+              .getProxy(ReferencedInventoryType.class, referencedInventoryTypeId)
+              .getSequence());
     }
   }
 
   /**
-   * Returns the sequence associated to the given referenced inventory type id or null if not found
+   * If the given referenced inventory type id is associated to a sequence (either with a Sequence
+   * Type Global or Per Organization), it then return the next value in that sequence. If sequence
+   * type is None, it returns null.
+   * 
+   * @param referencedInventoryTypeId
+   *          Referenced Inventory Type Id used to get its sequence
+   * @param orgId
+   *          Organization Id of the referenced inventory. It is used when Sequence Type is Per
+   *          Organization
+   * @param updateNext
+   *          if true updates the sequence's next value in database
    */
-  private static Sequence getSequence(final String referencedInventoryTypeId) {
-    return OBDal.getInstance()
-        .get(ReferencedInventoryType.class, referencedInventoryTypeId)
-        .getSequence();
+  public static String getProposedValueFromSequence(final String referencedInventoryTypeId,
+      final String orgId, final boolean updateNext) {
+    if (StringUtils.isBlank(referencedInventoryTypeId)) {
+      return null;
+    }
+    return SequenceUtil.getDocumentNo(updateNext, getSequence(referencedInventoryTypeId, orgId));
+  }
+
+  /**
+   * Returns the sequence associated to the given referenced inventory type id if Sequence Type is
+   * Global or from Organization Sequence in case Sequence Type is Per Organization
+   */
+  private static Sequence getSequence(final String referencedInventoryTypeId, final String orgId) {
+    final ReferencedInventoryType refInventoryType = OBDal.getInstance()
+        .getProxy(ReferencedInventoryType.class, referencedInventoryTypeId);
+    final String riSequenceType = refInventoryType.getSequenceType();
+
+    if (SequenceType.GLOBAL.value.equals(riSequenceType)) {
+      return refInventoryType.getSequence();
+    } else if (SequenceType.PER_ORGANIZATION.value.equals(riSequenceType)) {
+      return ReferencedInventoryUtil.getPerOrganizationSequence(referencedInventoryTypeId, orgId);
+    } else if (SequenceType.NONE.value.equals(riSequenceType)) {
+      return null;
+    } else {
+      throw new OBException("Sequence Type not supported: " + riSequenceType, true);
+    }
+  }
+
+  private static Sequence getPerOrganizationSequence(final String referencedInventoryTypeId,
+      String orgId) {
+    try {
+      OBContext.setAdminMode(true);
+      final OBCriteria<ReferencedInventoryTypeOrgSequence> criteria = OBDao.getFilteredCriteria(
+          ReferencedInventoryTypeOrgSequence.class,
+          Restrictions.eq(
+              ReferencedInventoryTypeOrgSequence.PROPERTY_REFERENCEDINVENTORYTYPE + ".id",
+              referencedInventoryTypeId),
+          Restrictions.eq(ReferencedInventoryTypeOrgSequence.PROPERTY_ORGANIZATION + ".id", orgId));
+      ReferencedInventoryTypeOrgSequence orgSeq = (ReferencedInventoryTypeOrgSequence) criteria
+          .uniqueResult();
+      return orgSeq != null ? orgSeq.getSequence() : null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**
@@ -253,4 +322,5 @@ public class ReferencedInventoryUtil {
     sdQuery.setFetchSize(1000);
     return sdQuery.scroll(ScrollMode.FORWARD_ONLY);
   }
+
 }

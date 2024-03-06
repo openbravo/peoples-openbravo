@@ -1161,7 +1161,7 @@ It updates to the most typical port for the defined connection security, but thi
 <!--B05A954309334F5282E8A56617821F22-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--B05A954309334F5282E8A56617821F22-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--B05A954309334F5282E8A56617821F22-->  <NAME><![CDATA[SE_RefInventory_RefInvType]]></NAME>
-<!--B05A954309334F5282E8A56617821F22-->  <DESCRIPTION><![CDATA[Sets the proposed value from the sequence associated to the referenced inventory type. The sequence is not updated yet.]]></DESCRIPTION>
+<!--B05A954309334F5282E8A56617821F22-->  <DESCRIPTION><![CDATA[Sets the proposed value from the sequence associated to the handling unit type. The sequence is not updated yet.]]></DESCRIPTION>
 <!--B05A954309334F5282E8A56617821F22-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--B05A954309334F5282E8A56617821F22--></AD_CALLOUT>
 

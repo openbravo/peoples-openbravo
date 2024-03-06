@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,7 +46,10 @@ import org.junit.runners.Suite;
     ReferencedInventoryPartialUnboxPartialReservation2MovementLinesUnboxTest.class, //
     ReferencedInventoryFullUnboxPartialReservation.class, //
     // Force bin or attribute set at reservation header
-    ReferencedInventoryBoxForcedReservation.class //
+    ReferencedInventoryBoxForcedReservation.class, //
+
+    ReferencedInventoryTypeOrgSequenceTest.class, //
+    ReferencedInventoryTypeTest.class //
 })
 public class ReferencedInventoryTestSuite {
 }

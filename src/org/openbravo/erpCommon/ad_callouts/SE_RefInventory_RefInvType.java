@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,20 +42,23 @@ public class SE_RefInventory_RefInvType extends SimpleCallout {
       OBContext.setAdminMode(true);
       final String referencedInventoryTypeId = info.getStringParameter("inpmRefinventoryTypeId",
           IsIDFilter.instance);
+      final String orgId = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
       final String proposedValue = getNextProposedValueWithoutUpdatingSequence(
-          referencedInventoryTypeId);
+          referencedInventoryTypeId, orgId);
       info.addResult("inpvalue", proposedValue);
     } catch (Exception logAndIgnore) {
+      info.addResult("inpvalue", "");
+      info.addResult("ERROR", logAndIgnore.getMessage());
       log.warn("Unexpected error in callout " + this.getClass().getName(), logAndIgnore);
     } finally {
       OBContext.restorePreviousMode();
     }
   }
 
-  private String getNextProposedValueWithoutUpdatingSequence(
-      final String referencedInventoryTypeId) {
+  private String getNextProposedValueWithoutUpdatingSequence(final String referencedInventoryTypeId,
+      String orgId) {
     final String nextProposedValue = ReferencedInventoryUtil
-        .getProposedValueFromSequenceOrNull(referencedInventoryTypeId, false);
+        .getProposedValueFromSequence(referencedInventoryTypeId, orgId, false);
     return StringUtils.isBlank(nextProposedValue) ? "" : "<" + nextProposedValue + ">";
   }
 }

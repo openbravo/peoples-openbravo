@@ -105,6 +105,7 @@ import org.openbravo.test.db.model.functions.Ad_isorgincludedTest;
 import org.openbravo.test.db.model.functions.CLocationGetIdentifierTest;
 import org.openbravo.test.db.model.functions.SqlCallableStatement;
 import org.openbravo.test.db.pool.PoolHasNoConnectionsDetection;
+import org.openbravo.test.documentsequence.SequenceTestSuite;
 import org.openbravo.test.expression.EvaluationTest;
 import org.openbravo.test.expression.OBBindingsTest;
 import org.openbravo.test.generalsetup.enterprise.organization.ADOrgPersistInfoTestSuite;
@@ -427,6 +428,9 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
 
     // Referenced Inventory
     ReferencedInventoryTestSuite.class,
+
+    // Document Sequence
+    SequenceTestSuite.class,
 
     // AD_Org Persist Information
     ADOrgPersistInfoTestSuite.class,
