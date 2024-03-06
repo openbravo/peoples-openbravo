@@ -11,17 +11,27 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2023 Openbravo SLU
+ * All portions are Copyright (C) 2023-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.authentication;
 
+import java.util.List;
+import java.util.Optional;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.Prioritizable;
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.model.ad.access.User;
+import org.openbravo.model.authentication.AuthenticationProvider;
 
 /**
  * Provides authentication using an external authentication provider. Classes extending this one
@@ -30,6 +40,29 @@ import org.openbravo.base.Prioritizable;
  */
 public abstract class ExternalAuthenticationManager extends AuthenticationManager
     implements Prioritizable {
+  private static final Logger log = LogManager.getLogger();
+
+  /**
+   * Get a ExternalAuthenticationManager instance
+   * 
+   * @param authMethod
+   *          The identifier of the authentication method
+   *
+   * @return an optional describing the ExternalAuthenticationManager instance for authentication
+   *         using the given method or an empty optional if no instance can be retrieved for the
+   *         given method
+   */
+  public static Optional<ExternalAuthenticationManager> newInstance(String authMethod) {
+    List<ExternalAuthenticationManager> externalAuthManagers = WeldUtils
+        .getInstancesSortedByPriority(ExternalAuthenticationManager.class,
+            new AuthenticationTypeSelector(authMethod));
+    if (externalAuthManagers.isEmpty()) {
+      log.error("Could not find an ExternalAuthenticationManager instance for method {}",
+          authMethod);
+      return Optional.empty();
+    }
+    return Optional.of(externalAuthManagers.get(0));
+  }
 
   @Override
   public String doAuthenticate(HttpServletRequest request, HttpServletResponse response) {
@@ -41,7 +74,7 @@ public abstract class ExternalAuthenticationManager extends AuthenticationManage
   }
 
   /**
-   * To be implemented with the logic of the external authentication
+   * To be implemented with the logic of the external authentication for the login flow.
    *
    * @param request
    *          HTTP request object to handle parameters and session attributes
@@ -51,4 +84,27 @@ public abstract class ExternalAuthenticationManager extends AuthenticationManage
    */
   public abstract AuthenticatedUser doExternalAuthentication(HttpServletRequest request,
       HttpServletResponse response);
+
+  /**
+   * Method to perform the external authentication from a given object containing the user
+   * credentials. This method is invoked when trying to perform an authentication in flows different
+   * from the login flow.
+   *
+   * @param authProvider
+   *          The name of the {@link AuthenticationProvider} used to authenticate
+   * @param credential
+   *          The credentials needed to perform the external authentication
+   *
+   * @return an Optional describing the authenticated user or an empty optional if the
+   *         authentication fails or cannot be done with the given credentials
+   *
+   * @throws JSONException
+   *           if there is an error retrieving the information from the credential
+   * @throws AuthenticationException
+   *           if there is an error during the external authentication process
+   */
+  public Optional<User> authenticate(String authProvider, JSONObject credential)
+      throws JSONException {
+    throw new AuthenticationException("Not implemented");
+  }
 }

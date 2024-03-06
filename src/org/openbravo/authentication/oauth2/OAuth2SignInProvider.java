@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2023 Openbravo SLU 
+ * All portions are Copyright (C) 2023-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,6 +34,7 @@ import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.security.SignInProvider;
+import org.openbravo.model.ad.module.Application;
 import org.openbravo.model.authentication.AuthenticationProvider;
 
 /**
@@ -44,6 +45,7 @@ import org.openbravo.model.authentication.AuthenticationProvider;
 public class OAuth2SignInProvider implements SignInProvider {
   private static final String TEMPLATE_ID = "64F02C64E2A14E09BCD145D74F2DE93F";
   private static final String OPENID = "OPENID";
+  static final String BACKOFFICE_APP = "85A6864E67B3427C9DEA981AAE11B306";
   private Template template;
 
   @Inject
@@ -85,6 +87,9 @@ public class OAuth2SignInProvider implements SignInProvider {
       return OBDal.getInstance()
           .createCriteria(AuthenticationProvider.class)
           .add(Restrictions.eq(AuthenticationProvider.PROPERTY_TYPE, type))
+          .add(Restrictions.eq(AuthenticationProvider.PROPERTY_APPLICATION,
+              OBDal.getInstance().getProxy(Application.class, BACKOFFICE_APP)))
+          .add(Restrictions.eq(AuthenticationProvider.PROPERTY_FLOW, "LOGIN"))
           .addOrderBy(AuthenticationProvider.PROPERTY_SEQUENCENUMBER, true)
           .list()
           .stream()

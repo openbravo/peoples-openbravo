@@ -53,6 +53,17 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="AD_APPLICATION_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default><![CDATA[85A6864E67B3427C9DEA981AAE11B306]]></default>
+        <onCreateDefault><![CDATA['85A6864E67B3427C9DEA981AAE11B306']]></onCreateDefault>
+      </column>
+      <column name="FLOW" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[LOGIN]]></default>
+        <onCreateDefault><![CDATA['LOGIN']]></onCreateDefault>
+      </column>
+      <foreign-key foreignTable="AD_APPLICATION" name="C_AUTH_PROVIDER_AD_APP_ID">
+        <reference local="AD_APPLICATION_ID" foreign="AD_APPLICATION_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="C_AUTH_PROVIDER_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>

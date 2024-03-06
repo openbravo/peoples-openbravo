@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2023 Openbravo S.L.U.
+ * Copyright (C) 2001-2024 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -14,7 +14,6 @@ package org.openbravo.base.secureApp;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -30,14 +29,12 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationExpirationPasswordException;
 import org.openbravo.authentication.AuthenticationManager;
-import org.openbravo.authentication.AuthenticationTypeSelector;
 import org.openbravo.authentication.ChangePasswordException;
 import org.openbravo.authentication.ExternalAuthenticationManager;
 import org.openbravo.authentication.LoginStateHandler;
 import org.openbravo.authentication.hashing.PasswordHash;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.LoginUtils.RoleDefaults;
-import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
@@ -176,16 +173,10 @@ public class LoginHandler extends HttpBaseServlet {
     if (StringUtils.isBlank(method)) {
       return AuthenticationManager.getAuthenticationManager(this);
     }
-    List<ExternalAuthenticationManager> externalAuthManagers = WeldUtils
-        .getInstancesSortedByPriority(ExternalAuthenticationManager.class,
-            new AuthenticationTypeSelector(method.toUpperCase()));
-    if (externalAuthManagers.isEmpty()) {
-      log4j.error("Could not find an AuthenticationManager instance for method {}", method);
-      throw new AuthenticationException("Could not find an AuthenticationManager");
-    }
-    ExternalAuthenticationManager authManager = externalAuthManagers.get(0);
-    authManager.init(this);
-    return authManager;
+    return ExternalAuthenticationManager.newInstance(method.toUpperCase()).map(m -> {
+      m.init(this);
+      return m;
+    }).orElseThrow(() -> new AuthenticationException("Could not find an AuthenticationManager"));
   }
 
   /**
