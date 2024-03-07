@@ -71,8 +71,8 @@ public class SequenceTestUtils {
   static DocumentType createDocumentType(String docTypeId, Sequence sequence) {
     final DocumentType anyExistingDocType = OBDal.getInstance()
         .getProxy(DocumentType.class, docTypeId);
-    // Create a document Type
-    final DocumentType docType = (DocumentType) DalUtil.copy(anyExistingDocType);
+    // Create a document Type, but do not copy its children's
+    final DocumentType docType = (DocumentType) DalUtil.copy(anyExistingDocType, false);
     docType.setName(UUID.randomUUID().toString());
     docType.setCreationDate(new Date());
     docType.setSequencedDocument(true);
