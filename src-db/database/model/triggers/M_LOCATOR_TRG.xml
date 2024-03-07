@@ -2,10 +2,6 @@
   <database name="TRIGGER M_LOCATOR_TRG">
     <trigger name="M_LOCATOR_TRG" table="M_LOCATOR" fires="before" insert="false" update="true" delete="false" foreach="row">
       <body><![CDATA[
-
-
-
-
     /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
     * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -18,39 +14,44 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2012 Openbravo SLU
+    * All portions are Copyright (C) 2012-2024 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
 
   v_count NUMBER;
-
      
 BEGIN
-    
-    IF AD_isTriggerEnabled()='N' THEN RETURN;
+
+    IF AD_isTriggerEnabled()='N' THEN IF DELETING THEN RETURN OLD; ELSE RETURN NEW; END IF;
     END IF;
 
-
   IF UPDATING THEN
-    if (:old.isactive = 'Y') then 
-	if (:new.isactive = 'N') then
-		select count(*)
-			into v_count
-			from m_storage_detail
-			where m_locator_id = :old.m_locator_id 
-			and (COALESCE(qtyonhand,0) <> 0 
-			or COALESCE(qtyorderonhand, 0) <> 0 
-			or COALESCE(preqtyonhand, 0) <> 0 
-			or COALESCE(preqtyorderonhand, 0) <> 0);
+    IF ((:OLD.isactive = 'Y' AND :NEW.isactive = 'N')
+         OR :OLD.allow_storing_items <> :NEW.allow_storing_items
+         OR :OLD.HU_Type_Selection <> :NEW.HU_Type_Selection) THEN
 
-		if (v_count <> '0') then
-			RAISE_APPLICATION_ERROR(-20000, '@StockAvailable@');
-		end if;
-	end if;
-    end if;
+	  SELECT COUNT(*)
+        INTO v_count
+      FROM m_storage_detail
+      WHERE m_locator_id = :old.m_locator_id
+        AND (COALESCE(qtyonhand,0) <> 0
+        OR COALESCE(qtyorderonhand, 0) <> 0
+        OR COALESCE(preqtyonhand, 0) <> 0
+        OR COALESCE(preqtyorderonhand, 0) <> 0);
+
+      IF (v_count <> '0' AND :OLD.isactive = 'Y' AND :NEW.isactive = 'N') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@StockAvailable@');
+      end if;
+
+	  IF (v_count <> '0' AND
+		  (:OLD.allow_storing_items <> :NEW.allow_storing_items
+		   OR :OLD.HU_Type_Selection <> :NEW.HU_Type_Selection)) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@NotEditableAllowStoringItemsHUType@');
+      END if;
+	END if;
   END IF;
-   
+
 END M_LOCATOR_TRG
 ]]></body>
     </trigger>

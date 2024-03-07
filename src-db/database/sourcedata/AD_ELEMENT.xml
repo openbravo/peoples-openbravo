@@ -22140,6 +22140,8 @@ Advanced features are only granted to the automatic roles defined as advanced.]]
 <!--1A4AC3DC83334BA8BF6F5269A61BF6B4-->  <COLUMNNAME><![CDATA[Allow_Storing_Items]]></COLUMNNAME>
 <!--1A4AC3DC83334BA8BF6F5269A61BF6B4-->  <NAME><![CDATA[Allow Storing Items]]></NAME>
 <!--1A4AC3DC83334BA8BF6F5269A61BF6B4-->  <PRINTNAME><![CDATA[Allow Storing Items]]></PRINTNAME>
+<!--1A4AC3DC83334BA8BF6F5269A61BF6B4-->  <DESCRIPTION><![CDATA[Allow storing items (directly) in the given storage bin.]]></DESCRIPTION>
+<!--1A4AC3DC83334BA8BF6F5269A61BF6B4-->  <HELP><![CDATA[Defines whether to allow storing items (directly) in the given storage bin.]]></HELP>
 <!--1A4AC3DC83334BA8BF6F5269A61BF6B4-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1A4AC3DC83334BA8BF6F5269A61BF6B4-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1A4AC3DC83334BA8BF6F5269A61BF6B4--></AD_ELEMENT>
