@@ -405,8 +405,15 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_BP_ENTITY_PROFILE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_C_BUSPARTNER">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BP_ENTITY_PROFILE" name="C_BP_BP_ENTITY_PROFILE">
+        <reference local="BPARTNER_ENTITY_PROFILE_ID" foreign="C_BP_ENTITY_PROFILE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="C_BPARTNER_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
