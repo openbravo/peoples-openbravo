@@ -21,7 +21,9 @@ package org.openbravo.materialmgmt.refinventory;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
@@ -43,27 +45,22 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
   // StorageDetailId:NewAttributeSetInstanceId created by this object
   private final Map<String, String> storageDetailNewAttributeIdMap;
 
+  // RIs in the storage details to box without a parent RI
+  private final Set<String> outterMostRefInventoryIdsToBox = new HashSet<>();
+
   public BoxProcessor(final ReferencedInventory referencedInventory,
       final JSONArray selectedStorageDetails, final String newStorageBinId) throws JSONException {
-    super(referencedInventory);
-    super.setSelectedStorageDetailsAndValidateThem(selectedStorageDetails);
-    // checkStorageDetailsNotAlreadyInReferencedInventory(selectedStorageDetails);
+    super(referencedInventory, selectedStorageDetails);
+    checkReferencedInventoryIsOutermost(referencedInventory);
     setAndValidateNewStorageBinId(newStorageBinId);
+    setAffectedRefInventoryIds(selectedStorageDetails);
     storageDetailNewAttributeIdMap = new HashMap<>(selectedStorageDetails.length());
   }
 
-  private void checkStorageDetailsNotAlreadyInReferencedInventory(
-      final JSONArray selectedStorageDetails) throws JSONException {
-    for (int i = 0; i < selectedStorageDetails.length(); i++) {
-      final JSONObject storageDetailJS = selectedStorageDetails.getJSONObject(i);
-      final StorageDetail storageDetail = getStorageDetail(storageDetailJS);
-      final ReferencedInventory previousReferencedInventory = storageDetail
-          .getReferencedInventory();
-      if (previousReferencedInventory != null) {
-        throw new OBException(String.format(
-            OBMessageUtils.messageBD("StorageDetailAlreadyLinkedToPreviousReferencedInventory"),
-            storageDetail.getIdentifier(), previousReferencedInventory.getIdentifier()));
-      }
+  private void checkReferencedInventoryIsOutermost(ReferencedInventory referencedInventory) {
+    if (referencedInventory.getParentRefInventory() != null) {
+      throw new OBException(OBMessageUtils.getI18NMessage("ReferencedInventoryNestedBoxError",
+          new String[] { referencedInventory.getParentRefInventory().getSearchKey() }));
     }
   }
 
@@ -72,6 +69,24 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
       throw new OBException(OBMessageUtils.messageBD("NewStorageBinParameterMandatory"));
     } else {
       this.newStorageBinId = newStorageBinId;
+    }
+  }
+
+  // Every outermost RIs
+  private void setAffectedRefInventoryIds(final JSONArray selectedStorageDetails)
+      throws JSONException {
+    for (int i = 0; i < selectedStorageDetails.length(); i++) {
+      final JSONObject storageDetailJS = selectedStorageDetails.getJSONObject(i);
+      final StorageDetail storageDetail = getStorageDetail(storageDetailJS);
+      try {
+        final ReferencedInventory outermostRI = ReferencedInventoryUtil
+            .getOutermostRefInventory(storageDetail);
+        if (outermostRI.getParentRefInventory() == null) {
+          outterMostRefInventoryIdsToBox.add(outermostRI.getId());
+        }
+      } catch (NullPointerException storageDetailWithoutRI) {
+        // Storage Details without RI are not affected
+      }
     }
   }
 
@@ -84,6 +99,7 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
               storageDetailNewAttributeIdMap.get(storageDetail.getId()));
     }
 
+    // TODO is this affected by Nested RIs?
     // Attribute previously created in other box executions for this refInventory
     final AttributeSetInstance previouslyClonedAttributeSetInstance = ReferencedInventoryUtil
         .getAlreadyClonedAttributeSetInstance(storageDetail.getAttributeSetValue(),
@@ -111,4 +127,19 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
     return newStorageBinId;
   }
 
+  @Override
+  protected int updateParentReferenceInventory() {
+    //@formatter:off
+    final String hql =
+                  " update MaterialMgmtReferencedInventory" +
+                  " set parentRefInventory.id = :thisRefInventoryId" +
+                  " where id in (:affectedRefInventoryIds)";
+    //@formatter:on
+    return OBDal.getInstance()
+        .getSession()
+        .createQuery(hql)
+        .setParameter("thisRefInventoryId", this.getReferencedInventory().getId())
+        .setParameter("affectedRefInventoryIds", outterMostRefInventoryIdsToBox)
+        .executeUpdate();
+  }
 }

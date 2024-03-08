@@ -65,6 +65,10 @@
       <foreign-key foreignTable="M_REFINVENTORY_TYPE" name="M_REFINVENTORY_TYPE">
         <reference local="M_REFINVENTORY_TYPE_ID" foreign="M_REFINVENTORY_TYPE_ID"/>
       </foreign-key>
+      <index name="M_REFINVENTORY_PARENT_IX" unique="false">
+        <index-column name="PARENT_REFINVENTORY_ID"/>
+        <whereClause><![CDATA[PARENT_REFINVENTORY_ID IS NOT NULL]]></whereClause>
+      </index>
       <unique name="M_REFINVENTORY_VALUE_UN">
         <unique-column name="VALUE"/>
         <unique-column name="AD_CLIENT_ID"/>

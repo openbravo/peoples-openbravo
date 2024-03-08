@@ -20,6 +20,7 @@
 package org.openbravo.materialmgmt.refinventory;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
@@ -65,10 +66,8 @@ import org.openbravo.service.db.CallProcess;
  * quantity pending to box/unbox. This is the key to be able to successfully process the reservation
  * reallocation.
  */
-abstract class ReferencedInventoryProcessor {
+public abstract class ReferencedInventoryProcessor {
   private static final String M_MOVEMENT_POST_ID = "122";
-  private static final String JS_STORAGEDETAIL_ID = "id";
-  private static final String QUANTITY = "quantityOnHand";
 
   private ReferencedInventory referencedInventory;
   private JSONArray selectedStorageDetails;
@@ -97,8 +96,12 @@ abstract class ReferencedInventoryProcessor {
     return OBDal.getInstance().getProxy(Locator.class, getNewStorageBinId(storageDetailJS));
   }
 
-  protected ReferencedInventoryProcessor(final ReferencedInventory referencedInventory) {
+  protected abstract int updateParentReferenceInventory();
+
+  protected ReferencedInventoryProcessor(final ReferencedInventory referencedInventory,
+      final JSONArray selectedStorageDetails) throws JSONException {
     setAndValidateReferencedInventory(referencedInventory);
+    setSelectedStorageDetailsAndValidateThem(selectedStorageDetails);
   }
 
   /**
@@ -123,7 +126,7 @@ abstract class ReferencedInventoryProcessor {
   protected void setSelectedStorageDetailsAndValidateThem(final JSONArray selectedStorageDetails)
       throws JSONException {
     this.selectedStorageDetails = selectedStorageDetails;
-    checkThereAreStorageDetailsToProcessOrThrowException();
+    // checkThereAreStorageDetailsToProcessOrThrowException();
     checkValidQuantitiesOrThrowException();
   }
 
@@ -176,6 +179,7 @@ abstract class ReferencedInventoryProcessor {
               getFixedInternalMovementName());
       createMovementLines(goodsMovementHeader);
       processGoodsMovement(goodsMovementHeader.getId());
+      updateParentReferenceInventory();
       return goodsMovementHeader;
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
@@ -271,11 +275,11 @@ abstract class ReferencedInventoryProcessor {
   }
 
   private String getStorageDetailId(JSONObject jsStorageDetail) throws JSONException {
-    return jsStorageDetail.getString(JS_STORAGEDETAIL_ID);
+    return jsStorageDetail.getString(GridJS.ID);
   }
 
   private BigDecimal getSelectedQty(final JSONObject storageDetailJS) throws JSONException {
-    return new BigDecimal(storageDetailJS.getString(QUANTITY));
+    return new BigDecimal(storageDetailJS.getString(StorageDetailJS.QUANTITY));
   }
 
   private void processGoodsMovement(final String goodsMovementId) {
@@ -291,4 +295,62 @@ abstract class ReferencedInventoryProcessor {
     }
   }
 
+  /**
+   * Contains the property names that are common for all the grids (Stock and Referenced Inventory)
+   * in Box/Unbox processes.
+   */
+  public abstract static class GridJS {
+    public static final String ID = "id";
+    public static final String STORAGEBIN_ID = "storageBin";
+  }
+
+  /**
+   * Storage Detail representation in Javascript for Box/Unbox processor.
+   * 
+   * It contains the properties to be used by the {@link ReferencedInventoryProcessor}
+   */
+  public static class StorageDetailJS extends GridJS {
+    public static final String QUANTITY = "quantityOnHand";
+
+    private final String id;
+    private final BigDecimal quantityOnHand;
+    private final String storageBinId;
+
+    public StorageDetailJS(final String id, final BigDecimal quantityOnHand,
+        final String storageBinId) {
+      this.id = id;
+      this.quantityOnHand = quantityOnHand;
+      this.storageBinId = storageBinId;
+    }
+
+    public JSONObject toJSONObject() {
+      final JSONObject js = new JSONObject();
+      try {
+        js.put(ID, id);
+        js.put(QUANTITY, quantityOnHand);
+        js.put(STORAGEBIN_ID, storageBinId);
+      } catch (JSONException e) {
+        throw new OBException(e);
+      }
+
+      return js;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (obj == null || getClass() != obj.getClass()) {
+        return false;
+      }
+      StorageDetailJS other = (StorageDetailJS) obj;
+      return Objects.equals(id, other.id);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(id);
+    }
+  }
 }

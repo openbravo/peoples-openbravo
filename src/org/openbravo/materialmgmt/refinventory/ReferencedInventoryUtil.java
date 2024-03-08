@@ -138,6 +138,7 @@ public class ReferencedInventoryUtil {
    * Returns the parent attribute set instance for the given storage detail. If not found it returns
    * null
    */
+  @Deprecated
   public static final AttributeSetInstance getParentAttributeSetInstance(
       final StorageDetail storageDetail) {
     try {
@@ -145,6 +146,71 @@ public class ReferencedInventoryUtil {
     } catch (NullPointerException noParentFound) {
       return null;
     }
+  }
+
+  /**
+   * Gets the outermost referenced inventory for the given storage detail. It might be null when the
+   * stock is not inside a referenced inventory
+   * 
+   * Note that this information is actually stored in the storage detail's attribute set instance
+   * itself.
+   */
+  public static final ReferencedInventory getOutermostRefInventory(
+      final StorageDetail storageDetail) {
+    return storageDetail.getAttributeSetValue().getReferencedInventory();
+  }
+
+  /**
+   * Gets the innermost referenced inventory for the given storage detail. It might be null when the
+   * stock is not inside a referenced inventory
+   * 
+   * Note that this information is actually stored in the storage detail's referenced inventory
+   * directly.
+   */
+  public static final ReferencedInventory getInnermostRefInventory(
+      final StorageDetail storageDetail) {
+    return storageDetail.getReferencedInventory();
+  }
+
+  /**
+   * The innermost attribute set instance stores into the
+   * {@link AttributeSetInstance#PROPERTY_PARENTATTRIBUTESETINSTANCE} the original attribute set
+   * instance that was cloned to box the stock into the innermost referenced inventory. This
+   * information is needed to unbox the stock and restore the original attribute set instance.
+   * 
+   */
+  public static final AttributeSetInstance getInnerMostAttributeSetInstance(
+      final AttributeSetInstance attributeSetInstance) {
+    AttributeSetInstance innerMostASI = attributeSetInstance;
+    while (innerMostASI != null && innerMostASI.getParentAttributeSetInstance() != null
+        && !innerMostASI.getParentAttributeSetInstance().getId().equals("0")) {
+      innerMostASI = innerMostASI.getParentAttributeSetInstance();
+    }
+    return innerMostASI;
+  }
+
+  /**
+   * Gets the inner attribute set instance that is linked to the given Referenced Inventory.
+   * 
+   * This is usually needed in unbox activities, where any parent referenced inventory has been
+   * unboxed, but the storage detail must be kept in its referenced inventory.
+   * 
+   * @param currentAttributeSetInstance
+   *          this is the storage detail's attribute set instance (which is linked to the outermost
+   *          referenced inventory)
+   * @param referencedInventory
+   *          this is the parent referenced inventory that it is being unboxed
+   */
+  public static final AttributeSetInstance getInnerAttributeSetInstanceLinkedToRefInventory(
+      final AttributeSetInstance currentAttributeSetInstance,
+      final ReferencedInventory referencedInventory) {
+    AttributeSetInstance innerASI = currentAttributeSetInstance;
+    while (innerASI != null && innerASI.getParentAttributeSetInstance() != null
+        && !innerASI.getParentAttributeSetInstance().getId().equals("0")
+        && !innerASI.getReferencedInventory().getId().equals(referencedInventory.getId())) {
+      innerASI = innerASI.getParentAttributeSetInstance();
+    }
+    return innerASI;
   }
 
   /**
@@ -323,4 +389,32 @@ public class ReferencedInventoryUtil {
     return sdQuery.scroll(ScrollMode.FORWARD_ONLY);
   }
 
+  /**
+   * Returns a ScrollableResults of storage details included in the given referenced inventory id
+   * 
+   * @param refInventoryId
+   *          return the stock (items) included in this referenced inventory id
+   * @param includeNestedRefInventories
+   *          if true returns also the stock (items) in the nested referenced inventories
+   */
+  public static ScrollableResults getStorageDetails(final String refInventoryId,
+      boolean includeNestedRefInventories) {
+    Check.isNotNull(refInventoryId, "refInventoryId parameter can't be null");
+    // @formatter:off
+    final String hql = "select sd "
+        + "from MaterialMgmtStorageDetail sd "
+        + "where sd.referencedInventory.id = "
+        + (includeNestedRefInventories
+            ? " any(select unnest(m_refinventory_nested(ri.id)) "
+                + " from MaterialMgmtReferencedInventory ri "
+                + " where ri.id = :refInventoryId "
+                + ") "
+            : " :refInventoryId ");
+    // @formatter:on
+    final Session session = OBDal.getInstance().getSession();
+    final Query<StorageDetail> sdQuery = session.createQuery(hql, StorageDetail.class);
+    sdQuery.setParameter("refInventoryId", refInventoryId);
+    sdQuery.setFetchSize(1000);
+    return sdQuery.scroll(ScrollMode.FORWARD_ONLY);
+  }
 }
