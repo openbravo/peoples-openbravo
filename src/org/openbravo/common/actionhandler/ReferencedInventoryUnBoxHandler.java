@@ -44,7 +44,8 @@ public class ReferencedInventoryUnBoxHandler extends ReferencedInventoryHandler 
   @Override
   protected void run() throws Exception {
     new UnboxProcessor(getReferencedInventory(), getSelectedStorageDetails(),
-        getUnboxToIndividualItemsFlag()).createAndProcessGoodsMovement();
+        getSelectedReferencedInventories(), getUnboxToIndividualItemsFlag())
+            .createAndProcessGoodsMovement();
   }
 
   private boolean getUnboxToIndividualItemsFlag() {

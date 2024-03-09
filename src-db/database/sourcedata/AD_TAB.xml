@@ -15994,8 +15994,7 @@ The corresponding tables have then the following setting:
 <!--5047A81BF13647CA9091FA0C474AB3ED-->  <HQLWHERECLAUSE><![CDATA[e.id = any(select unnest(m_refinventory_nested(ri.id))
            from MaterialMgmtReferencedInventory ri
            where ri.id = @MaterialMgmtReferencedInventory.id@
-           )
-and e.id <> @MaterialMgmtReferencedInventory.id@]]></HQLWHERECLAUSE>
+           )]]></HQLWHERECLAUSE>
 <!--5047A81BF13647CA9091FA0C474AB3ED-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--5047A81BF13647CA9091FA0C474AB3ED-->  <AD_TABLE_TREE_ID><![CDATA[963B2AAE0B6B44AEB3871E97CC755B8A]]></AD_TABLE_TREE_ID>
 <!--5047A81BF13647CA9091FA0C474AB3ED-->  <DISABLE_PARENT_KEY_PROPERTY><![CDATA[N]]></DISABLE_PARENT_KEY_PROPERTY>

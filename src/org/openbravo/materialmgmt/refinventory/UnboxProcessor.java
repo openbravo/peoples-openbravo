@@ -19,11 +19,16 @@
 
 package org.openbravo.materialmgmt.refinventory;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.service.OBDal;
@@ -40,17 +45,22 @@ public class UnboxProcessor extends ReferencedInventoryProcessor {
 
   private boolean unboxToIndividualItems;
 
+  // Every RIs selected and, if unboxToIndividualItems, any RI in the selected storage details
+  private final Set<String> affectedRefInventoryIds = new HashSet<>();
+
   @Deprecated
   public UnboxProcessor(final ReferencedInventory referencedInventory,
       final JSONArray selectedStorageDetails) throws JSONException {
-    this(referencedInventory, selectedStorageDetails, true);
+    this(referencedInventory, selectedStorageDetails, null, true);
   }
 
   public UnboxProcessor(final ReferencedInventory referencedInventory,
-      final JSONArray selectedStorageDetails, boolean unboxToIndividualItems) throws JSONException {
+      final JSONArray selectedStorageDetails, final JSONArray selectedRefInventories,
+      boolean unboxToIndividualItems) throws JSONException {
     super(referencedInventory, selectedStorageDetails);
-    checkStorageDetailsHaveReferencedInventory(selectedStorageDetails);
     this.unboxToIndividualItems = unboxToIndividualItems;
+    checkStorageDetailsHaveReferencedInventory(selectedStorageDetails);
+    setAffectedRefInventoryIds(selectedStorageDetails, selectedRefInventories);
   }
 
   private void checkStorageDetailsHaveReferencedInventory(final JSONArray selectedStorageDetails)
@@ -64,23 +74,68 @@ public class UnboxProcessor extends ReferencedInventoryProcessor {
     }
   }
 
+  private void setAffectedRefInventoryIds(final JSONArray selectedStorageDetails,
+      JSONArray selectedRIs) throws JSONException {
+    // Selected RI or, exceptionally and alternatively, immediate nested RIs if outermost RI
+    for (int i = 0; selectedRIs != null && i < selectedRIs.length(); i++) {
+      final String riId = selectedRIs.getJSONObject(i).getString(GridJS.ID);
+      final ReferencedInventory ri = OBDal.getInstance().getProxy(ReferencedInventory.class, riId);
+      if (ri.getParentRefInventory() == null) {
+        // Add immediate inner RIs if RI is the outermost
+        affectedRefInventoryIds.addAll(getImmediateNestedRefInventories(riId));
+      } else {
+        // Selected RI
+        affectedRefInventoryIds.add(riId);
+      }
+    }
+
+    // Add all parent RIs (including the innermost) of the selected storage details
+    if (unboxToIndividualItems) {
+      for (int i = 0; i < selectedStorageDetails.length(); i++) {
+        final JSONObject storageDetailJS = selectedStorageDetails.getJSONObject(i);
+        final StorageDetail storageDetail = getStorageDetail(storageDetailJS);
+        try {
+          affectedRefInventoryIds.addAll(ReferencedInventoryUtil
+              .getParentReferencedInventories(storageDetail.getReferencedInventory(), true)
+              .stream()
+              .map(ReferencedInventory::getId)
+              .collect(Collectors.toList()));
+        } catch (NullPointerException storageDetailWithoutRI) {
+          // Storage Details without RI are not affected
+        }
+      }
+    }
+  }
+
+  private Collection<String> getImmediateNestedRefInventories(final String refInventoryId) {
+    //@formatter:off
+    final String hql = "select ri.id "
+                     + "from MaterialMgmtReferencedInventory ri "
+                     + "where ri.parentRefInventory.id = :thisRefInventoryId ";
+    //@formatter:on
+    final Query<String> query = OBDal.getInstance().getSession().createQuery(hql, String.class);
+    query.setParameter("thisRefInventoryId", refInventoryId);
+    return query.list();
+  }
+
   @Override
   protected AttributeSetInstance getAttributeSetInstanceTo(StorageDetail storageDetail) {
-    final AttributeSetInstance storageDetailAttributeSetInstance = storageDetail
-        .getAttributeSetValue();
-    final AttributeSetInstance innerMostAttributeSetInstance = ReferencedInventoryUtil
-        .getInnerMostAttributeSetInstance(storageDetailAttributeSetInstance);
-    final boolean isAlreadyTheInnerMost = storageDetailAttributeSetInstance.getId()
-        .equals(innerMostAttributeSetInstance.getId());
+    return ReferencedInventoryUtil.getAttributeSetInstanceTo(storageDetail,
+        getSelectedReferencedInventory(storageDetail));
+  }
 
-    if (unboxToIndividualItems || isAlreadyTheInnerMost) {
-      // Unbox from all the boxes
-      return innerMostAttributeSetInstance.getParentAttributeSetInstance();
-    } else {
-      // Unbox from the selected box, but keep the stock in any inner box
-      return ReferencedInventoryUtil.getInnerAttributeSetInstanceLinkedToRefInventory(
-          storageDetailAttributeSetInstance, getReferencedInventory());
+  private ReferencedInventory getSelectedReferencedInventory(final StorageDetail storageDetail) {
+    if (unboxToIndividualItems) {
+      return null; // Extract the stock outside any RI
     }
+
+    // Get the first parent in the RI tree that has been selected by the user
+    ReferencedInventory outerMostRI = storageDetail.getReferencedInventory();
+    while (outerMostRI.getParentRefInventory() != null
+        && !affectedRefInventoryIds.contains(outerMostRI.getId())) {
+      outerMostRI = outerMostRI.getParentRefInventory();
+    }
+    return outerMostRI;
   }
 
   @Override
@@ -100,56 +155,33 @@ public class UnboxProcessor extends ReferencedInventoryProcessor {
 
   @Override
   protected int updateParentReferenceInventory() {
-    return unboxToIndividualItems ? removeParentRefInventoryIfEmpty()
-        : removeParentRefInventoryForThisRIAndAnyImmediateRIWhenOutermost();
+    return removeParentRefInventoryIfEmpty();
   }
 
   /**
-   * Remove the parent reference inventory, i.e. move the reference inventory outside of the
-   * outermost reference inventory, if this reference inventory has no stock remaining after the
-   * unbox process
+   * For the affected RIs, remove the parent reference inventory, i.e. move the reference inventory
+   * outside of the outermost reference inventory.
+   * 
+   * If unboxToIndividualItems do it only for referenced inventories that are empty after the
+   * unboxing.
    */
   private int removeParentRefInventoryIfEmpty() {
     //@formatter:off
     final String hql = "update MaterialMgmtReferencedInventory ri "
                      + "set ri.parentRefInventory.id = null "
-                       // Always this box
-                     + " where ri.id = :thisRefInventoryId "
-                       // if no stock remaining
-                     + " and not exists (select 1 "
-                     + "                 from MaterialMgmtStorageDetail sd "
-                     + "                 where sd.referencedInventory.id = ri.id) ";
+                     // Affected referenced inventories..
+                     + "where ri.id in (:affectedRefInventoryIds) "
+                     // ...that have no stock remaining in unboxToIndividualItems
+                     + (unboxToIndividualItems 
+                         ? " and not exists (select 1 "
+                            + "             from MaterialMgmtStorageDetail sd "
+                            + "             where sd.referencedInventory.id = ri.id) "
+                         : "");
     //@formatter:on
     return OBDal.getInstance()
         .getSession()
         .createQuery(hql)
-        .setParameter("thisRefInventoryId", this.getReferencedInventory().getId())
-        .executeUpdate();
-  }
-
-  /**
-   * Remove always the parent reference inventory for this RI.
-   * 
-   * Besides, if this RI is the outermost one, remove the parent reference inventory of the
-   * immediate inner RIs, i.e. the former immediate inner RIs are now the outermost RIs.
-   */
-  private int removeParentRefInventoryForThisRIAndAnyImmediateRIWhenOutermost() {
-    //@formatter:off
-    final String hql = "update MaterialMgmtReferencedInventory ri "
-                     + "set ri.parentRefInventory.id = null "
-                       // Always this box
-                     + "where ri.id = :thisRefInventoryId "
-                       // Immediate inner boxes if this box is the outermost
-                     + "or (ri.parentRefInventory.id = :thisRefInventoryId "
-                     + "    and exists (select 1 from MaterialMgmtReferencedInventory rip "
-                     + "                where rip.id = ri.parentRefInventory.id "
-                     + "                and rip.parentRefInventory.id is null) "
-                     + "    )";
-    //@formatter:on
-    return OBDal.getInstance()
-        .getSession()
-        .createQuery(hql)
-        .setParameter("thisRefInventoryId", this.getReferencedInventory().getId())
+        .setParameterList("affectedRefInventoryIds", affectedRefInventoryIds)
         .executeUpdate();
   }
 

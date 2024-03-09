@@ -99,7 +99,6 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
               storageDetailNewAttributeIdMap.get(storageDetail.getId()));
     }
 
-    // TODO is this affected by Nested RIs?
     // Attribute previously created in other box executions for this refInventory
     final AttributeSetInstance previouslyClonedAttributeSetInstance = ReferencedInventoryUtil
         .getAlreadyClonedAttributeSetInstance(storageDetail.getAttributeSetValue(),

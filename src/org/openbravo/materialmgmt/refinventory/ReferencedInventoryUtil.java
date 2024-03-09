@@ -20,7 +20,9 @@
 package org.openbravo.materialmgmt.refinventory;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
@@ -173,44 +175,105 @@ public class ReferencedInventoryUtil {
   }
 
   /**
-   * The innermost attribute set instance stores into the
-   * {@link AttributeSetInstance#PROPERTY_PARENTATTRIBUTESETINSTANCE} the original attribute set
-   * instance that was cloned to box the stock into the innermost referenced inventory. This
-   * information is needed to unbox the stock and restore the original attribute set instance.
+   * This method is used only for unboxing activities. It returns the right attribute set instance
+   * ready to associate with the storage detail.
    * 
+   * @param storageDetail
+   *          this is the storage detail being unboxed
+   * @param referencedInventoryToKeep
+   *          If the parameter is null, it returns the inner most attribute set instance, i.e. the
+   *          original attribute set instance cloned before the very first box. It is used when we
+   *          want to fully unbox the storage detail outside any referenced inventory.
+   * 
+   *          If it is not null, it returns the attribute set instance, for the given storage
+   *          detail, linked to the given referenced inventory. It is used when we want to keep the
+   *          storage detail inside a referenced inventory tree, but the referencedInventoryToKeep
+   *          is being unboxed from its parent(s) referenced inventories.
    */
-  public static final AttributeSetInstance getInnerMostAttributeSetInstance(
-      final AttributeSetInstance attributeSetInstance) {
-    AttributeSetInstance innerMostASI = attributeSetInstance;
-    while (innerMostASI != null && innerMostASI.getParentAttributeSetInstance() != null
-        && !innerMostASI.getParentAttributeSetInstance().getId().equals("0")) {
+  private static final AttributeSetInstance getInnerAttributeSetInstance(
+      final StorageDetail storageDetail, final ReferencedInventory referencedInventoryToKeep) {
+    AttributeSetInstance innerMostASI = storageDetail.getAttributeSetValue();
+    while (innerMostASI.getParentAttributeSetInstance() != null //
+        && (referencedInventoryToKeep == null || !innerMostASI.getReferencedInventory()
+            .getId()
+            .equals(referencedInventoryToKeep.getId()))) {
       innerMostASI = innerMostASI.getParentAttributeSetInstance();
     }
     return innerMostASI;
   }
 
   /**
-   * Gets the inner attribute set instance that is linked to the given Referenced Inventory.
+   * Gets the right attribute set instance to associate to the storage detail when unboxing.
    * 
-   * This is usually needed in unbox activities, where any parent referenced inventory has been
-   * unboxed, but the storage detail must be kept in its referenced inventory.
+   * @param storageDetail
+   *          storage detail to unbox
+   * @param referencedInventoryToKeep
+   *          there are two possibilities:
+   *          <ul>
+   *          <li>referencedInventoryToKeep is not null: the storage detail must be kept in the
+   *          given referenced inventory (and any inner referenced inventory), but it is being
+   *          unboxed from any outer referenced inventory.
    * 
-   * @param currentAttributeSetInstance
-   *          this is the storage detail's attribute set instance (which is linked to the outermost
-   *          referenced inventory)
-   * @param referencedInventory
-   *          this is the parent referenced inventory that it is being unboxed
+   *          For example, we have a stock inside a [SmallBox], which is inside
+   *          [MediumBox][BigBox][Pallet]. We want to unbox [BigBox] as a box outside [Pallet]. In
+   *          this case the stock will remain inside [SmallBox][MediumBox][BigBox], but not anymore
+   *          inside [Pallet].
+   * 
+   *          The parameter in this example would be [BigBox].</li>
+   * 
+   *          <li>referencedInventoryToKeep is null: the storage detail is unboxed outside of any
+   *          referenced inventory.
+   * 
+   *          In the above example it means that the stock originally in [SmallBox] will be unboxed
+   *          outside [Pallet]</li>
+   * 
+   *          <li>Exceptionally, if the referencedInventoryToKeep is not null, but it is already the
+   *          outermost referenced inventory, then the attributed set instance returned is the same
+   *          as when this parameter is null.
+   * 
+   *          For example, if we have a stock inside [Pallet], and [Pallet] is the outermost
+   *          referenced inventory, then the unbox process should always extract the stock from
+   *          [Pallet]</li>
+   *          </ul>
    */
-  public static final AttributeSetInstance getInnerAttributeSetInstanceLinkedToRefInventory(
-      final AttributeSetInstance currentAttributeSetInstance,
-      final ReferencedInventory referencedInventory) {
-    AttributeSetInstance innerASI = currentAttributeSetInstance;
-    while (innerASI != null && innerASI.getParentAttributeSetInstance() != null
-        && !innerASI.getParentAttributeSetInstance().getId().equals("0")
-        && !innerASI.getReferencedInventory().getId().equals(referencedInventory.getId())) {
-      innerASI = innerASI.getParentAttributeSetInstance();
+  public static final AttributeSetInstance getAttributeSetInstanceTo(
+      final StorageDetail storageDetail, final ReferencedInventory referencedInventoryToKeep) {
+    Check.isNotNull(storageDetail.getReferencedInventory(),
+        "Storage detail is not linked to a referenced inventory. "
+            + "This method only accepts storage details within a referenced inventory.");
+
+    final AttributeSetInstance innerMostAttributeSetInstance = ReferencedInventoryUtil
+        .getInnerAttributeSetInstance(storageDetail, null);
+    final boolean isStorageDetailInTheOuterMostRI = storageDetail.getReferencedInventory()
+        .getParentRefInventory() == null;
+
+    if (referencedInventoryToKeep == null || isStorageDetailInTheOuterMostRI) {
+      // Unbox from all the boxes
+      return innerMostAttributeSetInstance;
+    } else {
+      // Unbox the selected box, but keep the stock inside
+      return ReferencedInventoryUtil.getInnerAttributeSetInstance(storageDetail,
+          referencedInventoryToKeep);
     }
-    return innerASI;
+  }
+
+  /**
+   * Returns the parent referenced inventories of the given one. If includeRefInventory, the given
+   * one is included in the returned collection
+   */
+  public static final Collection<ReferencedInventory> getParentReferencedInventories(
+      final ReferencedInventory refInventory, boolean includeRefInventory) {
+    final Collection<ReferencedInventory> parentList = new ArrayList<>();
+    if (includeRefInventory) {
+      parentList.add(refInventory);
+    }
+
+    ReferencedInventory parentRI = refInventory.getParentRefInventory();
+    while (parentRI != null) {
+      parentList.add(parentRI);
+      parentRI = parentRI.getParentRefInventory();
+    }
+    return parentList;
   }
 
   /**

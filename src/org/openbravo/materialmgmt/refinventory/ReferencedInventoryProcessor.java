@@ -96,6 +96,11 @@ public abstract class ReferencedInventoryProcessor {
     return OBDal.getInstance().getProxy(Locator.class, getNewStorageBinId(storageDetailJS));
   }
 
+  /**
+   * Updates the parent referenced inventory of the affected referenced inventories.
+   * 
+   * @return the number of referenced inventories updated
+   */
   protected abstract int updateParentReferenceInventory();
 
   protected ReferencedInventoryProcessor(final ReferencedInventory referencedInventory,
@@ -126,7 +131,7 @@ public abstract class ReferencedInventoryProcessor {
   protected void setSelectedStorageDetailsAndValidateThem(final JSONArray selectedStorageDetails)
       throws JSONException {
     this.selectedStorageDetails = selectedStorageDetails;
-    // checkThereAreStorageDetailsToProcessOrThrowException();
+    checkThereAreStorageDetailsToProcessOrThrowException();
     checkValidQuantitiesOrThrowException();
   }
 

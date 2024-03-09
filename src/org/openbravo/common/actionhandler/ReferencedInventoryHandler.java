@@ -100,7 +100,7 @@ public abstract class ReferencedInventoryHandler extends BaseProcessActionHandle
         .forEach(sd -> storageDetailsToProcess.put(sd.toJSONObject()));
   }
 
-  private JSONArray getSelectedReferencedInventories() throws JSONException {
+  protected JSONArray getSelectedReferencedInventories() throws JSONException {
     return paramsJson.getJSONObject(PARAM_GRID_REFINVENTORY).getJSONArray(PARAM_GRID_SELECTION);
   }
 
