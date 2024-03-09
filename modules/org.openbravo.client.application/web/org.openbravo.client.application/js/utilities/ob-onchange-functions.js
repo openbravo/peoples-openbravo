@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2017 Openbravo SLU
+ * All portions are Copyright (C) 2014-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -113,5 +113,14 @@ OB.OnChange.colorSelection = function(item, view, form, grid) {
       a.canvas.setBackgroundColor(item.getValue());
       a.canvas.markForRedraw();
     }
+  }
+};
+
+//**  {{{OB.OnChange.refInventoryUnboxSelection}}}**
+// Force unboxToIndividualItems when selection type is Stock
+OB.OnChange.refInventoryUnboxSelection = function(item, view, form, grid) {
+  var unboxToIndividualItemsFlag = form.getItem('unboxToIndividualItems');
+  if (item.getValue() === 'S' && !unboxToIndividualItemsFlag.getValue()) {
+    unboxToIndividualItemsFlag.setValue(true);
   }
 };
