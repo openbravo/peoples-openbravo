@@ -57,7 +57,8 @@ public abstract class BaseActionHandler implements ActionHandler {
 
       final String content = this.extractRequestContent(request, parameterMap);
 
-      if ("POST".equals(request.getMethod()) && shouldCheckCSRFInActionHandlers()) {
+      if ("POST".equals(request.getMethod()) && !isArray(content)
+          && shouldCheckCSRFInActionHandlers()) {
         final String csrfToken = CsrfUtil.getCsrfTokenFromRequestContent(content);
         CsrfUtil.checkCsrfToken(csrfToken, request);
       }
@@ -73,6 +74,10 @@ public abstract class BaseActionHandler implements ActionHandler {
     } catch (Exception e) {
       throw new IllegalStateException(e);
     }
+  }
+
+  private boolean isArray(String jsonContent) {
+    return jsonContent.startsWith("[");
   }
 
   private boolean shouldCheckCSRFInActionHandlers() {

@@ -81,7 +81,15 @@
         rpcRequest.errorCallback = errorCallback;
       }
       if (data) {
-        const requestData = { ...data, csrfToken: OB.User.csrfToken };
+        let requestData;
+        if (Array.isArray(data)) {
+          // There are cases where request data is just an array. In those cases CSRF Token is not inserted
+          // See issue 54801 for more info
+          requestData = [...data];
+        } else {
+          requestData = { ...data, csrfToken: OB.User.csrfToken };
+        }
+
         rpcRequest.data = ISC.JSON.encode(requestData);
         rpcRequest.httpMethod = 'POST';
       } else if (!rpcRequest.httpMethod) {
