@@ -66,6 +66,7 @@ public abstract class ReferencedInventoryHandler extends BaseProcessActionHandle
           .getJSONArray(PARAM_GRID_SELECTION);
 
       OBContext.setAdminMode(true);
+      validateSelectionOrThrowException();
       appendNestedStorageDetailsFromSelectedRefInventories();
       run();
     } catch (Exception e) {
@@ -89,6 +90,12 @@ public abstract class ReferencedInventoryHandler extends BaseProcessActionHandle
         .showMsgInView(MessageType.SUCCESS, OBMessageUtils.messageBD("Success"),
             OBMessageUtils.messageBD("Success"))
         .build();
+  }
+
+  /**
+   * Hook to validate user selection. Throw an exception in case of errors
+   */
+  protected void validateSelectionOrThrowException() throws Exception {
   }
 
   /**

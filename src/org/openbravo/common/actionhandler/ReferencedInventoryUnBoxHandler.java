@@ -26,6 +26,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollableResults;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryProcessor.GridJS;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryProcessor.StorageDetailJS;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
@@ -39,7 +40,14 @@ import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 public class ReferencedInventoryUnBoxHandler extends ReferencedInventoryHandler {
   private static final String PARAM_UNBOXTOINDIVIDUALITEMS = "unboxToIndividualItems";
 
-  // TODO validation only HU or Stock can be selected at the same time!
+  @Override
+  protected void validateSelectionOrThrowException() throws Exception {
+    if (getSelectedReferencedInventories().length() > 0
+        && getSelectedStorageDetails().length() > 0) {
+      throw new OBException("@UnboxRIsAndStockAtTheSameTimeError@");
+    }
+    super.validateSelectionOrThrowException();
+  }
 
   @Override
   protected void run() throws Exception {
