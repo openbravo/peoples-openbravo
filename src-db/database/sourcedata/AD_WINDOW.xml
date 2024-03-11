@@ -3102,7 +3102,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--6A5963EA222743ACB44F9C65DF7F658C-->  <NAME><![CDATA[Handling Unit]]></NAME>
 <!--6A5963EA222743ACB44F9C65DF7F658C-->  <DESCRIPTION><![CDATA[Defines the containers or boxes, which includes any kind of object that can contain goods.]]></DESCRIPTION>
 <!--6A5963EA222743ACB44F9C65DF7F658C-->  <HELP><![CDATA[Defines the containers or boxes, which includes any kind of object that can contain goods.]]></HELP>
-<!--6A5963EA222743ACB44F9C65DF7F658C-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
+<!--6A5963EA222743ACB44F9C65DF7F658C-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--6A5963EA222743ACB44F9C65DF7F658C-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--6A5963EA222743ACB44F9C65DF7F658C-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--6A5963EA222743ACB44F9C65DF7F658C-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
