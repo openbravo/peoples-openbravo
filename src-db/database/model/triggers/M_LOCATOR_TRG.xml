@@ -44,7 +44,7 @@ BEGIN
         RAISE_APPLICATION_ERROR(-20000, '@StockAvailable@');
       end if;
 
-	  IF (v_count <> '0' AND
+	  IF (v_count <> '0' AND :NEW.allow_storing_items = 'N' AND
 		  (:OLD.allow_storing_items <> :NEW.allow_storing_items
 		   OR :OLD.HU_Type_Selection <> :NEW.HU_Type_Selection)) THEN
         RAISE_APPLICATION_ERROR(-20000, '@NotEditableAllowStoringItemsHUType@');
