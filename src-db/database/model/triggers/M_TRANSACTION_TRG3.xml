@@ -23,14 +23,15 @@
   v_hu_type_selection M_LOCATOR.HU_TYPE_SELECTION%TYPE;
   v_refinventory_id M_REFINVENTORY.M_REFINVENTORY_ID%TYPE;
   v_refinventory_type_id M_REFINVENTORY.M_REFINVENTORY_TYPE_ID%TYPE;
+  v_locatorname M_LOCATOR.VALUE%TYPE;
 
 BEGIN
   IF (AD_isTriggerEnabled() = 'N') THEN RETURN;
   END IF;
 
   IF (INSERTING OR UPDATING) THEN
-    SELECT ALLOW_STORING_ITEMS, HU_TYPE_SELECTION
-      INTO v_allow_storing_items, v_hu_type_selection
+    SELECT ALLOW_STORING_ITEMS, HU_TYPE_SELECTION, NAME
+      INTO v_allow_storing_items, v_hu_type_selection, v_locatorname
     FROM M_LOCATOR
     WHERE M_LOCATOR_ID = :NEW.M_LOCATOR_ID;
 
@@ -43,7 +44,7 @@ BEGIN
         AND M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESETINSTANCE_ID = :NEW.M_ATTRIBUTESETINSTANCE_ID;
 
       IF (v_refinventory_id IS NULL) THEN
-        RAISE_APPLICATION_ERROR(-20000, 'Handling Unit cannot be empty for the transactions attributesetinstance as linked locator is set with Allow Storing Items as No');
+        RAISE_APPLICATION_ERROR(-20000, '@NonEmptyHUForTransactionAttributeSetInst@'||v_locatorname);
       END IF;
 
       SELECT COALESCE(COUNT(*), 0) INTO v_count
@@ -53,7 +54,7 @@ BEGIN
 
       IF ((v_Count > 0 AND v_hu_type_selection = 'E')
         OR (v_Count = 0 AND v_hu_type_selection = 'I')) THEN
-        RAISE_APPLICATION_ERROR(-20000, 'Handling Unit Type is not valid for this locator');
+        RAISE_APPLICATION_ERROR(-20000, '@NotValidHUTypeForLocator@'||v_locatorname);
       END IF;
     END IF;
   END IF;
