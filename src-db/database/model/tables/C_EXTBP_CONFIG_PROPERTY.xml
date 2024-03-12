@@ -233,6 +233,22 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="SUGGESTIONS" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[NO_SUGGEST]]></default>
+        <onCreateDefault><![CDATA['NO_SUGGEST']]></onCreateDefault>
+      </column>
+      <column name="SUGGESTIONS_EXT_SYSTEM_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="SUGGESTIONS_MIN_CHARS" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default><![CDATA[3]]></default>
+        <onCreateDefault><![CDATA[3]]></onCreateDefault>
+      </column>
+      <column name="VALIDATION_EXT_SYSTEM_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_EXTBP_CONFIG_FILTER" name="C_EXTBPCONFPROP_CFGFILTER_FK">
         <reference local="C_EXTBP_CONFIG_FILTER_ID" foreign="C_EXTBP_CONFIG_FILTER_ID"/>
       </foreign-key>
@@ -257,8 +273,20 @@
       <foreign-key foreignTable="AD_MESSAGE" name="C_EXTBPCONFPROP_SECTION_FK">
         <reference local="SECTIONMESSAGE_ID" foreign="AD_MESSAGE_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_EXTERNAL_SYSTEM" name="C_EXTBPCP_SUGG_EXTSYSTEM_FK">
+        <reference local="SUGGESTIONS_EXT_SYSTEM_ID" foreign="C_EXTERNAL_SYSTEM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_EXTERNAL_SYSTEM" name="C_EXTBPCP_VALID_EXTSYSTEM_FK">
+        <reference local="VALIDATION_EXT_SYSTEM_ID" foreign="C_EXTERNAL_SYSTEM_ID"/>
+      </foreign-key>
       <index name="C_EXTBPCONFPROP_CFGFILTER_FKI" unique="false">
         <index-column name="C_EXTBP_CONFIG_PROPERTY_ID"/>
+      </index>
+      <index name="C_EXTBPCP_SUGG_EXTSYSTEM_FKI" unique="false">
+        <index-column name="SUGGESTIONS_EXT_SYSTEM_ID"/>
+      </index>
+      <index name="C_EXTBPCP_VALID_EXTSYSTEM_FKI" unique="false">
+        <index-column name="VALIDATION_EXT_SYSTEM_ID"/>
       </index>
       <unique name="C_EXTBPCONFPROP_APIKEY_UN">
         <unique-column name="C_EXTBP_CONFIG_ID"/>

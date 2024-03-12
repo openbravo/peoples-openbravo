@@ -65,6 +65,8 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     checkKeyColumnsAndAddress(event);
     checkTranslatableFields(event);
     checkIsUniqueFields(event);
+    checkSuggestionsMandatory(event);
+    checkValidationsMandatory(event);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -78,6 +80,8 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     checkKeyColumnsAndAddress(event);
     checkTranslatableFields(event);
     checkIsUniqueFields(event);
+    checkSuggestionsMandatory(event);
+    checkValidationsMandatory(event);
   }
 
   private void resetValuesWhenReferenceIsInvoiceOrShipping(final EntityPersistenceEvent event) {
@@ -291,6 +295,30 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
         .getTargetInstance();
     if (extBPConfigProperty.isUnique() && extBPConfigProperty.getFilterForUnique() == null) {
       throw new OBException("@NotNullCRMFilterForUnique@");
+    }
+  }
+
+  private void checkSuggestionsMandatory(EntityPersistenceEvent event) {
+    final ExternalBusinessPartnerConfigProperty extBPConfigProperty = (ExternalBusinessPartnerConfigProperty) event
+        .getTargetInstance();
+    if ("SUGGEST_DQM".equals(extBPConfigProperty.getSuggestions())) {
+      if (extBPConfigProperty.getSuggestionsExtSystem() == null) {
+        throw new OBException("@NotNullCRMSuggestionsExtSystem@");
+      }
+      if (extBPConfigProperty.getSuggestionsMinChars() == null) {
+        throw new OBException("@NotNullCRMSuggestionsMinChars@");
+      }
+    }
+  }
+
+  private void checkValidationsMandatory(EntityPersistenceEvent event) {
+    final ExternalBusinessPartnerConfigProperty extBPConfigProperty = (ExternalBusinessPartnerConfigProperty) event
+        .getTargetInstance();
+    if (!"no".equals(extBPConfigProperty.getValidation())
+        && "dqm".equals(extBPConfigProperty.getValidationtype())) {
+      if (extBPConfigProperty.getValidationExtSystem() == null) {
+        throw new OBException("@NotNullCRMValidationExtSystem@");
+      }
     }
   }
 }
