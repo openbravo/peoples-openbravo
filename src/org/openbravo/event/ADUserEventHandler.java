@@ -47,6 +47,9 @@ class ADUserEventHandler extends EntityPersistenceEventObserver {
       return;
     }
     final User currentUser = (User) event.getTargetInstance();
+    if (currentUser == null) {
+      return;
+    }
     if (currentUser.isSsoonly()) {
       Entity entity = ModelProvider.getInstance().getEntity(User.ENTITY_NAME);
       event.setCurrentState(entity.getProperty(User.PROPERTY_PASSWORD), null);
