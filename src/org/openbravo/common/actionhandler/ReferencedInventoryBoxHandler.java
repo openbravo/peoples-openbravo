@@ -44,23 +44,31 @@ public class ReferencedInventoryBoxHandler extends ReferencedInventoryHandler {
 
   @Override
   protected void validateSelectionOrThrowException() throws Exception {
-    throwExceptionIfNestedRIsAreSelected();
+    throwExceptionIfNestedRIsOrEmptyRIsAreSelected();
     super.validateSelectionOrThrowException();
   }
 
-  private void throwExceptionIfNestedRIsAreSelected() throws JSONException {
+  private void throwExceptionIfNestedRIsOrEmptyRIsAreSelected() throws JSONException {
     final JSONArray selectedRIs = getSelectedReferencedInventories();
     final List<String> alreadyNestedRIsSelected = new ArrayList<>();
+    final List<String> emptyRIsSelected = new ArrayList<>();
     for (int i = 0; selectedRIs != null && i < selectedRIs.length(); i++) {
       final String riId = selectedRIs.getJSONObject(i).getString(GridJS.ID);
       final ReferencedInventory ri = OBDal.getInstance().getProxy(ReferencedInventory.class, riId);
       if (ri.getParentRefInventory() != null) {
         alreadyNestedRIsSelected.add(ri.getIdentifier());
       }
+      if (ri.getUniqueItemsCount() == 0) {
+        emptyRIsSelected.add(ri.getIdentifier());
+      }
     }
     if (!alreadyNestedRIsSelected.isEmpty()) {
       throw new OBException(String.format(OBMessageUtils.messageBD("BoxNestedRISelectionError"),
           alreadyNestedRIsSelected.stream().collect(Collectors.joining(", "))));
+    }
+    if (!emptyRIsSelected.isEmpty()) {
+      throw new OBException(String.format(OBMessageUtils.messageBD("BoxEmptyRISelectionError"),
+          emptyRIsSelected.stream().collect(Collectors.joining(", "))));
     }
   }
 
