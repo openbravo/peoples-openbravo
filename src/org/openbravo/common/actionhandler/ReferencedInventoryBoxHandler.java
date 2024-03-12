@@ -19,10 +19,20 @@
 
 package org.openbravo.common.actionhandler;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.refinventory.BoxProcessor;
+import org.openbravo.materialmgmt.refinventory.ReferencedInventoryProcessor.GridJS;
+import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 
 /**
  * Action handler for boxing storage details (already contained into a Referenced Inventory or not)
@@ -31,6 +41,28 @@ import org.openbravo.materialmgmt.refinventory.BoxProcessor;
  */
 public class ReferencedInventoryBoxHandler extends ReferencedInventoryHandler {
   private static final String PARAM_NEWSTORAGEBIN = "M_LocatorTo_ID";
+
+  @Override
+  protected void validateSelectionOrThrowException() throws Exception {
+    throwExceptionIfNestedRIsAreSelected();
+    super.validateSelectionOrThrowException();
+  }
+
+  private void throwExceptionIfNestedRIsAreSelected() throws JSONException {
+    final JSONArray selectedRIs = getSelectedReferencedInventories();
+    final List<String> alreadyNestedRIsSelected = new ArrayList<>();
+    for (int i = 0; selectedRIs != null && i < selectedRIs.length(); i++) {
+      final String riId = selectedRIs.getJSONObject(i).getString(GridJS.ID);
+      final ReferencedInventory ri = OBDal.getInstance().getProxy(ReferencedInventory.class, riId);
+      if (ri.getParentRefInventory() != null) {
+        alreadyNestedRIsSelected.add(ri.getIdentifier());
+      }
+    }
+    if (!alreadyNestedRIsSelected.isEmpty()) {
+      throw new OBException(String.format(OBMessageUtils.messageBD("BoxNestedRISelectionError"),
+          alreadyNestedRIsSelected.stream().collect(Collectors.joining(", "))));
+    }
+  }
 
   @Override
   protected void run() throws Exception {
