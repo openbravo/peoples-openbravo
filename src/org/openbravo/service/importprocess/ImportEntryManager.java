@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2023 Openbravo SLU
+ * All portions are Copyright (C) 2015-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -150,7 +150,7 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
   private boolean threadsStarted = false;
 
   private long initialWaitTime = 10000;
-  private long managerWaitTime = 100_000L;
+  private int managerWaitTime = 60; // seconds
 
   // default to number of processors plus some additionals for the main threads
   private int numberOfThreads = Runtime.getRuntime().availableProcessors() + 3;
@@ -203,18 +203,16 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
         numberOfThreads, 4);
     maxTaskQueueSize = ImportProcessUtils.getCheckIntProperty(log, "import.max.task.queue.size",
         maxTaskQueueSize, 50);
-    managerWaitTime = ImportProcessUtils.getCheckIntProperty(log, "import.wait.time", 600, 1);
+    managerWaitTime = ImportProcessUtils.getCheckIntProperty(log, "import.wait.time",
+        managerWaitTime, 1);
     processingCapacityPerSecond = ImportProcessUtils.getCheckIntProperty(log,
         "import.processing.capacity.per.second", numberOfThreads * 30, 10);
-
-    // property defined in secs, convert to ms
-    managerWaitTime = managerWaitTime * 1000;
 
     log.info("Import entry manager settings");
     log.info("  batch size: {}", importBatchSize);
     log.info("  number of threads: {}", numberOfThreads);
     log.info("  task queue size: {}", maxTaskQueueSize);
-    log.info("  wait time: {} sec", managerWaitTime);
+    log.info("  wait time: {} s", managerWaitTime);
     log.info("  processing capacity per second: {} entries", processingCapacityPerSecond);
 
     MBeanRegistry.registerMBean("ImportEntryManager", this);
@@ -631,9 +629,9 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
       synchronized (monitorObject) {
         try {
           if (!wasNotifiedInParallel) {
-            log.debug("Waiting for next cycle or new import entries for {} ms",
+            log.debug("Waiting for next cycle or new import entries for {} s",
                 manager.managerWaitTime);
-            monitorObject.wait(manager.managerWaitTime);
+            monitorObject.wait(manager.managerWaitTime * 1_000L);
             log.debug("Woken");
           }
           wasNotifiedInParallel = false;
