@@ -31,6 +31,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.refinventory.BoxProcessor;
+import org.openbravo.materialmgmt.refinventory.ContentRestriction;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryProcessor.GridJS;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 
@@ -45,6 +46,7 @@ public class ReferencedInventoryBoxHandler extends ReferencedInventoryHandler {
   @Override
   protected void validateSelectionOrThrowException() throws Exception {
     throwExceptionIfNestedRIsOrEmptyRIsAreSelected();
+    throwExceptionIfContentRestrictionsAreNotRespected();
     super.validateSelectionOrThrowException();
   }
 
@@ -69,6 +71,19 @@ public class ReferencedInventoryBoxHandler extends ReferencedInventoryHandler {
     if (!emptyRIsSelected.isEmpty()) {
       throw new OBException(String.format(OBMessageUtils.messageBD("BoxEmptyRISelectionError"),
           emptyRIsSelected.stream().collect(Collectors.joining(", "))));
+    }
+  }
+
+  private void throwExceptionIfContentRestrictionsAreNotRespected() throws JSONException {
+    final ContentRestriction contentRestriction = ContentRestriction
+        .getByValue(getReferencedInventory().getReferencedInventoryType().getContentRestriction());
+    if (ContentRestriction.ONLY_ITEMS.value.equals(contentRestriction.value)
+        && getSelectedReferencedInventories().length() > 0) {
+      throw new OBException("@RIBoxRIsContentRestrictionError@");
+    }
+    if (ContentRestriction.ONLY_REFINVENTORIES.value.equals(contentRestriction.value)
+        && getSelectedStorageDetails().length() > 0) {
+      throw new OBException("@RIBoxItemsContentRestrictionError@");
     }
   }
 
