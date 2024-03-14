@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2021 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,6 @@ import static org.junit.Assert.assertThrows;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -54,37 +53,14 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductAUM;
 import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
 import org.openbravo.model.materialmgmt.onhandquantity.ReservationStock;
-import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
-import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
-import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.service.db.CallStoredProcedure;
+import org.openbravo.test.storageBin.StorageBinTestUtils;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class InventoryStatusTest extends WeldBaseTest {
 
   final static private Logger log = LogManager.getLogger();
 
-  // Client QA Testing
-  private static final String CLIENT_ID = "4028E6C72959682B01295A070852010D";
-  // Organization *
-  private static final String ORG_STAR_ID = "0";
-  // Organization USA
-  private static final String ORG_ID = "5EFF95EB540740A3B10510D9814EFAD5";
-  // User Openbravo
-  private static final String USER_ID = "100";
-  // Role QA Administrator
-  private static final String ROLE_ID = "4028E6C72959682B01295A071429011E";
-  // Language encoding English US
-  private static final String LANGUAGE_CODE = "en_US";
-
-  // StorageBin USA111
-  private static final String LOCATOR_USA111_ID = "4028E6C72959682B01295ECFE4E50273";
-  // Product Distribution Goods A
-  private static final String PRODUCT_DGA_ID = "4028E6C72959682B01295ADC211E0237";
-  // Original Goods Receipt
-  private static final String GOODS_RECEIPT_ID = "AB9230E0C7974BC4A6E5429673FF9460";
-  // Original Goods Shipment
-  private static final String GOODS_SHIPMENT_ID = "8C43DC1BFB514C188BAC0246A36ED4A0";
   // Original Reservation
   private static final String RESERVATION_ID = "82E3163AD14F4182B9F1292D5EACF7D4";
 
@@ -97,11 +73,9 @@ public class InventoryStatusTest extends WeldBaseTest {
   // Document Status and Actions
   private static final String COMPLETED_DOCUMENT = "CO";
   private static final String DRAFT_STATUS = "DR";
-  private static final String COMPLETE_ACTION = "CO";
   private static final String RES_PROCESS_ACTION = "PR";
 
   // Process to complete Documents
-  private static final String PROCESS_SHIPMENT_RECEIPT = "m_inout_post";
   private static final String PROCESS_RESERVATION = "m_reservation_post";
 
   // Reservations preference
@@ -123,7 +97,9 @@ public class InventoryStatusTest extends WeldBaseTest {
   @Before
   public void initialize() {
     log.info("Initializing Inventory Status Test ...");
-    OBContext.setOBContext(USER_ID, ROLE_ID, CLIENT_ID, ORG_ID, LANGUAGE_CODE);
+    OBContext.setOBContext(StorageBinTestUtils.USER_ID, StorageBinTestUtils.ROLE_ID,
+        StorageBinTestUtils.CLIENT_ID, StorageBinTestUtils.ORG_ID,
+        StorageBinTestUtils.LANGUAGE_CODE);
     initializeReservationsPreference();
   }
 
@@ -134,8 +110,9 @@ public class InventoryStatusTest extends WeldBaseTest {
   }
 
   private void createReservationsPreference() {
-    Client client = OBDal.getInstance().get(Client.class, CLIENT_ID);
-    Organization organization = OBDal.getInstance().get(Organization.class, ORG_STAR_ID);
+    Client client = OBDal.getInstance().get(Client.class, StorageBinTestUtils.CLIENT_ID);
+    Organization organization = OBDal.getInstance()
+        .get(Organization.class, StorageBinTestUtils.ORG_STAR_ID);
 
     Preference reservationsPreference = OBProvider.getInstance().get(Preference.class);
     reservationsPreference.setClient(client);
@@ -153,8 +130,9 @@ public class InventoryStatusTest extends WeldBaseTest {
   }
 
   private boolean existsReservationsPreference() {
-    Client client = OBDal.getInstance().get(Client.class, CLIENT_ID);
-    Organization organization = OBDal.getInstance().get(Organization.class, ORG_STAR_ID);
+    Client client = OBDal.getInstance().get(Client.class, StorageBinTestUtils.CLIENT_ID);
+    Organization organization = OBDal.getInstance()
+        .get(Organization.class, StorageBinTestUtils.ORG_STAR_ID);
     // Value property is defined as CLOB in Oracle, this is why it is needed this expression to
     // convert it to a char first
     String valueISYes = " to_char(value) = 'Y' ";
@@ -210,19 +188,21 @@ public class InventoryStatusTest extends WeldBaseTest {
   }
 
   private Locator getNewStorageBinForTest001() {
-    Locator storageBin = cloneStorageBin(LOCATOR_USA111_ID, "IS001");
+    Locator storageBin = StorageBinTestUtils.cloneStorageBin(StorageBinTestUtils.LOCATOR_USA111_ID,
+        "IS001");
     return storageBin;
   }
 
   private Product getNewProductForTest001() {
-    Product product = cloneProduct(PRODUCT_DGA_ID, "IS001");
+    Product product = cloneProduct(StorageBinTestUtils.PRODUCT_DGA_ID, "IS001");
     return product;
   }
 
   private void createStockForProductInBinForTest001(Product product, Locator storageBin) {
     String documentNo = "IS001";
     BigDecimal quantity = BigDecimal.ONE;
-    createShipmentInOut(GOODS_RECEIPT_ID, product, storageBin, documentNo, quantity);
+    StorageBinTestUtils.createShipmentInOut(StorageBinTestUtils.GOODS_RECEIPT_ID, product,
+        storageBin, documentNo, quantity);
   }
 
   /**
@@ -260,17 +240,18 @@ public class InventoryStatusTest extends WeldBaseTest {
   }
 
   private Locator getNewStorageBinForTest002() {
-    return cloneStorageBin(LOCATOR_USA111_ID, "IS002");
+    return StorageBinTestUtils.cloneStorageBin(StorageBinTestUtils.LOCATOR_USA111_ID, "IS002");
   }
 
   private Product getNewProductForTest002() {
-    return cloneProduct(PRODUCT_DGA_ID, "IS002");
+    return cloneProduct(StorageBinTestUtils.PRODUCT_DGA_ID, "IS002");
   }
 
   private void createNegativeStockForProductInBinForTest002(Product product, Locator storageBin) {
     String documentNo = "IS002";
     BigDecimal quantity = BigDecimal.ONE;
-    createShipmentInOut(GOODS_SHIPMENT_ID, product, storageBin, documentNo, quantity);
+    StorageBinTestUtils.createShipmentInOut(StorageBinTestUtils.GOODS_SHIPMENT_ID, product,
+        storageBin, documentNo, quantity);
   }
 
   /**
@@ -347,13 +328,14 @@ public class InventoryStatusTest extends WeldBaseTest {
   }
 
   private Locator getNewStorageBinForTestAndSaveSharedBinID003() {
-    Locator storageBin = cloneStorageBin(LOCATOR_USA111_ID, "IS003");
+    Locator storageBin = StorageBinTestUtils.cloneStorageBin(StorageBinTestUtils.LOCATOR_USA111_ID,
+        "IS003");
     saveSharedBinIDForTest003(storageBin);
     return storageBin;
   }
 
   private Product getNewProductAndSaveSharedIDForTest003() {
-    Product product = cloneProduct(PRODUCT_DGA_ID, "IS003");
+    Product product = cloneProduct(StorageBinTestUtils.PRODUCT_DGA_ID, "IS003");
     saveSharedProductIDForTest003(product);
     return product;
   }
@@ -377,13 +359,15 @@ public class InventoryStatusTest extends WeldBaseTest {
   private void createStockForProductInBinForTest003(Locator storageBin, Product product) {
     String documentNo = "IS003";
     BigDecimal quantity = new BigDecimal(100);
-    createShipmentInOut(GOODS_RECEIPT_ID, product, storageBin, documentNo, quantity);
+    StorageBinTestUtils.createShipmentInOut(StorageBinTestUtils.GOODS_RECEIPT_ID, product,
+        storageBin, documentNo, quantity);
   }
 
   private void createGoodsShipmentForTest003(Locator storageBin, Product product) {
     String documentNo = "IS003";
     BigDecimal quantity = BigDecimal.ONE;
-    createShipmentInOut(GOODS_SHIPMENT_ID, product, storageBin, documentNo, quantity);
+    StorageBinTestUtils.createShipmentInOut(StorageBinTestUtils.GOODS_SHIPMENT_ID, product,
+        storageBin, documentNo, quantity);
   }
 
   /**
@@ -457,13 +441,14 @@ public class InventoryStatusTest extends WeldBaseTest {
   }
 
   private Locator getNewStorageBinForTestAndSaveSharedBinID004() {
-    Locator storageBin = cloneStorageBin(LOCATOR_USA111_ID, "IS004");
+    Locator storageBin = StorageBinTestUtils.cloneStorageBin(StorageBinTestUtils.LOCATOR_USA111_ID,
+        "IS004");
     saveSharedBinIDForTest004(storageBin);
     return storageBin;
   }
 
   private Product getNewProductAndSaveSharedIDForTest004() {
-    Product product = cloneProduct(PRODUCT_DGA_ID, "IS004");
+    Product product = cloneProduct(StorageBinTestUtils.PRODUCT_DGA_ID, "IS004");
     saveSharedProductIDForTest004(product);
     return product;
   }
@@ -487,7 +472,8 @@ public class InventoryStatusTest extends WeldBaseTest {
   private void createGoodsShipmentForTest004(Locator storageBin, Product product) {
     String documentNo = "IS004";
     BigDecimal quantity = BigDecimal.ONE;
-    createShipmentInOut(GOODS_SHIPMENT_ID, product, storageBin, documentNo, quantity);
+    StorageBinTestUtils.createShipmentInOut(StorageBinTestUtils.GOODS_SHIPMENT_ID, product,
+        storageBin, documentNo, quantity);
   }
 
   /**
@@ -530,17 +516,18 @@ public class InventoryStatusTest extends WeldBaseTest {
   }
 
   private Locator getNewStorageBinForTest005() {
-    return cloneStorageBin(LOCATOR_USA111_ID, "IS005");
+    return StorageBinTestUtils.cloneStorageBin(StorageBinTestUtils.LOCATOR_USA111_ID, "IS005");
   }
 
   private Product getNewProductForTest005() {
-    return cloneProduct(PRODUCT_DGA_ID, "IS005");
+    return cloneProduct(StorageBinTestUtils.PRODUCT_DGA_ID, "IS005");
   }
 
   private void createStockForProductInBinForTest005(Locator storageBin, Product product) {
     String documentNo = "IS005";
     BigDecimal quantity = new BigDecimal(1);
-    createShipmentInOut(GOODS_RECEIPT_ID, product, storageBin, documentNo, quantity);
+    StorageBinTestUtils.createShipmentInOut(StorageBinTestUtils.GOODS_RECEIPT_ID, product,
+        storageBin, documentNo, quantity);
   }
 
   private void createStockReservationForProductInBinForTest0005(Product product,
@@ -556,56 +543,6 @@ public class InventoryStatusTest extends WeldBaseTest {
   /***********************************************************************************************************************/
 
   /**
-   * Returns a new StorageBin based on the given one.
-   * 
-   * @param oldStorageBinID
-   *          Id of original Locator to clone
-   * @param name
-   *          Name to be set to the new Storage Bin
-   * @return a new StorageBin based on the original one
-   */
-  private static Locator cloneStorageBin(String oldStorageBinID, String name) {
-    Locator oldStorageBin = OBDal.getInstance().get(Locator.class, oldStorageBinID);
-    Locator newStorageBin = (Locator) DalUtil.copy(oldStorageBin, false);
-    String suffix = getSuffixBasedOnNumberOfBinsWithSameName(name);
-
-    setNewBinParameters(newStorageBin, name, suffix);
-
-    return newStorageBin;
-  }
-
-  private static String getSuffixBasedOnNumberOfBinsWithSameName(String name) {
-    return StringUtils.leftPad(String.valueOf(getNumberOfBinsWithSameName(name) + 1), 4, "0");
-  }
-
-  /**
-   * Returns the number of locators with same Locators value
-   */
-  private static int getNumberOfBinsWithSameName(String searchKey) {
-    try {
-      final OBCriteria<Locator> criteria = OBDal.getInstance().createCriteria(Locator.class);
-      criteria.add(Restrictions.like(Locator.PROPERTY_SEARCHKEY, searchKey + "-%"));
-      return criteria.count();
-    } catch (Exception e) {
-      throw new OBException(e);
-    }
-  }
-
-  private static void setNewBinParameters(Locator storageBin, String name, String suffix) {
-    storageBin.setId(SequenceIdData.getUUID());
-    storageBin.setSearchKey(name + "-" + suffix);
-    storageBin.setRowX(storageBin.getRowX() + "-" + suffix + " - " + name);
-    storageBin.setStackY(storageBin.getStackY() + "-" + suffix + " - " + name);
-    storageBin.setLevelZ(storageBin.getLevelZ() + "-" + suffix + " - " + name);
-    storageBin.setNewOBObject(true);
-    OBDal.getInstance().save(storageBin);
-  }
-
-  private static void refreshStorageBin(Locator storageBin) {
-    OBDal.getInstance().refresh(storageBin);
-  }
-
-  /**
    * Returns a new Product based on the given one. It is a clone of the first one but with different
    * name and value
    * 
@@ -618,58 +555,14 @@ public class InventoryStatusTest extends WeldBaseTest {
   private static Product cloneProduct(String productId, String name) {
     Product oldProduct = OBDal.getInstance().get(Product.class, productId);
     Product newProduct = (Product) DalUtil.copy(oldProduct, false);
-    String suffix = getSuffixBasedOnNumberOfProductsWithSameName(name);
+    String suffix = StorageBinTestUtils.getSuffixBasedOnNumberOfProductsWithSameName(name);
 
-    setProductParameters(newProduct, name, suffix);
+    StorageBinTestUtils.setProductParameters(newProduct, name, suffix);
 
-    cloneProductPrices(oldProduct, newProduct);
+    StorageBinTestUtils.cloneProductPrices(oldProduct, newProduct);
     cloneProductAUMs(oldProduct, newProduct);
 
     return newProduct;
-  }
-
-  private static String getSuffixBasedOnNumberOfProductsWithSameName(String name) {
-    return StringUtils.leftPad(String.valueOf(getNumberOfProductsWithSameName(name)) + 1, 4, "0");
-  }
-
-  /**
-   * Returns the number of products with same Product name
-   */
-  private static int getNumberOfProductsWithSameName(String name) {
-    try {
-      final OBCriteria<Product> criteria = OBDal.getInstance().createCriteria(Product.class);
-      criteria.add(Restrictions.like(Product.PROPERTY_NAME, name + "-%"));
-      return criteria.count();
-    } catch (Exception e) {
-      throw new OBException(e);
-    }
-  }
-
-  private static void setProductParameters(Product product, String name, String suffix) {
-    product.setSearchKey(name + "-" + suffix);
-    product.setName(name + "-" + suffix);
-    product.setUPCEAN(null);
-    product.setId(SequenceIdData.getUUID());
-    product.setNewOBObject(true);
-    OBDal.getInstance().save(product);
-  }
-
-  private static void cloneProductPrices(Product oldProduct, Product newProduct) {
-    List<ProductPrice> oldPriceList = oldProduct.getPricingProductPriceList();
-    for (ProductPrice oldPrice : oldPriceList) {
-      ProductPrice newProductPrice = createNewPriceForProduct(oldPrice, newProduct);
-      newProduct.getPricingProductPriceList().add(newProductPrice);
-    }
-    OBDal.getInstance().save(newProduct);
-  }
-
-  private static ProductPrice createNewPriceForProduct(ProductPrice price, Product product) {
-    ProductPrice newProductPrice = (ProductPrice) DalUtil.copy(price, false);
-    newProductPrice.setNewOBObject(true);
-    newProductPrice.setId(SequenceIdData.getUUID());
-    newProductPrice.setProduct(product);
-    OBDal.getInstance().save(newProductPrice);
-    return newProductPrice;
   }
 
   private static void cloneProductAUMs(Product oldProduct, Product newProduct) {
@@ -688,134 +581,6 @@ public class InventoryStatusTest extends WeldBaseTest {
     newAUM.setProduct(newProduct);
     OBDal.getInstance().save(newAUM);
     return newAUM;
-  }
-
-  private static void createShipmentInOut(String oldShipmentInOutID, Product product,
-      Locator storageBin, String documentNo, BigDecimal quantity) {
-    ShipmentInOut shipmentInOut = cloneReceiptShipment(oldShipmentInOutID, documentNo);
-    ShipmentInOutLine line = getFisrtLineOfShipmentInOut(shipmentInOut);
-
-    modifyClonedInOutLine(product, storageBin, line, quantity);
-
-    processAndRefreshShipmentInOut(shipmentInOut);
-    assertThatDocumentHasBeenCompleted(shipmentInOut);
-    // Needs to refresh Storage Bin to take into account new Stock
-    refreshStorageBin(storageBin);
-  }
-
-  private static String getSuffixBasedOnNumberOfShipmentsWithSameDocNo(String docNo) {
-    return StringUtils.leftPad(String.valueOf(getNumberOfShipmentsWithSameName(docNo)) + 1, 4, "0");
-  }
-
-  /**
-   * Returns the number of Goods Receipts/Shipments with same Document Number
-   */
-  private static int getNumberOfShipmentsWithSameName(String docNo) {
-    try {
-      final OBCriteria<ShipmentInOut> criteria = OBDal.getInstance()
-          .createCriteria(ShipmentInOut.class);
-      criteria.add(Restrictions.like(ShipmentInOut.PROPERTY_DOCUMENTNO, docNo + "-%"));
-      return criteria.count();
-    } catch (Exception e) {
-      throw new OBException(e);
-    }
-  }
-
-  /**
-   * Returns a new Goods Receipt/Shipment based on the given one. It is a clone of the first one but
-   * in a not completed status
-   * 
-   * @param oldInOutID
-   *          Id of original Goods Receipt/Shipment to clone
-   * @param docNo
-   *          docNo to set to the new Goods Receipt/Shipment
-   * @return a Goods Receipt/Shipment not completed
-   */
-  private static ShipmentInOut cloneReceiptShipment(String oldInOutID, String docNo) {
-    ShipmentInOut oldInOut = OBDal.getInstance().get(ShipmentInOut.class, oldInOutID);
-    ShipmentInOut newInOut = (ShipmentInOut) DalUtil.copy(oldInOut, false);
-    String suffix = getSuffixBasedOnNumberOfShipmentsWithSameDocNo(docNo);
-
-    setInOutParameters(newInOut, docNo, suffix);
-    for (ShipmentInOutLine oldLine : oldInOut.getMaterialMgmtShipmentInOutLineList()) {
-      ShipmentInOutLine newLine = cloneReceiptShipmentLine(oldLine, newInOut);
-      newInOut.getMaterialMgmtShipmentInOutLineList().add(newLine);
-    }
-
-    OBDal.getInstance().save(newInOut);
-    return newInOut;
-  }
-
-  private static ShipmentInOutLine getFisrtLineOfShipmentInOut(ShipmentInOut receipt) {
-    return receipt.getMaterialMgmtShipmentInOutLineList().get(0);
-  }
-
-  private static void setInOutParameters(ShipmentInOut inOut, String docNo, String suffix) {
-    inOut.setId(SequenceIdData.getUUID());
-    inOut.setDocumentNo(docNo + "-" + suffix);
-    inOut.setDocumentStatus(DRAFT_STATUS);
-    inOut.setDocumentAction(COMPLETE_ACTION);
-    inOut.setProcessed(false);
-    inOut.setMovementDate(new Date());
-    inOut.setOrderDate(new Date());
-    inOut.setNewOBObject(true);
-    inOut.setSalesOrder(null);
-    OBDal.getInstance().save(inOut);
-  }
-
-  /**
-   * Returns a new Goods Receipt/Shipment Line based on the given one. It is a clone of the first
-   * one but with different product
-   * 
-   * @param line
-   *          Original Goods Receipt/Shipment
-   * @param newInOut
-   *          new Goods Receipt/Shipment (a clone of the original one)
-   * @return A new Goods Receipt/Shipment Line clone based on the original one
-   */
-  private static ShipmentInOutLine cloneReceiptShipmentLine(ShipmentInOutLine oldLine,
-      ShipmentInOut newInOut) {
-    ShipmentInOutLine newLine = (ShipmentInOutLine) DalUtil.copy(oldLine, false);
-    setInOutLineParameters(newInOut, newLine);
-    OBDal.getInstance().save(newLine);
-    return newLine;
-  }
-
-  private static void setInOutLineParameters(ShipmentInOut inOut, ShipmentInOutLine inOutLIne) {
-    inOutLIne.setId(SequenceIdData.getUUID());
-    inOutLIne.setShipmentReceipt(inOut);
-    inOutLIne.setNewOBObject(true);
-    inOutLIne.setSalesOrderLine(null);
-  }
-
-  private static void modifyClonedInOutLine(Product product, Locator storageBin,
-      ShipmentInOutLine line, BigDecimal movementQty) {
-    line.setProduct(product);
-    line.setStorageBin(storageBin);
-    line.setAttributeSetValue(null);
-    line.setMovementQuantity(movementQty);
-    OBDal.getInstance().save(line);
-  }
-
-  private static void processAndRefreshShipmentInOut(ShipmentInOut receipt) {
-    processShipmentInOutInDB(receipt);
-    OBDal.getInstance().refresh(receipt);
-  }
-
-  /**
-   * Calls M_Inout_Post Database Function to complete the given Shipment/Receipt
-   * 
-   * @param shipmentReceipt
-   *          Shipment or Receipt to be completed
-   * @throws OBException
-   */
-  private static void processShipmentInOutInDB(ShipmentInOut shipmentReceipt) throws OBException {
-    final List<Object> parameters = new ArrayList<Object>();
-    parameters.add(null);
-    parameters.add(shipmentReceipt.getId());
-    final String procedureName = PROCESS_SHIPMENT_RECEIPT;
-    CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, false);
-    OBDal.getInstance().flush();
   }
 
   private static void createStockReservationForProductInBin(Product product, Locator storageBin,
@@ -901,7 +666,7 @@ public class InventoryStatusTest extends WeldBaseTest {
   }
 
   private static void processAndRefreshReservation(Reservation reservation) {
-    processReservationInDB(reservation, USER_ID);
+    processReservationInDB(reservation, StorageBinTestUtils.USER_ID);
     OBDal.getInstance().refresh(reservation);
   }
 
@@ -957,11 +722,6 @@ public class InventoryStatusTest extends WeldBaseTest {
   private static void assertThatBinHasBackflushStatus(Locator storageBin) {
     assertThat("Inventory Status of Storage Bin must be 'Backflush': ",
         storageBin.getInventoryStatus().getId(), equalTo(BACKFLUSH_STATUS));
-  }
-
-  private static void assertThatDocumentHasBeenCompleted(ShipmentInOut shipment) {
-    assertThat("Document must be completed: ", shipment.getDocumentStatus(),
-        equalTo(COMPLETED_DOCUMENT));
   }
 
   private static void assertThatReservationHasBeenCompleted(Reservation reservation) {
