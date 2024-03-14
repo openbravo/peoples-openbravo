@@ -401,6 +401,10 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
+      <column name="NATIONALITY" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_C_BUSPARTNER">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
@@ -421,6 +425,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="C_BPARTNER_C_BPARTNER">
         <reference local="SALESREP_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_COUNTRY" name="C_BPARTNER_C_COUNTRY">
+        <reference local="NATIONALITY" foreign="C_COUNTRY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_GREETING" name="C_BPARTNER_C_GREETING">
         <reference local="C_GREETING_ID" foreign="C_GREETING_ID"/>
