@@ -1127,7 +1127,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
   /**
    * Helper function which returns the old value from a audit row. Essentially
-   * coalesce(old_char,old_nchar,old_date,old_number, old_text)
+   * coalesce(old_char,old_date,old_number, old_text)
    * 
    * @param row
    *          audit record
@@ -1136,9 +1136,6 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   private static String getOld(AuditTrailRaw row) {
     String result;
     result = row.getOldChar();
-    if (result == null) {
-      result = row.getOldNChar();
-    }
     if (result == null && row.getOldDate() != null) {
       result = String.valueOf(row.getOldDate());
     }
@@ -1153,7 +1150,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
   /**
    * Helper function which returns the new value from a audit row. Essentially coalesce(new_char,
-   * new_nchar, new_date, new_number, new_text)
+   * new_date, new_number, new_text)
    * 
    * @param row
    *          audit record
@@ -1162,9 +1159,6 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   private static String getNew(AuditTrailRaw row) {
     String result;
     result = row.getNewChar();
-    if (result == null) {
-      result = row.getNewNChar();
-    }
     if (result == null && row.getNewDate() != null) {
       result = String.valueOf(row.getNewDate());
     }
