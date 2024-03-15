@@ -35,8 +35,9 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.common.enterprise.Locator;
-import org.openbravo.model.common.enterprise.Warehouse;
+import org.openbravo.model.common.enterprise.LocatorHandlingUnitType;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
@@ -74,31 +75,30 @@ public class StorageBinTestUtils {
   // Process to complete Documents
   private static final String PROCESS_SHIPMENT_RECEIPT = "m_inout_post";
 
-  // Error messages
-  static final String ERROR_MESSAGE = "org.hibernate.exception.GenericJDBCException: could not execute batch";
   // USA warehouse
   static final String QA_USA_WAREHOUSE_ID = "4028E6C72959682B01295ECFE2E20270";
 
-  public static void createStorageBin(Warehouse warehouse, String searchKey, String strX,
-      String strY, String strZ) {
-    Locator storageBin = OBProvider.getInstance().get(Locator.class);
-    storageBin.setWarehouse(warehouse);
-    storageBin.setSearchKey(searchKey);
-    storageBin.setRowX(strX);
-    storageBin.setStackY(strY);
-    storageBin.setLevelZ(strZ);
-    OBDal.getInstance().save(storageBin);
-  }
+  /**
+   * Create Storage Bin
+   */
 
   public static Locator getNewStorageBinForTest(String key) {
     Locator storageBin = cloneStorageBin(LOCATOR_USA111_ID, key);
     return storageBin;
   }
 
+  /**
+   * Create Product
+   */
+
   public static Product getNewProductForTest(String name) {
     Product product = cloneProduct(PRODUCT_DGA_ID, name);
     return product;
   }
+
+  /**
+   * Create Stock for product in particular locator
+   */
 
   public static void createStockForProductInBinForTest(String oldTransactionId, String documentNo,
       Product product, Locator storageBin, BigDecimal quantity) {
@@ -358,5 +358,14 @@ public class StorageBinTestUtils {
     final String procedureName = PROCESS_SHIPMENT_RECEIPT;
     CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, false);
     OBDal.getInstance().flush();
+  }
+
+  public static void createStorageBinHUType(Locator storageBin,
+      ReferencedInventoryType handlingUnitType) {
+    LocatorHandlingUnitType locatorHUType = OBProvider.getInstance()
+        .get(LocatorHandlingUnitType.class);
+    locatorHUType.setStorageBin(storageBin);
+    locatorHUType.setHandlingUnitType(handlingUnitType);
+    OBDal.getInstance().save(locatorHUType);
   }
 }
