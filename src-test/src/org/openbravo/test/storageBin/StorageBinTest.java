@@ -18,9 +18,11 @@
  */
 package org.openbravo.test.storageBin;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assume.assumeThat;
 
 import java.math.BigDecimal;
 
@@ -59,6 +61,10 @@ public class StorageBinTest extends WeldBaseTest {
 
   @Before
   public void initialize() {
+    boolean awoIsInstalled = ReferencedInventoryTestUtils.isAwoInstalled();
+    assumeThat("Auto-Disabled test case as incompatible with AWO (found to be installed) ",
+        awoIsInstalled, is(false));
+
     log.info("Initializing Storage Bin Test ...");
     OBContext.setOBContext(StorageBinTestUtils.USER_ID, StorageBinTestUtils.ROLE_ID,
         StorageBinTestUtils.CLIENT_ID, StorageBinTestUtils.ORG_ID,

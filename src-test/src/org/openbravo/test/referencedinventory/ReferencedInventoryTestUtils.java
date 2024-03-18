@@ -38,6 +38,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -98,6 +99,19 @@ public class ReferencedInventoryTestUtils {
   static void initializeReservationsPreferenceIfDoesnotExist() {
     if (!existsReservationsPreference()) {
       createReservationsPreference();
+    }
+  }
+
+  /**
+   * Check whether AWO module is installed or not
+   */
+  public static boolean isAwoInstalled() {
+    try {
+      OBContext.setAdminMode(true);
+      return KernelUtils.getInstance()
+          .isModulePresent("org.openbravo.warehouse.advancedwarehouseoperations");
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 
