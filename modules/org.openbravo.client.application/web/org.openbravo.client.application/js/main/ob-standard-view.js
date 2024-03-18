@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2023 Openbravo SLU
+ * All portions are Copyright (C) 2010-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -2026,6 +2026,9 @@ isc.OBStandardView.addProperties({
       // If the active tab of the tabset is now hidden, another tab has to to be selected
       // If there are no visible tabs left, maximize the current view
       activeTab = this.childTabSet.getSelectedTab();
+      if (!activeTab) {
+        return;
+      }
       activeTabPane = this.childTabSet.getTabPane(activeTab);
       if (activeTabPane.hidden) {
         //Look for the first not-hidden tab
