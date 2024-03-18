@@ -78,6 +78,11 @@ public class StorageBinTestUtils {
   // USA warehouse
   public static final String QA_USA_WAREHOUSE_ID = "4028E6C72959682B01295ECFE2E20270";
 
+  // Selection MODE
+  public static final String ALL_SELECTION_MODE = "A";
+  public static final String ONLY_THOSE_DEFINED = "I";
+  public static final String ALL_EXCLUDING_DEFINED = "E";
+
   /**
    * Create Storage Bin
    */

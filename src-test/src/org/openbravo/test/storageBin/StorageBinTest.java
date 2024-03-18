@@ -54,6 +54,7 @@ import org.openbravo.test.referencedinventory.ReferencedInventoryTestUtils;
 public class StorageBinTest extends WeldBaseTest {
 
   private static final Logger log = LogManager.getLogger();
+
   // Error messages
   private static final String ERROR_MESSAGE_NOT_EDITABLE = "NotEditableAllowStoringItemsHUType";
   private static final String ERROR_MESSAGE_Not_Valid_HU_TYPE = "Handling Unit Type is not valid for the locator";
@@ -115,7 +116,7 @@ public class StorageBinTest extends WeldBaseTest {
     OBDal.getInstance().save(storageBin);
     OBDal.getInstance().flush();
 
-    storageBin.setHandlingUnitTypeSelection("E");
+    storageBin.setIncludedHandlingUnitTypes(StorageBinTestUtils.ALL_EXCLUDING_DEFINED);
     OBDal.getInstance().save(storageBin);
     OBDal.getInstance().flush();
   }
@@ -133,7 +134,7 @@ public class StorageBinTest extends WeldBaseTest {
 
     Locator newStorageBin = StorageBinTestUtils.getNewStorageBinForTest("SB007");
     newStorageBin.setAllowStoringItems(false);
-    newStorageBin.setHandlingUnitTypeSelection("I");
+    newStorageBin.setIncludedHandlingUnitTypes(StorageBinTestUtils.ONLY_THOSE_DEFINED);
     OBDal.getInstance().save(newStorageBin);
     OBDal.getInstance().flush();
 
@@ -167,7 +168,7 @@ public class StorageBinTest extends WeldBaseTest {
 
     Locator newStorageBin = StorageBinTestUtils.getNewStorageBinForTest("SB007");
     newStorageBin.setAllowStoringItems(false);
-    newStorageBin.setHandlingUnitTypeSelection("I");
+    newStorageBin.setIncludedHandlingUnitTypes(StorageBinTestUtils.ONLY_THOSE_DEFINED);
     OBDal.getInstance().save(newStorageBin);
     OBDal.getInstance().flush();
 
@@ -218,7 +219,7 @@ public class StorageBinTest extends WeldBaseTest {
 
     Locator newStorageBin = StorageBinTestUtils.getNewStorageBinForTest("SB011");
     newStorageBin.setAllowStoringItems(false);
-    newStorageBin.setHandlingUnitTypeSelection("I");
+    newStorageBin.setIncludedHandlingUnitTypes(StorageBinTestUtils.ONLY_THOSE_DEFINED);
     OBDal.getInstance().save(newStorageBin);
     OBDal.getInstance().flush();
 

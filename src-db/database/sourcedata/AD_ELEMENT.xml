@@ -22176,7 +22176,7 @@ Advanced features are only granted to the automatic roles defined as advanced.]]
 <!--1A85DE9AEFB44412BDADE7D24DDB9312-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1A85DE9AEFB44412BDADE7D24DDB9312-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1A85DE9AEFB44412BDADE7D24DDB9312-->  <COLUMNNAME><![CDATA[HU_Type_Selection]]></COLUMNNAME>
-<!--1A85DE9AEFB44412BDADE7D24DDB9312-->  <NAME><![CDATA[Handling Unit Type Selection]]></NAME>
+<!--1A85DE9AEFB44412BDADE7D24DDB9312-->  <NAME><![CDATA[Included Handling Unit Types]]></NAME>
 <!--1A85DE9AEFB44412BDADE7D24DDB9312-->  <PRINTNAME><![CDATA[Handling Unit Type Selection]]></PRINTNAME>
 <!--1A85DE9AEFB44412BDADE7D24DDB9312-->  <DESCRIPTION><![CDATA[Handling unit type selection mode]]></DESCRIPTION>
 <!--1A85DE9AEFB44412BDADE7D24DDB9312-->  <HELP><![CDATA[Defines the way Handling unit type will be selected (All, Only those defined or All excluding defined)]]></HELP>
