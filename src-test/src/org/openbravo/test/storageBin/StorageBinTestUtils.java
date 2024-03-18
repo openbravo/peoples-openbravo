@@ -76,7 +76,7 @@ public class StorageBinTestUtils {
   private static final String PROCESS_SHIPMENT_RECEIPT = "m_inout_post";
 
   // USA warehouse
-  static final String QA_USA_WAREHOUSE_ID = "4028E6C72959682B01295ECFE2E20270";
+  public static final String QA_USA_WAREHOUSE_ID = "4028E6C72959682B01295ECFE2E20270";
 
   /**
    * Create Storage Bin
