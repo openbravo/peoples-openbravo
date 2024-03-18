@@ -51,6 +51,11 @@ import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.test.referencedinventory.ReferencedInventoryTestUtils;
 
+/**
+ * This class implements tests for Storage Bin configuration: Allow Storing Items, Included Handling
+ * Unit Types and Handling Unit Type defined.
+ */
+
 public class StorageBinTest extends WeldBaseTest {
 
   private static final Logger log = LogManager.getLogger();
@@ -80,11 +85,11 @@ public class StorageBinTest extends WeldBaseTest {
   public void testAllowStoringItemsHUTypeSelectionWithStock() {
 
     Locator storageBin = StorageBinTestUtils.getNewStorageBinForTest("SB001");
-    Product product = StorageBinTestUtils.getNewProductForTest("SB001");
+    Product product = StorageBinTestUtils.getNewProductForTest("SB028");
 
     // Create stock for product
     StorageBinTestUtils.createStockForProductInBinForTest(StorageBinTestUtils.GOODS_RECEIPT_ID,
-        "SB001", product, storageBin, BigDecimal.ONE);
+        "SB029", product, storageBin, BigDecimal.ONE);
 
     // Expect to throw an exception when changing Allow Storing Items flag or HU Type Selection
     storageBin.setAllowStoringItems(!storageBin.isAllowStoringItems());
@@ -99,16 +104,16 @@ public class StorageBinTest extends WeldBaseTest {
   @Test
   public void testAllowStoringItemsHUTypeSelectionWithoutStock() {
 
-    Locator storageBin = StorageBinTestUtils.getNewStorageBinForTest("SB001");
-    Product product = StorageBinTestUtils.getNewProductForTest("SB001");
+    Locator storageBin = StorageBinTestUtils.getNewStorageBinForTest("SB030");
+    Product product = StorageBinTestUtils.getNewProductForTest("SB031");
 
     // Create stock for product
     StorageBinTestUtils.createStockForProductInBinForTest(StorageBinTestUtils.GOODS_RECEIPT_ID,
-        "SB002", product, storageBin, BigDecimal.ONE);
+        "SB032", product, storageBin, BigDecimal.ONE);
 
     // Consume stock for product
     StorageBinTestUtils.createStockForProductInBinForTest(StorageBinTestUtils.GOODS_SHIPMENT_ID,
-        "SB003", product, storageBin, BigDecimal.ONE);
+        "SB033", product, storageBin, BigDecimal.ONE);
 
     // when there is no stock available in Storage Bin, Allow Storing Items flag or HU Type
     // Selection could be changed
@@ -156,89 +161,111 @@ public class StorageBinTest extends WeldBaseTest {
   }
 
   @Test
-  public void testStorageBinHUTypeSelection_OnlyThoseDefined() {
-
-    Locator storageBin = StorageBinTestUtils.getNewStorageBinForTest("SB004");
-
-    Product product = StorageBinTestUtils.getNewProductForTest("SB005");
-
-    // Create stock for product
-    StorageBinTestUtils.createStockForProductInBinForTest(StorageBinTestUtils.GOODS_RECEIPT_ID,
-        "SB006", product, storageBin, BigDecimal.ONE);
-
-    Locator newStorageBin = StorageBinTestUtils.getNewStorageBinForTest("SB007");
-    newStorageBin.setAllowStoringItems(false);
-    newStorageBin.setIncludedHandlingUnitTypes(StorageBinTestUtils.ONLY_THOSE_DEFINED);
-    OBDal.getInstance().save(newStorageBin);
-    OBDal.getInstance().flush();
-
-    final ReferencedInventoryType huType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType(
-            OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
-            SequenceType.NONE, null);
-
-    StorageBinTestUtils.createStorageBinHUType(newStorageBin, huType);
-
-    final StorageDetail storageDetail = ReferencedInventoryTestUtils
-        .getUniqueStorageDetail(product);
-
-    final ReferencedInventory refInv = ReferencedInventoryTestUtils
-        .createReferencedInventory(StorageBinTestUtils.ORG_ID, huType);
-
-    try {
-      new BoxProcessor(refInv,
-          ReferencedInventoryTestUtils.getStorageDetailsToBoxJSArray(storageDetail,
-              storageDetail.getQuantityOnHand()),
-          newStorageBin.getId()).createAndProcessGoodsMovement();
-    } catch (JSONException e) {
-      log.error(
-          "JSONException while creating box transaction in testStorageBinHUTypeSelection_OnlyThoseDefined ",
-          e, e.getMessage());
-    } catch (Exception e) {
-      log.error(
-          "Exception while creating box transaction in testStorageBinHUTypeSelection_OnlyThoseDefined ",
-          e, e.getMessage());
-    }
+  public void testStorageBin_AllowStoringItemsNo_IncludedHandlingUnitTypesAll() {
+    createStorageBinTestData(false, StorageBinTestUtils.ALL_SELECTION_MODE, true, false,
+        "StorageBin with AllowStoringItems No, IncludedHandlingUnitTypes All, HandlingUnitTypeTab is empty");
   }
 
   @Test
-  public void testStorageBinHUTypeSelection_AllExcludingDefined() {
+  public void testStorageBin_AllowStoringItemsNo_IncludedHandlingUnitTypesOnlyThoseDefined_EmptyHandlingUnitTypeTab() {
+    createStorageBinTestData(false, StorageBinTestUtils.ONLY_THOSE_DEFINED, true, true,
+        "StorageBin with AllowStoringItems No, IncludedHandlingUnitTypes OnlyThoseDefined, HandlingUnitTypeTab is empty");
+  }
+
+  @Test
+  public void testStorageBin_AllowStoringItemsNo_IncludedHandlingUnitTypesOnlyThoseDefined() {
+    createStorageBinTestData(false, StorageBinTestUtils.ONLY_THOSE_DEFINED, false, false,
+        "StorageBin with AllowStoringItems No, IncludedHandlingUnitTypes OnlyThoseDefined, HandlingUnitTypeTab is not empty");
+  }
+
+  @Test
+  public void testStorageBin_AllowStoringItemsNo_IncludedHandlingUnitTypesAllExcludingDefined_EmptyHandlingUnitTypeTab() {
+    createStorageBinTestData(false, StorageBinTestUtils.ALL_EXCLUDING_DEFINED, true, false,
+        "StorageBin with AllowStoringItems No, IncludedHandlingUnitTypes AllExcludingDefined, HandlingUnitTypeTab is empty");
+  }
+
+  @Test
+  public void testStorageBin_AllowStoringItemsNo_IncludedHandlingUnitTypesAllExcludingDefined() {
+    createStorageBinTestData(false, StorageBinTestUtils.ALL_EXCLUDING_DEFINED, false, true,
+        "StorageBin with AllowStoringItems No, IncludedHandlingUnitTypes AllExcludingDefined, HandlingUnitTypeTab is not empty");
+  }
+
+  @Test
+  public void testStorageBin_AllowStoringItems_Yes_IncludedHandlingUnitTypes_OnlyThoseDefined() {
+    createStorageBinTestData(true, StorageBinTestUtils.ONLY_THOSE_DEFINED, false, false,
+        "StorageBin with AllowStoringItems No, IncludedHandlingUnitTypes OnlyThoseDefined, HandlingUnitTypeTab is not empty");
+  }
+
+  @Test
+  public void testStorageBin_AllowStoringItems_Yes_IncludedHandlingUnitTypes_All() {
+    createStorageBinTestData(true, StorageBinTestUtils.ALL_SELECTION_MODE, false, false,
+        "StorageBin with AllowStoringItems Yes, IncludedHandlingUnitTypes All, HandlingUnitTypeTab is not empty");
+  }
+
+  @Test
+  public void testStorageBin_AllowStoringItems_Yes_IncludedHandlingUnitTypes_AllExcludingDefined() {
+    createStorageBinTestData(true, StorageBinTestUtils.ALL_EXCLUDING_DEFINED, false, false,
+        "StorageBin with AllowStoringItems Yes, IncludedHandlingUnitTypes AllExcludingDefined, HandlingUnitTypeTab is not empty");
+  }
+
+  /**
+   * Creates storage bin test data for various input parameters
+   */
+
+  private void createStorageBinTestData(boolean allowStoringItems, String includedHandlingUnitTypes,
+      boolean isHandlingUnitTypeTabEmpty, boolean throwsException, String testName) {
+
+    Locator storageBin = StorageBinTestUtils.getNewStorageBinForTest("SB023");
+
+    Product product = StorageBinTestUtils.getNewProductForTest("SB024");
+
+    // Create stock for product
+    StorageBinTestUtils.createStockForProductInBinForTest(StorageBinTestUtils.GOODS_RECEIPT_ID,
+        "SB025", product, storageBin, BigDecimal.ONE);
+
+    Locator newStorageBin = StorageBinTestUtils.getNewStorageBinForTest("SB026");
+    newStorageBin.setAllowStoringItems(allowStoringItems);
+    newStorageBin.setIncludedHandlingUnitTypes(includedHandlingUnitTypes);
+    OBDal.getInstance().save(newStorageBin);
+    OBDal.getInstance().flush();
 
     final ReferencedInventoryType huType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(
             OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
             SequenceType.NONE, null);
 
-    Locator storageBin = StorageBinTestUtils.getNewStorageBinForTest("SB008");
-
-    Product product = StorageBinTestUtils.getNewProductForTest("SB009");
-
-    // Create stock for product
-    StorageBinTestUtils.createStockForProductInBinForTest(StorageBinTestUtils.GOODS_RECEIPT_ID,
-        "SB010", product, storageBin, BigDecimal.ONE);
-
-    Locator newStorageBin = StorageBinTestUtils.getNewStorageBinForTest("SB011");
-    newStorageBin.setAllowStoringItems(false);
-    newStorageBin.setIncludedHandlingUnitTypes(StorageBinTestUtils.ONLY_THOSE_DEFINED);
-    OBDal.getInstance().save(newStorageBin);
-    OBDal.getInstance().flush();
-
-    StorageBinTestUtils.createStorageBinHUType(storageBin, huType);
-
-    final ReferencedInventory refInv = ReferencedInventoryTestUtils
-        .createReferencedInventory(StorageBinTestUtils.ORG_ID, huType);
+    if (!isHandlingUnitTypeTabEmpty) {
+      StorageBinTestUtils.createStorageBinHUType(newStorageBin, huType);
+    }
 
     final StorageDetail storageDetail = ReferencedInventoryTestUtils
         .getUniqueStorageDetail(product);
 
-    OBException thrown = assertThrows(OBException.class,
-        () -> new BoxProcessor(refInv,
+    final ReferencedInventory refInv = ReferencedInventoryTestUtils
+        .createReferencedInventory(StorageBinTestUtils.ORG_ID, huType);
+
+    if (throwsException) {
+      OBException thrown = assertThrows(OBException.class,
+          () -> new BoxProcessor(refInv,
+              ReferencedInventoryTestUtils.getStorageDetailsToBoxJSArray(storageDetail,
+                  storageDetail.getQuantityOnHand()),
+              newStorageBin.getId()).createAndProcessGoodsMovement());
+
+      assertThat(thrown.getMessage(), containsString(ERROR_MESSAGE_Not_Valid_HU_TYPE));
+    } else {
+      try {
+        new BoxProcessor(refInv,
             ReferencedInventoryTestUtils.getStorageDetailsToBoxJSArray(storageDetail,
                 storageDetail.getQuantityOnHand()),
-            newStorageBin.getId()).createAndProcessGoodsMovement());
-
-    assertThat(thrown.getMessage(), containsString(ERROR_MESSAGE_Not_Valid_HU_TYPE));
-
+            newStorageBin.getId()).createAndProcessGoodsMovement();
+      } catch (JSONException e) {
+        log.error("JSONException while creating box transaction in test " + testName, e,
+            e.getMessage());
+      } catch (Exception e) {
+        log.error("Exception while creating box transaction in test " + testName, e,
+            e.getMessage());
+      }
+    }
   }
 
   @After

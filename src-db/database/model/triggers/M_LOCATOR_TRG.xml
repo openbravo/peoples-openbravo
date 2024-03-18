@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER M_LOCATOR_TRG">
     <trigger name="M_LOCATOR_TRG" table="M_LOCATOR" fires="before" insert="false" update="true" delete="false" foreach="row">
-      <body><![CDATA[
-    /*************************************************************************
+      <body><![CDATA[    /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
     * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
     * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -18,14 +17,10 @@
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
-
   v_count NUMBER;
-     
 BEGIN
-
     IF AD_isTriggerEnabled()='N' THEN IF DELETING THEN RETURN OLD; ELSE RETURN NEW; END IF;
     END IF;
-
   IF UPDATING THEN
     IF ((:OLD.isactive = 'Y' AND :NEW.isactive = 'N')
          OR :OLD.allow_storing_items <> :NEW.allow_storing_items
@@ -34,24 +29,26 @@ BEGIN
 	  SELECT COUNT(*)
         INTO v_count
       FROM m_storage_detail
-      WHERE m_locator_id = :old.m_locator_id
+      WHERE m_locator_id = :OLD.m_locator_id
         AND (COALESCE(qtyonhand,0) <> 0
         OR COALESCE(qtyorderonhand, 0) <> 0
         OR COALESCE(preqtyonhand, 0) <> 0
         OR COALESCE(preqtyorderonhand, 0) <> 0);
-
+      --When active flag is being set as N and there exists pending transaction,
+      --or stock exists in the locator, this change is not allowed
       IF (v_count <> '0' AND :OLD.isactive = 'Y' AND :NEW.isactive = 'N') THEN
         RAISE_APPLICATION_ERROR(-20000, '@StockAvailable@');
-      end if;
-
-	  IF (v_count <> '0' AND :NEW.allow_storing_items = 'N' AND
-		  (:OLD.allow_storing_items <> :NEW.allow_storing_items
-		   OR :OLD.HU_Type_Selection <> :NEW.HU_Type_Selection)) THEN
+      END IF;
+      --When there are pending transactions or stock exists and allow storing items
+      --flag is being set as No or Included Handling Unit Types is being changed
+      --this change is not allowed
+      IF (v_count <> '0' AND :NEW.allow_storing_items = 'N' AND
+          (:OLD.allow_storing_items <> :NEW.allow_storing_items
+          OR :OLD.HU_Type_Selection <> :NEW.HU_Type_Selection)) THEN
         RAISE_APPLICATION_ERROR(-20000, '@NotEditableAllowStoringItemsHUType@');
-      END if;
-	END if;
+      END IF;
+    END IF;
   END IF;
-
 END M_LOCATOR_TRG
 ]]></body>
     </trigger>

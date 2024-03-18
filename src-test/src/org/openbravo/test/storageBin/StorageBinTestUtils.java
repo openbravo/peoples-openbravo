@@ -43,6 +43,10 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.service.db.CallStoredProcedure;
 
+/**
+ * This is a utility class for storage bin tests
+ */
+
 public class StorageBinTestUtils {
 
   // Client QA Testing
@@ -152,6 +156,10 @@ public class StorageBinTestUtils {
     }
   }
 
+  /**
+   * sets the storage bin properties Id, search key, RowX, StackY, LevelZ for new storage bin
+   */
+
   private static void setNewBinParameters(Locator storageBin, String name, String suffix) {
     storageBin.setId(SequenceIdData.getUUID());
     storageBin.setSearchKey(name + "-" + suffix);
@@ -161,6 +169,10 @@ public class StorageBinTestUtils {
     storageBin.setNewOBObject(true);
     OBDal.getInstance().save(storageBin);
   }
+
+  /**
+   * Refresh storage bin
+   */
 
   public static void refreshStorageBin(Locator storageBin) {
     OBDal.getInstance().refresh(storageBin);
@@ -188,6 +200,9 @@ public class StorageBinTestUtils {
     return newProduct;
   }
 
+  /**
+   * gets a suffix based on number of products with same name
+   */
   public static String getSuffixBasedOnNumberOfProductsWithSameName(String name) {
     return StringUtils.leftPad(String.valueOf(getNumberOfProductsWithSameName(name)) + 1, 4, "0");
   }
@@ -205,6 +220,9 @@ public class StorageBinTestUtils {
     }
   }
 
+  /**
+   * Sets product properties search key, name, upc, id for new Product
+   */
   public static void setProductParameters(Product product, String name, String suffix) {
     product.setSearchKey(name + "-" + suffix);
     product.setName(name + "-" + suffix);
@@ -214,6 +232,9 @@ public class StorageBinTestUtils {
     OBDal.getInstance().save(product);
   }
 
+  /**
+   * Creates a copy of product price for the newly created product from old product
+   */
   public static void cloneProductPrices(Product oldProduct, Product newProduct) {
     List<ProductPrice> oldPriceList = oldProduct.getPricingProductPriceList();
     for (ProductPrice oldPrice : oldPriceList) {
@@ -223,6 +244,9 @@ public class StorageBinTestUtils {
     OBDal.getInstance().save(newProduct);
   }
 
+  /**
+   * Creates a copy of product price for the newly created product from old product
+   */
   private static ProductPrice createNewPriceForProduct(ProductPrice price, Product product) {
     ProductPrice newProductPrice = (ProductPrice) DalUtil.copy(price, false);
     newProductPrice.setNewOBObject(true);
@@ -231,6 +255,10 @@ public class StorageBinTestUtils {
     OBDal.getInstance().save(newProductPrice);
     return newProductPrice;
   }
+
+  /**
+   * Creates Receipt Shipment from old transaction id for new product and new locator
+   */
 
   public static void createShipmentInOut(String oldShipmentInOutID, Product product,
       Locator storageBin, String documentNo, BigDecimal quantity) {
@@ -245,10 +273,18 @@ public class StorageBinTestUtils {
     refreshStorageBin(storageBin);
   }
 
+  /**
+   * asserts that receipt/shipment document is completed
+   */
+
   private static void assertThatDocumentHasBeenCompleted(ShipmentInOut shipment) {
     assertThat("Document must be completed: ", shipment.getDocumentStatus(),
         equalTo(COMPLETED_DOCUMENT));
   }
+
+  /**
+   * Gets the suffix based on number of shipments/receipts with same documentNo
+   */
 
   public static String getSuffixBasedOnNumberOfShipmentsWithSameDocNo(String docNo) {
     return StringUtils.leftPad(String.valueOf(getNumberOfShipmentsWithSameName(docNo)) + 1, 4, "0");
@@ -293,9 +329,18 @@ public class StorageBinTestUtils {
     return newInOut;
   }
 
+  /**
+   * Gets the first receipt/shipment line
+   */
+
   private static ShipmentInOutLine getFisrtLineOfShipmentInOut(ShipmentInOut receipt) {
     return receipt.getMaterialMgmtShipmentInOutLineList().get(0);
   }
+
+  /**
+   * Set the receipt/shipment properties id, documentNo, documentStatus,documentAction, Processed
+   * flag, movementDate, orderDate for newly created receipt/shipment
+   */
 
   private static void setInOutParameters(ShipmentInOut inOut, String docNo, String suffix) {
     inOut.setId(SequenceIdData.getUUID());
@@ -328,6 +373,9 @@ public class StorageBinTestUtils {
     return newLine;
   }
 
+  /**
+   * Sets receipt/shipment line properties id, receipt/shipment
+   */
   private static void setInOutLineParameters(ShipmentInOut inOut, ShipmentInOutLine inOutLIne) {
     inOutLIne.setId(SequenceIdData.getUUID());
     inOutLIne.setShipmentReceipt(inOut);
@@ -335,6 +383,9 @@ public class StorageBinTestUtils {
     inOutLIne.setSalesOrderLine(null);
   }
 
+  /**
+   * Set receipt/shipment properties product, locator, attributeSetValue, movementQuantity
+   */
   public static void modifyClonedInOutLine(Product product, Locator storageBin,
       ShipmentInOutLine line, BigDecimal movementQty) {
     line.setProduct(product);
@@ -344,6 +395,9 @@ public class StorageBinTestUtils {
     OBDal.getInstance().save(line);
   }
 
+  /**
+   * Process and Refresh receipt/shipment document.
+   */
   public static void processAndRefreshShipmentInOut(ShipmentInOut receipt) {
     processShipmentInOutInDB(receipt);
     OBDal.getInstance().refresh(receipt);
@@ -364,6 +418,10 @@ public class StorageBinTestUtils {
     CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, false);
     OBDal.getInstance().flush();
   }
+
+  /**
+   * Defines a handling unit type for Storage Bin
+   */
 
   public static void createStorageBinHUType(Locator storageBin,
       ReferencedInventoryType handlingUnitType) {
