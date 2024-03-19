@@ -13878,11 +13878,14 @@ and e.referencedInventory.id = any(select unnest(m_refinventory_nested(ri.id))
 <!--1C007B1D2FAA4A5D82C147588C24F8CE-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--1C007B1D2FAA4A5D82C147588C24F8CE-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1C007B1D2FAA4A5D82C147588C24F8CE-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
-<!--1C007B1D2FAA4A5D82C147588C24F8CE-->  <HQLWHERECLAUSE><![CDATA[exists (select 1 
-          from AttributeSetInstance asi 
-          where asi.id <> e.attributeSetInstanceTo.id 
-          and asi.id = e.attributeSetValue.id
-          and asi.referencedInventory.id = @M_RefInventory_ID@)]]></HQLWHERECLAUSE>
+<!--1C007B1D2FAA4A5D82C147588C24F8CE-->  <HQLWHERECLAUSE><![CDATA[e.attributeSetInstanceTo.id <> e.attributeSetValue.id
+and e.attributeSetValue.referencedInventory.id = @M_RefInventory_ID@
+and (e.attributeSetInstanceTo.parentAttributeSetInstance is null
+     or exists (select 1 
+                from AttributeSetInstance pasi
+                where pasi.id = e.attributeSetInstanceTo.parentAttributeSetInstance.id
+                and pasi.parentAttributeSetInstance is null)
+    )]]></HQLWHERECLAUSE>
 <!--1C007B1D2FAA4A5D82C147588C24F8CE-->  <HQLORDERBYCLAUSE><![CDATA[e.movement.movementDate]]></HQLORDERBYCLAUSE>
 <!--1C007B1D2FAA4A5D82C147588C24F8CE-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--1C007B1D2FAA4A5D82C147588C24F8CE-->  <DISABLE_PARENT_KEY_PROPERTY><![CDATA[N]]></DISABLE_PARENT_KEY_PROPERTY>
@@ -21317,11 +21320,14 @@ AND (e.storageBin is null OR ad_org_isinnaturaltree(@MaterialMgmtShipmentInOut.o
 <!--DF4BB257D1824980A15F95A1C29B6194-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--DF4BB257D1824980A15F95A1C29B6194-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--DF4BB257D1824980A15F95A1C29B6194-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
-<!--DF4BB257D1824980A15F95A1C29B6194-->  <HQLWHERECLAUSE><![CDATA[exists (select 1 
-          from AttributeSetInstance asi 
-          where asi.id = e.attributeSetInstanceTo.id 
-          and asi.id <> e.attributeSetValue.id
-          and asi.referencedInventory.id = @M_RefInventory_ID@)]]></HQLWHERECLAUSE>
+<!--DF4BB257D1824980A15F95A1C29B6194-->  <HQLWHERECLAUSE><![CDATA[e.attributeSetValue.id <> e.attributeSetInstanceTo.id
+and e.attributeSetInstanceTo.referencedInventory.id = @M_RefInventory_ID@
+and (e.attributeSetValue.parentAttributeSetInstance is null
+     or exists (select 1 
+                from AttributeSetInstance pasi
+                where pasi.id = e.attributeSetValue.parentAttributeSetInstance.id
+                and pasi.parentAttributeSetInstance is null)
+    )]]></HQLWHERECLAUSE>
 <!--DF4BB257D1824980A15F95A1C29B6194-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--DF4BB257D1824980A15F95A1C29B6194-->  <DISABLE_PARENT_KEY_PROPERTY><![CDATA[N]]></DISABLE_PARENT_KEY_PROPERTY>
 <!--DF4BB257D1824980A15F95A1C29B6194-->  <ISREADONLYTREE><![CDATA[N]]></ISREADONLYTREE>
