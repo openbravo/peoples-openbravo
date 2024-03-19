@@ -10129,8 +10129,6 @@ You can also select if transactions are allowed or not for this organization typ
 <!--42FB6DA5B5574B5684F297608BDBCE0C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--42FB6DA5B5574B5684F297608BDBCE0C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--42FB6DA5B5574B5684F297608BDBCE0C-->  <NAME><![CDATA[ServicePriceRuleVersion]]></NAME>
-<!--42FB6DA5B5574B5684F297608BDBCE0C-->  <DESCRIPTION><![CDATA[Defines price rule versions for Relatable Products (Services and Contributions)]]></DESCRIPTION>
-<!--42FB6DA5B5574B5684F297608BDBCE0C-->  <HELP><![CDATA[Defines price rule versions for Relatable Products (Services and Contributions).]]></HELP>
 <!--42FB6DA5B5574B5684F297608BDBCE0C-->  <TABLENAME><![CDATA[M_ServicePriceRule_Version]]></TABLENAME>
 <!--42FB6DA5B5574B5684F297608BDBCE0C-->  <CLASSNAME><![CDATA[ServicePriceRuleVersion]]></CLASSNAME>
 <!--42FB6DA5B5574B5684F297608BDBCE0C-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -12072,8 +12070,7 @@ GROUP BY
 <!--8B0BBDDB2169404BB55CC816A573B88B-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--8B0BBDDB2169404BB55CC816A573B88B-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--8B0BBDDB2169404BB55CC816A573B88B-->  <NAME><![CDATA[ServicePriceRule]]></NAME>
-<!--8B0BBDDB2169404BB55CC816A573B88B-->  <DESCRIPTION><![CDATA[Define rules to determine service/contribution price based on its related products]]></DESCRIPTION>
-<!--8B0BBDDB2169404BB55CC816A573B88B-->  <HELP><![CDATA[Used to define price rules for 'Relatable Products' (Services and Contributions)]]></HELP>
+<!--8B0BBDDB2169404BB55CC816A573B88B-->  <DESCRIPTION><![CDATA[Define rules to determine service price based on related products]]></DESCRIPTION>
 <!--8B0BBDDB2169404BB55CC816A573B88B-->  <TABLENAME><![CDATA[M_ServicePriceRule]]></TABLENAME>
 <!--8B0BBDDB2169404BB55CC816A573B88B-->  <CLASSNAME><![CDATA[ServicePriceRule]]></CLASSNAME>
 <!--8B0BBDDB2169404BB55CC816A573B88B-->  <ISVIEW><![CDATA[N]]></ISVIEW>
