@@ -556,5 +556,6 @@
       <check name="M_PRODUCT_PRINT_DESCRIP_CHECK"><![CDATA[PRINT_DESCRIPTION IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_RETURNABLE_CHECK"><![CDATA[RETURNABLE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_UN_PERDOCUMENT_CHECK"><![CDATA[UNIQUE_PER_DOCUMENT IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_CONTRIBUTION_CHECK"><![CDATA[PRODUCTTYPE = 'C' AND M_PRODUCT_SUBTYPE_ID IS NOT NULL OR PRODUCTTYPE <> 'C']]></check>
     </table>
   </database>
