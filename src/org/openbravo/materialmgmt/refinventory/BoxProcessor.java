@@ -19,6 +19,7 @@
 
 package org.openbravo.materialmgmt.refinventory;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -128,6 +129,20 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
 
   @Override
   protected int updateParentReferenceInventory() {
+    return updateParentReferenceInventory(this.getReferencedInventory().getId(),
+        outterMostRefInventoryIdsToBox);
+  }
+
+  /**
+   * Updates the affectedRefInventoryIds' parent referenced inventory with the
+   * newParentRefInventoryId. This process should be executed after the Box activity took place, and
+   * it is actually needed only when handling unit(s) (affectedRefInventoryIds) have been boxed into
+   * another handling unit (newParentRefInventoryId).
+   * 
+   * @return the number of referenced inventories updated
+   */
+  public static int updateParentReferenceInventory(final String newParentRefInventoryId,
+      final Collection<String> affectedRefInventoryIds) {
     //@formatter:off
     final String hql =
                   " update MaterialMgmtReferencedInventory" +
@@ -137,8 +152,8 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
     return OBDal.getInstance()
         .getSession()
         .createQuery(hql)
-        .setParameter("thisRefInventoryId", this.getReferencedInventory().getId())
-        .setParameter("affectedRefInventoryIds", outterMostRefInventoryIdsToBox)
+        .setParameter("thisRefInventoryId", newParentRefInventoryId)
+        .setParameter("affectedRefInventoryIds", affectedRefInventoryIds)
         .executeUpdate();
   }
 }
