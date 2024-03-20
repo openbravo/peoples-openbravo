@@ -20,16 +20,12 @@
   "repository": "https://gitlab.com/openbravo/product/openbravo",
   "author": "Openbravo SLU",
   "license": "SEE LICENSE IN legal/Openbravo_license.txt",
-  "dependencies": {
-    "autoprefixer": "^10.4.14",
-    "caniuse-lite": "^1.0.30001477",
+  "dependencies": {},
+  "devDependencies": {
     "eslint-config-prettier": "~7.1.0",
     "eslint-plugin-prettier": "~3.3.1",
-    "prettier": "~1.18.2"
-  },
-  "devDependencies": {
+    "prettier": "~1.18.2",
     "@babel/eslint-parser": "^7.18.9",
-    "@babel/plugin-proposal-optional-chaining": "^7.12.7",
     "@babel/preset-env": "^7.11.0",
     "@babel/preset-react": "^7.10.4",
     "@testing-library/jest-dom": "^5.11.5",
