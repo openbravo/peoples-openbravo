@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2023 Openbravo SLU
+ * All portions are Copyright (C) 2012-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -488,6 +488,7 @@ isc.OBParameterWindowView.addProperties({
         formData.append('reportId', view.reportId);
         formData.append('windowId', view.windowId);
         formData.append('paramValues', isc.JSON.encode(allProperties));
+        formData.append('csrfToken', OB.User.csrfToken);
 
         fetch('org.openbravo.client.kernel?_action=' + view.actionHandler, {
           method: 'POST',
