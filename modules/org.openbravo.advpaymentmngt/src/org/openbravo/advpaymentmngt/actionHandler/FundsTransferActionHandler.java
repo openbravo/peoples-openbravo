@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -115,7 +115,6 @@ public class FundsTransferActionHandler extends BaseProcessActionHandler {
 
     } catch (OBException e) {
       log.error(ERROR_IN_PROCESS, e);
-
       return getResponseBuilder()
           .showMsgInProcessView(MessageType.ERROR, OBMessageUtils.messageBD("error"),
               e.getMessage(), true)
@@ -230,6 +229,7 @@ public class FundsTransferActionHandler extends BaseProcessActionHandler {
 
     } catch (Exception e) {
       String message = OBMessageUtils.parseTranslation(e.getMessage());
+      OBDal.getInstance().rollbackAndClose();
       throw new OBException(message, e);
     }
   }

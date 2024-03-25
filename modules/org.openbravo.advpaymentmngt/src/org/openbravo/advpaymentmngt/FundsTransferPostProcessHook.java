@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  
  *************************************************************************
@@ -20,6 +20,7 @@ package org.openbravo.advpaymentmngt;
 
 import java.util.List;
 
+import org.openbravo.base.Prioritizable;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 
 /**
@@ -28,7 +29,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
  * @author Daniel Martins
  * 
  */
-public interface FundsTransferPostProcessHook {
+public interface FundsTransferPostProcessHook extends Prioritizable {
 
   /**
    * Method to implement in extension classes. This method will be called to extend functionality.
@@ -37,4 +38,5 @@ public interface FundsTransferPostProcessHook {
    *          A list of all transactions created by Funds Transfer
    */
   public void exec(List<FIN_FinaccTransaction> transactions) throws Exception;
+
 }

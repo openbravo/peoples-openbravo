@@ -11,15 +11,17 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.advpaymentmngt.actionHandler;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -39,10 +41,18 @@ public class FundsTransferHookCaller {
   }
 
   private void executeHooks(List<FIN_FinaccTransaction> transactions) throws Exception {
-    for (Iterator<FundsTransferPostProcessHook> procIter = hooks.iterator(); procIter.hasNext();) {
-      FundsTransferPostProcessHook proc = procIter.next();
-      proc.exec(transactions);
+    List<FundsTransferPostProcessHook> unsortedHooks = new ArrayList<FundsTransferPostProcessHook>();
+    for (final FundsTransferPostProcessHook fundTransferHook : hooks) {
+      unsortedHooks.add(fundTransferHook);
+    }
+
+    // Less priority means that it is executed before
+    List<FundsTransferPostProcessHook> sortedHooks = unsortedHooks.stream()
+        .sorted(Comparator.comparing(FundsTransferPostProcessHook::getPriority))
+        .collect(Collectors.toList());
+
+    for (final FundsTransferPostProcessHook fundTransferHook : sortedHooks) {
+      fundTransferHook.exec(transactions);
     }
   }
-
 }
