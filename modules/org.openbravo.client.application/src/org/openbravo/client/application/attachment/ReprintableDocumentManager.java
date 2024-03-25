@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2023 Openbravo SLU
+ * All portions are Copyright (C) 2023-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,12 +19,18 @@
 package org.openbravo.client.application.attachment;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Base64;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -224,13 +230,115 @@ public class ReprintableDocumentManager {
    */
   public ReprintableDocument download(ReprintableSourceDocument<?> sourceDocument,
       OutputStream outputStream) throws IOException, DocumentNotFoundException {
-    long init = System.currentTimeMillis();
     ReprintableDocument reprintableDocument = findReprintableDocument(sourceDocument);
+    download(reprintableDocument, outputStream);
+    return reprintableDocument;
+  }
+
+  /**
+   * Retrieves the data of a ReprintableDocument linked to the provided document in the specified
+   * format. If the format of the document linked to the given source document is different from the
+   * given format, then the document is tried to be transformed using a
+   * {@link ReprintableDocumentTransformer}. Otherwise the document is directly retrieved with its
+   * actual format.
+   * 
+   * @param sourceDocument
+   *          The document used as source data for the ReprintableDocument
+   * @param outputStream
+   *          outputStream where document data is provided. Code invoking this method is also
+   *          responsible of closing it.
+   * @param format
+   *          the format of the document to be downloaded
+   * 
+   * @return the ReprintableDocument linked to the source document
+   *
+   * @throws DocumentNotFoundException
+   *           if it is not possible to find the ReprintableDocument linked to the provided source
+   *           document
+   * @throws OBSecurityException
+   *           if the read access to the source document is not granted in the current context
+   *           because in such case is not allowed to access to the ReprintableDocument linked to
+   *           the source document.
+   * @throws OBException
+   *           if it is not possible to find a handler for the attachment method defined in the
+   *           ReprintableDocument attachment configuration or if the document transformation fails
+   * @throws TransformerNotFoundException
+   *           if the document needs to be transformed and there is no
+   *           {@link ReprintableDocumentTransformer} instance that can be used to do the
+   *           transformation into the given format
+   */
+  public ReprintableDocument download(ReprintableSourceDocument<?> sourceDocument,
+      OutputStream outputStream, Format format)
+      throws IOException, DocumentNotFoundException, TransformerNotFoundException {
+    ReprintableDocument reprintableDocument = findReprintableDocument(sourceDocument);
+    if (reprintableDocument.getFormat().equalsIgnoreCase(format.name())) {
+      download(reprintableDocument, outputStream);
+    } else {
+      Optional<ReprintableDocumentTransformer> transformer = getReprintableDocumentTransformer(
+          format);
+      if (transformer.isEmpty()) {
+        throw new TransformerNotFoundException(
+            "No ReprintableDocumentTransformer instance found to transform into " + format.name()
+                + " format");
+      }
+      Path transformedDocument = null;
+      Path originalDocument = null;
+      try {
+        originalDocument = download(reprintableDocument);
+        transformedDocument = transformer.get().transform(sourceDocument, originalDocument);
+        Files.copy(transformedDocument, outputStream);
+      } finally {
+        delete(originalDocument);
+        delete(transformedDocument);
+      }
+    }
+    return reprintableDocument;
+  }
+
+  private Path download(ReprintableDocument reprintableDocument) throws IOException {
+    File document = File.createTempFile("obrd-",
+        "." + reprintableDocument.getFormat().toLowerCase());
+    try (OutputStream os = new FileOutputStream(document)) {
+      download(reprintableDocument, os);
+    }
+    return document.toPath();
+  }
+
+  private void download(ReprintableDocument reprintableDocument, OutputStream outputStream)
+      throws IOException {
+    long init = System.currentTimeMillis();
     ReprintableDocumentAttachHandler handler = getHandler(reprintableDocument);
     handler.download(reprintableDocument, outputStream);
     log.trace("Reprintable document {} downloaded in {} ms", reprintableDocument.getId(),
         System.currentTimeMillis() - init);
-    return reprintableDocument;
+  }
+
+  private void delete(Path path) throws IOException {
+    if (path != null) {
+      Files.deleteIfExists(path);
+    }
+  }
+
+  /**
+   * Gets the {@link ReprintableDocumentTransformer} with more priority for the given format
+   *
+   * @param format
+   *          The format to which the document is transformed
+   *
+   * @return the transformed with more priority for the given format
+   */
+  Optional<ReprintableDocumentTransformer> getReprintableDocumentTransformer(Format format) {
+    List<ReprintableDocumentTransformer> hooks = WeldUtils.getInstancesSortedByPriority(
+        ReprintableDocumentTransformer.class, new ReprintableDocumentFormatSelector(format));
+    return hooks.isEmpty() ? Optional.empty() : Optional.of(hooks.get(0));
+  }
+
+  /**
+   * @return true if it is possible to transform reprintable documents into the given format or
+   *         false in any other case.
+   */
+  public boolean canTransformIntoFormat(Format format) {
+    return getReprintableDocumentTransformer(format).isPresent();
   }
 
   /**

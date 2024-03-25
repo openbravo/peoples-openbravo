@@ -8,7 +8,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2008-2023 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2008-2024 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  */
 package org.openbravo.erpCommon.utility.reporting.printing;
@@ -287,14 +287,13 @@ public class PrintController extends HttpSecureAppServlet {
           if (reprintableDocument.isPresent()) {
             // reprint: get the stored report and directly write it into the response
             Format format = Format.valueOf(reprintableDocument.get().getFormat().toUpperCase());
-            if (Format.PDF == format) {
-              response.setHeader("Content-disposition",
-                  "attachment" + "; filename=" + report.getFilename());
-              try (OutputStream os = response.getOutputStream()) {
-                reprintableManager.download(sourceDocument, os);
-              }
-            } else {
+            if (format != Format.PDF && !reprintableManager.canTransformIntoFormat(Format.PDF)) {
               throw new ServletException("@CODE=UnsupportedReprintDocumentFormat@");
+            }
+            response.setHeader("Content-disposition",
+                "attachment" + "; filename=" + report.getFilename());
+            try (OutputStream os = response.getOutputStream()) {
+              reprintableManager.download(sourceDocument, os, Format.PDF);
             }
           } else {
             // persist and print

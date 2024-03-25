@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Business Momentum b.v.
- * All portions are Copyright (C) 2007-2023 Openbravo SLU
+ * All portions are Copyright (C) 2007-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  Business Momentum b.v. (http://www.businessmomentum.eu).
  *************************************************************************
@@ -42,15 +42,18 @@ import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.attachment.AttachImplementationManager;
 import org.openbravo.client.application.attachment.DocumentNotFoundException;
 import org.openbravo.client.application.attachment.ReprintableDocumentManager;
+import org.openbravo.client.application.attachment.ReprintableDocumentManager.Format;
 import org.openbravo.client.application.attachment.ReprintableInvoice;
 import org.openbravo.client.application.attachment.ReprintableOrder;
 import org.openbravo.client.application.attachment.ReprintableSourceDocument;
+import org.openbravo.client.application.attachment.TransformerNotFoundException;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.client.application.report.language.ReportLanguageHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.invoice.Invoice;
@@ -181,10 +184,12 @@ public class ReportManager {
         File reprintable = new File(
             report.getTargetDirectory().toString() + '/' + report.getFilename());
         try (OutputStream outputStream = new FileOutputStream(reprintable)) {
-          reprintableManager.download(reprintableSource, outputStream);
+          reprintableManager.download(reprintableSource, outputStream, Format.PDF);
         } catch (IOException ex) {
-          throw new OBException("Error reading reprintable for document" + report.getDocumentId(),
+          throw new OBException("Error reading reprintable for document " + report.getDocumentId(),
               ex);
+        } catch (TransformerNotFoundException ex) {
+          throw new OBException(OBMessageUtils.messageBD("UnsupportedReprintDocumentFormat"));
         }
       } catch (DocumentNotFoundException dex) {
         JasperPrint jasperPrint = processReport(report, vars);

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2023 Openbravo SLU
+ * All portions are Copyright (C) 2023-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,16 +24,22 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -57,6 +63,7 @@ import org.openbravo.model.ad.utility.ReprintableDocument;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
+import org.openbravo.test.base.Issue;
 import org.openbravo.test.base.TestConstants;
 
 /**
@@ -67,6 +74,7 @@ public class ReprintableDocumentTest extends WeldBaseTest {
   private static final String DISABLED = "disabled";
   private static final String ENABLED = "enabled";
   private static final String DATA = "<output>hello<output/>";
+  private static final String TRANSFORMED_DATA = "hello";
   private static final String INVALID_CONFIG_MSG = "The attachment type is not supported by the selected attachment method";
 
   @Inject
@@ -304,6 +312,76 @@ public class ReprintableDocumentTest extends WeldBaseTest {
     }
   }
 
+  @Test
+  @Issue("54971")
+  public void uploadAndDownloadTransformedReprintableDocument()
+      throws IOException, DocumentNotFoundException, TransformerNotFoundException {
+    InputStream inputStream = new ByteArrayInputStream(DATA.getBytes(StandardCharsets.UTF_8));
+    ReprintableSourceDocument<?> sourceDocument = ReprintableSourceDocument
+        .newSourceDocument(TEST_ORDER_ID, DocumentType.ORDER);
+    Order order = OBDal.getInstance().get(Order.class, TEST_ORDER_ID);
+
+    ReprintableDocument document = reprintableDocumentManager.upload(inputStream, Format.XML,
+        sourceDocument);
+    assertThat(document.getFormat(), equalTo(Format.XML.name()));
+    assertThat(document.getOrder().getId(), equalTo(order.getId()));
+    assertThat(document.getClient().getId(), equalTo(order.getClient().getId()));
+    assertThat(document.getOrganization().getId(), equalTo(order.getOrganization().getId()));
+    assertThat(document.getName(), equalTo("1000014.xml"));
+    OBDal.getInstance().flush();
+
+    String downloadedDocument = download(sourceDocument, Format.PDF, getTransformer());
+    assertThat(downloadedDocument, equalTo(TRANSFORMED_DATA));
+  }
+
+  @Test
+  @Issue("54971")
+  public void cannotTransformWhithoutATransformer() {
+    InputStream inputStream = new ByteArrayInputStream(DATA.getBytes(StandardCharsets.UTF_8));
+    ReprintableSourceDocument<?> sourceDocument = ReprintableSourceDocument
+        .newSourceDocument(TEST_ORDER_ID, DocumentType.ORDER);
+    Order order = OBDal.getInstance().get(Order.class, TEST_ORDER_ID);
+
+    ReprintableDocument document = reprintableDocumentManager.upload(inputStream, Format.XML,
+        sourceDocument);
+    assertThat(document.getFormat(), equalTo(Format.XML.name()));
+    assertThat(document.getOrder().getId(), equalTo(order.getId()));
+    assertThat(document.getClient().getId(), equalTo(order.getClient().getId()));
+    assertThat(document.getOrganization().getId(), equalTo(order.getOrganization().getId()));
+    assertThat(document.getName(), equalTo("1000014.xml"));
+    OBDal.getInstance().flush();
+
+    assertThrows(TransformerNotFoundException.class,
+        () -> download(sourceDocument, Format.PDF, null));
+  }
+
+  @Test
+  @Issue("54971")
+  public void checkIfCanTransform() {
+    ReprintableDocumentManager rdm = spy(ReprintableDocumentManager.class);
+    ReprintableDocumentTransformer transformer = getTransformer();
+
+    when(rdm.getReprintableDocumentTransformer(Format.PDF)).thenReturn(Optional.of(transformer));
+    when(rdm.getReprintableDocumentTransformer(Format.XML)).thenReturn(Optional.empty());
+
+    assertThat(rdm.canTransformIntoFormat(Format.PDF), equalTo(true));
+    assertThat(rdm.canTransformIntoFormat(Format.XML), equalTo(false));
+  }
+
+  private ReprintableDocumentTransformer getTransformer() {
+    ReprintableDocumentTransformer transformer = mock(ReprintableDocumentTransformer.class);
+    try {
+      Path transformedFile = createTmpFile();
+      try (FileWriter writer = new FileWriter(transformedFile.toFile())) {
+        writer.write(TRANSFORMED_DATA);
+      }
+      when(transformer.transform(any(), any())).thenReturn(transformedFile);
+    } catch (IOException ex) {
+      throw new OBException(ex);
+    }
+    return transformer;
+  }
+
   private AttachmentConfig createAttachmentConfiguration(String clientId,
       AttachmentMethod attachmentMethod) {
     try {
@@ -362,13 +440,34 @@ public class ReprintableDocumentTest extends WeldBaseTest {
 
   private String download(ReprintableSourceDocument<?> sourceDocument)
       throws IOException, DocumentNotFoundException {
-    Path file = Files.createTempFile(null, null);
+    Path file = createTmpFile();
     try (OutputStream os = new FileOutputStream(file.toFile())) {
       reprintableDocumentManager.download(sourceDocument, os);
     }
     try (FileInputStream is = new FileInputStream(file.toFile())) {
       return new String(is.readAllBytes(), StandardCharsets.UTF_8);
     }
+  }
+
+  private String download(ReprintableSourceDocument<?> sourceDocument, Format format,
+      ReprintableDocumentTransformer transformer)
+      throws IOException, DocumentNotFoundException, TransformerNotFoundException {
+    ReprintableDocumentManager rdm = spy(ReprintableDocumentManager.class);
+    when(rdm.getReprintableDocumentTransformer(format))
+        .thenReturn(Optional.ofNullable(transformer));
+    Path file = createTmpFile();
+    try (OutputStream os = new FileOutputStream(file.toFile())) {
+      rdm.download(sourceDocument, os, format);
+    }
+    try (FileInputStream is = new FileInputStream(file.toFile())) {
+      return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+    }
+  }
+
+  private Path createTmpFile() throws IOException {
+    Path file = Files.createTempFile(null, null);
+    file.toFile().deleteOnExit();
+    return file;
   }
 
   private void setReprintDocuments(String orgId, String status) {
