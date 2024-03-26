@@ -46,7 +46,7 @@ public class UnboxProcessor extends ReferencedInventoryProcessor {
   private boolean unboxToIndividualItems;
 
   // Every RIs selected and, if unboxToIndividualItems, any RI in the selected storage details
-  private final Set<String> affectedRefInventoryIds = new HashSet<>();
+  private Set<String> affectedRefInventoryIds = new HashSet<>();
 
   @Deprecated
   public UnboxProcessor(final ReferencedInventory referencedInventory,
@@ -76,6 +76,23 @@ public class UnboxProcessor extends ReferencedInventoryProcessor {
 
   private void setAffectedRefInventoryIds(final JSONArray selectedStorageDetails,
       JSONArray selectedRIs) throws JSONException {
+    this.affectedRefInventoryIds = (Set<String>) calculateAffectedRefInventoryIds(
+        selectedStorageDetails, unboxToIndividualItems, selectedRIs);
+  }
+
+  /**
+   * Calculates all the affected referenced inventories by the user selection.
+   * 
+   * In Unbox To Individual Items all the parent RIs of the selected storage details might be
+   * potentially affected by the unbox process.
+   * 
+   * In Unbox to HU then only the selected RIs are affected or, exceptionally and alternatively, any
+   * immediate nested RIs if outermost RI is selected
+   */
+  public static Collection<String> calculateAffectedRefInventoryIds(
+      final JSONArray selectedStorageDetails, final boolean unboxToIndividualItems,
+      JSONArray selectedRIs) throws JSONException {
+    final Set<String> affectedRefInventoryIds = new HashSet<>();
     // Selected RI or, exceptionally and alternatively, immediate nested RIs if outermost RI
     for (int i = 0; selectedRIs != null && i < selectedRIs.length(); i++) {
       final String riId = selectedRIs.getJSONObject(i).getString(GridJS.ID);
@@ -105,9 +122,11 @@ public class UnboxProcessor extends ReferencedInventoryProcessor {
         }
       }
     }
+
+    return affectedRefInventoryIds;
   }
 
-  private Collection<String> getImmediateNestedRefInventories(final String refInventoryId) {
+  private static Collection<String> getImmediateNestedRefInventories(final String refInventoryId) {
     //@formatter:off
     final String hql = "select ri.id "
                      + "from MaterialMgmtReferencedInventory ri "
@@ -125,6 +144,13 @@ public class UnboxProcessor extends ReferencedInventoryProcessor {
   }
 
   private ReferencedInventory getSelectedReferencedInventory(final StorageDetail storageDetail) {
+    return getSelectedReferencedInventory(storageDetail, unboxToIndividualItems,
+        affectedRefInventoryIds);
+  }
+
+  public static final ReferencedInventory getSelectedReferencedInventory(
+      final StorageDetail storageDetail, boolean unboxToIndividualItems,
+      final Collection<String> affectedRefInventoryIds) {
     if (unboxToIndividualItems) {
       return null; // Extract the stock outside any RI
     }
@@ -155,7 +181,16 @@ public class UnboxProcessor extends ReferencedInventoryProcessor {
 
   @Override
   protected int updateParentReferenceInventory() {
-    return removeParentRefInventoryIfEmpty();
+    return removeParentRefInventoryIfEmpty(unboxToIndividualItems, affectedRefInventoryIds);
+  }
+
+  /**
+   * Updates the parent referenced inventory of the affected referenced inventories.
+   */
+  public static int updateParentReferenceInventory(boolean isUnboxToIndividualItems,
+      Collection<String> affectedRefInventoryIdCollection) {
+    return removeParentRefInventoryIfEmpty(isUnboxToIndividualItems,
+        affectedRefInventoryIdCollection);
   }
 
   /**
@@ -165,14 +200,15 @@ public class UnboxProcessor extends ReferencedInventoryProcessor {
    * If unboxToIndividualItems do it only for referenced inventories that are empty after the
    * unboxing.
    */
-  private int removeParentRefInventoryIfEmpty() {
+  private static int removeParentRefInventoryIfEmpty(boolean isUnboxToIndividualItems,
+      Collection<String> affectedRefInventoryIdCollection) {
     //@formatter:off
     final String hql = "update MaterialMgmtReferencedInventory ri "
                      + "set ri.parentRefInventory.id = null "
                      // Affected referenced inventories..
                      + "where ri.id in (:affectedRefInventoryIds) "
                      // ...that have no stock remaining in unboxToIndividualItems
-                     + (unboxToIndividualItems 
+                     + (isUnboxToIndividualItems 
                          ? " and not exists (select 1 "
                             + "             from MaterialMgmtStorageDetail sd "
                             + "             where sd.referencedInventory.id = ri.id) "
@@ -181,7 +217,7 @@ public class UnboxProcessor extends ReferencedInventoryProcessor {
     return OBDal.getInstance()
         .getSession()
         .createQuery(hql)
-        .setParameterList("affectedRefInventoryIds", affectedRefInventoryIds)
+        .setParameterList("affectedRefInventoryIds", affectedRefInventoryIdCollection)
         .executeUpdate();
   }
 

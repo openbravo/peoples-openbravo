@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -275,11 +275,12 @@ public abstract class ReferencedInventoryProcessor {
     }
   }
 
-  protected StorageDetail getStorageDetail(final JSONObject storageDetailJS) throws JSONException {
+  protected static StorageDetail getStorageDetail(final JSONObject storageDetailJS)
+      throws JSONException {
     return OBDal.getInstance().get(StorageDetail.class, getStorageDetailId(storageDetailJS));
   }
 
-  private String getStorageDetailId(JSONObject jsStorageDetail) throws JSONException {
+  private static String getStorageDetailId(JSONObject jsStorageDetail) throws JSONException {
     return jsStorageDetail.getString(GridJS.ID);
   }
 

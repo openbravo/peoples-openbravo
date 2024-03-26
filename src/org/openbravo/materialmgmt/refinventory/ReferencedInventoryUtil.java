@@ -175,6 +175,31 @@ public class ReferencedInventoryUtil {
   }
 
   /**
+   * Gets the innermost referenced inventory for the attribute set instance. It might be null when
+   * the stock is not inside a referenced inventory
+   * 
+   * This method uses the tree structure available in {@link AttributeSetInstance} instead of taking
+   * it directly from the storage detail, as it does the
+   * {@link #getInnermostRefInventory(StorageDetail)} method.
+   * 
+   * Use this method if the referenced inventory linked to the storage detail might not be accurate
+   * during the transaction (for example during an unboxing activity).
+   * 
+   */
+  public static final ReferencedInventory getInnermostRefInventory(
+      final AttributeSetInstance attributeSetInstance) {
+    try {
+      AttributeSetInstance innerMostASI = attributeSetInstance;
+      while (innerMostASI.getParentAttributeSetInstance().getReferencedInventory() != null) {
+        innerMostASI = innerMostASI.getParentAttributeSetInstance();
+      }
+      return innerMostASI.getReferencedInventory();
+    } catch (NullPointerException notPartOfAReferencedInventory) {
+      return null;
+    }
+  }
+
+  /**
    * This method is used only for unboxing activities. It returns the right attribute set instance
    * ready to associate with the storage detail.
    * 
@@ -454,6 +479,7 @@ public class ReferencedInventoryUtil {
 
   /**
    * Returns a ScrollableResults of storage details included in the given referenced inventory id
+   * ordered from the innermost RIs to the outermost.
    * 
    * @param refInventoryId
    *          return the stock (items) included in this referenced inventory id
@@ -472,7 +498,8 @@ public class ReferencedInventoryUtil {
                 + " from MaterialMgmtReferencedInventory ri "
                 + " where ri.id = :refInventoryId "
                 + ") "
-            : " :refInventoryId ");
+            : " :refInventoryId ") 
+        + "order by sd.referencedInventory._computedColumns.nestedReferencedInventoriesCount asc ";
     // @formatter:on
     final Session session = OBDal.getInstance().getSession();
     final Query<StorageDetail> sdQuery = session.createQuery(hql, StorageDetail.class);
