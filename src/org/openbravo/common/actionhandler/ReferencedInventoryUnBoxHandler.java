@@ -27,10 +27,13 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryProcessor.GridJS;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryProcessor.StorageDetailJS;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
 import org.openbravo.materialmgmt.refinventory.UnboxProcessor;
+import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 
 /**
@@ -42,11 +45,41 @@ public class ReferencedInventoryUnBoxHandler extends ReferencedInventoryHandler 
 
   @Override
   protected void validateSelectionOrThrowException() throws Exception {
-    if (getSelectedReferencedInventories().length() > 0
-        && getSelectedStorageDetails().length() > 0) {
+    final JSONArray selectedRIsJS = getSelectedReferencedInventories();
+    final JSONArray selectedStorageDetailsJS = getSelectedStorageDetails();
+    if (selectedRIsJS.length() > 0 && selectedStorageDetailsJS.length() > 0) {
       throw new OBException("@UnboxRIsAndStockAtTheSameTimeError@");
     }
+    validateNotNestedRIsAreSelected(selectedRIsJS);
     super.validateSelectionOrThrowException();
+  }
+
+  /**
+   * Validates it is not possible to select at the same time a handling unit and any of its parents
+   */
+  public static void validateNotNestedRIsAreSelected(final JSONArray selectedRIsJS)
+      throws JSONException {
+    final Collection<String> selectedRIs = new HashSet<>();
+    for (int i = 0; i < selectedRIsJS.length(); i++) {
+      selectedRIs.add(selectedRIsJS.getJSONObject(i).getString(GridJS.ID));
+    }
+
+    for (final String selectedRIId : selectedRIs) {
+      final ReferencedInventory selectedRI = OBDal.getInstance()
+          .getProxy(ReferencedInventory.class, selectedRIId);
+
+      ReferencedInventoryUtil.getParentReferencedInventories(selectedRI, false)
+          .stream()
+          .map(ReferencedInventory::getId)
+          .filter(selectedRIs::contains)
+          .findAny()
+          .ifPresent(match -> {
+            throw new OBException(OBMessageUtils.getI18NMessage("UnboxToRIParentTreeSelectionError",
+                new String[] { OBDal.getInstance()
+                    .getProxy(ReferencedInventory.class, match)
+                    .getIdentifier() }));
+          });
+    }
   }
 
   @Override
