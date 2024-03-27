@@ -45,17 +45,22 @@ public class ReferencedInventoryBoxHandler extends ReferencedInventoryHandler {
 
   @Override
   protected void validateSelectionOrThrowException() throws Exception {
-    throwExceptionIfNestedRIsOrEmptyRIsAreSelected();
+    throwExceptionIfInnerRIsOrEmptyRIsAreSelected();
     throwExceptionIfContentRestrictionsAreNotRespected();
     super.validateSelectionOrThrowException();
   }
 
-  private void throwExceptionIfNestedRIsOrEmptyRIsAreSelected() throws JSONException {
-    final JSONArray selectedRIs = getSelectedReferencedInventories();
+  private void throwExceptionIfInnerRIsOrEmptyRIsAreSelected() throws JSONException {
+    throwExceptionIfInnerRIsOrEmptyRIsAreSelected(getSelectedReferencedInventories());
+  }
+
+  public static void throwExceptionIfInnerRIsOrEmptyRIsAreSelected(
+      final JSONArray selectedReferencedInventories) throws JSONException {
     final List<String> alreadyNestedRIsSelected = new ArrayList<>();
     final List<String> emptyRIsSelected = new ArrayList<>();
-    for (int i = 0; selectedRIs != null && i < selectedRIs.length(); i++) {
-      final String riId = selectedRIs.getJSONObject(i).getString(GridJS.ID);
+    for (int i = 0; selectedReferencedInventories != null
+        && i < selectedReferencedInventories.length(); i++) {
+      final String riId = selectedReferencedInventories.getJSONObject(i).getString(GridJS.ID);
       final ReferencedInventory ri = OBDal.getInstance().getProxy(ReferencedInventory.class, riId);
       if (ri.getParentRefInventory() != null) {
         alreadyNestedRIsSelected.add(ri.getIdentifier());
@@ -75,14 +80,21 @@ public class ReferencedInventoryBoxHandler extends ReferencedInventoryHandler {
   }
 
   private void throwExceptionIfContentRestrictionsAreNotRespected() throws JSONException {
+    throwExceptionIfContentRestrictionsAreNotRespected(getReferencedInventory(),
+        getSelectedStorageDetails().length(), getSelectedReferencedInventories().length());
+  }
+
+  public static void throwExceptionIfContentRestrictionsAreNotRespected(
+      final ReferencedInventory referencedInventory, int selectedStorageDetailsCount,
+      int selectedReferencedInventoriesCount) {
     final ContentRestriction contentRestriction = ContentRestriction
-        .getByValue(getReferencedInventory().getReferencedInventoryType().getContentRestriction());
+        .getByValue(referencedInventory.getReferencedInventoryType().getContentRestriction());
     if (ContentRestriction.ONLY_ITEMS.value.equals(contentRestriction.value)
-        && getSelectedReferencedInventories().length() > 0) {
+        && selectedReferencedInventoriesCount > 0) {
       throw new OBException("@RIBoxRIsContentRestrictionError@");
     }
     if (ContentRestriction.ONLY_REFINVENTORIES.value.equals(contentRestriction.value)
-        && getSelectedStorageDetails().length() > 0) {
+        && selectedStorageDetailsCount > 0) {
       throw new OBException("@RIBoxItemsContentRestrictionError@");
     }
   }
