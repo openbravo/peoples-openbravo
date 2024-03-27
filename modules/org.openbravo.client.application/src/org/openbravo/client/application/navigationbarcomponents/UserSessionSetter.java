@@ -34,9 +34,8 @@ import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.service.db.DalConnectionProvider;
 
 /**
- * ugly inheriting from HttpSecureAppServlet because it provides a number of methods... This class
- * was originally a private extension in UserInfoWidgetActionHandler. It should only be used in
- * places where we want to reset the Session because of a change of Role
+ * This class was originally a private extension in UserInfoWidgetActionHandler. It should only be
+ * used in places where we want to reset the Session because of a change of Role
  */
 public class UserSessionSetter extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -49,6 +48,10 @@ public class UserSessionSetter extends HttpSecureAppServlet {
   // stored in Session
   private static final String CURRENT_APPLICATION_MODE = "#APPLICATION_MODE";
 
+  /**
+   * Reset the current Session and updates its data with the given parameters. This call is only
+   * intended for requests where the Role changes
+   */
   public void resetSession(HttpServletRequest request, boolean isDefault, String userId,
       String roleId, String clientId, String organizationId, String languageId, String warehouseId,
       String defaultRoleProperty, boolean setOnlyRole) throws Exception {
