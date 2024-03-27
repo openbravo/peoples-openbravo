@@ -105,6 +105,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="SCANFILTERPRIORITY" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[None]]></default>
+        <onCreateDefault><![CDATA['None']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_EXTBPCONFFIL_CLIENT_FK">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -129,5 +133,7 @@
       <check name="C_EXTBPCONFFIL_SORT_CH"><![CDATA[ALLOWSORTING IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFFIL_TRMSG_CH"><![CDATA[ISTRANSLATABLE = 'N' OR AD_MESSAGE_ID IS NOT NULL AND ISTRANSLATABLE = 'Y']]></check>
       <check name="C_EXTBPCONFFIL_TXTMSG_CH"><![CDATA[TEXT IS NOT NULL OR ISTRANSLATABLE = 'Y']]></check>
+      <check name="CHCK_SCNPRTY_1"><![CDATA[CHCK_SCNPRTY_1() <= 1]]></check>
+      <check name="CHCK_SCNPRTY_2"><![CDATA[CHCK_SCNPRTY_2() <= 1]]></check>
     </table>
   </database>
