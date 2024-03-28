@@ -51,7 +51,8 @@ public class ReferencedInventorySequenceTest extends ReferencedInventoryTest {
         null, ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, true);
 
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType(sequence.getOrganization(), SequenceType.GLOBAL, sequence);
+        .createReferencedInventoryType(sequence.getOrganization(), SequenceType.GLOBAL, sequence,
+            ReferencedInventoryTestUtils.CONTENTRESTRICTION_ONLY_ITEMS);
     OBDal.getInstance().save(refInvType);
     Long currentSequenceNumber = sequence.getNextAssignedNumber();
 
@@ -143,7 +144,8 @@ public class ReferencedInventorySequenceTest extends ReferencedInventoryTest {
 
     // Create Referenced Inventory Type with Sequence Type as Per Organization
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType(org, SequenceType.PER_ORGANIZATION, null);
+        .createReferencedInventoryType(org, SequenceType.PER_ORGANIZATION, null,
+            ReferencedInventoryTestUtils.CONTENTRESTRICTION_ONLY_ITEMS);
 
     // Create Referenced Inventory Type Organization Sequence with Parent Sequence created Above.
     ReferencedInventoryTestUtils.createReferencedInventoryTypeOrgSeq(refInvType, org,

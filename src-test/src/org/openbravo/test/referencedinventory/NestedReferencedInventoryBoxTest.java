@@ -55,7 +55,8 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
   private void createReferencedInventory() throws Exception {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.NONE, null);
+            SequenceType.NONE, null,
+            ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
     final ReferencedInventory refInv = ReferencedInventoryTestUtils
         .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
     final JSONArray selectedStorageDetailsJS = new JSONArray();

@@ -62,7 +62,8 @@ public class ReferencedInventoryTypeOrgSequenceTest extends ReferencedInventoryT
     // Create Referenced Inventory Type with Sequence Type as Per Organization
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.PER_ORGANIZATION, parentSequence);
+            SequenceType.PER_ORGANIZATION, parentSequence,
+            ReferencedInventoryTestUtils.CONTENTRESTRICTION_ONLY_ITEMS);
     OBDal.getInstance().save(refInvType);
 
     ReferencedInventoryTestUtils.createReferencedInventoryTypeOrgSeq(refInvType,
@@ -113,7 +114,8 @@ public class ReferencedInventoryTypeOrgSequenceTest extends ReferencedInventoryT
         .createReferencedInventoryType(
             OBDal.getInstance()
                 .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_MAIN_ORG_ID),
-            SequenceType.PER_ORGANIZATION, parentSequence);
+            SequenceType.PER_ORGANIZATION, parentSequence,
+            ReferencedInventoryTestUtils.CONTENTRESTRICTION_ONLY_ITEMS);
     OBDal.getInstance().save(refInvType);
 
     // Create Referenced Inventory Type Organization Sequence with Parent Sequence created above in

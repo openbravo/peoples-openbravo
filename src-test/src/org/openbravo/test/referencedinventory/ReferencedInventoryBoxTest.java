@@ -83,7 +83,7 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
       final boolean isForceAttribute) throws Exception {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.NONE, null);
+            SequenceType.NONE, null, ReferencedInventoryTestUtils.CONTENTRESTRICTION_ONLY_ITEMS);
     final ReferencedInventory refInv = ReferencedInventoryTestUtils
         .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 

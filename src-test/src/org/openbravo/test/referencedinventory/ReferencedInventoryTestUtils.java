@@ -96,6 +96,10 @@ public class ReferencedInventoryTestUtils {
   static final String PRODUCT_RAWMATERIAL_LOTATTRIBUTE = "4028E6C72959682B01295ADC1AD40222";
   static final String ATTRIBUTE_RAWMATERIAL_LOT = "4028E6C72959682B01295ECFE4C60272";
 
+  public static final String CONTENTRESTRICTION_ONLY_ITEMS = "I";
+  public static final String CONTENTRESTRICTION_ONLY_HU = "RI";
+  public static final String CONTENTRESTRICTION_BOTH_ITEMS_OR_HU = "IRI";
+
   static void initializeReservationsPreferenceIfDoesnotExist() {
     if (!existsReservationsPreference()) {
       createReservationsPreference();
@@ -165,8 +169,8 @@ public class ReferencedInventoryTestUtils {
     OBDal.getInstance().flush();
   }
 
-  public static ReferencedInventoryType createReferencedInventoryType(Organization org,
-      SequenceType sequenceType, Sequence sequence) {
+  static ReferencedInventoryType createReferencedInventoryType(Organization org,
+      SequenceType sequenceType, Sequence sequence, String contentRestriction) {
     final ReferencedInventoryType refInvType = OBProvider.getInstance()
         .get(ReferencedInventoryType.class);
     refInvType.setClient(OBContext.getOBContext().getCurrentClient());
@@ -175,6 +179,7 @@ public class ReferencedInventoryTestUtils {
     refInvType.setSequence(sequence);
     refInvType.setName(UUID.randomUUID().toString());
     refInvType.setShared(true);
+    refInvType.setContentRestriction(contentRestriction);
     OBDal.getInstance().save(refInvType);
     assertThat("Referenced Inventory Type is successfully created", refInvType, notNullValue());
     return refInvType;

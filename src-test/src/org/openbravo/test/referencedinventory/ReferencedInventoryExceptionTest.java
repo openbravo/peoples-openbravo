@@ -54,7 +54,7 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
   public void testNoStorageDetailsProvidedToBox() throws Exception {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.NONE, null);
+            SequenceType.NONE, null, ReferencedInventoryTestUtils.CONTENTRESTRICTION_ONLY_ITEMS);
     final ReferencedInventory refInv = ReferencedInventoryTestUtils
         .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 
@@ -68,7 +68,7 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
   public void testNegativeStorageDetailProvidedToBox() throws Exception {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.NONE, null);
+            SequenceType.NONE, null, ReferencedInventoryTestUtils.CONTENTRESTRICTION_ONLY_ITEMS);
     final ReferencedInventory refInv = ReferencedInventoryTestUtils
         .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 
@@ -89,7 +89,7 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
   public void testZeroQtyStorageDetailProvidedToBox() throws Exception {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.NONE, null);
+            SequenceType.NONE, null, ReferencedInventoryTestUtils.CONTENTRESTRICTION_ONLY_ITEMS);
     final ReferencedInventory refInv = ReferencedInventoryTestUtils
         .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 
@@ -154,7 +154,7 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
   public void testBoxMandatoryNewStorageBinParameter() throws Exception {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.NONE, null);
+            SequenceType.NONE, null, ReferencedInventoryTestUtils.CONTENTRESTRICTION_ONLY_ITEMS);
     final ReferencedInventory refInv = ReferencedInventoryTestUtils
         .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 
