@@ -135,7 +135,8 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
       OBQuery<Product> productQuery = OBDal.getInstance()
           .createQuery(Product.class, hql)
           .setFilterOnReadableOrganization(false)
-          .setFilterOnActive(false);
+          .setFilterOnActive(false)
+          .setFetchSize(5000);
       if (StringUtils.isNotBlank(strChValueId)) {
         productQuery.setNamedParameter("chvid", strChValueId);
       }
@@ -150,7 +151,8 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
             updateProductTrl(product, languages);
           }
 
-          if ((i % 100) == 0) {
+          if ((i % 10000) == 0) {
+            log4j.info("Products updated: " + (i + 1));
             OBDal.getInstance().flush();
             OBDal.getInstance().getSession().clear();
           }
@@ -167,6 +169,8 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
 
   private void updateProduct(Product product) {
     StringBuilder strChDesc = new StringBuilder();
+    StringBuilder strChIdDesc = new StringBuilder();
+
     //@formatter:off
     String hql = " as pch "
                + " where pch.product.id = :productId "
@@ -181,8 +185,10 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
     for (ProductCharacteristic pch : pchQuery.list()) {
       if (StringUtils.isNotBlank(strChDesc.toString())) {
         strChDesc.append(", ");
+        strChIdDesc.append(", ");
       }
       strChDesc.append(pch.getCharacteristic().getName() + ":");
+      strChIdDesc.append(pch.getCharacteristic().getId() + ":");
       //@formatter:off
       hql = " as pchv "
           + " where pchv.characteristic.id = :chId "
@@ -197,9 +203,11 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
 
       for (ProductCharacteristicValue pchv : pchvQuery.list()) {
         strChDesc.append(" " + pchv.getCharacteristicValue().getName());
+        strChIdDesc.append(" " + pchv.getCharacteristicValue().getId());
       }
     }
     product.setCharacteristicDescription(strChDesc.toString());
+    product.setCharacteristicIdDesc(strChIdDesc.toString());
   }
 
   private void updateProductTrl(Product product, List<Language> languages) {
