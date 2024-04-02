@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.equalTo;
 import java.math.BigDecimal;
 
 import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
@@ -50,33 +51,49 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
   }
 
   @Test
+  public void testBoxAddProduct() throws Exception {
+    createReferencedInventoryAddProduct();
+  }
+
+  @Test
   public void testNestedBox() throws Exception {
     createNestedReferencedInventory();
+  }
+
+  @Test
+  public void testNestedBoxAddProduct() throws Exception {
+    createNestedReferencedInventoryAddProduct();
   }
 
   /**
    * create referenced inventory and do boxing transaction
    */
 
-  private void createReferencedInventory() throws Exception {
-    final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.NONE, null,
-            ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
-    final ReferencedInventory refInv = ReferencedInventoryTestUtils
-        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
+  private ReferencedInventory createReferencedInventory() throws Exception {
+    final String toBinId = BINS[0];
+
+    final ReferencedInventory refInv = createRI(
+        ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+
     JSONArray selectedStorageDetailsJS = new JSONArray();
-    String toBinId = BINS[0];
 
     final Product firstProduct = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[0][0]);
-    final Product secondProduct = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[1][0]);
     selectedStorageDetailsJS.put(addProductInBox(refInv, firstProduct, PRODUCTS[0][1]).get(0));
 
-    // Store second Product Storage Detail with Attribute set instance to be added later on
-    JSONArray secondProductSD = new JSONArray();
-    secondProductSD.put(addProductInBox(refInv, secondProduct, PRODUCTS[1][1]).get(0));
-    selectedStorageDetailsJS.put(secondProductSD.get(0));
+    final Product secondProduct = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[1][0]);
+    selectedStorageDetailsJS.put(addProductInBox(refInv, secondProduct, PRODUCTS[1][1]).get(0));
 
+    validateRIAfterBoxTransaction(refInv, selectedStorageDetailsJS, toBinId, 2, 2L);
+    return refInv;
+  }
+
+  /**
+   * validate referenced inventory after box transaction
+   */
+
+  private void validateRIAfterBoxTransaction(final ReferencedInventory refInv,
+      JSONArray selectedStorageDetailsJS, String toBinId, Integer noOfLines, Long uniqueItemCount)
+      throws JSONException, Exception {
     InternalMovement boxMovement = new BoxProcessor(refInv, selectedStorageDetailsJS, toBinId)
         .createAndProcessGoodsMovement();
 
@@ -84,22 +101,44 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
     OBDal.getInstance().refresh(refInv);
 
     assertsGoodsMovementIsProcessed(boxMovement);
-    assertsGoodsMovementNumberOfLines(boxMovement, 2);
-    assertThat("Nested Referenced Inventory does not have Unique Items Count equal to 2",
-        refInv.getUniqueItemsCount(), equalTo(2L));
+    if (noOfLines != null) {
+      assertsGoodsMovementNumberOfLines(boxMovement, noOfLines);
+    }
+    if (uniqueItemCount != null) {
+      assertThat("Nested Referenced Inventory does not have Unique Items Count equal to 2",
+          refInv.getUniqueItemsCount(), equalTo(uniqueItemCount));
+    }
+  }
 
-    // Add product in with attribute set instance which is already present in Box, added during
-    // previous Box transaction
+  /**
+   * create referenced inventory and do boxing transaction
+   */
+
+  private void createReferencedInventoryAddProduct() throws Exception {
+
+    final String toBinId = BINS[0];
+
+    final ReferencedInventory refInv = createRI(
+        ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+
+    JSONArray selectedStorageDetailsJS = new JSONArray();
+
+    // Store first Product Storage Detail without Attribute set instance to be added later on
+    final Product firstProduct = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[0][0]);
+    JSONArray firstProductSD = new JSONArray();
+    firstProductSD.put(addProductInBox(refInv, firstProduct, PRODUCTS[0][1]).get(0));
+    selectedStorageDetailsJS.put(firstProductSD.get(0));
+
+    final Product secondProduct = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[1][0]);
+    selectedStorageDetailsJS.put(addProductInBox(refInv, secondProduct, PRODUCTS[1][1]).get(0));
+
+    validateRIAfterBoxTransaction(refInv, selectedStorageDetailsJS, toBinId, 2, 2L);
+
+    // Add product in without attribute set instance which is already present in Box, added during
+    // previous Box transaction in the referenced inventory
     selectedStorageDetailsJS = new JSONArray();
-    selectedStorageDetailsJS.put(secondProductSD.get(0));
-    boxMovement = new BoxProcessor(refInv, selectedStorageDetailsJS, toBinId)
-        .createAndProcessGoodsMovement();
-    OBDal.getInstance().refresh(boxMovement);
-    OBDal.getInstance().refresh(refInv);
-
-    assertsGoodsMovementIsProcessed(boxMovement);
-    assertThat("Nested Referenced Inventory does not have Unique Items Count equal to 2",
-        refInv.getUniqueItemsCount(), equalTo(2L));
+    selectedStorageDetailsJS.put(firstProductSD.get(0));
+    validateRIAfterBoxTransaction(refInv, selectedStorageDetailsJS, toBinId, 1, 2L);
 
   }
 
@@ -108,41 +147,63 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
    */
 
   private void createNestedReferencedInventory() throws Exception {
-    final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.NONE, null,
-            ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
-    final ReferencedInventory refInv = ReferencedInventoryTestUtils
-        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
-    JSONArray selectedStorageDetailsJS = new JSONArray();
-    String toBinId = BINS[0];
 
-    final Product firstProduct = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[0][0]);
-    final Product secondProduct = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[1][0]);
-    selectedStorageDetailsJS.put(addProductInBox(refInv, firstProduct, PRODUCTS[0][1]).get(0));
-    selectedStorageDetailsJS.put(addProductInBox(refInv, secondProduct, PRODUCTS[1][1]).get(0));
-
-    InternalMovement boxMovement = new BoxProcessor(refInv, selectedStorageDetailsJS, toBinId)
-        .createAndProcessGoodsMovement();
-
-    OBDal.getInstance().refresh(boxMovement);
-    OBDal.getInstance().refresh(refInv);
-
-    assertsGoodsMovementIsProcessed(boxMovement);
-    assertsGoodsMovementNumberOfLines(boxMovement, 2);
-    assertThat("Nested Referenced Inventory does not have Unique Items Count equal to 2",
-        refInv.getUniqueItemsCount(), equalTo(2L));
-
+    final String toBinId = BINS[0];
+    final ReferencedInventory refInv = createReferencedInventory();
     // Create a nested Referenced Inventory
-    final StorageDetail storageDetail = refInv.getMaterialMgmtStorageDetailList().get(0);
-
     final ReferencedInventory refInvNested = ReferencedInventoryTestUtils.createReferencedInventory(
         ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInv.getReferencedInventoryType());
-    final JSONArray storageDetailsJS = ReferencedInventoryTestUtils
-        .getStorageDetailsToBoxJSArray(storageDetail, BigDecimal.ONE);
 
-    new BoxProcessor(refInvNested, storageDetailsJS, storageDetail.getStorageBin().getId())
-        .createAndProcessGoodsMovement();
+    final JSONArray storageDetailsForNestedRI = new JSONArray();
+    for (StorageDetail sd : refInv.getMaterialMgmtStorageDetailList()) {
+      storageDetailsForNestedRI.put(
+          ReferencedInventoryTestUtils.getStorageDetailsToBoxJSArray(sd, BigDecimal.ONE).get(0));
+    }
+    validateRIAfterBoxTransaction(refInvNested, storageDetailsForNestedRI, toBinId, 2, 2L);
+  }
+
+  /**
+   * create referenced inventory and do boxing transaction
+   */
+
+  private void createNestedReferencedInventoryAddProduct() throws Exception {
+
+    final String toBinId = BINS[0];
+
+    JSONArray selectedStorageDetailsJS = new JSONArray();
+
+    final ReferencedInventory refInv = createRI(
+        ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+
+    // Store first Product Storage Detail without Attribute set instance to be added later on
+    final Product firstProduct = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[0][0]);
+    JSONArray firstProductSD = new JSONArray();
+    firstProductSD.put(addProductInBox(refInv, firstProduct, PRODUCTS[0][1]).get(0));
+    selectedStorageDetailsJS.put(firstProductSD.get(0));
+
+    final Product secondProduct = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[1][0]);
+    selectedStorageDetailsJS.put(addProductInBox(refInv, secondProduct, PRODUCTS[1][1]).get(0));
+
+    validateRIAfterBoxTransaction(refInv, selectedStorageDetailsJS, toBinId, 2, 2L);
+
+    // create nested referenced inventory
+
+    final ReferencedInventory refInvNested = createRI(
+        ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+
+    final JSONArray storageDetailsForNestedRI = new JSONArray();
+    for (StorageDetail sd : refInv.getMaterialMgmtStorageDetailList()) {
+      storageDetailsForNestedRI.put(
+          ReferencedInventoryTestUtils.getStorageDetailsToBoxJSArray(sd, BigDecimal.ONE).get(0));
+    }
+
+    validateRIAfterBoxTransaction(refInvNested, storageDetailsForNestedRI, toBinId, 2, 2L);
+
+    // Add product without attribute set instance which is already present in Box, added during
+    // previous Box transaction in nested referenced inventory
+    selectedStorageDetailsJS = new JSONArray();
+    selectedStorageDetailsJS.put(firstProductSD.get(0));
+    validateRIAfterBoxTransaction(refInvNested, selectedStorageDetailsJS, toBinId, 1, 2L);
 
   }
 
@@ -159,6 +220,20 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
     final JSONArray storageDetailsJS = ReferencedInventoryTestUtils
         .getStorageDetailsToBoxJSArray(storageDetail, BigDecimal.ONE);
     return storageDetailsJS;
+  }
+
+  /**
+   * Creates a referenced inventory with referenced inventory type having contentRestriction
+   */
+
+  private ReferencedInventory createRI(String contentRestriction) {
+    final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
+        .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
+            SequenceType.NONE, null, contentRestriction);
+
+    return ReferencedInventoryTestUtils
+        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
+
   }
 
   @Override
