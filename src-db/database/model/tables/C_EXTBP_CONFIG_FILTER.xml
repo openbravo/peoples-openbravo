@@ -105,6 +105,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="CREATECUSTOMERONSCAN" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <column name="SCANFILTERPRIORITY" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[None]]></default>
         <onCreateDefault><![CDATA['None']]></onCreateDefault>
