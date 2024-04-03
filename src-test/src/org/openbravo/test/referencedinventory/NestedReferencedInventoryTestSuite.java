@@ -25,7 +25,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     // Nested Box Test
-    NestedReferencedInventoryBoxTest.class //
+    NestedReferencedInventoryBoxTest.class, //
+    NestedReferencedInventoryUnBoxTest.class //
 })
 public class NestedReferencedInventoryTestSuite {
 }
