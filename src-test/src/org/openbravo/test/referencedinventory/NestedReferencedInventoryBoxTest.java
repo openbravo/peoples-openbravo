@@ -96,7 +96,7 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
     final Product secondProduct = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[1][0]);
     selectedStorageDetailsJS.put(addProductInBox(secondProduct, PRODUCTS[1][1]).get(0));
 
-    validateRIAfterBoxTransaction(refInv, selectedStorageDetailsJS, toBinId, 2, 2L);
+    validateRIAfterBoxTransaction(refInv, selectedStorageDetailsJS, toBinId, 2, 2L, 0L);
     return refInv;
   }
 
@@ -105,8 +105,8 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
    */
 
   private void validateRIAfterBoxTransaction(final ReferencedInventory refInv,
-      JSONArray selectedStorageDetailsJS, String toBinId, Integer noOfLines, Long uniqueItemCount)
-      throws JSONException, Exception {
+      JSONArray selectedStorageDetailsJS, String toBinId, Integer noOfLines, Long uniqueItemCount,
+      Long nestedInvCount) throws JSONException, Exception {
     InternalMovement boxMovement = new BoxProcessor(refInv, selectedStorageDetailsJS, toBinId)
         .createAndProcessGoodsMovement();
 
@@ -115,12 +115,17 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
 
     assertsGoodsMovementIsProcessed(boxMovement);
     if (noOfLines != null) {
-      assertsGoodsMovementNumberOfLines(boxMovement, noOfLines);
+      assertThat("Box Movement does not have " + noOfLines + "lines",
+          boxMovement.getMaterialMgmtInternalMovementLineList().size(), equalTo(noOfLines));
     }
     if (uniqueItemCount != null) {
-      assertThat(
-          "Nested Referenced Inventory does not have Unique Items Count equal to " + noOfLines,
-          refInv.getUniqueItemsCount(), equalTo(uniqueItemCount));
+      assertThat("Nested Referenced Inventory does not have Unique Items Count equal to "
+          + uniqueItemCount.intValue(), refInv.getUniqueItemsCount(), equalTo(uniqueItemCount));
+    }
+
+    if (nestedInvCount != null) {
+      assertThat("Nested Referenced Inventory Count is not equal to " + nestedInvCount.intValue(),
+          refInv.getNestedReferencedInventoriesCount(), equalTo(nestedInvCount));
     }
   }
 
@@ -146,13 +151,13 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
     final Product secondProduct = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[1][0]);
     selectedStorageDetailsJS.put(addProductInBox(secondProduct, PRODUCTS[1][1]).get(0));
 
-    validateRIAfterBoxTransaction(refInv, selectedStorageDetailsJS, toBinId, 2, 2L);
+    validateRIAfterBoxTransaction(refInv, selectedStorageDetailsJS, toBinId, 2, 2L, 0L);
 
     // Add product in without attribute set instance which is already present in Box, added during
     // previous Box transaction in the referenced inventory
     selectedStorageDetailsJS = new JSONArray();
     selectedStorageDetailsJS.put(firstProductSD.get(0));
-    validateRIAfterBoxTransaction(refInv, selectedStorageDetailsJS, toBinId, 1, 2L);
+    validateRIAfterBoxTransaction(refInv, selectedStorageDetailsJS, toBinId, 1, 2L, 0L);
 
   }
 
@@ -169,7 +174,7 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
         ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInv.getReferencedInventoryType());
 
     final JSONArray storageDetailsForNestedRI = getStorageDetailsforNestedRI(refInv, toBinId);
-    validateRIAfterBoxTransaction(refInvNested, storageDetailsForNestedRI, toBinId, 2, 2L);
+    validateRIAfterBoxTransaction(refInvNested, storageDetailsForNestedRI, toBinId, 2, 2L, 1L);
   }
 
   /**
@@ -194,7 +199,7 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
     final Product secondProduct = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[1][0]);
     selectedStorageDetailsJS.put(addProductInBox(secondProduct, PRODUCTS[1][1]).get(0));
 
-    validateRIAfterBoxTransaction(refInv, selectedStorageDetailsJS, toBinId, 2, 2L);
+    validateRIAfterBoxTransaction(refInv, selectedStorageDetailsJS, toBinId, 2, 2L, 0L);
 
     // create nested referenced inventory
 
@@ -203,13 +208,13 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
 
     final JSONArray storageDetailsForNestedRI = getStorageDetailsforNestedRI(refInv, toBinId);
 
-    validateRIAfterBoxTransaction(refInvNested, storageDetailsForNestedRI, toBinId, 2, 2L);
+    validateRIAfterBoxTransaction(refInvNested, storageDetailsForNestedRI, toBinId, 2, 2L, 1L);
 
     // Add product without attribute set instance which is already present in Box, added during
     // previous Box transaction in nested referenced inventory
     selectedStorageDetailsJS = new JSONArray();
     selectedStorageDetailsJS.put(firstProductSD.get(0));
-    validateRIAfterBoxTransaction(refInvNested, selectedStorageDetailsJS, toBinId, 1, 2L);
+    validateRIAfterBoxTransaction(refInvNested, selectedStorageDetailsJS, toBinId, 1, 2L, 1L);
 
   }
 
@@ -237,7 +242,7 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
     secondProductSD.put(addProductInBox(secondProduct, PRODUCTS[1][1]).get(0));
     selectedStorageDetailsJS.put(secondProductSD.get(0));
 
-    validateRIAfterBoxTransaction(refInv, selectedStorageDetailsJS, toBinId, 2, 2L);
+    validateRIAfterBoxTransaction(refInv, selectedStorageDetailsJS, toBinId, 2, 2L, 0L);
 
     // create nested referenced inventory
 
@@ -252,7 +257,7 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
     selectedStorageDetailsJS = new JSONArray();
     selectedStorageDetailsJS.put(firstProductSD.get(0));
     selectedStorageDetailsJS.put(secondProductSD.get(0));
-    validateRIAfterBoxTransaction(refInvNested, storageDetailsForNestedRI, toBinId, 2, 2L);
+    validateRIAfterBoxTransaction(refInvNested, storageDetailsForNestedRI, toBinId, 2, 2L, 1L);
 
   }
 
@@ -282,7 +287,7 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
     secondProductSD.put(addProductInBox(secondProduct, PRODUCTS[1][1]).get(0));
     selectedStorageDetailsJS.put(secondProductSD.get(0));
 
-    validateRIAfterBoxTransaction(refInv, selectedStorageDetailsJS, toBinId, 2, 2L);
+    validateRIAfterBoxTransaction(refInv, selectedStorageDetailsJS, toBinId, 2, 2L, 0L);
 
     // Medium Box
 
@@ -296,7 +301,8 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
     thirdProductSD.put(addProductInBox(thirdProduct, PRODUCTS[2][1]).get(0));
     storageDetailsForNestedRI.put(thirdProductSD.get(0));
 
-    validateRIAfterBoxTransaction(refInvNestedLevel2, storageDetailsForNestedRI, toBinId, 3, 3L);
+    validateRIAfterBoxTransaction(refInvNestedLevel2, storageDetailsForNestedRI, toBinId, 3, 3L,
+        1L);
 
     // Big Box
 
@@ -311,8 +317,7 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
     storageDetailsForNestedRILevel3.put(firstProductSD.get(0));
     storageDetailsForNestedRILevel3.put(secondProductSD.get(0));
     validateRIAfterBoxTransaction(refInvNestedLevel3, storageDetailsForNestedRILevel3, toBinId, 5,
-        3L);
-
+        3L, 2L);
   }
 
   /**
