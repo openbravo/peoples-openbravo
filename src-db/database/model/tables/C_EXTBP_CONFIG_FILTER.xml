@@ -137,7 +137,5 @@
       <check name="C_EXTBPCONFFIL_SORT_CH"><![CDATA[ALLOWSORTING IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFFIL_TRMSG_CH"><![CDATA[ISTRANSLATABLE = 'N' OR AD_MESSAGE_ID IS NOT NULL AND ISTRANSLATABLE = 'Y']]></check>
       <check name="C_EXTBPCONFFIL_TXTMSG_CH"><![CDATA[TEXT IS NOT NULL OR ISTRANSLATABLE = 'Y']]></check>
-      <check name="CHCK_SCNPRTY_1"><![CDATA[CHCK_SCNPRTY_1() <= 1]]></check>
-      <check name="CHCK_SCNPRTY_2"><![CDATA[CHCK_SCNPRTY_2() <= 1]]></check>
     </table>
   </database>
