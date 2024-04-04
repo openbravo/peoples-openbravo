@@ -33,10 +33,10 @@ public class ScanFilterPriorityModuleScript extends ModuleScript {
   @Override
   public void execute() {
     try {
-      log4j.debug("Updating CRM filters marked as scan identifiers with default priority");
+      log4j.debug("Updating CRM filters marked as scan identifiers with default type");
       ConnectionProvider cp = getConnectionProvider();
       PreparedStatement ps = cp.getPreparedStatement("UPDATE c_extbp_config_filter "
-      + "SET scanfilterpriority = (CASE WHEN isscanidentifier = 'Y' THEN 'primary' "
+      + "SET crmscanhandler = (CASE WHEN isscanidentifier = 'Y' THEN 'primary' "
       + "ELSE 'none' END)");
       ps.executeUpdate();
     } catch (Exception e) {
