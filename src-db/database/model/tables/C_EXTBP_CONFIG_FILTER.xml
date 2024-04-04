@@ -113,6 +113,10 @@
         <default><![CDATA[none]]></default>
         <onCreateDefault><![CDATA['none']]></onCreateDefault>
       </column>
+      <column name="SCANCODEPROPERTY" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_EXTBPCONFFIL_CLIENT_FK">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
