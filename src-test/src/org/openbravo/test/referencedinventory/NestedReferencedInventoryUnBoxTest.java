@@ -158,7 +158,7 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
   }
 
   @Test
-  public void testUnBoxOuterMostParentRIWithoutUnBoxIndividualItems() throws Exception {
+  public void testUnBoxOuterMostParentHUAndInnermostHU() throws Exception {
 
     final String toBinId = BINS[0];
 
@@ -230,10 +230,39 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
 
     // It is important to re-initialize referenced inventory objects when unboxing so that parent
     // referenced inventory is properly set
-    palletRefInv = reInitializeRefInv(palletRefInv);
+    mediumBox1RefInv = reInitializeRefInv(mediumBox1RefInv);
+    mediumBox2RefInv = reInitializeRefInv(mediumBox2RefInv);
+    smallBoxRefInv = reInitializeRefInv(smallBoxRefInv);
 
     // Unbox pallet, unbox to individual items as No
     unBoxNestedRI(palletRefInv, palletRefInv, null, toBinId, false);
+
+    // It is important to re-initialize referenced inventory objects when unboxing so that parent
+    // referenced inventory is properly set
+    palletRefInv = reInitializeRefInv(palletRefInv);
+
+    // Re-Box Medium Box 1 and Medium Box 2 in to Pallet
+    storageDetailsForPallet = NestedReferencedInventoryTestUtils
+        .getStorageDetailsforNestedRI(mediumBox1RefInv, toBinId);
+
+    storageDetailsForPalletFromMediumBox2 = NestedReferencedInventoryTestUtils
+        .getStorageDetailsforNestedRI(mediumBox2RefInv, toBinId);
+
+    for (int i = 0; i < storageDetailsForPalletFromMediumBox2.length(); i++) {
+      storageDetailsForPallet.put(storageDetailsForPalletFromMediumBox2.get(i));
+    }
+
+    storageDetailsForPallet.put(smallBoxProductSD.get(0));
+
+    NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(palletRefInv,
+        storageDetailsForPallet, toBinId, 4, 3L, 3L);
+
+    // It is important to re-initialize referenced inventory objects when unboxing so that parent
+    // referenced inventory is properly set
+    smallBoxRefInv = reInitializeRefInv(smallBoxRefInv);
+
+    // Unbox small box, unbox to individual items as Yes
+    unBoxNestedRI(smallBoxRefInv, smallBoxRefInv, null, toBinId, true);
 
   }
 

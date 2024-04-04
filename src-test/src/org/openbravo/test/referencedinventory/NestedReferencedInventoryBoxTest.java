@@ -19,12 +19,21 @@
 
 package org.openbravo.test.referencedinventory;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+
+import java.math.BigDecimal;
+
 import org.codehaus.jettison.json.JSONArray;
+import org.hibernate.criterion.Restrictions;
 import org.junit.After;
 import org.junit.Test;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
+import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 
 /**
  * This is class to test Nested Referenced Inventory Functionalities.
@@ -34,28 +43,28 @@ import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
 
   @Test
-  public void testBox() throws Exception {
-    createReferencedInventory();
+  public void testIndividualBox() throws Exception {
+    executeIndividualBoxTest();
   }
 
   @Test
-  public void testBoxAddProduct() throws Exception {
-    createReferencedInventoryAddProduct();
+  public void testAddProductInIndividualBox() throws Exception {
+    executeAddProductInIndividualBoxTest();
   }
 
   @Test
-  public void testNestedBox() throws Exception {
-    createNestedReferencedInventory();
+  public void testNestedReferencedInventory() throws Exception {
+    executedNestedReferencedInventoryTest();
   }
 
   @Test
-  public void testNestedBoxAddProduct() throws Exception {
-    createNestedReferencedInventoryAddProduct();
+  public void testAddProductInNestedReferencedInventory() throws Exception {
+    executedAddProductInNestedReferencedInventoryTest();
   }
 
   @Test
-  public void testNestedBoxAddProductsAtSameTime() throws Exception {
-    createNestedReferencedInventoryAddProductAtSameTime();
+  public void testAddProductAndNestedReferencedInventoryAtSameTime() throws Exception {
+    executeAddProductAndNestedReferencedInventoryAtSameTimeTest();
   }
 
   @Test
@@ -64,10 +73,10 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
   }
 
   /**
-   * create referenced inventory and do boxing transaction
+   * Create Individual Box referenced inventory
    */
 
-  private ReferencedInventory createReferencedInventory() throws Exception {
+  private ReferencedInventory executeIndividualBoxTest() throws Exception {
     final String toBinId = BINS[0];
 
     final ReferencedInventory refInv = NestedReferencedInventoryTestUtils
@@ -85,14 +94,53 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
 
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(refInv,
         selectedStorageDetailsJS, toBinId, 2, 2L, 0L);
+
+    validateAttributeSetInstanceValue(refInv, firstProduct, BigDecimal.ONE,
+        "[" + refInv.getSearchKey() + "]");
+    validateAttributeSetInstanceValue(refInv, secondProduct, BigDecimal.ONE,
+        "Yellow[" + refInv.getSearchKey() + "]");
+
     return refInv;
   }
 
   /**
-   * create referenced inventory and do boxing transaction
+   * Validate product and attribute set instance value in the referenced inventory
    */
 
-  private void createReferencedInventoryAddProduct() throws Exception {
+  private void validateAttributeSetInstanceValue(final ReferencedInventory refInv,
+      final Product product, final BigDecimal qtyOnHand,
+      final String attributeSetInstanceDescription) {
+    assertThat("Product with Attribute Set Instance does not exists in Referenced Inventory",
+        storageDetailExists(refInv, product, qtyOnHand, attributeSetInstanceDescription),
+        equalTo(true));
+  }
+
+  /**
+   * Check whether storage detail exists for product and attribute set instance value in the
+   * referenced inventory
+   */
+
+  private boolean storageDetailExists(final ReferencedInventory refInv, final Product product,
+      final BigDecimal qtyOnHand, final String attributeSetInstanceDescription) {
+    OBCriteria<StorageDetail> crit = OBDal.getInstance().createCriteria(StorageDetail.class);
+    crit.createAlias(StorageDetail.PROPERTY_ATTRIBUTESETVALUE, "att");
+    crit.add(Restrictions.eq(StorageDetail.PROPERTY_REFERENCEDINVENTORY, refInv));
+    if (product != null) {
+      crit.add(Restrictions.eq(StorageDetail.PROPERTY_PRODUCT, product));
+    }
+    if (qtyOnHand != null) {
+      crit.add(Restrictions.eq(StorageDetail.PROPERTY_QUANTITYONHAND, qtyOnHand));
+    }
+    crit.add(Restrictions.eq("att." + AttributeSetInstance.PROPERTY_DESCRIPTION,
+        attributeSetInstanceDescription));
+    return !crit.list().isEmpty();
+  }
+
+  /**
+   * Add product in existing referenced inventory
+   */
+
+  private void executeAddProductInIndividualBoxTest() throws Exception {
 
     final String toBinId = BINS[0];
 
@@ -115,6 +163,11 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(refInv,
         selectedStorageDetailsJS, toBinId, 2, 2L, 0L);
 
+    validateAttributeSetInstanceValue(refInv, firstProduct, BigDecimal.ONE,
+        "[" + refInv.getSearchKey() + "]");
+    validateAttributeSetInstanceValue(refInv, secondProduct, BigDecimal.ONE,
+        "Yellow[" + refInv.getSearchKey() + "]");
+
     // Add product in without attribute set instance which is already present in Box, added during
     // previous Box transaction in the referenced inventory
     selectedStorageDetailsJS = new JSONArray();
@@ -122,16 +175,19 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(refInv,
         selectedStorageDetailsJS, toBinId, 1, 2L, 0L);
 
+    validateAttributeSetInstanceValue(refInv, firstProduct, new BigDecimal(2),
+        "[" + refInv.getSearchKey() + "]");
+
   }
 
   /**
    * create nested referenced inventory
    */
 
-  private void createNestedReferencedInventory() throws Exception {
+  private void executedNestedReferencedInventoryTest() throws Exception {
 
     final String toBinId = BINS[0];
-    final ReferencedInventory refInv = createReferencedInventory();
+    final ReferencedInventory refInv = executeIndividualBoxTest();
     // Create a nested Referenced Inventory
     final ReferencedInventory refInvNested = ReferencedInventoryTestUtils.createReferencedInventory(
         ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInv.getReferencedInventoryType());
@@ -140,13 +196,18 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
         .getStorageDetailsforNestedRI(refInv, toBinId);
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(refInvNested,
         storageDetailsForNestedRI, toBinId, 2, 2L, 1L);
+
+    validateAttributeSetInstanceValue(refInv, null, null,
+        "Yellow[" + refInv.getSearchKey() + "]" + "[" + refInvNested.getSearchKey() + "]");
+    validateAttributeSetInstanceValue(refInv, null, null,
+        "[" + refInv.getSearchKey() + "]" + "[" + refInvNested.getSearchKey() + "]");
   }
 
   /**
-   * create referenced inventory and do boxing transaction
+   * Adds product in existing nested referenced inventory
    */
 
-  private void createNestedReferencedInventoryAddProduct() throws Exception {
+  private void executedAddProductInNestedReferencedInventoryTest() throws Exception {
 
     final String toBinId = BINS[0];
 
@@ -180,6 +241,12 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(refInvNested,
         storageDetailsForNestedRI, toBinId, 2, 2L, 1L);
 
+    validateAttributeSetInstanceValue(refInv, firstProduct, BigDecimal.ONE,
+        "[" + refInv.getSearchKey() + "]" + "[" + refInvNested.getSearchKey() + "]");
+
+    validateAttributeSetInstanceValue(refInv, secondProduct, BigDecimal.ONE,
+        "Yellow[" + refInv.getSearchKey() + "]" + "[" + refInvNested.getSearchKey() + "]");
+
     // Add product without attribute set instance which is already present in Box, added during
     // previous Box transaction in nested referenced inventory
     selectedStorageDetailsJS = new JSONArray();
@@ -187,13 +254,16 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(refInvNested,
         selectedStorageDetailsJS, toBinId, 1, 2L, 1L);
 
+    validateAttributeSetInstanceValue(refInvNested, firstProduct, BigDecimal.ONE,
+        "[" + refInvNested.getSearchKey() + "]");
+
   }
 
   /**
-   * create referenced inventory and do boxing transaction
+   * Add Product & Nested Referenced Inventory at the same time
    */
 
-  private void createNestedReferencedInventoryAddProductAtSameTime() throws Exception {
+  private void executeAddProductAndNestedReferencedInventoryAtSameTimeTest() throws Exception {
 
     final String toBinId = BINS[0];
 
