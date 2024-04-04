@@ -82,6 +82,7 @@
       </unique>
       <check name="M_PROD_SUBTYPE_FRCDINRTRNS_CHK"><![CDATA[FORCEDINRETURNS IN ('Y', 'N')]]></check>
       <check name="M_PROD_SUBTYPE_INPRODPRICE_CHK"><![CDATA[INCLUDEDINPRODUCTPRICE IN ('Y', 'N')]]></check>
+      <check name="M_PROD_SUBTYPE_LINKDTOPROD_CHK"><![CDATA[ISLINKEDTOPRODUCT IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_SUBTYPE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
