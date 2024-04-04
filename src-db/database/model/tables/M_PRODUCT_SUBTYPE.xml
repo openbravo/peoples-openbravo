@@ -45,10 +45,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="LINKABLETOPRODUCTS" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[Y]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="PRICECALCULATION" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[L]]></default>
         <onCreateDefault/>
@@ -69,6 +65,10 @@
         <default><![CDATA[PP]]></default>
         <onCreateDefault/>
       </column>
+      <column name="ISLINKEDTOPRODUCT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCT_SUBTYPE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -82,7 +82,6 @@
       </unique>
       <check name="M_PROD_SUBTYPE_FRCDINRTRNS_CHK"><![CDATA[FORCEDINRETURNS IN ('Y', 'N')]]></check>
       <check name="M_PROD_SUBTYPE_INPRODPRICE_CHK"><![CDATA[INCLUDEDINPRODUCTPRICE IN ('Y', 'N')]]></check>
-      <check name="M_PROD_SUBTYPE_LINKTOPRODS_CHK"><![CDATA[LINKABLETOPRODUCTS IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_SUBTYPE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
