@@ -52,7 +52,7 @@ class NestedReferencedInventoryTestUtils {
 
   static void validateRIAfterBoxTransaction(final ReferencedInventory refInv,
       JSONArray selectedStorageDetailsJS, String toBinId, Integer noOfLines, Long uniqueItemCount,
-      Long nestedInvCount) throws JSONException, Exception {
+      Long nestedRefInvCount) throws JSONException, Exception {
     InternalMovement boxMovement = new BoxProcessor(refInv, selectedStorageDetailsJS, toBinId)
         .createAndProcessGoodsMovement();
 
@@ -70,9 +70,10 @@ class NestedReferencedInventoryTestUtils {
           + uniqueItemCount.intValue(), refInv.getUniqueItemsCount(), equalTo(uniqueItemCount));
     }
 
-    if (nestedInvCount != null) {
-      assertThat("Nested Referenced Inventory Count is not equal to " + nestedInvCount.intValue(),
-          refInv.getNestedReferencedInventoriesCount(), equalTo(nestedInvCount));
+    if (nestedRefInvCount != null) {
+      assertThat(
+          "Nested Referenced Inventory Count is not equal to " + nestedRefInvCount.intValue(),
+          refInv.getNestedReferencedInventoriesCount(), equalTo(nestedRefInvCount));
     }
   }
 
