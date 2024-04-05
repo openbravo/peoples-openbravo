@@ -19,6 +19,11 @@
 
 package org.openbravo.test.referencedinventory;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+
+import java.math.BigDecimal;
+
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
@@ -104,14 +109,50 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
     // Unbox medium box inside pallet, unbox to individual items as No
     unBoxNestedRI(palletRefInv, mediumBoxRefInv, null, toBinId, false);
 
+    // Check attribute set instance after unbox
+    NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(smallBoxRefInv,
+        firstProduct, BigDecimal.ONE,
+        "[" + smallBoxRefInv.getSearchKey() + "][" + mediumBoxRefInv.getSearchKey() + "]");
+
+    NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(smallBoxRefInv,
+        secondProduct, BigDecimal.ONE,
+        "Yellow[" + smallBoxRefInv.getSearchKey() + "][" + mediumBoxRefInv.getSearchKey() + "]");
+
+    NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(mediumBoxRefInv,
+        thirdProduct, BigDecimal.ONE, "#015[" + mediumBoxRefInv.getSearchKey() + "]");
+
     // Re-Box
     final JSONArray storageDetailsForNestedRILevel3ReBox = NestedReferencedInventoryTestUtils
         .getStorageDetailsforNestedRI(mediumBoxRefInv, toBinId);
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(palletRefInv,
         storageDetailsForNestedRILevel3ReBox, toBinId, 3, 3L, 2L);
 
+    // Check attribute set instance after re-box
+    NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(smallBoxRefInv,
+        firstProduct, BigDecimal.ONE, "[" + smallBoxRefInv.getSearchKey() + "]["
+            + mediumBoxRefInv.getSearchKey() + "][" + palletRefInv.getSearchKey() + "]");
+
+    NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(smallBoxRefInv,
+        secondProduct, BigDecimal.ONE, "Yellow[" + smallBoxRefInv.getSearchKey() + "]["
+            + mediumBoxRefInv.getSearchKey() + "][" + palletRefInv.getSearchKey() + "]");
+
+    NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(mediumBoxRefInv,
+        thirdProduct, BigDecimal.ONE,
+        "#015[" + mediumBoxRefInv.getSearchKey() + "][" + palletRefInv.getSearchKey() + "]");
+
     // Unbox medium box inside pallet, unbox to individual items as Yes
     unBoxNestedRI(palletRefInv, mediumBoxRefInv, null, toBinId, true);
+
+    assertThat("Medium Box is not empty",
+        NestedReferencedInventoryTestUtils.storageDetailExists(mediumBoxRefInv, null, null, null),
+        equalTo(false));
+
+    // Check attribute set instance after unbox
+    NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(palletRefInv, firstProduct,
+        BigDecimal.ONE, "[" + palletRefInv.getSearchKey() + "]");
+
+    NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(palletRefInv,
+        secondProduct, BigDecimal.ONE, "Yellow[" + palletRefInv.getSearchKey() + "]");
 
     // Re-Box - Small Box
     // It is important to re-initialize referenced inventory objects when unboxing so that parent
@@ -131,13 +172,30 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(palletRefInv,
         storageDetailsForPallet, toBinId, 3, 3L, null);
 
-    // Box Pallet into Big Pallet
+    // Check attribute set instance after re-box
+    NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(smallBoxRefInv,
+        firstProduct, BigDecimal.ONE,
+        "[" + smallBoxRefInv.getSearchKey() + "][" + palletRefInv.getSearchKey() + "]");
+
+    NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(smallBoxRefInv,
+        secondProduct, BigDecimal.ONE,
+        "Yellow[" + smallBoxRefInv.getSearchKey() + "][" + palletRefInv.getSearchKey() + "]");
+
+    // Box Transaction - Pallet into Big Pallet
     ReferencedInventory bigPalletRefInv = NestedReferencedInventoryTestUtils
         .createRI(ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
     JSONArray storageDetailsForBigPallet = NestedReferencedInventoryTestUtils
         .getStorageDetailsforNestedRI(palletRefInv, toBinId);
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(bigPalletRefInv,
         storageDetailsForBigPallet, toBinId, 5, 3L, 2L);
+
+    NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(smallBoxRefInv,
+        firstProduct, BigDecimal.ONE, "[" + smallBoxRefInv.getSearchKey() + "]["
+            + palletRefInv.getSearchKey() + "][" + bigPalletRefInv.getSearchKey() + "]");
+
+    NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(smallBoxRefInv,
+        secondProduct, BigDecimal.ONE, "Yellow[" + smallBoxRefInv.getSearchKey() + "]["
+            + palletRefInv.getSearchKey() + "][" + bigPalletRefInv.getSearchKey() + "]");
 
     // Partial Unbox - Select any one item from small box, unbox to individual items
     // as Yes
@@ -155,10 +213,22 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
         NestedReferencedInventoryTestUtils.getStorageDetailsforNestedRI(bigPalletRefInv, toBinId),
         toBinId, true);
 
+    assertThat("Big Pallet is not empty",
+        NestedReferencedInventoryTestUtils.storageDetailExists(bigPalletRefInv, null, null, null),
+        equalTo(false));
+
+    assertThat("Pallet is not empty",
+        NestedReferencedInventoryTestUtils.storageDetailExists(palletRefInv, null, null, null),
+        equalTo(false));
+
+    assertThat("Small Box is not empty",
+        NestedReferencedInventoryTestUtils.storageDetailExists(smallBoxRefInv, null, null, null),
+        equalTo(false));
+
   }
 
   @Test
-  public void testUnBoxOuterMostParentHUAndInnermostHU() throws Exception {
+  public void testUnBoxOuterMostParentHU() throws Exception {
 
     final String toBinId = BINS[0];
 
@@ -176,7 +246,7 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
     storageDetailsForSmallBox.put(smallBoxProductSD.get(0));
 
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(smallBoxRefInv,
-        storageDetailsForSmallBox, toBinId, null, null, null);
+        storageDetailsForSmallBox, toBinId, 1, 1L, 0L);
 
     // Medium Box 1
     ReferencedInventory mediumBox1RefInv = NestedReferencedInventoryTestUtils
@@ -193,7 +263,7 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
     storageDetailsForMediumBox1.put(mediumBox1ProductSD.get(0));
 
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(mediumBox1RefInv,
-        storageDetailsForMediumBox1, toBinId, null, null, null);
+        storageDetailsForMediumBox1, toBinId, 2, 2L, 1L);
 
     // Medium Box 2
     ReferencedInventory mediumBox2RefInv = NestedReferencedInventoryTestUtils
@@ -206,7 +276,7 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
             .get(0));
 
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(mediumBox2RefInv,
-        mediumBox2ProductSD, toBinId, null, null, null);
+        mediumBox2ProductSD, toBinId, 1, 1L, 0L);
 
     // Pallet - Medium Box 1 and Medium Box 2
 
@@ -226,7 +296,7 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
     storageDetailsForPallet.put(smallBoxProductSD.get(0));
 
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(palletRefInv,
-        storageDetailsForPallet, toBinId, null, null, null);
+        storageDetailsForPallet, toBinId, 4, 3L, 3L);
 
     // It is important to re-initialize referenced inventory objects when unboxing so that parent
     // referenced inventory is properly set
@@ -237,15 +307,83 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
     // Unbox pallet, unbox to individual items as No
     unBoxNestedRI(palletRefInv, palletRefInv, null, toBinId, false);
 
-    // It is important to re-initialize referenced inventory objects when unboxing so that parent
-    // referenced inventory is properly set
-    palletRefInv = reInitializeRefInv(palletRefInv);
+    // Check attribute set instance after boxing Medium Box 1 and Medium Box 2 into Pallet
+    NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(smallBoxRefInv,
+        smallBoxProduct, BigDecimal.ONE,
+        "[" + smallBoxRefInv.getSearchKey() + "][" + mediumBox1RefInv.getSearchKey() + "]");
 
-    // Re-Box Medium Box 1 and Medium Box 2 in to Pallet
-    storageDetailsForPallet = NestedReferencedInventoryTestUtils
+    NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(mediumBox1RefInv,
+        mediumBox1Product, BigDecimal.ONE, "Yellow[" + mediumBox1RefInv.getSearchKey() + "]");
+
+    NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(mediumBox2RefInv,
+        mediumBox2Product, BigDecimal.ONE, "#015[" + mediumBox2RefInv.getSearchKey() + "]");
+
+    assertThat("Pallet is not empty",
+        NestedReferencedInventoryTestUtils.storageDetailExists(palletRefInv, null, null, null),
+        equalTo(false));
+
+  }
+
+  @Test
+  public void testUnBoxInnermostHU() throws Exception {
+
+    final String toBinId = BINS[0];
+
+    JSONArray storageDetailsForSmallBox = new JSONArray();
+
+    // Small Box
+
+    ReferencedInventory smallBoxRefInv = NestedReferencedInventoryTestUtils
+        .createRI(ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+
+    final Product smallBoxProduct = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[0][0]);
+    JSONArray smallBoxProductSD = new JSONArray();
+    smallBoxProductSD.put(
+        NestedReferencedInventoryTestUtils.addProductInBox(smallBoxProduct, PRODUCTS[0][1]).get(0));
+    storageDetailsForSmallBox.put(smallBoxProductSD.get(0));
+
+    NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(smallBoxRefInv,
+        storageDetailsForSmallBox, toBinId, 1, 1L, 0L);
+
+    // Medium Box 1
+    ReferencedInventory mediumBox1RefInv = NestedReferencedInventoryTestUtils
+        .createRI(ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+
+    final JSONArray storageDetailsForMediumBox1 = NestedReferencedInventoryTestUtils
+        .getStorageDetailsforNestedRI(smallBoxRefInv, toBinId);
+
+    final Product mediumBox1Product = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[1][0]);
+    JSONArray mediumBox1ProductSD = new JSONArray();
+    mediumBox1ProductSD
+        .put(NestedReferencedInventoryTestUtils.addProductInBox(mediumBox1Product, PRODUCTS[1][1])
+            .get(0));
+    storageDetailsForMediumBox1.put(mediumBox1ProductSD.get(0));
+
+    NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(mediumBox1RefInv,
+        storageDetailsForMediumBox1, toBinId, 2, 2L, 1L);
+
+    // Medium Box 2
+    ReferencedInventory mediumBox2RefInv = NestedReferencedInventoryTestUtils
+        .createRI(ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+
+    final Product mediumBox2Product = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[2][0]);
+    JSONArray mediumBox2ProductSD = new JSONArray();
+    mediumBox2ProductSD
+        .put(NestedReferencedInventoryTestUtils.addProductInBox(mediumBox2Product, PRODUCTS[2][1])
+            .get(0));
+
+    NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(mediumBox2RefInv,
+        mediumBox2ProductSD, toBinId, 1, 1L, 0L);
+
+    // Pallet - Medium Box 1 and Medium Box 2
+
+    ReferencedInventory palletRefInv = NestedReferencedInventoryTestUtils
+        .createRI(ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+
+    JSONArray storageDetailsForPallet = NestedReferencedInventoryTestUtils
         .getStorageDetailsforNestedRI(mediumBox1RefInv, toBinId);
 
-    storageDetailsForPalletFromMediumBox2 = NestedReferencedInventoryTestUtils
+    JSONArray storageDetailsForPalletFromMediumBox2 = NestedReferencedInventoryTestUtils
         .getStorageDetailsforNestedRI(mediumBox2RefInv, toBinId);
 
     for (int i = 0; i < storageDetailsForPalletFromMediumBox2.length(); i++) {
@@ -257,12 +395,24 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(palletRefInv,
         storageDetailsForPallet, toBinId, 4, 3L, 3L);
 
-    // It is important to re-initialize referenced inventory objects when unboxing so that parent
-    // referenced inventory is properly set
-    smallBoxRefInv = reInitializeRefInv(smallBoxRefInv);
-
     // Unbox small box, unbox to individual items as Yes
     unBoxNestedRI(smallBoxRefInv, smallBoxRefInv, null, toBinId, true);
+
+    // Check attribute set instance after boxing Medium Box 1 and Medium Box 2 into Pallet
+    NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(mediumBox1RefInv,
+        mediumBox1Product, BigDecimal.ONE,
+        "Yellow[" + mediumBox1RefInv.getSearchKey() + "][" + palletRefInv.getSearchKey() + "]");
+
+    NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(mediumBox2RefInv,
+        mediumBox2Product, BigDecimal.ONE,
+        "#015[" + mediumBox2RefInv.getSearchKey() + "][" + palletRefInv.getSearchKey() + "]");
+
+    NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(palletRefInv,
+        smallBoxProduct, BigDecimal.ONE, "[" + palletRefInv.getSearchKey() + "]");
+
+    assertThat("Small Box is not empty",
+        NestedReferencedInventoryTestUtils.storageDetailExists(smallBoxRefInv, null, null, null),
+        equalTo(false));
 
   }
 

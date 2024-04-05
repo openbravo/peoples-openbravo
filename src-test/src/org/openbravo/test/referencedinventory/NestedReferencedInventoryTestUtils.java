@@ -27,12 +27,15 @@ import java.math.BigDecimal;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.hibernate.ScrollableResults;
+import org.hibernate.criterion.Restrictions;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.materialmgmt.refinventory.BoxProcessor;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryProcessor.StorageDetailJS;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
@@ -123,5 +126,41 @@ class NestedReferencedInventoryTestUtils {
     return ReferencedInventoryTestUtils
         .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 
+  }
+
+  /**
+   * Validate product and attribute set instance value in the referenced inventory
+   */
+
+  static void validateAttributeSetInstanceValue(final ReferencedInventory refInv,
+      final Product product, final BigDecimal qtyOnHand,
+      final String attributeSetInstanceDescription) {
+    assertThat(
+        "Product with Quantity On Hand and Attribute Set Instance does not exists in Referenced Inventory",
+        storageDetailExists(refInv, product, qtyOnHand, attributeSetInstanceDescription),
+        equalTo(true));
+  }
+
+  /**
+   * Check whether storage detail exists for product and attribute set instance value in the
+   * referenced inventory
+   */
+
+  static boolean storageDetailExists(final ReferencedInventory refInv, final Product product,
+      final BigDecimal qtyOnHand, final String attributeSetInstanceDescription) {
+    OBCriteria<StorageDetail> crit = OBDal.getInstance().createCriteria(StorageDetail.class);
+    crit.createAlias(StorageDetail.PROPERTY_ATTRIBUTESETVALUE, "att");
+    crit.add(Restrictions.eq(StorageDetail.PROPERTY_REFERENCEDINVENTORY, refInv));
+    if (product != null) {
+      crit.add(Restrictions.eq(StorageDetail.PROPERTY_PRODUCT, product));
+    }
+    if (qtyOnHand != null) {
+      crit.add(Restrictions.eq(StorageDetail.PROPERTY_QUANTITYONHAND, qtyOnHand));
+    }
+    if (attributeSetInstanceDescription != null) {
+      crit.add(Restrictions.eq("att." + AttributeSetInstance.PROPERTY_DESCRIPTION,
+          attributeSetInstanceDescription));
+    }
+    return !crit.list().isEmpty();
   }
 }
