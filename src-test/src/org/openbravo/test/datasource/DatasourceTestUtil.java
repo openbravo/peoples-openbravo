@@ -24,6 +24,7 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -31,9 +32,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.service.datasource.DataSourceServiceProvider;
 
 import junit.framework.TestCase;
 
@@ -66,6 +70,43 @@ public class DatasourceTestUtil {
       hc.setRequestProperty("Cookie", cookie);
     }
     return hc;
+  }
+
+  /**
+   * Fetch data with an HQL data source
+   *
+   * @see #fetch(String, Map)
+   */
+  public static JSONObject fetchWithHQLDataSource(Map<String, String> additionalParams)
+      throws JSONException {
+    String result = fetch("3C1148C0AB604DE1B51B7EA4112C325F", additionalParams);
+    return new JSONObject(result);
+  }
+
+  /**
+   * Fetch data with a data source
+   *
+   * @param dataSourceId
+   *          The data source identifier
+   * @param additionalParams
+   *          Parameters to include in the data source fetch call
+   *
+   * @return the result of fetching data with the data source
+   */
+  public static String fetch(String dataSourceId, Map<String, String> additionalParams) {
+    Map<String, String> params = new HashMap<>();
+    params.put("dataSourceName", dataSourceId);
+    params.put("_startRow", "0");
+    params.put("_endRow", "99");
+    params.put("_noCount", "true");
+    params.putAll(additionalParams);
+
+    String result = WeldUtils.getInstanceFromStaticBeanManager(DataSourceServiceProvider.class)
+        .getDataSource(dataSourceId)
+        .fetch(params);
+    log.debug("Fetch result: {}", result);
+
+    return result;
   }
 
   static String authenticate(String openbravoURL, String user, String password) throws Exception {
@@ -128,7 +169,7 @@ public class DatasourceTestUtil {
     if (StringUtils.isEmpty(obURL)) {
       throw new OBException(CONTEXT_PROPERTY + " is not set in Openbravo.properties");
     }
-    log.debug("got OB context: " + obURL);
+    log.debug("got OB context: {}", obURL);
 
     return obURL;
   }
