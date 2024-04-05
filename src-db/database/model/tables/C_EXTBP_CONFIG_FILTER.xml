@@ -129,14 +129,6 @@
       <foreign-key foreignTable="AD_ORG" name="C_EXTBPCONFFIL_ORG_FK">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <index name="C_EXTBP_CONFIG_FILTER_SCNPRTY1" unique="true">
-        <index-column name="CRMSCANHANDLER"/>
-        <whereClause><![CDATA[CRMSCANHANDLER='primary']]></whereClause>
-      </index>
-      <index name="C_EXTBP_CONFIG_FILTER_SCNPRTY2" unique="true">
-        <index-column name="CRMSCANHANDLER"/>
-        <whereClause><![CDATA[CRMSCANHANDLER='secondary']]></whereClause>
-      </index>
       <unique name="C_EXTBPCONFFIL_NAME_UN">
         <unique-column name="C_EXTBP_CONFIG_ID"/>
         <unique-column name="NAME"/>

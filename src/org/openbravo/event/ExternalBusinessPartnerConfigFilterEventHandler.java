@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2021-2023 Openbravo SLU
+ * All portions are Copyright (C) 2021-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -67,29 +67,80 @@ public class ExternalBusinessPartnerConfigFilterEventHandler
     final String id = event.getId();
     final ExternalBusinessPartnerConfigFilter filter = (ExternalBusinessPartnerConfigFilter) event
         .getTargetInstance();
+    final String filterScanningHandler = filter.getScanningHandlerUsedForScan();
     final ExternalBusinessPartnerConfig currentExtBPConfig = filter
         .getExternalBusinessPartnerIntegrationConfiguration();
 
-    if (!filter.isScanIdentifier() || !filter.isActive()) {
+    if (!filter.isActive()) {
       return;
     }
 
-    // Query the filters for the current config and check that there is 0 or 1 with the flag
-    // isScanIdentifier=true.
-    // Fail otherwise
-    final OBCriteria<?> criteria = OBDal.getInstance()
-        .createCriteria(event.getTargetInstance().getClass());
-    criteria.add(Restrictions.eq(
-        ExternalBusinessPartnerConfigFilter.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
-        currentExtBPConfig));
-    criteria
-        .add(Restrictions.eq(ExternalBusinessPartnerConfigFilter.PROPERTY_ISSCANIDENTIFIER, true));
-    criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigFilter.PROPERTY_ACTIVE, true));
-    criteria.add(Restrictions.ne(ExternalBusinessPartnerConfigFilter.PROPERTY_ID, id));
+    if (filter.isScanIdentifier()) {
+      // Query the filters for the current config and check that there is 0 or 1 with the flag
+      // isScanIdentifier=true.
+      // Fail otherwise
+      final OBCriteria<?> scanIdentifierFiltercriteria = OBDal.getInstance()
+          .createCriteria(event.getTargetInstance().getClass());
+      scanIdentifierFiltercriteria.add(Restrictions.eq(
+          ExternalBusinessPartnerConfigFilter.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
+          currentExtBPConfig));
+      scanIdentifierFiltercriteria.add(
+          Restrictions.eq(ExternalBusinessPartnerConfigFilter.PROPERTY_ISSCANIDENTIFIER, true));
+      scanIdentifierFiltercriteria
+          .add(Restrictions.eq(ExternalBusinessPartnerConfigFilter.PROPERTY_ACTIVE, true));
+      scanIdentifierFiltercriteria
+          .add(Restrictions.ne(ExternalBusinessPartnerConfigFilter.PROPERTY_ID, id));
 
-    criteria.setMaxResults(1);
-    if (criteria.uniqueResult() != null) {
-      throw new OBException("@DuplicatedCRMScanFilter@");
+      scanIdentifierFiltercriteria.setMaxResults(1);
+      if (scanIdentifierFiltercriteria.uniqueResult() != null) {
+        throw new OBException("@DuplicatedCRMScanFilter@");
+      }
+    }
+
+    if (!filterScanningHandler.isEmpty() && filterScanningHandler.equals("primary")) {
+      // Query the filters for the current config and check that there is 0 or 1 with the flag
+      // scanninghandlerusedforscan = 'primary'.
+      // Fail otherwise
+      final OBCriteria<?> criteriaPrimaryScanFilter = OBDal.getInstance()
+          .createCriteria(event.getTargetInstance().getClass());
+      criteriaPrimaryScanFilter.add(Restrictions.eq(
+          ExternalBusinessPartnerConfigFilter.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
+          currentExtBPConfig));
+      criteriaPrimaryScanFilter.add(Restrictions
+          .eq(ExternalBusinessPartnerConfigFilter.PROPERTY_SCANNINGHANDLERUSEDFORSCAN, "primary"));
+      criteriaPrimaryScanFilter
+          .add(Restrictions.eq(ExternalBusinessPartnerConfigFilter.PROPERTY_ACTIVE, true));
+      criteriaPrimaryScanFilter
+          .add(Restrictions.ne(ExternalBusinessPartnerConfigFilter.PROPERTY_ID, id));
+
+      criteriaPrimaryScanFilter.setMaxResults(1);
+
+      if (criteriaPrimaryScanFilter.uniqueResult() != null) {
+        throw new OBException("@DuplicateCRMScanFilterType@");
+      }
+    }
+
+    if (!filterScanningHandler.isEmpty() && filterScanningHandler.equals("secondary")) {
+      // Query the filters for the current config and check that there is 0 or 1 with the flag
+      // scanninghandlerusedforscan = 'secondary'.
+      // Fail otherwise
+      final OBCriteria<?> criteriaSecondaryScanFilter = OBDal.getInstance()
+          .createCriteria(event.getTargetInstance().getClass());
+      criteriaSecondaryScanFilter.add(Restrictions.eq(
+          ExternalBusinessPartnerConfigFilter.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
+          currentExtBPConfig));
+      criteriaSecondaryScanFilter.add(Restrictions.eq(
+          ExternalBusinessPartnerConfigFilter.PROPERTY_SCANNINGHANDLERUSEDFORSCAN, "secondary"));
+      criteriaSecondaryScanFilter
+          .add(Restrictions.eq(ExternalBusinessPartnerConfigFilter.PROPERTY_ACTIVE, true));
+      criteriaSecondaryScanFilter
+          .add(Restrictions.ne(ExternalBusinessPartnerConfigFilter.PROPERTY_ID, id));
+
+      criteriaSecondaryScanFilter.setMaxResults(1);
+
+      if (criteriaSecondaryScanFilter.uniqueResult() != null) {
+        throw new OBException("@DuplicateCRMScanFilterType@");
+      }
     }
   }
 
