@@ -62,7 +62,8 @@ public class StorageBinTest extends WeldBaseTest {
 
   // Error messages
   private static final String ERROR_MESSAGE_NOT_EDITABLE = "NotEditableAllowStoringItemsHUType";
-  private static final String ERROR_MESSAGE_Not_Valid_HU_TYPE = "Handling Unit Type is not valid for the locator";
+  private static final String ERROR_MESSAGE_NON_EMPTY_HU = "NonEmptyHUForTransactionAttributeSetInst";
+  private static final String ERROR_MESSAGE_Not_Valid_HU_TYPE = "Handling Unit Type is not valid for this storage bin";
   private static final String ERROR_MESSAGE_No_Duplicate_Locator_HU_TYPE = "duplicate key value violates unique constraint";
 
   @Before
@@ -161,59 +162,69 @@ public class StorageBinTest extends WeldBaseTest {
   }
 
   @Test
+  public void testStorageBin_AllowStoringItemsNo() {
+    runAllowStoringItemTest(false, true, "Storagebin with allowed storing items no");
+  }
+
+  @Test
+  public void testStorageBin_AllowStoringItemsYes() {
+    runAllowStoringItemTest(true, false, "Storagebin with allowed storing items yes");
+  }
+
+  @Test
   public void testStorageBin_AllowStoringItemsNo_IncludedHandlingUnitTypesAll() {
-    createStorageBinTestData(false, StorageBinTestUtils.ALL_SELECTION_MODE, true, false,
+    runHandlingUnitInStorageBinTest(false, StorageBinTestUtils.ALL_SELECTION_MODE, true, false,
         "StorageBin with AllowStoringItems No, IncludedHandlingUnitTypes All, HandlingUnitTypeTab is empty");
   }
 
   @Test
   public void testStorageBin_AllowStoringItemsNo_IncludedHandlingUnitTypesOnlyThoseDefined_EmptyHandlingUnitTypeTab() {
-    createStorageBinTestData(false, StorageBinTestUtils.ONLY_THOSE_DEFINED, true, true,
+    runHandlingUnitInStorageBinTest(false, StorageBinTestUtils.ONLY_THOSE_DEFINED, true, true,
         "StorageBin with AllowStoringItems No, IncludedHandlingUnitTypes OnlyThoseDefined, HandlingUnitTypeTab is empty");
   }
 
   @Test
   public void testStorageBin_AllowStoringItemsNo_IncludedHandlingUnitTypesOnlyThoseDefined() {
-    createStorageBinTestData(false, StorageBinTestUtils.ONLY_THOSE_DEFINED, false, false,
+    runHandlingUnitInStorageBinTest(false, StorageBinTestUtils.ONLY_THOSE_DEFINED, false, false,
         "StorageBin with AllowStoringItems No, IncludedHandlingUnitTypes OnlyThoseDefined, HandlingUnitTypeTab is not empty");
   }
 
   @Test
   public void testStorageBin_AllowStoringItemsNo_IncludedHandlingUnitTypesAllExcludingDefined_EmptyHandlingUnitTypeTab() {
-    createStorageBinTestData(false, StorageBinTestUtils.ALL_EXCLUDING_DEFINED, true, false,
+    runHandlingUnitInStorageBinTest(false, StorageBinTestUtils.ALL_EXCLUDING_DEFINED, true, false,
         "StorageBin with AllowStoringItems No, IncludedHandlingUnitTypes AllExcludingDefined, HandlingUnitTypeTab is empty");
   }
 
   @Test
   public void testStorageBin_AllowStoringItemsNo_IncludedHandlingUnitTypesAllExcludingDefined() {
-    createStorageBinTestData(false, StorageBinTestUtils.ALL_EXCLUDING_DEFINED, false, true,
+    runHandlingUnitInStorageBinTest(false, StorageBinTestUtils.ALL_EXCLUDING_DEFINED, false, true,
         "StorageBin with AllowStoringItems No, IncludedHandlingUnitTypes AllExcludingDefined, HandlingUnitTypeTab is not empty");
   }
 
   @Test
   public void testStorageBin_AllowStoringItems_Yes_IncludedHandlingUnitTypes_OnlyThoseDefined() {
-    createStorageBinTestData(true, StorageBinTestUtils.ONLY_THOSE_DEFINED, false, false,
+    runHandlingUnitInStorageBinTest(true, StorageBinTestUtils.ONLY_THOSE_DEFINED, false, false,
         "StorageBin with AllowStoringItems No, IncludedHandlingUnitTypes OnlyThoseDefined, HandlingUnitTypeTab is not empty");
   }
 
   @Test
   public void testStorageBin_AllowStoringItems_Yes_IncludedHandlingUnitTypes_All() {
-    createStorageBinTestData(true, StorageBinTestUtils.ALL_SELECTION_MODE, false, false,
+    runHandlingUnitInStorageBinTest(true, StorageBinTestUtils.ALL_SELECTION_MODE, false, false,
         "StorageBin with AllowStoringItems Yes, IncludedHandlingUnitTypes All, HandlingUnitTypeTab is not empty");
   }
 
   @Test
   public void testStorageBin_AllowStoringItems_Yes_IncludedHandlingUnitTypes_AllExcludingDefined() {
-    createStorageBinTestData(true, StorageBinTestUtils.ALL_EXCLUDING_DEFINED, false, false,
+    runHandlingUnitInStorageBinTest(true, StorageBinTestUtils.ALL_EXCLUDING_DEFINED, false, false,
         "StorageBin with AllowStoringItems Yes, IncludedHandlingUnitTypes AllExcludingDefined, HandlingUnitTypeTab is not empty");
   }
 
   /**
-   * Creates storage bin test data for various input parameters
+   * Runs a test if a specific handling unit is allowed in a storage bin
    */
-
-  private void createStorageBinTestData(boolean allowStoringItems, String includedHandlingUnitTypes,
-      boolean isHandlingUnitTypeTabEmpty, boolean throwsException, String testName) {
+  private void runHandlingUnitInStorageBinTest(boolean allowStoringItems,
+      String includedHandlingUnitTypes, boolean isHandlingUnitTypeTabEmpty, boolean throwsException,
+      String testName) {
 
     Locator storageBin = StorageBinTestUtils.getNewStorageBinForTest("SB023");
 
@@ -265,6 +276,29 @@ public class StorageBinTest extends WeldBaseTest {
         log.error("Exception while creating box transaction in test " + testName, e,
             e.getMessage());
       }
+    }
+  }
+
+  /**
+   * Runs a test for allowing items or not
+   */
+  private void runAllowStoringItemTest(boolean allowStoringItems, boolean throwsException,
+      String testName) {
+    Locator newStorageBin = StorageBinTestUtils.getNewStorageBinForTest("SB026");
+    newStorageBin.setAllowStoringItems(allowStoringItems);
+    OBDal.getInstance().save(newStorageBin);
+    OBDal.getInstance().flush();
+
+    Product product = StorageBinTestUtils.getNewProductForTest("SB024");
+    if (throwsException) {
+      Exception thrown = assertThrows(Exception.class,
+          () -> StorageBinTestUtils.createStockForProductInBinForTest(
+              StorageBinTestUtils.GOODS_RECEIPT_ID, "SB025", product, newStorageBin,
+              BigDecimal.ONE));
+      assertThat(thrown.getMessage(), containsString(ERROR_MESSAGE_NON_EMPTY_HU));
+    } else {
+      StorageBinTestUtils.createStockForProductInBinForTest(StorageBinTestUtils.GOODS_RECEIPT_ID,
+          "SB025", product, newStorageBin, BigDecimal.ONE);
     }
   }
 
