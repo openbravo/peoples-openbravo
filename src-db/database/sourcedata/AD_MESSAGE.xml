@@ -27367,8 +27367,8 @@ Changing the Business Partner's currency will not allow you to use available cre
 <!--D5B39D68B981457F91229B65139C22DF-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--D5B39D68B981457F91229B65139C22DF-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--D5B39D68B981457F91229B65139C22DF-->  <VALUE><![CDATA[NonEmptyHUForTransactionAttributeSetInst]]></VALUE>
-<!--D5B39D68B981457F91229B65139C22DF-->  <MSGTEXT><![CDATA[Handling Unit cannot be empty for the attribute set instance of the transactions as Allow Storing Items is set as No for the linked locator ]]></MSGTEXT>
-<!--D5B39D68B981457F91229B65139C22DF-->  <MSGTIP><![CDATA[Handling Unit cannot be empty for the attribute set instance of the transactions as Allow Storing Items is set as No for the linked locator ]]></MSGTIP>
+<!--D5B39D68B981457F91229B65139C22DF-->  <MSGTEXT><![CDATA[This storage bin does not allow storing items without a box because 'Allow Storing Items' is set to No for the storage bin ]]></MSGTEXT>
+<!--D5B39D68B981457F91229B65139C22DF-->  <MSGTIP><![CDATA[This storage bin does not allow storing items without a box because 'Allow Storing Items' is set to No for the storage bin ]]></MSGTIP>
 <!--D5B39D68B981457F91229B65139C22DF-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--D5B39D68B981457F91229B65139C22DF-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--D5B39D68B981457F91229B65139C22DF-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
@@ -28790,8 +28790,8 @@ Lines: @lines@]]></MSGTEXT>
 <!--ED70D6D745C64D0F9C2D1A9CECB43216-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--ED70D6D745C64D0F9C2D1A9CECB43216-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--ED70D6D745C64D0F9C2D1A9CECB43216-->  <VALUE><![CDATA[NotValidHUTypeForLocator]]></VALUE>
-<!--ED70D6D745C64D0F9C2D1A9CECB43216-->  <MSGTEXT><![CDATA[Handling Unit Type is not valid for the locator ]]></MSGTEXT>
-<!--ED70D6D745C64D0F9C2D1A9CECB43216-->  <MSGTIP><![CDATA[Handling Unit Type is not valid for the locator ]]></MSGTIP>
+<!--ED70D6D745C64D0F9C2D1A9CECB43216-->  <MSGTEXT><![CDATA[Handling Unit Type is not valid for this storage bin ]]></MSGTEXT>
+<!--ED70D6D745C64D0F9C2D1A9CECB43216-->  <MSGTIP><![CDATA[Handling Unit Type is not valid for this storage bin]]></MSGTIP>
 <!--ED70D6D745C64D0F9C2D1A9CECB43216-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--ED70D6D745C64D0F9C2D1A9CECB43216-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--ED70D6D745C64D0F9C2D1A9CECB43216-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
