@@ -208,34 +208,33 @@ BEGIN
     FROM M_LOCATOR
     WHERE M_LOCATOR_ID = :NEW.M_LOCATOR_ID;
 
-    IF (v_allow_storing_items = 'N' AND COALESCE(:NEW.M_ATTRIBUTESETINSTANCE_ID, '-1') <> '0') THEN
-      SELECT M_ATTRIBUTESETINSTANCE.M_REFINVENTORY_ID, M_REFINVENTORY.M_REFINVENTORY_TYPE_ID
+    SELECT M_ATTRIBUTESETINSTANCE.M_REFINVENTORY_ID, M_REFINVENTORY.M_REFINVENTORY_TYPE_ID
         INTO v_refinventory_id, v_refinventory_type_id
-      FROM M_ATTRIBUTESETINSTANCE
+    FROM M_ATTRIBUTESETINSTANCE
         JOIN M_REFINVENTORY ON M_REFINVENTORY.M_REFINVENTORY_ID = M_ATTRIBUTESETINSTANCE.M_REFINVENTORY_ID
-      WHERE M_ATTRIBUTESETINSTANCE.M_REFINVENTORY_ID IS NOT NULL
+    WHERE M_ATTRIBUTESETINSTANCE.M_REFINVENTORY_ID IS NOT NULL
         AND M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESETINSTANCE_ID = :NEW.M_ATTRIBUTESETINSTANCE_ID;
 
       --If Attribute set instance of M_Transaction is not linked with Handling Unit then fail
       --when locator has allow storing items as No
-      IF (v_refinventory_id IS NULL) THEN
+    IF (v_allow_storing_items = 'N' AND v_refinventory_id IS NULL) THEN
         RAISE_APPLICATION_ERROR(-20000, '@NonEmptyHUForTransactionAttributeSetInst@'||v_locatorname);
-      END IF;
+    END IF;
 
-      SELECT COALESCE(COUNT(*), 0) INTO v_count
+    SELECT COALESCE(COUNT(*), 0) INTO v_count
         FROM M_LOCATOR_HU_TYPE
-      WHERE M_LOCATOR_ID = :NEW.M_LOCATOR_ID
+    WHERE M_LOCATOR_ID = :NEW.M_LOCATOR_ID
         AND m_refinventory_type_id = v_refinventory_type_id;
 
       --Check whether handling unit type of handling unit is defined for Locator
       --and its Handling unit selection is set as All excluding defined
       --Check whether handling unit type of handling unit is not defined for Locator
       --and its Handling unit selection is set as Only those defined
-      IF ((v_Count > 0 AND v_hu_type_selection = 'E')
+    IF ((v_Count > 0 AND v_hu_type_selection = 'E')
         OR (v_Count = 0 AND v_hu_type_selection = 'I')) THEN
         RAISE_APPLICATION_ERROR(-20000, '@NotValidHUTypeForLocator@'||v_locatorname);
-      END IF;
     END IF;
+
     --reset v_count as this is used later on
     v_count := 0;
   END IF;
