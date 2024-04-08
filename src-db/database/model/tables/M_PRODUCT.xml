@@ -413,6 +413,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="M_PRODUCT_SUBTYPE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MPRODUCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -457,6 +461,9 @@
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT_STATUS" name="M_PRODUCT_M_PRODUCT_STATUS">
         <reference local="M_PRODUCT_STATUS_ID" foreign="M_PRODUCT_STATUS_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT_SUBTYPE" name="M_PRODUCT_M_PRODUCT_SUBTYPE">
+        <reference local="M_PRODUCT_SUBTYPE_ID" foreign="M_PRODUCT_SUBTYPE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MRP_PLANNER" name="M_PRODUCT_MRP_PLANNER">
         <reference local="MRP_PLANNER_ID" foreign="MRP_PLANNER_ID"/>
@@ -526,6 +533,7 @@
       <check name="M_PROD_LINKEDTOPROD_SEL_CHECK"><![CDATA[ISLINKEDTOPRODUCT = 'Y' AND (PROD_CAT_SELECTION IS NOT NULL OR PRODUCT_SELECTION IS NOT NULL) OR ISLINKEDTOPRODUCT = 'N']]></check>
       <check name="M_PROD_LINKEDTOPRODUCT_CHECK"><![CDATA[ISLINKEDTOPRODUCT IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ATSETVALTYPE_CHK"><![CDATA[M_ATTRIBUTESETINSTANCE_ID IS NULL OR ATTRSETVALUETYPE IS NOT NULL]]></check>
+      <check name="M_PRODUCT_CONTRIBUTION_CHECK"><![CDATA[PRODUCTTYPE <> 'C' OR M_PRODUCT_SUBTYPE_ID IS NOT NULL]]></check>
       <check name="M_PRODUCT_DISCONTINUED_CHECK"><![CDATA[DISCONTINUED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ENFORCE_ATTRIBUT_CHK"><![CDATA[ENFORCE_ATTRIBUTE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

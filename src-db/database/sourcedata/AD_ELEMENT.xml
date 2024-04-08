@@ -10483,8 +10483,7 @@ If selected, this column will be used in the Search Window as an available filte
 <!--1899-->  <NAME><![CDATA[Product Type]]></NAME>
 <!--1899-->  <PRINTNAME><![CDATA[Product Type]]></PRINTNAME>
 <!--1899-->  <DESCRIPTION><![CDATA[An important classification used to determine the accounting and management of a product.]]></DESCRIPTION>
-<!--1899-->  <HELP><![CDATA[There are four types of products available. Item type can be used to configure any product such as raw materials or finished products ready to be sold. An item can be flagged as Socked or not, can be part of a production process and/or can be a bill of materials. Item type is the only one for which a cost type calculation can be configured.  Service type can be used to configure consultancy, transport or insurance services. Service type can be purchased or sold but can not be stocked. A service can be a bill of materials. Finally Resource and Expense are product types which can be used to distinguish between different types of products which can be purchased or sold but make not sense to stock. Expense type can be used to configure travel expenses fto be used while reporting Employee Expenses.
-The fact of using a given product type does not mean a different accounting. All product types account same way while being purchased, stocked or sold. All of them use the ledger accounts defined in the Accounting tab of the Product window.]]></HELP>
+<!--1899-->  <HELP><![CDATA[There are five types of products available. The Item type can be used to configure any product such as raw materials or finished products ready to be sold. An item can be flagged as Stocked or not, can be part of a production process and/or can be a bill of materials. The Item type is the only one for which a cost type calculation can be configured. The Service type can be used to configure consultancy, transport or insurance services. A service can be purchased or sold but not stocked. A service can be a bill of materials. Resource and Expenses are product types which can be used to distinguish between different types of products which can be purchased or sold but make not treated as stock. The Expense type can be used to configure travel expenses and/or fto while reporting Employee Expenses. The Contribution type can be used to set a charge on a particular product/product category or independently at order level. The Contribution type is further configured via a Product Subtype, e.g. if the contribution should be linked to another product, the quantity rule, etc. The fact of using a given product type does not mean a different accounting. All product types account same way while being purchased, stocked or sold. All of them use the ledger accounts defined in the Accounting tab of the Product window.]]></HELP>
 <!--1899-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1899-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1899--></AD_ELEMENT>
@@ -21635,6 +21634,20 @@ Advanced features are only granted to the automatic roles defined as advanced.]]
 <!--1220FCBCA0E0442D8810EC8C8026B221-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1220FCBCA0E0442D8810EC8C8026B221--></AD_ELEMENT>
 
+<!--12C9DB5D965B487EB09B72740B1EFF10--><AD_ELEMENT>
+<!--12C9DB5D965B487EB09B72740B1EFF10-->  <AD_ELEMENT_ID><![CDATA[12C9DB5D965B487EB09B72740B1EFF10]]></AD_ELEMENT_ID>
+<!--12C9DB5D965B487EB09B72740B1EFF10-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--12C9DB5D965B487EB09B72740B1EFF10-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--12C9DB5D965B487EB09B72740B1EFF10-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--12C9DB5D965B487EB09B72740B1EFF10-->  <COLUMNNAME><![CDATA[Pricecalculation]]></COLUMNNAME>
+<!--12C9DB5D965B487EB09B72740B1EFF10-->  <NAME><![CDATA[Price Calculation]]></NAME>
+<!--12C9DB5D965B487EB09B72740B1EFF10-->  <PRINTNAME><![CDATA[Price Calculation]]></PRINTNAME>
+<!--12C9DB5D965B487EB09B72740B1EFF10-->  <DESCRIPTION><![CDATA[Specifies how the price is calculated for a contribution]]></DESCRIPTION>
+<!--12C9DB5D965B487EB09B72740B1EFF10-->  <HELP><![CDATA[Specifies how the price is calculated for a contribution]]></HELP>
+<!--12C9DB5D965B487EB09B72740B1EFF10-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--12C9DB5D965B487EB09B72740B1EFF10-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
+<!--12C9DB5D965B487EB09B72740B1EFF10--></AD_ELEMENT>
+
 <!--13338440A6404E389A502A20DCDDF226--><AD_ELEMENT>
 <!--13338440A6404E389A502A20DCDDF226-->  <AD_ELEMENT_ID><![CDATA[13338440A6404E389A502A20DCDDF226]]></AD_ELEMENT_ID>
 <!--13338440A6404E389A502A20DCDDF226-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -22072,7 +22085,7 @@ Advanced features are only granted to the automatic roles defined as advanced.]]
 <!--19E0E6C95026216DE0530100007FB781-->  <COLUMNNAME><![CDATA[Quantity_Rule]]></COLUMNNAME>
 <!--19E0E6C95026216DE0530100007FB781-->  <NAME><![CDATA[Quantity Rule]]></NAME>
 <!--19E0E6C95026216DE0530100007FB781-->  <PRINTNAME><![CDATA[Quantity Rule]]></PRINTNAME>
-<!--19E0E6C95026216DE0530100007FB781-->  <DESCRIPTION><![CDATA[Rule to define how many related lines will be created while relating a service to multiple lines of a sales order]]></DESCRIPTION>
+<!--19E0E6C95026216DE0530100007FB781-->  <DESCRIPTION><![CDATA[Rule to define how many related lines will be created while relating a service/contribution to multiple lines of a sales order]]></DESCRIPTION>
 <!--19E0E6C95026216DE0530100007FB781-->  <HELP><![CDATA[There are two values:
  * As per product: One relation line per each different product line will be created.
  * Unique quantity: Only one relation line will be created with the total amount of all related lines.]]></HELP>
@@ -22376,6 +22389,20 @@ Advanced features are only granted to the automatic roles defined as advanced.]]
 <!--1F8E1739072247FF9ED957306CC9EA6B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1F8E1739072247FF9ED957306CC9EA6B-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1F8E1739072247FF9ED957306CC9EA6B--></AD_ELEMENT>
+
+<!--1F927A83E1C348FFB5EAF6CD02897897--><AD_ELEMENT>
+<!--1F927A83E1C348FFB5EAF6CD02897897-->  <AD_ELEMENT_ID><![CDATA[1F927A83E1C348FFB5EAF6CD02897897]]></AD_ELEMENT_ID>
+<!--1F927A83E1C348FFB5EAF6CD02897897-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1F927A83E1C348FFB5EAF6CD02897897-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1F927A83E1C348FFB5EAF6CD02897897-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1F927A83E1C348FFB5EAF6CD02897897-->  <COLUMNNAME><![CDATA[M_Product_Subtype_ID]]></COLUMNNAME>
+<!--1F927A83E1C348FFB5EAF6CD02897897-->  <NAME><![CDATA[Product Subtype]]></NAME>
+<!--1F927A83E1C348FFB5EAF6CD02897897-->  <PRINTNAME><![CDATA[Product Subtype]]></PRINTNAME>
+<!--1F927A83E1C348FFB5EAF6CD02897897-->  <DESCRIPTION><![CDATA[Identifies a Product Subtype]]></DESCRIPTION>
+<!--1F927A83E1C348FFB5EAF6CD02897897-->  <HELP><![CDATA[Used to identify a Product Subtype]]></HELP>
+<!--1F927A83E1C348FFB5EAF6CD02897897-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1F927A83E1C348FFB5EAF6CD02897897-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
+<!--1F927A83E1C348FFB5EAF6CD02897897--></AD_ELEMENT>
 
 <!--1FC7771000042291E0530100007FB355--><AD_ELEMENT>
 <!--1FC7771000042291E0530100007FB355-->  <AD_ELEMENT_ID><![CDATA[1FC7771000042291E0530100007FB355]]></AD_ELEMENT_ID>
@@ -23038,6 +23065,20 @@ When Never the Balance is always used, when Positive the balance is considered Z
 <!--2AA5DD33C625410DAC1FDEB71C80ECC1-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--2AA5DD33C625410DAC1FDEB71C80ECC1--></AD_ELEMENT>
 
+<!--2B6F94A77F8E4B7EA13515C06294F7FB--><AD_ELEMENT>
+<!--2B6F94A77F8E4B7EA13515C06294F7FB-->  <AD_ELEMENT_ID><![CDATA[2B6F94A77F8E4B7EA13515C06294F7FB]]></AD_ELEMENT_ID>
+<!--2B6F94A77F8E4B7EA13515C06294F7FB-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--2B6F94A77F8E4B7EA13515C06294F7FB-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--2B6F94A77F8E4B7EA13515C06294F7FB-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--2B6F94A77F8E4B7EA13515C06294F7FB-->  <COLUMNNAME><![CDATA[Allocationtype]]></COLUMNNAME>
+<!--2B6F94A77F8E4B7EA13515C06294F7FB-->  <NAME><![CDATA[Allocation Type]]></NAME>
+<!--2B6F94A77F8E4B7EA13515C06294F7FB-->  <PRINTNAME><![CDATA[Allocation Type]]></PRINTNAME>
+<!--2B6F94A77F8E4B7EA13515C06294F7FB-->  <DESCRIPTION><![CDATA[Defines how a contribution should be allocated]]></DESCRIPTION>
+<!--2B6F94A77F8E4B7EA13515C06294F7FB-->  <HELP><![CDATA[Defines how a contribution should behave if the product it relates to is added to the ticket.]]></HELP>
+<!--2B6F94A77F8E4B7EA13515C06294F7FB-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--2B6F94A77F8E4B7EA13515C06294F7FB-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
+<!--2B6F94A77F8E4B7EA13515C06294F7FB--></AD_ELEMENT>
+
 <!--2BAA5F1E728D43B690EA4A29C00A1576--><AD_ELEMENT>
 <!--2BAA5F1E728D43B690EA4A29C00A1576-->  <AD_ELEMENT_ID><![CDATA[2BAA5F1E728D43B690EA4A29C00A1576]]></AD_ELEMENT_ID>
 <!--2BAA5F1E728D43B690EA4A29C00A1576-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -23340,6 +23381,20 @@ When this flag is enabled, this default behavior can be overridden allowing to r
 <!--3214384084114F38B297AD4448B6D3F6-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--3214384084114F38B297AD4448B6D3F6-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--3214384084114F38B297AD4448B6D3F6--></AD_ELEMENT>
+
+<!--3223C4A309F34AA49BFDBE38912C7F3B--><AD_ELEMENT>
+<!--3223C4A309F34AA49BFDBE38912C7F3B-->  <AD_ELEMENT_ID><![CDATA[3223C4A309F34AA49BFDBE38912C7F3B]]></AD_ELEMENT_ID>
+<!--3223C4A309F34AA49BFDBE38912C7F3B-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--3223C4A309F34AA49BFDBE38912C7F3B-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--3223C4A309F34AA49BFDBE38912C7F3B-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--3223C4A309F34AA49BFDBE38912C7F3B-->  <COLUMNNAME><![CDATA[Forcedinreturns]]></COLUMNNAME>
+<!--3223C4A309F34AA49BFDBE38912C7F3B-->  <NAME><![CDATA[Forced In Returns]]></NAME>
+<!--3223C4A309F34AA49BFDBE38912C7F3B-->  <PRINTNAME><![CDATA[Forced In Returns]]></PRINTNAME>
+<!--3223C4A309F34AA49BFDBE38912C7F3B-->  <DESCRIPTION><![CDATA[Specifies if the contribution should must be returned when its product is returned]]></DESCRIPTION>
+<!--3223C4A309F34AA49BFDBE38912C7F3B-->  <HELP><![CDATA[Specifies if the contribution should must be returned when its product is returned]]></HELP>
+<!--3223C4A309F34AA49BFDBE38912C7F3B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--3223C4A309F34AA49BFDBE38912C7F3B-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
+<!--3223C4A309F34AA49BFDBE38912C7F3B--></AD_ELEMENT>
 
 <!--3269E9900D0C45BB9CDA1BF2975242ED--><AD_ELEMENT>
 <!--3269E9900D0C45BB9CDA1BF2975242ED-->  <AD_ELEMENT_ID><![CDATA[3269E9900D0C45BB9CDA1BF2975242ED]]></AD_ELEMENT_ID>
@@ -24318,6 +24373,20 @@ By default the type is empty (null), which means the product characteristic does
 <!--44CBD6E9427241D1B8052EC48012FC6C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--44CBD6E9427241D1B8052EC48012FC6C-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--44CBD6E9427241D1B8052EC48012FC6C--></AD_ELEMENT>
+
+<!--44FB81CA14A14047939B093ACC6CD00E--><AD_ELEMENT>
+<!--44FB81CA14A14047939B093ACC6CD00E-->  <AD_ELEMENT_ID><![CDATA[44FB81CA14A14047939B093ACC6CD00E]]></AD_ELEMENT_ID>
+<!--44FB81CA14A14047939B093ACC6CD00E-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--44FB81CA14A14047939B093ACC6CD00E-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--44FB81CA14A14047939B093ACC6CD00E-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--44FB81CA14A14047939B093ACC6CD00E-->  <COLUMNNAME><![CDATA[Islinkedtoproduct]]></COLUMNNAME>
+<!--44FB81CA14A14047939B093ACC6CD00E-->  <NAME><![CDATA[Linkable To Products]]></NAME>
+<!--44FB81CA14A14047939B093ACC6CD00E-->  <PRINTNAME><![CDATA[Linkable To Products]]></PRINTNAME>
+<!--44FB81CA14A14047939B093ACC6CD00E-->  <DESCRIPTION><![CDATA[Indicates the product with the given product subtype can be linked to another product]]></DESCRIPTION>
+<!--44FB81CA14A14047939B093ACC6CD00E-->  <HELP><![CDATA[Indicates the product with the given product subtype can be linked to another product]]></HELP>
+<!--44FB81CA14A14047939B093ACC6CD00E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--44FB81CA14A14047939B093ACC6CD00E-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
+<!--44FB81CA14A14047939B093ACC6CD00E--></AD_ELEMENT>
 
 <!--454F0DF7A3CE4A60B8AEA77359FA8E25--><AD_ELEMENT>
 <!--454F0DF7A3CE4A60B8AEA77359FA8E25-->  <AD_ELEMENT_ID><![CDATA[454F0DF7A3CE4A60B8AEA77359FA8E25]]></AD_ELEMENT_ID>
@@ -28241,8 +28310,8 @@ The distribution algorithm will be driven by this priority. The pending payments
 <!--680E69F4E5C8492BA0897166B5C54926-->  <COLUMNNAME><![CDATA[Islinkedtoproduct]]></COLUMNNAME>
 <!--680E69F4E5C8492BA0897166B5C54926-->  <NAME><![CDATA[Linked To Product]]></NAME>
 <!--680E69F4E5C8492BA0897166B5C54926-->  <PRINTNAME><![CDATA[Linked To Product]]></PRINTNAME>
-<!--680E69F4E5C8492BA0897166B5C54926-->  <DESCRIPTION><![CDATA[The service can be linked to a Product]]></DESCRIPTION>
-<!--680E69F4E5C8492BA0897166B5C54926-->  <HELP><![CDATA[The service can be linked to a Product. If so, when adding the product to a Sales Order, the related service product could be added to the Sales Order also, following special rules to set the quantity to be added and the price of the service, both of them based on the product.]]></HELP>
+<!--680E69F4E5C8492BA0897166B5C54926-->  <DESCRIPTION><![CDATA[The service/contribution can be linked to a Product]]></DESCRIPTION>
+<!--680E69F4E5C8492BA0897166B5C54926-->  <HELP><![CDATA[The service or contribution can be linked to a Product. If so, when adding the product to a Sales Order, the related service/contribution product could be added to the Sales Order also, following special rules to set the quantity to be added and the price of the service, both of them based on the product. For contributions, this option is defined at Product Subtype level.]]></HELP>
 <!--680E69F4E5C8492BA0897166B5C54926-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--680E69F4E5C8492BA0897166B5C54926-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--680E69F4E5C8492BA0897166B5C54926--></AD_ELEMENT>
@@ -31181,10 +31250,10 @@ Configuration Properties are defined by modules with the purpose other modules a
 <!--84538EC13C964DBF8E98A64541FD850E-->  <COLUMNNAME><![CDATA[Relateprodtoservice]]></COLUMNNAME>
 <!--84538EC13C964DBF8E98A64541FD850E-->  <NAME><![CDATA[Relate Products]]></NAME>
 <!--84538EC13C964DBF8E98A64541FD850E-->  <PRINTNAME><![CDATA[Relate Products]]></PRINTNAME>
-<!--84538EC13C964DBF8E98A64541FD850E-->  <DESCRIPTION><![CDATA[P&E to include/exclude products in Products tab to indicate that the Service could be applied on those products]]></DESCRIPTION>
-<!--84538EC13C964DBF8E98A64541FD850E-->  <HELP><![CDATA[P&E to include/exclude products in Products tab to indicate that the Service could be applied on those products.
+<!--84538EC13C964DBF8E98A64541FD850E-->  <DESCRIPTION><![CDATA[P&E to include/exclude products in Products tab to indicate that the Service/Contribution could be applied on those products]]></DESCRIPTION>
+<!--84538EC13C964DBF8E98A64541FD850E-->  <HELP><![CDATA[P&E to include/exclude products in Products tab to indicate that the Service/Contribution could be applied on those products.
 
-This P&E is only visible for Service Type Products]]></HELP>
+This P&E is only visible for Related Product Type Products]]></HELP>
 <!--84538EC13C964DBF8E98A64541FD850E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--84538EC13C964DBF8E98A64541FD850E-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--84538EC13C964DBF8E98A64541FD850E--></AD_ELEMENT>
@@ -35835,6 +35904,20 @@ If this flag is checked the creation and deletion of tree nodes will be handled 
 <!--C5D0BA2A87A24D90B56495CFD0A642D1-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--C5D0BA2A87A24D90B56495CFD0A642D1--></AD_ELEMENT>
 
+<!--C5EDDF2EAB2543A89BC8041945E11393--><AD_ELEMENT>
+<!--C5EDDF2EAB2543A89BC8041945E11393-->  <AD_ELEMENT_ID><![CDATA[C5EDDF2EAB2543A89BC8041945E11393]]></AD_ELEMENT_ID>
+<!--C5EDDF2EAB2543A89BC8041945E11393-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--C5EDDF2EAB2543A89BC8041945E11393-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--C5EDDF2EAB2543A89BC8041945E11393-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--C5EDDF2EAB2543A89BC8041945E11393-->  <COLUMNNAME><![CDATA[Includedinproductprice]]></COLUMNNAME>
+<!--C5EDDF2EAB2543A89BC8041945E11393-->  <NAME><![CDATA[Included In Product Price]]></NAME>
+<!--C5EDDF2EAB2543A89BC8041945E11393-->  <PRINTNAME><![CDATA[Included In Product Price]]></PRINTNAME>
+<!--C5EDDF2EAB2543A89BC8041945E11393-->  <DESCRIPTION><![CDATA[Whether the price of a product is included in the price of its related product]]></DESCRIPTION>
+<!--C5EDDF2EAB2543A89BC8041945E11393-->  <HELP><![CDATA[Used to specify whether the price of a product is included in the price of its related product.]]></HELP>
+<!--C5EDDF2EAB2543A89BC8041945E11393-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--C5EDDF2EAB2543A89BC8041945E11393-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
+<!--C5EDDF2EAB2543A89BC8041945E11393--></AD_ELEMENT>
+
 <!--C61B9460672F4657A62AF941F2CB51C1--><AD_ELEMENT>
 <!--C61B9460672F4657A62AF941F2CB51C1-->  <AD_ELEMENT_ID><![CDATA[C61B9460672F4657A62AF941F2CB51C1]]></AD_ELEMENT_ID>
 <!--C61B9460672F4657A62AF941F2CB51C1-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -38579,10 +38662,10 @@ For details - http://wiki.openbravo.com/wiki/Role#Permissions_Inheritance]]></HE
 <!--EAB79580580A476890F6C6F4E634C43D-->  <COLUMNNAME><![CDATA[Relateprodcattoservice]]></COLUMNNAME>
 <!--EAB79580580A476890F6C6F4E634C43D-->  <NAME><![CDATA[Relate Prod Categories]]></NAME>
 <!--EAB79580580A476890F6C6F4E634C43D-->  <PRINTNAME><![CDATA[Relate Prod Categories]]></PRINTNAME>
-<!--EAB79580580A476890F6C6F4E634C43D-->  <DESCRIPTION><![CDATA[P&E to include/exclude product categories in Products tab to indicate that the Service could be applied on those product categories.]]></DESCRIPTION>
-<!--EAB79580580A476890F6C6F4E634C43D-->  <HELP><![CDATA[P&E to include/exclude product categories in Products tab to indicate that the Service could be applied on those product categories.
+<!--EAB79580580A476890F6C6F4E634C43D-->  <DESCRIPTION><![CDATA[P&E to include/exclude product categories in Products tab to indicate that the Service/Contribution could be applied on those product categories.]]></DESCRIPTION>
+<!--EAB79580580A476890F6C6F4E634C43D-->  <HELP><![CDATA[P&E to include/exclude product categories in Products tab to indicate that the Service/Contribution could be applied on those product categories.
 
-This P&E is only visible for Service Type Products]]></HELP>
+This P&E is only visible for Related Product Type Products]]></HELP>
 <!--EAB79580580A476890F6C6F4E634C43D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--EAB79580580A476890F6C6F4E634C43D-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--EAB79580580A476890F6C6F4E634C43D--></AD_ELEMENT>
