@@ -183,6 +183,7 @@ isc.OBStandardView.addProperties({
   readOnly: false,
   singleRecord: false,
   editOrDeleteOnly: false,
+  allowDelete: true,
 
   isShowingForm: false,
   isEditingGrid: false,
