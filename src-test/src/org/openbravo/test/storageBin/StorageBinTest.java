@@ -43,6 +43,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.materialmgmt.refinventory.BoxProcessor;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
 import org.openbravo.model.common.enterprise.Locator;
+import org.openbravo.model.common.enterprise.LocatorHandlingUnitType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
@@ -130,18 +131,10 @@ public class StorageBinTest extends WeldBaseTest {
   @Test
   public void testNoDuplicateStorageBinHUType() {
 
-    Locator storageBin = StorageBinTestUtils.getNewStorageBinForTest("SB004");
-
-    Product product = StorageBinTestUtils.getNewProductForTest("SB005");
-
-    // Create stock for product
-    StorageBinTestUtils.createStockForProductInBinForTest(StorageBinTestUtils.GOODS_RECEIPT_ID,
-        "SB006", product, storageBin, BigDecimal.ONE);
-
-    Locator newStorageBin = StorageBinTestUtils.getNewStorageBinForTest("SB007");
-    newStorageBin.setAllowStoringItems(false);
-    newStorageBin.setIncludedHandlingUnitTypes(StorageBinTestUtils.ONLY_THOSE_DEFINED);
-    OBDal.getInstance().save(newStorageBin);
+    Locator storageBin = StorageBinTestUtils.getNewStorageBinForTest("SB007");
+    storageBin.setAllowStoringItems(false);
+    storageBin.setIncludedHandlingUnitTypes(StorageBinTestUtils.ONLY_THOSE_DEFINED);
+    OBDal.getInstance().save(storageBin);
     OBDal.getInstance().flush();
 
     final ReferencedInventoryType huType = ReferencedInventoryTestUtils
@@ -149,15 +142,155 @@ public class StorageBinTest extends WeldBaseTest {
             OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
             SequenceType.NONE, null);
 
-    StorageBinTestUtils.createStorageBinHUType(newStorageBin, huType);
+    StorageBinTestUtils.createStorageBinHUType(storageBin, huType);
 
     PersistenceException thrown = assertThrows(PersistenceException.class, () -> {
-      StorageBinTestUtils.createStorageBinHUType(newStorageBin, huType);
+      StorageBinTestUtils.createStorageBinHUType(storageBin, huType);
       OBDal.getInstance().flush();
     });
 
     assertThat(DbUtility.getUnderlyingSQLException(thrown).getMessage(),
         containsString(ERROR_MESSAGE_No_Duplicate_Locator_HU_TYPE));
+
+  }
+
+  @Test
+  public void testStorageBinHUTypeConfiguration() {
+
+    Locator storageBin = StorageBinTestUtils.getNewStorageBinForTest("SB007");
+    storageBin.setAllowStoringItems(true);
+    storageBin.setIncludedHandlingUnitTypes(StorageBinTestUtils.ALL_SELECTION_MODE);
+    OBDal.getInstance().save(storageBin);
+    OBDal.getInstance().flush();
+
+    final ReferencedInventoryType huType = ReferencedInventoryTestUtils
+        .createReferencedInventoryType(
+            OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
+            SequenceType.NONE, null);
+
+    final ReferencedInventoryType huTypeForUpdateOrDelete = ReferencedInventoryTestUtils
+        .createReferencedInventoryType(
+            OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
+            SequenceType.NONE, null);
+
+    // Add
+
+    LocatorHandlingUnitType locatorHuType = StorageBinTestUtils.createStorageBinHUType(storageBin,
+        huType);
+
+    // Update
+    locatorHuType.setHandlingUnitType(huTypeForUpdateOrDelete);
+    OBDal.getInstance().save(locatorHuType);
+    OBDal.getInstance().flush();
+
+    // Remove
+    OBDal.getInstance().remove(locatorHuType);
+    OBDal.getInstance().flush();
+
+  }
+
+  @Test
+  public void testDeleteStorageBinHUTypeConfiguration() {
+
+    Locator storageBin = StorageBinTestUtils.getNewStorageBinForTest("SB007");
+    storageBin.setAllowStoringItems(true);
+    storageBin.setIncludedHandlingUnitTypes(StorageBinTestUtils.ALL_SELECTION_MODE);
+    OBDal.getInstance().save(storageBin);
+    OBDal.getInstance().flush();
+
+    final ReferencedInventoryType huTypeForDelete = ReferencedInventoryTestUtils
+        .createReferencedInventoryType(
+            OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
+            SequenceType.NONE, null);
+
+    LocatorHandlingUnitType locatorHuTypeForDelete = StorageBinTestUtils
+        .createStorageBinHUType(storageBin, huTypeForDelete);
+
+    Product product = StorageBinTestUtils.getNewProductForTest("SB005");
+
+    // Create stock for product
+    StorageBinTestUtils.createStockForProductInBinForTest(StorageBinTestUtils.GOODS_RECEIPT_ID,
+        "SB006", product, storageBin, BigDecimal.ONE);
+
+    // Try to remove HU Type Configuration for storage bin
+    Exception thrown = assertThrows(Exception.class, () -> {
+      OBDal.getInstance().remove(locatorHuTypeForDelete);
+      OBDal.getInstance().flush();
+    });
+
+    assertThat(DbUtility.getUnderlyingSQLException(thrown).getMessage(),
+        containsString("NotEditableAllowStoringItemsHUType"));
+
+  }
+
+  @Test
+  public void testInsertStorageBinHUTypeConfiguration() {
+
+    Locator storageBin = StorageBinTestUtils.getNewStorageBinForTest("SB007");
+    storageBin.setAllowStoringItems(true);
+    storageBin.setIncludedHandlingUnitTypes(StorageBinTestUtils.ALL_SELECTION_MODE);
+    OBDal.getInstance().save(storageBin);
+    OBDal.getInstance().flush();
+
+    final ReferencedInventoryType huTypeForInsert = ReferencedInventoryTestUtils
+        .createReferencedInventoryType(
+            OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
+            SequenceType.NONE, null);
+
+    Product product = StorageBinTestUtils.getNewProductForTest("SB005");
+
+    // Create stock for product
+    StorageBinTestUtils.createStockForProductInBinForTest(StorageBinTestUtils.GOODS_RECEIPT_ID,
+        "SB006", product, storageBin, BigDecimal.ONE);
+
+    // Try to add HU Type Configuration for storage bin
+    Exception thrown = assertThrows(Exception.class, () -> {
+      StorageBinTestUtils.createStorageBinHUType(storageBin, huTypeForInsert);
+      OBDal.getInstance().flush();
+    });
+
+    assertThat(DbUtility.getUnderlyingSQLException(thrown).getMessage(),
+        containsString("NotEditableAllowStoringItemsHUType"));
+
+  }
+
+  @Test
+  public void testUpdateStorageBinHUTypeConfiguration() {
+
+    Locator storageBin = StorageBinTestUtils.getNewStorageBinForTest("SB007");
+    storageBin.setAllowStoringItems(true);
+    storageBin.setIncludedHandlingUnitTypes(StorageBinTestUtils.ALL_SELECTION_MODE);
+    OBDal.getInstance().save(storageBin);
+    OBDal.getInstance().flush();
+
+    final ReferencedInventoryType huTypeForInsert = ReferencedInventoryTestUtils
+        .createReferencedInventoryType(
+            OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
+            SequenceType.NONE, null);
+
+    final ReferencedInventoryType huTypeForUpdate = ReferencedInventoryTestUtils
+        .createReferencedInventoryType(
+            OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
+            SequenceType.NONE, null);
+
+    LocatorHandlingUnitType locatorHuTypeForInsert = StorageBinTestUtils
+        .createStorageBinHUType(storageBin, huTypeForInsert);
+
+    Product product = StorageBinTestUtils.getNewProductForTest("SB005");
+
+    // Create stock for product
+    StorageBinTestUtils.createStockForProductInBinForTest(StorageBinTestUtils.GOODS_RECEIPT_ID,
+        "SB006", product, storageBin, BigDecimal.ONE);
+
+    // Try to update HU Type Configuration for storage bin
+    Exception thrown = assertThrows(Exception.class, () -> {
+      locatorHuTypeForInsert.setHandlingUnitType(huTypeForUpdate);
+      OBDal.getInstance().save(locatorHuTypeForInsert);
+      OBDal.getInstance().flush();
+    });
+
+    assertThat(DbUtility.getUnderlyingSQLException(thrown).getMessage(),
+        containsString("NotEditableAllowStoringItemsHUType"));
 
   }
 

@@ -423,12 +423,13 @@ public class StorageBinTestUtils {
    * Defines a handling unit type for Storage Bin
    */
 
-  public static void createStorageBinHUType(Locator storageBin,
+  public static LocatorHandlingUnitType createStorageBinHUType(Locator storageBin,
       ReferencedInventoryType handlingUnitType) {
     LocatorHandlingUnitType locatorHUType = OBProvider.getInstance()
         .get(LocatorHandlingUnitType.class);
     locatorHUType.setStorageBin(storageBin);
     locatorHUType.setHandlingUnitType(handlingUnitType);
     OBDal.getInstance().save(locatorHUType);
+    return locatorHUType;
   }
 }
