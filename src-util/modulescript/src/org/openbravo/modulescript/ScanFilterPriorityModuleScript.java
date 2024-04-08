@@ -47,7 +47,7 @@ public class ScanFilterPriorityModuleScript extends ModuleScript {
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
     return new ModuleScriptExecutionLimits("0", null, 
-        new OpenbravoVersion(3,0,243900);
+        new OpenbravoVersion(3,0,243900));
   }
   
   @Override
