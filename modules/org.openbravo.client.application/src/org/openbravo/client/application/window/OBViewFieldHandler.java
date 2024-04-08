@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2023 Openbravo SLU
+ * All portions are Copyright (C) 2011-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -93,7 +93,7 @@ public class OBViewFieldHandler {
 
   private List<Field> ignoredFields = new ArrayList<Field>();
 
-  private Optional<GCSystem> systemGridConfig;
+  private Optional<GCSystem> systemGridConfig = Optional.empty();
   private Map<String, Optional<GCTab>> tabsGridConfig;
 
   private List<FieldSettingsProvider> fieldSettingsProviders = WeldUtils
@@ -1295,7 +1295,10 @@ public class OBViewFieldHandler {
   }
 
   private Optional<GCTab> getTabGridConfig() {
-    return tabsGridConfig.get(tab.getId());
+    if (tabsGridConfig == null) {
+      return Optional.empty();
+    }
+    return tabsGridConfig.getOrDefault(tab.getId(), Optional.empty());
   }
 
   public class OBViewField implements OBViewFieldDefinition {
