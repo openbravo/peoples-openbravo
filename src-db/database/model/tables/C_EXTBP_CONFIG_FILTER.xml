@@ -129,6 +129,9 @@
       <foreign-key foreignTable="AD_ORG" name="C_EXTBPCONFFIL_ORG_FK">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_EXTBP_CONFIG_PROPERTY" name="C_EXTBPCONFFIL_SCANCODE_FK">
+        <reference local="SCANCODEPROPERTY" foreign="C_EXTBP_CONFIG_PROPERTY_ID"/>
+      </foreign-key>
       <unique name="C_EXTBPCONFFIL_NAME_UN">
         <unique-column name="C_EXTBP_CONFIG_ID"/>
         <unique-column name="NAME"/>
