@@ -2,10 +2,6 @@
   <database name="TRIGGER M_TRANSACTION_TRG">
     <trigger name="M_TRANSACTION_TRG" table="M_TRANSACTION" fires="after" insert="true" update="true" delete="true" foreach="row">
       <body><![CDATA[
-
-
-
-
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -18,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2020 Openbravo SLU
+* All portions are Copyright (C) 2001-2024 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -43,10 +39,15 @@
   v_preQtyOnHand M_STORAGE_DETAIL.PREQTYONHAND%TYPE;
   v_hasZeroStockOrPending BOOLEAN:= FALSE;
   v_issotrx M_INOUT.ISSOTRX%TYPE;
+  v_allow_storing_items M_LOCATOR.ALLOW_STORING_ITEMS%TYPE;
+  v_hu_type_selection M_LOCATOR.HU_TYPE_SELECTION%TYPE;
+  v_refinventory_id M_REFINVENTORY.M_REFINVENTORY_ID%TYPE;
+  v_refinventory_type_id M_REFINVENTORY.M_REFINVENTORY_TYPE_ID%TYPE;
+  v_locatorname M_LOCATOR.VALUE%TYPE;
+
 BEGIN
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
-
 
   IF INSERTING OR UPDATING THEN
     SELECT P.NAME, P.C_UOM_ID, P.M_ATTRIBUTESET_ID, A.ISONEATTRSETVALREQUIRED, P.ATTRSETVALUETYPE
@@ -200,6 +201,42 @@ BEGIN
        	END IF;
      	END IF;
 		END IF;
+
+    --Get Allow_Storing_Items, handling unit type selection and search key for Locator
+    SELECT ALLOW_STORING_ITEMS, HU_TYPE_SELECTION, VALUE
+      INTO v_allow_storing_items, v_hu_type_selection, v_locatorname
+    FROM M_LOCATOR
+    WHERE M_LOCATOR_ID = :NEW.M_LOCATOR_ID;
+
+    SELECT M_ATTRIBUTESETINSTANCE.M_REFINVENTORY_ID, M_REFINVENTORY.M_REFINVENTORY_TYPE_ID
+        INTO v_refinventory_id, v_refinventory_type_id
+    FROM M_ATTRIBUTESETINSTANCE
+        JOIN M_REFINVENTORY ON M_REFINVENTORY.M_REFINVENTORY_ID = M_ATTRIBUTESETINSTANCE.M_REFINVENTORY_ID
+    WHERE M_ATTRIBUTESETINSTANCE.M_REFINVENTORY_ID IS NOT NULL
+        AND M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESETINSTANCE_ID = :NEW.M_ATTRIBUTESETINSTANCE_ID;
+
+      --If Attribute set instance of M_Transaction is not linked with Handling Unit then fail
+      --when locator has allow storing items as No
+    IF (v_allow_storing_items = 'N' AND v_refinventory_id IS NULL) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@NonEmptyHUForTransactionAttributeSetInst@'||v_locatorname);
+    END IF;
+
+    SELECT COALESCE(COUNT(*), 0) INTO v_count
+        FROM M_LOCATOR_HU_TYPE
+    WHERE M_LOCATOR_ID = :NEW.M_LOCATOR_ID
+        AND m_refinventory_type_id = v_refinventory_type_id;
+
+      --Check whether handling unit type of handling unit is defined for Locator
+      --and its Handling unit selection is set as All excluding defined
+      --Check whether handling unit type of handling unit is not defined for Locator
+      --and its Handling unit selection is set as Only those defined
+    IF ((v_Count > 0 AND v_hu_type_selection = 'E')
+        OR (v_Count = 0 AND v_hu_type_selection = 'I')) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@NotValidHUTypeForLocator@'||v_locatorname);
+    END IF;
+
+    --reset v_count as this is used later on
+    v_count := 0;
   END IF;
   
   -- Updating inventory

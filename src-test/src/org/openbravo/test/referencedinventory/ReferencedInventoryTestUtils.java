@@ -38,6 +38,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -66,7 +67,7 @@ import org.openbravo.service.db.CallStoredProcedure;
 /**
  * Utils class for Referenced Inventory tests
  */
-class ReferencedInventoryTestUtils {
+public class ReferencedInventoryTestUtils {
 
   private static final String COMPLETE_ACTION = "CO";
   private static final String DRAFT_STATUS = "DR";
@@ -98,6 +99,19 @@ class ReferencedInventoryTestUtils {
   static void initializeReservationsPreferenceIfDoesnotExist() {
     if (!existsReservationsPreference()) {
       createReservationsPreference();
+    }
+  }
+
+  /**
+   * Check whether AWO module is installed or not
+   */
+  public static boolean isAwoInstalled() {
+    try {
+      OBContext.setAdminMode(true);
+      return KernelUtils.getInstance()
+          .isModulePresent("org.openbravo.warehouse.advancedwarehouseoperations");
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 
@@ -151,7 +165,7 @@ class ReferencedInventoryTestUtils {
     OBDal.getInstance().flush();
   }
 
-  static ReferencedInventoryType createReferencedInventoryType(Organization org,
+  public static ReferencedInventoryType createReferencedInventoryType(Organization org,
       SequenceType sequenceType, Sequence sequence) {
     final ReferencedInventoryType refInvType = OBProvider.getInstance()
         .get(ReferencedInventoryType.class);
@@ -166,7 +180,7 @@ class ReferencedInventoryTestUtils {
     return refInvType;
   }
 
-  static ReferencedInventory createReferencedInventory(final String orgId,
+  public static ReferencedInventory createReferencedInventory(final String orgId,
       final ReferencedInventoryType refInvType) {
     String strSequence = ReferencedInventoryUtil.getProposedValueFromSequence(refInvType.getId(),
         orgId, true);
@@ -257,7 +271,7 @@ class ReferencedInventoryTestUtils {
     CallStoredProcedure.getInstance().call(M_INOUT_POST, parameters, null, true, false);
   }
 
-  static JSONArray getStorageDetailsToBoxJSArray(final StorageDetail storageDetail,
+  public static JSONArray getStorageDetailsToBoxJSArray(final StorageDetail storageDetail,
       final BigDecimal qty) throws JSONException {
     final JSONObject storageDetailJS = new JSONObject();
     storageDetailJS.put("id", storageDetail.getId());
@@ -286,7 +300,7 @@ class ReferencedInventoryTestUtils {
     return crit.list();
   }
 
-  static StorageDetail getUniqueStorageDetail(final Product product) {
+  public static StorageDetail getUniqueStorageDetail(final Product product) {
     final List<StorageDetail> storageDetails = getAvailableStorageDetailsOrderByQtyOnHand(product);
     if (storageDetails.size() > 1) {
       throw new OBException(

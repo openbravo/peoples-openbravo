@@ -151,6 +151,7 @@ import org.openbravo.test.sendemail.SendEmailTest;
 import org.openbravo.test.services.ServicesTest;
 import org.openbravo.test.services.ServicesTest2;
 import org.openbravo.test.services.ServicesTest3;
+import org.openbravo.test.storageBin.StorageBinTest;
 import org.openbravo.test.system.CryptoUtilities;
 import org.openbravo.test.system.ErrorTextParserIntegrationTest;
 import org.openbravo.test.system.ErrorTextParserTest;
@@ -312,6 +313,9 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
 
     // Inventory Status
     InventoryStatusTest.class, //
+
+    // Storage Bin
+    StorageBinTest.class, //
 
     // Characteristics
     CharacteristicEventHandlerTest.class, //

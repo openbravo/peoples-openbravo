@@ -32,7 +32,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.test.WeldBaseTest;
-import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -56,19 +55,9 @@ public abstract class ReferencedInventoryTest extends WeldBaseTest {
           ReferencedInventoryTestUtils.ATTRIBUTE_LAPTOP_SERIALNO } };
   protected final boolean[] ISALLOCATED = { false, true };
 
-  private boolean isAwoInstalled() {
-    try {
-      OBContext.setAdminMode(true);
-      return KernelUtils.getInstance()
-          .isModulePresent("org.openbravo.warehouse.advancedwarehouseoperations");
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
-
   @Before
   public void initialize() {
-    boolean awoIsInstalled = isAwoInstalled();
+    boolean awoIsInstalled = ReferencedInventoryTestUtils.isAwoInstalled();
     assumeThat("Auto-Disabled test case as incompatible with AWO (found to be installed) ",
         awoIsInstalled, is(false));
 
