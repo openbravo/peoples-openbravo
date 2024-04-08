@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2023 Openbravo SLU
+ * All portions are Copyright (C) 2010-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -599,6 +599,7 @@ isc.OBStandardWindow.addProperties({
         view = this.getView(tab.tabId);
         disabledFields = [];
         if (view !== null) {
+          view.allowDelete = tab.updatable;
           for (i = 0; i < view.formFields.length; i++) {
             field = view.formFields[i];
             if (tab.fields[field.name] !== undefined) {
