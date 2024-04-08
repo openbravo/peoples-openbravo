@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2019 Openbravo SLU
+ * All portions are Copyright (C) 2009-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,13 +33,9 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.authentication.hashing.PasswordHash;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.LoginUtils;
-import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelConstants;
-import org.openbravo.client.kernel.KernelServlet;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -48,8 +44,6 @@ import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.Language;
-import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.portal.PortalAccessible;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.password.PasswordStrengthChecker;
@@ -258,80 +252,4 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
     }
     return null;
   }
-
-  // ugly inheriting from HttpSecureAppServlet because it provides a number of methods...
-  private static class UserSessionSetter extends HttpSecureAppServlet {
-    private static final long serialVersionUID = 1L;
-    private static final String TEXT_DIRECTION = "#TextDirection";
-    private static final String SESSION_ID = "#AD_Session_ID";
-    private static final String AUTHENTICATED_USER = "#Authenticated_user";
-    private static final String CURRENT_APPLICATION = "#APPLICATION_SEARCH_KEY";
-    // Application Mode is a concept introduced in Core2, but as this is a private static class
-    // there is no other way to extend this class to include additional values
-    // stored in Session
-    private static final String CURRENT_APPLICATION_MODE = "#APPLICATION_MODE";
-
-    private void resetSession(HttpServletRequest request, boolean isDefault, String userId,
-        String roleId, String clientId, String organizationId, String languageId,
-        String warehouseId, String defaultRoleProperty, boolean setOnlyRole) throws Exception {
-      final VariablesSecureApp vars = new VariablesSecureApp(request); // refresh
-      final Language language = OBDal.getInstance().get(Language.class, languageId);
-      if (language.isRTLLanguage()) {
-        vars.setSessionValue(TEXT_DIRECTION, "RTL");
-      } else {
-        vars.setSessionValue(TEXT_DIRECTION, "LTR");
-      }
-
-      if (isDefault) {
-        final User user = OBDal.getInstance().get(User.class, userId);
-        user.set(defaultRoleProperty, OBDal.getInstance().get(Role.class, roleId));
-        user.setDefaultLanguage(OBDal.getInstance().get(Language.class, languageId));
-        if (!setOnlyRole) {
-          user.setDefaultClient(OBDal.getInstance().get(Client.class, clientId));
-          user.setDefaultOrganization(OBDal.getInstance().get(Organization.class, organizationId));
-        }
-
-        if (warehouseId != null) {
-          user.setDefaultWarehouse(OBDal.getInstance().get(Warehouse.class, warehouseId));
-        }
-        OBDal.getInstance().save(user);
-        OBDal.getInstance().flush();
-      }
-
-      if (clientId == null || organizationId == null || roleId == null) {
-        throw new IllegalArgumentException("Illegal values for client/org or role " + clientId + "/"
-            + organizationId + "/" + roleId);
-      }
-
-      // Clear session variables maintaining session and user
-      String sessionID = vars.getSessionValue(SESSION_ID);
-      String currentApp = vars.getSessionValue(CURRENT_APPLICATION, "");
-      String currentAppMode = vars.getSessionValue(CURRENT_APPLICATION_MODE, "");
-      String sessionUser = (String) request.getSession(true).getAttribute(AUTHENTICATED_USER);
-      vars.clearSession(false);
-      vars.setSessionValue(SESSION_ID, sessionID);
-      request.getSession(true).setAttribute(AUTHENTICATED_USER, sessionUser);
-      vars.setSessionValue(CURRENT_APPLICATION, currentApp);
-      vars.setSessionValue(CURRENT_APPLICATION_MODE, currentAppMode);
-
-      OBDal.getInstance().flush();
-      boolean result = LoginUtils.fillSessionArguments(new DalConnectionProvider(false), vars,
-          userId, toSaveStr(language.getLanguage()), (language.isRTLLanguage() ? "Y" : "N"),
-          toSaveStr(roleId), toSaveStr(clientId), toSaveStr(organizationId),
-          toSaveStr(warehouseId));
-      if (!result) {
-        throw new IllegalArgumentException("Error when saving default values");
-      }
-      readProperties(vars);
-      readNumberFormat(vars, KernelServlet.getGlobalParameters().getFormatPath());
-    }
-
-    private String toSaveStr(String value) {
-      if (value == null) {
-        return "";
-      }
-      return value;
-    }
-  }
-
 }
