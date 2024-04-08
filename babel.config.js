@@ -18,21 +18,30 @@
  */
 
 /* eslint-disable no-undef */
-module.exports = {
-  presets: [
-    [
-      '@babel/preset-env',
-      {
-        // keep this list in sync with userinterface.react
-        targets: [
-          'last 2 Chrome versions',
-          'last 2 Firefox versions',
-          'last 2 Safari versions',
-          'current node'
-        ],
-        include: []
-      }
+module.exports = app => {
+  const isTest = app.env('test');
+  const plugins = [];
+  if (isTest) {
+    plugins.push('babel-plugin-transform-vite-meta-env');
+  }
+
+  return {
+    presets: [
+      [
+        '@babel/preset-env',
+        {
+          // keep this list in sync with userinterface.react
+          targets: [
+            'last 2 Chrome versions',
+            'last 2 Firefox versions',
+            'last 2 Safari versions',
+            'current node'
+          ],
+          include: []
+        }
+      ],
+      '@babel/preset-react'
     ],
-    '@babel/preset-react'
-  ]
+    plugins
+  };
 };
