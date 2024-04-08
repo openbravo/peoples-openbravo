@@ -1439,7 +1439,8 @@ public class OBViewFieldHandler {
       if (field.getProperty() != null && field.getProperty().contains(DalUtil.DOT)) {
         return true;
       }
-      if (field.getColumn().getSqllogic() != null) {
+      if (!field.getTab().getWindow().getWindowType().equals("OBUIAPP_PickAndExecute")
+          && field.getColumn().getSqllogic() != null) {
         return true;
       }
       return getParentProperty() || field.isReadOnly();
