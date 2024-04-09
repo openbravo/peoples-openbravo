@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2020 Openbravo SLU
+ * All portions are Copyright (C) 2012-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -302,7 +302,10 @@ isc.OBMultiSelectorItem.addProperties({
     // always refresh the content of the grid to force a reload
     // if the organization has changed
     if (this.selectorWindow.selectorGrid) {
-      this.selectorWindow.selectorGrid.invalidateCache();
+      // delete the data instead of invoking this.selectorWindow.invalidateCache, because invalidateCache will invoke
+      // a throttled request to the datasource that will prevent the one from this.selectorWindow.open (that will have the current context data)
+      // from being executed
+      delete this.selectorWindow.selectorGrid.data;
     }
     this.selectorWindow.selectedIds = this.getValue();
     this.selectorWindow.origSelection = isc.shallowClone(
