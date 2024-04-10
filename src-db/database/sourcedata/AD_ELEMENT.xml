@@ -33122,8 +33122,8 @@ Unique References: A Storage Detail can (optionally) have a reference number, an
 <!--98456CD7DF4C44CD81CFD79B9FEE23EC-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--98456CD7DF4C44CD81CFD79B9FEE23EC-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--98456CD7DF4C44CD81CFD79B9FEE23EC-->  <COLUMNNAME><![CDATA[Scancodeproperty]]></COLUMNNAME>
-<!--98456CD7DF4C44CD81CFD79B9FEE23EC-->  <NAME><![CDATA[Code is the Default for Property]]></NAME>
-<!--98456CD7DF4C44CD81CFD79B9FEE23EC-->  <PRINTNAME><![CDATA[Code is the Default for Property]]></PRINTNAME>
+<!--98456CD7DF4C44CD81CFD79B9FEE23EC-->  <NAME><![CDATA[Default Property for Scanned Code]]></NAME>
+<!--98456CD7DF4C44CD81CFD79B9FEE23EC-->  <PRINTNAME><![CDATA[Default Property for Scanned Code]]></PRINTNAME>
 <!--98456CD7DF4C44CD81CFD79B9FEE23EC-->  <DESCRIPTION><![CDATA[When set, the scanning handler will set the scanned value for the specified property by default]]></DESCRIPTION>
 <!--98456CD7DF4C44CD81CFD79B9FEE23EC-->  <HELP><![CDATA[When set, the scanning handler will set the scanned value for the specified property by default]]></HELP>
 <!--98456CD7DF4C44CD81CFD79B9FEE23EC-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
