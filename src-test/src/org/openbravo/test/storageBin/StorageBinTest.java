@@ -140,7 +140,8 @@ public class StorageBinTest extends WeldBaseTest {
     final ReferencedInventoryType huType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(
             OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
-            SequenceType.NONE, null);
+            SequenceType.NONE, null,
+            ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
 
     StorageBinTestUtils.createStorageBinHUType(storageBin, huType);
 
@@ -166,12 +167,14 @@ public class StorageBinTest extends WeldBaseTest {
     final ReferencedInventoryType huType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(
             OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
-            SequenceType.NONE, null);
+            SequenceType.NONE, null,
+            ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
 
     final ReferencedInventoryType huTypeForUpdateOrDelete = ReferencedInventoryTestUtils
         .createReferencedInventoryType(
             OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
-            SequenceType.NONE, null);
+            SequenceType.NONE, null,
+            ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
 
     // Add
 
@@ -201,7 +204,8 @@ public class StorageBinTest extends WeldBaseTest {
     final ReferencedInventoryType huTypeForDelete = ReferencedInventoryTestUtils
         .createReferencedInventoryType(
             OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
-            SequenceType.NONE, null);
+            SequenceType.NONE, null,
+            ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
 
     LocatorHandlingUnitType locatorHuTypeForDelete = StorageBinTestUtils
         .createStorageBinHUType(storageBin, huTypeForDelete);
@@ -235,7 +239,8 @@ public class StorageBinTest extends WeldBaseTest {
     final ReferencedInventoryType huTypeForInsert = ReferencedInventoryTestUtils
         .createReferencedInventoryType(
             OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
-            SequenceType.NONE, null);
+            SequenceType.NONE, null,
+            ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
 
     Product product = StorageBinTestUtils.getNewProductForTest("SB005");
 
@@ -266,12 +271,14 @@ public class StorageBinTest extends WeldBaseTest {
     final ReferencedInventoryType huTypeForInsert = ReferencedInventoryTestUtils
         .createReferencedInventoryType(
             OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
-            SequenceType.NONE, null);
+            SequenceType.NONE, null,
+            ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
 
     final ReferencedInventoryType huTypeForUpdate = ReferencedInventoryTestUtils
         .createReferencedInventoryType(
             OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
-            SequenceType.NONE, null);
+            SequenceType.NONE, null,
+            ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
 
     LocatorHandlingUnitType locatorHuTypeForInsert = StorageBinTestUtils
         .createStorageBinHUType(storageBin, huTypeForInsert);
@@ -376,7 +383,8 @@ public class StorageBinTest extends WeldBaseTest {
     final ReferencedInventoryType huType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(
             OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
-            SequenceType.NONE, null);
+            SequenceType.NONE, null,
+            ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
 
     if (!isHandlingUnitTypeTabEmpty) {
       StorageBinTestUtils.createStorageBinHUType(newStorageBin, huType);

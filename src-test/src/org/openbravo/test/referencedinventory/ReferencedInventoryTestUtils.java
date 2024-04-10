@@ -169,7 +169,7 @@ public class ReferencedInventoryTestUtils {
     OBDal.getInstance().flush();
   }
 
-  static ReferencedInventoryType createReferencedInventoryType(Organization org,
+  public static ReferencedInventoryType createReferencedInventoryType(Organization org,
       SequenceType sequenceType, Sequence sequence, String contentRestriction) {
     final ReferencedInventoryType refInvType = OBProvider.getInstance()
         .get(ReferencedInventoryType.class);
