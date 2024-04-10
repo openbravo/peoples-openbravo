@@ -11,28 +11,37 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2020-2021 Openbravo SLU
+ * All portions are Copyright (C) 2020-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 /* eslint-disable no-undef */
-module.exports = {
-  presets: [
-    [
-      '@babel/preset-env',
-      {
-        // keep this list in sync with userinterface.react
-        targets: [
-          'last 2 Chrome versions',
-          'last 2 Firefox versions',
-          'last 2 Safari versions',
-          'current node'
-        ],
-        include: ['@babel/plugin-proposal-optional-chaining']
-      }
+module.exports = app => {
+  const isTest = app.env('test');
+  const plugins = [];
+  if (isTest) {
+    plugins.push('babel-plugin-transform-vite-meta-env');
+  }
+
+  return {
+    presets: [
+      [
+        '@babel/preset-env',
+        {
+          // keep this list in sync with userinterface.react
+          targets: [
+            'last 2 Chrome versions',
+            'last 2 Firefox versions',
+            'last 2 Safari versions',
+            'current node'
+          ],
+          include: []
+        }
+      ],
+      '@babel/preset-react'
     ],
-    '@babel/preset-react'
-  ]
+    plugins
+  };
 };

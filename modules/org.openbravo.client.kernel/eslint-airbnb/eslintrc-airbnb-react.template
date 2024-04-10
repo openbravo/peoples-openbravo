@@ -35,7 +35,8 @@
           "**/__test__/**",
           "**/setupTests.js",
           "**/?(*.)+(test).[jt]s?(x)",
-          "**/src-test/**"
+          "**/src-test/**",
+          "**/*.config.js"
         ]
       }
     ],
