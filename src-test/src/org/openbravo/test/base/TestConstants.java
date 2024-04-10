@@ -75,6 +75,7 @@ public class TestConstants {
   public static class Users {
     public static final String OPENBRAVO = "100";
     public static final String SYSTEM = "0";
+    public static final String FB_ADMIN = "A530AAE22C864702B7E1C22D58E7B17B";
     public static final String FB_ESP_USER = "167450A5BB284AB29C4FEF039E98C963";
     public static final String FB_US_USER = "5A79667096964E83A6985D549C988275";
   }

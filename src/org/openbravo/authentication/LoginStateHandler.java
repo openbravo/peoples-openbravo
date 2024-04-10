@@ -38,7 +38,8 @@ public class LoginStateHandler {
   public static final String LOGIN_STATE = "#LOGIN_STATE";
 
   /**
-   * Saves the given configuration ID in the session, linked to a random generated UUID.
+   * Saves the given configuration ID in the session, linked to a random generated UUID but only if
+   * there is no value linked to the given configuration yet.
    *
    * @param configId
    *          The ID of the record where the configuration is kept
@@ -50,7 +51,8 @@ public class LoginStateHandler {
   }
 
   /**
-   * Saves the given configuration ID in the session, linked to given random value
+   * Saves the given configuration ID in the session, linked to given random value but only if there
+   * is no value linked to the given configuration yet.
    *
    * @param configId
    *          The ID of the record where the configuration is kept
@@ -63,6 +65,16 @@ public class LoginStateHandler {
     Map<String, String> loginState = getLoginState();
     loginState.putIfAbsent(configId, random);
     return loginState.get(configId);
+  }
+
+  /**
+   * Clears the value linked to the given configuration ID from the session
+   *
+   * @param configId
+   *          The ID of the record where the configuration is kept
+   */
+  public void clearConfiguration(String configId) {
+    getLoginState().remove(configId);
   }
 
   /**

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2017-2023 Openbravo SLU
+ * All portions are Copyright (C) 2017-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -232,12 +232,12 @@ public class HttpServletRequestMock implements HttpServletRequest {
 
   @Override
   public String getServerName() {
-    return null;
+    return "localhost";
   }
 
   @Override
   public int getServerPort() {
-    return 0;
+    return 8080;
   }
 
   @Override
@@ -311,8 +311,8 @@ public class HttpServletRequestMock implements HttpServletRequest {
   }
 
   @Override
-  public String getHeader(String arg0) {
-    return null;
+  public String getHeader(String header) {
+    return "Origin".equals(header) ? "http://localhost:8080" : null;
   }
 
   @Override
