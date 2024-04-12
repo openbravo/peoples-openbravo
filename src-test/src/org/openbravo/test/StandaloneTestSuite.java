@@ -50,6 +50,7 @@ import org.openbravo.client.kernel.freemarker.test.LabelTest;
 import org.openbravo.client.kernel.reference.materialmgmt.RelevantCharacteristicAdditionalPropertyResolverTest;
 import org.openbravo.client.kernel.reference.materialmgmt.RelevantCharacteristicQueryHookTest;
 import org.openbravo.client.kernel.test.CompressionTest;
+import org.openbravo.dal.security.SecurityCheckerTest;
 import org.openbravo.dal.service.DataPoolCheckerTest;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.erpCommon.utility.OBDateUtilsTest;
@@ -223,6 +224,7 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     DatasourceEventObserver.class, //
     PersistanceObserver.class, //
     ImageTest.class, //
+    SecurityCheckerTest.class, //
 
     // database pool
     DataPoolCheckerTest.class, //

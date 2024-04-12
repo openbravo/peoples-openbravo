@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2022 Openbravo SLU
+ * All portions are Copyright (C) 2008-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,6 +30,7 @@ import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.model.ad.system.Client;
@@ -182,8 +183,15 @@ public class SecurityChecker implements OBSingleton {
   }
 
   /**
-   * Checks if there is access to the entity and if the organization is readable. If not, it throws
-   * an OBSecurityException.
+   * Checks if there is access to the entity and if the organization is readable. If the
+   * organization is not directly readable, it may be eventually decided that the object is readable
+   * if there is an extension whose {@link SecurityCheckerExtension#isReadable(OrganizationEnabled)}
+   * method returns true for the given object.
+   * 
+   * If none of the previous conditions is met it means that the object is not readable and a
+   * {@link OBSecurityException} is thrown.
+   * 
+   * @see #hasSpecialReadAccess(OrganizationEnabled)
    * 
    * @param organizationEnabledObject
    *          a {@link BaseOBObject} that implements the {@link OrganizationEnabled} interface. This
@@ -195,12 +203,32 @@ public class SecurityChecker implements OBSingleton {
 
     obContext.getEntityAccessChecker().checkReadable(entity);
     String orgId = organizationEnabledObject.getOrganization().getId();
-    String readableOrganizations[] = obContext.getReadableOrganizations();
-    List<String> organizations = Arrays.asList(readableOrganizations);
-    if (!organizations.contains(orgId)) {
+    List<String> organizations = Arrays.asList(obContext.getReadableOrganizations());
+    if (!organizations.contains(orgId) && !hasSpecialReadAccess(organizationEnabledObject)) {
       throw new OBSecurityException(
           "Organization " + orgId + " of object (" + organizationEnabledObject
               + ") is not present in OrganizationList " + organizations.toString());
+    }
+  }
+
+  /**
+   * Checks if the current context user has read access to the provided object according to any of
+   * the special security rules provided by the {@link SecurityCheckerExtension} instances (if any).
+   * 
+   * @param organizationEnabledObject
+   *          the object whose special is checked
+   *
+   * @return true if the current context user has read access to the provided object or false
+   *         otherwise.
+   */
+  boolean hasSpecialReadAccess(OrganizationEnabled organizationEnabledObject) {
+    try {
+      OBContext.setAdminMode(true);
+      return WeldUtils.getInstances(SecurityCheckerExtension.class)
+          .stream()
+          .anyMatch(hook -> hook.isReadable(organizationEnabledObject));
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 }
