@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2023 Openbravo SLU 
+ * All portions are Copyright (C) 2023-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -85,13 +85,20 @@ public class EnableOrDisableMultipleRecords extends BaseActionHandler {
       baseOBObjectQuery.setNamedParameter("active", action);
       baseOBObjectQuery.setFilterOnActive(false);
 
+      long t = System.currentTimeMillis();
       final List<BaseOBObject> baseOBObjects = baseOBObjectQuery.list();
 
       for (BaseOBObject bo : baseOBObjects) {
         bo.set("active", action);
+        // ideally we would prefer not to flush inside the loop and do it only once, outside
+        // but some event handlers check the number of active records (i.e. to check number is
+        // higher than a given amount), and if data is flushed only at the end, those event handlers
+        // will not have the current information of the number of active records
+        OBDal.getInstance().flush();
       }
-      OBDal.getInstance().flush();
       int updateCount = baseOBObjects.size();
+      long queryTime = System.currentTimeMillis() - t;
+      System.out.println("query time " + queryTime);
 
       jsonResponse.put("updateCount", updateCount);
       return jsonResponse;
