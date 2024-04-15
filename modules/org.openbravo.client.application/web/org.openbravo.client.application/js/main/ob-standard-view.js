@@ -873,6 +873,16 @@ isc.OBStandardView.addProperties({
       return;
     }
 
+    if (!this.childTabSet) {
+      this.childTabSet = isc.OBTabSetChild.create({
+        height: '*',
+        parentContainer: this,
+        parentTabSet: this.parentTabSet
+      });
+      this.addMember(this.childTabSet);
+      this.setHalfSplit();
+    }
+
     childView.parentView = this;
     childView.parentTabSet = this.childTabSet;
 
