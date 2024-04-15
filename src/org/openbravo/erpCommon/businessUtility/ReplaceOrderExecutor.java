@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2019-2023 Openbravo SLU
+ * All portions are Copyright (C) 2019-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -229,6 +229,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     inverseOrder.setCreationDate(today);
     inverseOrder.setUpdated(today);
     inverseOrder.setScheduledDeliveryDate(today);
+
     String newDocumentNo = documentNo;
     if (newDocumentNo == null) {
       newDocumentNo = oldOrder.getDocumentNo() + REVERSE_PREFIX;
@@ -472,8 +473,17 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     inverseInvoice.setInvoiceDate(OBDateUtils.getDate(OBDateUtils.formatDate(today)));
     inverseInvoice.setCreationDate(today);
     inverseInvoice.setUpdated(today);
-    String newDocumentNo = inverseInvoice.getDocumentNo() + REVERSE_PREFIX;
-    inverseInvoice.setDocumentNo(newDocumentNo);
+    final DocumentType canceledDocumentType = oldInvoice.getDocumentType().getDocumentCancelled();
+
+    if (canceledDocumentType != null) {
+      inverseInvoice.setDocumentType(canceledDocumentType);
+      inverseInvoice.setTransactionDocument(canceledDocumentType);
+      inverseInvoice
+          .setDocumentNo(FIN_Utility.getDocumentNo(canceledDocumentType, Invoice.TABLE_NAME));
+    } else {
+      inverseInvoice.setDocumentNo(inverseInvoice.getDocumentNo() + REVERSE_PREFIX);
+    }
+
     OBDal.getInstance().save(inverseInvoice);
 
     createInverseInvoiceTaxes(oldInvoice, inverseInvoice);
