@@ -11,7 +11,7 @@
 # * under the License.
 # * The Original Code is Openbravo ERP.
 # * The Initial Developer of the Original Code is Openbravo SLU
-# * All portions are Copyright (C) 2020-2022 Openbravo SLU
+# * All portions are Copyright (C) 2020-2024 Openbravo SLU
 # * All Rights Reserved.
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
@@ -19,8 +19,8 @@
 NODE_VERSION=$(node -v)
 NPM_VERSION=$(npm -v)
 
-if [[ ! "$NODE_VERSION" =~ ^v(18|20)[.].*$ ]]; then
-  echo "Node version $NODE_VERSION not supported. Only Node 18.x and 20.x are supported"
+if [[ ! "$NODE_VERSION" =~ ^v(18|20|22)[.].*$ ]]; then
+  echo "Node version $NODE_VERSION not supported. Only Node 18.x, 20.x and 22.x are supported"
   exit 1
 fi
 
