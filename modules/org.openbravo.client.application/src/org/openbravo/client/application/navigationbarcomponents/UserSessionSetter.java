@@ -19,13 +19,16 @@
 package org.openbravo.client.application.navigationbarcomponents;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.KernelServlet;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.Language;
@@ -54,7 +57,7 @@ public class UserSessionSetter extends HttpSecureAppServlet {
    */
   public void resetSession(HttpServletRequest request, boolean isDefault, String userId,
       String roleId, String clientId, String organizationId, String languageId, String warehouseId,
-      String defaultRoleProperty, boolean setOnlyRole) throws Exception {
+      String defaultRoleProperty, boolean setOnlyRole, boolean resetWebSession) throws Exception {
     final VariablesSecureApp vars = new VariablesSecureApp(request); // refresh
     final Language language = OBDal.getInstance().get(Language.class, languageId);
     if (language.isRTLLanguage()) {
@@ -84,12 +87,24 @@ public class UserSessionSetter extends HttpSecureAppServlet {
           + organizationId + "/" + roleId);
     }
 
+    HttpSession oldSession = request.getSession(false);
+
     // Clear session variables maintaining session and user
     String sessionID = vars.getSessionValue(SESSION_ID);
     String currentApp = vars.getSessionValue(CURRENT_APPLICATION, "");
     String currentAppMode = vars.getSessionValue(CURRENT_APPLICATION_MODE, "");
     String sessionUser = (String) request.getSession(true).getAttribute(AUTHENTICATED_USER);
     vars.clearSession(false);
+
+    if (resetWebSession) {
+      oldSession.invalidate();
+
+      HttpSession newSession = request.getSession(true);
+      vars.refreshSession();
+
+      updateDBSession(sessionID, newSession.getId());
+    }
+
     vars.setSessionValue(SESSION_ID, sessionID);
     request.getSession(true).setAttribute(AUTHENTICATED_USER, sessionUser);
     vars.setSessionValue(CURRENT_APPLICATION, currentApp);
@@ -104,6 +119,28 @@ public class UserSessionSetter extends HttpSecureAppServlet {
     }
     readProperties(vars);
     readNumberFormat(vars, KernelServlet.getGlobalParameters().getFormatPath());
+  }
+
+  public void resetSession(HttpServletRequest request, boolean isDefault, String userId,
+      String roleId, String clientId, String organizationId, String languageId, String warehouseId,
+      String defaultRoleProperty, boolean setOnlyRole) throws Exception {
+    this.resetSession(request, isDefault, userId, roleId, clientId, organizationId, languageId,
+        warehouseId, defaultRoleProperty, setOnlyRole, false);
+  }
+
+  private void updateDBSession(String sessionId, String webSessionId) {
+    try {
+      OBContext.setAdminMode();
+      Session session = OBDal.getInstance().get(Session.class, sessionId);
+      session.setWebSession(webSessionId);
+      session.setSessionActive(true);
+      OBDal.getInstance().flush();
+    } catch (Exception e) {
+      log4j.error("Error updating session in DB", e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
   }
 
   private String toSaveStr(String value) {

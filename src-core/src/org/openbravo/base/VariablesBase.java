@@ -94,6 +94,13 @@ public class VariablesBase {
     }
   }
 
+  /**
+   * Refresh the stored web Session object with the current one
+   */
+  public void refreshSession() {
+    this.session = this.httpRequest.getSession(!isStatelessRequest(this.httpRequest));
+  }
+
   private boolean isStatelessRequest(HttpServletRequest request) {
     return "true".equals(request.getParameter("stateless"))
         || "true".equals(request.getAttribute("stateless"));
