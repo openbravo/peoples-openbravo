@@ -47,7 +47,7 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovement;
  *
  */
 
-class NestedReferencedInventoryTestUtils {
+public class NestedReferencedInventoryTestUtils {
 
   /**
    * validate referenced inventory after box transaction
@@ -84,8 +84,8 @@ class NestedReferencedInventoryTestUtils {
    * get Storage details for Nested RI
    */
 
-  static JSONArray getStorageDetailsforNestedRI(final ReferencedInventory refInv, String toBinId)
-      throws JSONException {
+  public static JSONArray getStorageDetailsforNestedRI(final ReferencedInventory refInv,
+      String toBinId) throws JSONException {
     final JSONArray StorageDetailJS = new JSONArray();
     try (ScrollableResults sdScroll = ReferencedInventoryUtil.getStorageDetails(refInv.getId(),
         true)) {
@@ -118,7 +118,7 @@ class NestedReferencedInventoryTestUtils {
    * Creates a referenced inventory with referenced inventory type having contentRestriction
    */
 
-  static ReferencedInventory createRI(String contentRestriction) {
+  public static ReferencedInventory createRI(String contentRestriction) {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
             SequenceType.NONE, null, contentRestriction);
@@ -132,7 +132,7 @@ class NestedReferencedInventoryTestUtils {
    * Validate product and attribute set instance value in the referenced inventory
    */
 
-  static void validateAttributeSetInstanceValue(final ReferencedInventory refInv,
+  public static void validateAttributeSetInstanceValue(final ReferencedInventory refInv,
       final Product product, final BigDecimal qtyOnHand,
       final String attributeSetInstanceDescription) {
     assertThat(
