@@ -85,7 +85,6 @@ public class EnableOrDisableMultipleRecords extends BaseActionHandler {
       baseOBObjectQuery.setNamedParameter("active", action);
       baseOBObjectQuery.setFilterOnActive(false);
 
-      long t = System.currentTimeMillis();
       final List<BaseOBObject> baseOBObjects = baseOBObjectQuery.list();
 
       for (BaseOBObject bo : baseOBObjects) {
@@ -97,8 +96,6 @@ public class EnableOrDisableMultipleRecords extends BaseActionHandler {
         OBDal.getInstance().flush();
       }
       int updateCount = baseOBObjects.size();
-      long queryTime = System.currentTimeMillis() - t;
-      System.out.println("query time " + queryTime);
 
       jsonResponse.put("updateCount", updateCount);
       return jsonResponse;
