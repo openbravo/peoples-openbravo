@@ -185,7 +185,6 @@ Under the LGPL license (included as LGPL-2.1.txt in this folder)
 
 # jakarta.enterprise.cdi-api-2.0.2.jar
 # caffeine-3.0.6.jar
-# guava-21.0.jar
 # jakarta.inject-api-1.0.jar
 # jboss-logging-3.4.3.Final.jar
 # jboss-classfilewriter-1.2.4.Final.jar
