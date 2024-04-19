@@ -66,8 +66,9 @@ import org.openbravo.model.common.enterprise.Organization;
 @ApplicationScoped
 public class ReprintableDocumentManager {
   private static final Logger log = LogManager.getLogger();
-  // Sales Order, Sales Invoice, Purchase Order and Purchase Invoice windows
-  private static final Set<String> WINDOWS_WITH_REPRINT = Set.of("143", "167", "181", "183");
+  // Sales Order, Sales Invoice, Purchase Order, Purchase Invoice and Return from Customer windows
+  private static final Set<String> WINDOWS_WITH_REPRINT = Set.of("143", "167", "181", "183",
+      "FF808081330213E60133021822E40007");
 
   private TimeInvalidatedCache<String, String> methodsOfAttachmentConfigs;
   private TimeInvalidatedCache<String, Boolean> reprintDocumentsConfiguration;
