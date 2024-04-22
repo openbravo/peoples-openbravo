@@ -17,17 +17,9 @@
  ************************************************************************
  */
 package org.openbravo.modulescript;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-
-import javax.servlet.ServletException;
-
 import org.openbravo.database.ConnectionProvider;
 
-public class ScanFilterPriorityModuleScript extends ModuleScript {
+public class ScanFilterType extends ModuleScript {
 
 // ModuleScript for issue 53218
   @Override
@@ -35,10 +27,7 @@ public class ScanFilterPriorityModuleScript extends ModuleScript {
     try {
       log4j.debug("Updating CRM filters marked as scan identifiers with default type");
       ConnectionProvider cp = getConnectionProvider();
-      PreparedStatement ps = cp.getPreparedStatement("UPDATE c_extbp_config_filter "
-      + "SET crmscanhandler = (CASE WHEN isscanidentifier = 'Y' THEN 'primary' "
-      + "ELSE 'none' END)");
-      ps.executeUpdate();
+      ScanFilterTypeData.setCrmScanFilters(cp);
     } catch (Exception e) {
       handleError(e);
     }
