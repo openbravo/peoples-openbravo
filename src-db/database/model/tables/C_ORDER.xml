@@ -501,6 +501,10 @@
         <index-column name="C_RETURN_REASON_ID"/>
         <whereClause><![CDATA[C_RETURN_REASON_ID IS NOT NULL]]></whereClause>
       </index>
+      <index name="C_ORDER_CANCELLEDORDER" unique="false">
+        <index-column name="CANCELLEDORDER_ID"/>
+        <whereClause><![CDATA[CANCELLEDORDER_ID IS NOT NULL]]></whereClause>
+      </index>
       <index name="C_ORDER_CLIENT_ORG_DATE_DOCNO" unique="false">
         <index-column name="AD_CLIENT_ID"/>
         <index-column name="AD_ORG_ID"/>
