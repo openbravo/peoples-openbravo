@@ -103,15 +103,19 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
 
     // It is important to re-initialize referenced inventory objects when unboxing so that parent
     // referenced inventory is properly set
-    mediumBoxRefInv = reInitializeRefInv(mediumBoxRefInv);
-    smallBoxRefInv = reInitializeRefInv(smallBoxRefInv);
+    mediumBoxRefInv = NestedReferencedInventoryTestUtils
+        .getRefreshedReferencedInventory(mediumBoxRefInv.getId());
+    smallBoxRefInv = NestedReferencedInventoryTestUtils
+        .getRefreshedReferencedInventory(smallBoxRefInv.getId());
 
     // Unbox medium box inside pallet, unbox to individual items as No
     unBoxNestedRI(palletRefInv, mediumBoxRefInv, null, toBinId, false);
 
-    // FIXME: Nested Referenced Inventories Count should be ZERO
+    palletRefInv = NestedReferencedInventoryTestUtils
+        .getRefreshedReferencedInventory(palletRefInv.getId());
+
     assertThat("Nested Referenced Inventory Count is not equal to 0L",
-        palletRefInv.getNestedReferencedInventoriesCount(), equalTo(2L));
+        palletRefInv.getNestedReferencedInventoriesCount(), equalTo(0L));
 
     // Check attribute set instance after unbox
     NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(smallBoxRefInv,
@@ -148,9 +152,11 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
     // Unbox medium box inside pallet, unbox to individual items as Yes
     unBoxNestedRI(palletRefInv, mediumBoxRefInv, null, toBinId, true);
 
-    // FIXME: Nested Referenced Inventories Count should be ONE
+    palletRefInv = NestedReferencedInventoryTestUtils
+        .getRefreshedReferencedInventory(palletRefInv.getId());
+
     assertThat("Nested Referenced Inventory Count is not equal to 1L",
-        palletRefInv.getNestedReferencedInventoriesCount(), equalTo(2L));
+        palletRefInv.getNestedReferencedInventoriesCount(), equalTo(1L));
 
     assertThat("Medium Box is not empty",
         NestedReferencedInventoryTestUtils.storageDetailExists(mediumBoxRefInv, null, null, null),
@@ -166,7 +172,8 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
     // Re-Box - Small Box
     // It is important to re-initialize referenced inventory objects when unboxing so that parent
     // referenced inventory is properly set
-    smallBoxRefInv = reInitializeRefInv(smallBoxRefInv);
+    smallBoxRefInv = NestedReferencedInventoryTestUtils
+        .getRefreshedReferencedInventory(smallBoxRefInv.getId());
 
     storageDetailsForSmallBox = new JSONArray();
     storageDetailsForSmallBox.put(firstProductSD.get(0));
@@ -179,9 +186,11 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
         .getStorageDetailsforNestedRI(smallBoxRefInv, toBinId);
     storageDetailsForPallet.put(thirdProductSD.get(0));
 
-    // FIXME: last parameter nestedRefInvCount should be 1L
+    palletRefInv = NestedReferencedInventoryTestUtils
+        .getRefreshedReferencedInventory(palletRefInv.getId());
+
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(palletRefInv,
-        storageDetailsForPallet, toBinId, 3, 3L, null);
+        storageDetailsForPallet, toBinId, 3, 3L, 1L);
 
     // Check attribute set instance after re-box
     NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(smallBoxRefInv,
@@ -309,11 +318,12 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(palletRefInv,
         storageDetailsForPallet, toBinId, 4, 3L, 3L);
 
-    // It is important to re-initialize referenced inventory objects when unboxing so that parent
-    // referenced inventory is properly set
-    mediumBox1RefInv = reInitializeRefInv(mediumBox1RefInv);
-    mediumBox2RefInv = reInitializeRefInv(mediumBox2RefInv);
-    smallBoxRefInv = reInitializeRefInv(smallBoxRefInv);
+    mediumBox1RefInv = NestedReferencedInventoryTestUtils
+        .getRefreshedReferencedInventory(mediumBox1RefInv.getId());
+    mediumBox2RefInv = NestedReferencedInventoryTestUtils
+        .getRefreshedReferencedInventory(mediumBox2RefInv.getId());
+    smallBoxRefInv = NestedReferencedInventoryTestUtils
+        .getRefreshedReferencedInventory(smallBoxRefInv.getId());
 
     // Unbox pallet, unbox to individual items as No
     unBoxNestedRI(palletRefInv, palletRefInv, null, toBinId, false);
@@ -424,18 +434,6 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
     assertThat("Small Box is not empty",
         NestedReferencedInventoryTestUtils.storageDetailExists(smallBoxRefInv, null, null, null),
         equalTo(false));
-
-  }
-
-  /**
-   * Re-initialize referenced inventory object to to avoid problems in Hibernate when the sunbox
-   * process is executed
-   */
-
-  private ReferencedInventory reInitializeRefInv(final ReferencedInventory refInv) {
-    OBDal.getInstance().getSession().evict(refInv); // Hack to avoid problems in Hibernate when the
-                                                    // unbox process is executed
-    return OBDal.getInstance().get(ReferencedInventory.class, refInv.getId());
 
   }
 

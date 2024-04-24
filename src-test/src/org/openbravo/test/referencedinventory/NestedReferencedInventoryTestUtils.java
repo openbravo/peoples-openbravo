@@ -163,4 +163,17 @@ public class NestedReferencedInventoryTestUtils {
     }
     return !crit.list().isEmpty();
   }
+
+  /**
+   * Session is cleared when box and unbox RI processes are executed, so to get updated information
+   * about RI we need to re-initialize RI object and get refreshed RI.
+   */
+
+  public static ReferencedInventory getRefreshedReferencedInventory(String refInventoryId) {
+    ReferencedInventory refInventory = OBDal.getInstance()
+        .get(ReferencedInventory.class, refInventoryId);
+    OBDal.getInstance().refresh(refInventory);
+    return refInventory;
+  }
+
 }
