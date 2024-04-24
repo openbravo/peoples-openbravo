@@ -11,12 +11,14 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2022 Openbravo SLU 
+ * All portions are Copyright (C) 2022-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.service.externalsystem;
+
+import java.util.concurrent.CompletionException;
 
 import org.openbravo.service.externalsystem.ExternalSystemResponse.Type;
 
@@ -82,6 +84,25 @@ public class ExternalSystemResponseBuilder {
   public ExternalSystemResponseBuilder withError(Object error) {
     response.setType(Type.ERROR);
     response.setError(error);
+    return this;
+  }
+
+  /**
+   * Sets the error information and cause of the external system response. It also sets the response
+   * type as {@link Type#ERROR}.
+   *
+   * @param error
+   *          the error information
+   * @param cause
+   *          the error cause
+   */
+  public ExternalSystemResponseBuilder withError(Object error, Throwable cause) {
+    withError(error);
+    if (cause instanceof CompletionException) {
+      response.setErrorCause(cause.getCause());
+    } else {
+      response.setErrorCause(cause);
+    }
     return this;
   }
 

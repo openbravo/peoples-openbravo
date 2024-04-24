@@ -324,7 +324,7 @@ public class HttpExternalSystem extends ExternalSystem implements Cacheable {
       log.warn("Operation exceeded the maximum {} seconds allowed", timeout, error);
       errorMessage = "Operation exceeded the maximum " + timeout + " seconds allowed";
     }
-    return ExternalSystemResponseBuilder.newBuilder().withError(errorMessage).build();
+    return ExternalSystemResponseBuilder.newBuilder().withError(errorMessage, error).build();
   }
 
   /**

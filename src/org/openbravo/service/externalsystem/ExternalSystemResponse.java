@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2022 Openbravo SLU 
+ * All portions are Copyright (C) 2022-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,6 +37,7 @@ public class ExternalSystemResponse {
   private int statusCode;
   private Type type;
   private Object error;
+  private Throwable errorCause;
 
   /**
    * Creates a new ExternalSystemResponse. Instance of this class must be created with a
@@ -106,6 +107,13 @@ public class ExternalSystemResponse {
   }
 
   /**
+   * @return the cause of error of the external system response
+   */
+  public Throwable getErrorCause() {
+    return errorCause;
+  }
+
+  /**
    * Sets the error information of the external system response
    * 
    * @param error
@@ -113,5 +121,15 @@ public class ExternalSystemResponse {
    */
   void setError(Object error) {
     this.error = error;
+  }
+
+  /**
+   * Sets the error cause of the external system response
+   *
+   * @param errorCause
+   *          the error cause
+   */
+  void setErrorCause(Throwable errorCause) {
+    this.errorCause = errorCause;
   }
 }
