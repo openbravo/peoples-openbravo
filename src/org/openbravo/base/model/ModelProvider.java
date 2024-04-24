@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2021 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -338,8 +338,10 @@ public class ModelProvider implements OBSingleton {
           if (p.getReferencedProperty() != null) {
             Entity referencedEntity = p.getReferencedProperty().getEntity();
             if ("ADImage".equals(referencedEntity.getName())) {
-              entitiesWithImage.computeIfAbsent(p.getEntity(), k -> new ArrayList<>())
-                  .add(p.getName());
+              if (!p.isComputedColumn()) {
+                entitiesWithImage.computeIfAbsent(p.getEntity(), k -> new ArrayList<>())
+                    .add(p.getName());
+              }
             } else if ("OBPRF_FILE".equals(referencedEntity.getName())) {
               entitiesWithFile.computeIfAbsent(p.getEntity(), k -> new ArrayList<>())
                   .add(p.getName());
