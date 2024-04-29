@@ -20,20 +20,27 @@
 package org.openbravo.test.referencedinventory;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.provider.OBProvider;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.materialmgmt.refinventory.BoxProcessor;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryProcessor.StorageDetailJS;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
+import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
@@ -41,6 +48,8 @@ import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.InternalMovement;
+import org.openbravo.warehouse.advancedwarehouseoperations.OBAWOTask;
+import org.openbravo.warehouse.advancedwarehouseoperations.utils.OBAWO_Constants;
 
 /**
  * This is Utility class used in Nested Referenced Inventory Tests.
@@ -174,6 +183,69 @@ public class NestedReferencedInventoryTestUtils {
         .get(ReferencedInventory.class, refInventoryId);
     OBDal.getInstance().refresh(refInventory);
     return refInventory;
+  }
+
+  /**
+   * creates Referenced Inventory Type based on Organization, sequence Type Sequence, content
+   * Restrictions, product
+   */
+
+  public static ReferencedInventoryType createReferencedInventoryType(Organization org,
+      SequenceType sequenceType, Sequence sequence, String contentRestriction, Product product) {
+    final ReferencedInventoryType refInvType = OBProvider.getInstance()
+        .get(ReferencedInventoryType.class);
+    refInvType.setClient(OBContext.getOBContext().getCurrentClient());
+    refInvType.setOrganization(org);
+    refInvType.setSequenceType(sequenceType.value);
+    refInvType.setSequence(sequence);
+    refInvType.setName(UUID.randomUUID().toString());
+    refInvType.setShared(true);
+    refInvType.setContentRestriction(contentRestriction);
+    refInvType.setObawoProduct(product);
+    OBDal.getInstance().save(refInvType);
+    assertThat("Referenced Inventory Type is successfully created", refInvType, notNullValue());
+    return refInvType;
+  }
+
+  /**
+   * Creates a referenced inventory with referenced inventory type having contentRestriction
+   */
+
+  public static ReferencedInventory createRI(String orgId, String contentRestriction,
+      Product product) {
+    final ReferencedInventoryType refInvType = createReferencedInventoryType(
+        OBDal.getInstance().getProxy(Organization.class, "0"), SequenceType.NONE, null,
+        contentRestriction, product);
+    return createReferencedInventory(orgId, refInvType);
+  }
+
+  /**
+   * Create referenced inventory for organization, referenced inventory type
+   */
+
+  public static ReferencedInventory createReferencedInventory(final String orgId,
+      final ReferencedInventoryType refInvType) {
+    String strSequence = ReferencedInventoryUtil.getProposedValueFromSequence(refInvType.getId(),
+        orgId, true);
+    final ReferencedInventory refInv = OBProvider.getInstance().get(ReferencedInventory.class);
+    refInv.setClient(OBContext.getOBContext().getCurrentClient());
+    refInv.setOrganization(OBDal.getInstance().getProxy(Organization.class, orgId));
+    refInv.setReferencedInventoryType(refInvType);
+    refInv.setSearchKey(strSequence == null || StringUtils.isEmpty(strSequence)
+        ? StringUtils.left(UUID.randomUUID().toString(), 30)
+        : strSequence);
+    OBDal.getInstance().save(refInv);
+    assertThat("Referenced Inventory is successfully created", refInv, notNullValue());
+    assertThat("Referenced Inventory is empty", refInv.getMaterialMgmtStorageDetailList(), empty());
+    return refInv;
+  }
+
+  /**
+   * check whether task is already confirmed
+   */
+
+  public static boolean isTaskConfirmed(OBAWOTask task) {
+    return StringUtils.equals(task.getStatus(), OBAWO_Constants.STATUS_CONFIRMED);
   }
 
 }
