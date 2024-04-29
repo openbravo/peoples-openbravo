@@ -471,6 +471,9 @@ isc.OBParameterWindowView.addProperties({
 
       // allow to add external parameters
       isc.addProperties(allProperties._params, view.externalParams);
+      isc.addProperties(allProperties._params, {
+        csrfToken: OB.User.csrfToken
+      });
 
       const form = view.theForm;
       const hasFileItems = form && form.getFileItemForm();
@@ -488,7 +491,6 @@ isc.OBParameterWindowView.addProperties({
         formData.append('reportId', view.reportId);
         formData.append('windowId', view.windowId);
         formData.append('paramValues', isc.JSON.encode(allProperties));
-        formData.append('csrfToken', OB.User.csrfToken);
 
         fetch('org.openbravo.client.kernel?_action=' + view.actionHandler, {
           method: 'POST',
