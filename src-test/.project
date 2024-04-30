@@ -26,6 +26,11 @@
 			<locationURI>MODULES/org.openbravo.client.kernel/src-test</locationURI>
 		</link>
 		<link>
+			<name>src-test</name>
+			<type>2</type>
+			<location>/home/openbravo/Workspace/Entornos/workspaces/pos2/openbravo/modules/org.openbravo.mobile.core/src-test</location>
+		</link>
+		<link>
 			<name>test-lib</name>
 			<type>2</type>
 			<locationURI>MODULES/org.openbravo.base.weld/lib/test</locationURI>
