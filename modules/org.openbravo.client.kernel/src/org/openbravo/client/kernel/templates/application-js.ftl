@@ -82,3 +82,11 @@ var OB = (OBLayoutMDI && OBLayoutMDI.OB) ? OBLayoutMDI.shallowClone(OBLayoutMDI.
 
     I18N: {}
 };
+
+// Prevent the standard browser save dialog to appear if the save shortcut is
+// pressed while the focus is not on a form (see issue https://issues.openbravo.com/view.php?id=55101)
+window.addEventListener('keydown', function(e) {
+  if (e.keyCode == 83 && (navigator.userAgent.includes('Mac') ? e.metaKey : e.ctrlKey)) {
+    e.preventDefault();
+  }
+});
