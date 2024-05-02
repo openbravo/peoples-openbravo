@@ -48,8 +48,6 @@ import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.InternalMovement;
-import org.openbravo.warehouse.advancedwarehouseoperations.OBAWOTask;
-import org.openbravo.warehouse.advancedwarehouseoperations.utils.OBAWO_Constants;
 
 /**
  * This is Utility class used in Nested Referenced Inventory Tests.
@@ -170,6 +168,7 @@ public class NestedReferencedInventoryTestUtils {
       crit.add(Restrictions.eq("att." + AttributeSetInstance.PROPERTY_DESCRIPTION,
           attributeSetInstanceDescription));
     }
+    crit.setMaxResults(1);
     return !crit.list().isEmpty();
   }
 
@@ -239,13 +238,4 @@ public class NestedReferencedInventoryTestUtils {
     assertThat("Referenced Inventory is empty", refInv.getMaterialMgmtStorageDetailList(), empty());
     return refInv;
   }
-
-  /**
-   * check whether task is already confirmed
-   */
-
-  public static boolean isTaskConfirmed(OBAWOTask task) {
-    return StringUtils.equals(task.getStatus(), OBAWO_Constants.STATUS_CONFIRMED);
-  }
-
 }
