@@ -18045,7 +18045,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--88AD0F89B8C5451683CAEB6C407A309E-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--88AD0F89B8C5451683CAEB6C407A309E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--88AD0F89B8C5451683CAEB6C407A309E-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
-<!--88AD0F89B8C5451683CAEB6C407A309E-->  <HQLWHERECLAUSE><![CDATA[e.sale = true and e.productType <> 'S' and not exists (from ServiceProduct sp where sp.relatedProduct.id = e.id and sp.product.id = @Product.id@)]]></HQLWHERECLAUSE>
+<!--88AD0F89B8C5451683CAEB6C407A309E-->  <HQLWHERECLAUSE><![CDATA[e.sale = true and (e.productType <> 'S' and e.productType <> 'C') and not exists (from ServiceProduct sp where sp.relatedProduct.id = e.id and sp.product.id = @Product.id@)]]></HQLWHERECLAUSE>
 <!--88AD0F89B8C5451683CAEB6C407A309E-->  <HQLORDERBYCLAUSE><![CDATA[searchKey, name]]></HQLORDERBYCLAUSE>
 <!--88AD0F89B8C5451683CAEB6C407A309E-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--88AD0F89B8C5451683CAEB6C407A309E-->  <DISABLE_PARENT_KEY_PROPERTY><![CDATA[N]]></DISABLE_PARENT_KEY_PROPERTY>

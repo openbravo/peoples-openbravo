@@ -41,6 +41,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="MULTIPLICATOR" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default><![CDATA[1]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="M_PRODUCT_CAT_SERV_M_PROD_CAT">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
