@@ -60,7 +60,7 @@ BEGIN
              :NEW.AD_Org_ID, :NEW.IsActive, :NEW.Created, :NEW.CreatedBy,
              :NEW.Updated, :NEW.UpdatedBy, :NEW.MsgText, :NEW.MsgTip, 'N'
         FROM AD_Language, aD_Module m
-       WHERE AD_Language.IsActive = 'Y'
+       WHERE AD_Language.IsActive = 'Y' AND IsSystemLanguage = 'Y'
        and m.ad_module_id = :new.ad_module_id
        and m.ad_language != AD_Language.AD_Language;
   END IF;
