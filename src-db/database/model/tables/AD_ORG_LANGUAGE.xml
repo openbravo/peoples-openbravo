@@ -50,11 +50,7 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORGLANGUAGE_ORG" onDelete="cascade">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <index name="AD_ORGLANGUAGE_ORG_IDX" unique="false">
-        <index-column name="AD_ORG_ID"/>
-      </index>
       <unique name="AD_ORGLANGUAGE_UNIQ">
-        <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="AD_ORG_ID"/>
         <unique-column name="AD_LANGUAGE_ID"/>
       </unique>
