@@ -40,4 +40,9 @@ public class UpdateSearchKeyPromotions extends ModuleScript {
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
     return new ModuleScriptExecutionLimits("0", null, new OpenbravoVersion(3, 0, 243000));
   }
+  
+  @Override
+  protected boolean executeOnInstall() {
+    return false;
+  }
 }
