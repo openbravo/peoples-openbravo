@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -77,7 +78,6 @@ import org.openbravo.erpCommon.utility.reporting.Report;
 import org.openbravo.erpCommon.utility.reporting.Report.OutputTypeEnum;
 import org.openbravo.erpCommon.utility.reporting.ReportManager;
 import org.openbravo.erpCommon.utility.reporting.ReportingException;
-import org.openbravo.erpCommon.utility.reporting.TemplateData;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
 import org.openbravo.exception.NoConnectionAvailableException;
@@ -98,9 +98,6 @@ import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
 
 @SuppressWarnings("serial")
 public class PrintController extends HttpSecureAppServlet {
-  private final Map<String, TemplateData[]> differentDocTypes = new HashMap<String, TemplateData[]>();
-  private boolean multiReports = false;
-  private boolean archivedReports = false;
   private static final String PRINT_OPTIONS_PATH = "printoptions.html";
   private static final String PRINT_PATH = "print.html";
   private static final String REPRINT_PATH = "reprint.html";
@@ -190,6 +187,7 @@ public class PrintController extends HttpSecureAppServlet {
   protected void post(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, DocumentType documentType, String sessionValuePrefix,
       String strDocumentId) throws IOException, ServletException {
+
     String localStrDocumentId = strDocumentId;
     try {
 
@@ -219,7 +217,7 @@ public class PrintController extends HttpSecureAppServlet {
         log4j.debug("Number of documents selected: " + documentIds.length);
       }
 
-      multiReports = (documentIds.length > 1);
+      final boolean multiReports = (documentIds.length > 1);
 
       reports = (HashMap<String, Report>) vars.getSessionObject(sessionValuePrefix + ".Documents");
       final ReportManager reportManager = new ReportManager(globalParameters.strFTPDirectory,
@@ -227,7 +225,6 @@ public class PrintController extends HttpSecureAppServlet {
           globalParameters.strDefaultDesignPath, globalParameters.prefix, multiReports);
 
       if (vars.commandIn("PRINT")) {
-        archivedReports = false;
         // Order documents by Document No.
         if (multiReports) {
           documentIds = orderByDocumentNo(documentType, documentIds);
@@ -257,7 +254,8 @@ public class PrintController extends HttpSecureAppServlet {
           }
           savedReports.add(report);
         }
-        printReports(response, jrPrintReports, savedReports, isDirectPrint(vars));
+        printReports(response, jrPrintReports, savedReports, isDirectPrint(vars), multiReports,
+            false);
       } else if (vars.commandIn("REPRINT")) {
         ReprintableDocumentManager reprintableManager = WeldUtils
             .getInstanceFromStaticBeanManager(ReprintableDocumentManager.class);
@@ -306,7 +304,8 @@ public class PrintController extends HttpSecureAppServlet {
               reprintableManager.upload(is, Format.PDF, sourceDocument);
             }
             JasperPrint jasperPrint = reportManager.processReport(report, vars);
-            printReports(response, Arrays.asList(jasperPrint), Arrays.asList(report), false);
+            printReports(response, Arrays.asList(jasperPrint), Arrays.asList(report), false,
+                multiReports, false);
           }
         } else {
           throw new ServletException("@CODE=ReprintDocumentsDisabledForOrg@");
@@ -321,7 +320,6 @@ public class PrintController extends HttpSecureAppServlet {
          * ARCHIVE will save each report individually and then print the reports in a single
          * printable (concatenated) format.
          */
-        archivedReports = true;
         Report report = null;
         JasperPrint jasperPrint = null;
         Collection<JasperPrint> jrPrintReports = new ArrayList<JasperPrint>();
@@ -340,10 +338,10 @@ public class PrintController extends HttpSecureAppServlet {
           reportManager.saveTempReport(report, vars);
           savedReports.add(report);
         }
-        printReports(response, jrPrintReports, savedReports, isDirectPrint(vars));
+        printReports(response, jrPrintReports, savedReports, isDirectPrint(vars), multiReports,
+            true);
       } else {
         if (vars.commandIn("DEFAULT")) {
-          differentDocTypes.clear();
           reports = new HashMap<String, Report>();
           for (int index = 0; index < documentIds.length; index++) {
             final String documentId = documentIds[index];
@@ -373,12 +371,6 @@ public class PrintController extends HttpSecureAppServlet {
                 printPageClosePopUpAndRefreshParent(response, vars);
                 throw new ServletException("Configuration Error no sender defined");
               }
-
-              // Check the different document type IDs. If all the selected documents have the same
-              // document type ID, the template selector should appear.
-              if (!differentDocTypes.containsKey(report.getDocTypeId())) {
-                differentDocTypes.put(report.getDocTypeId(), report.getTemplate());
-              }
             } catch (final ReportingException exception) {
               throw new ServletException(exception);
             }
@@ -392,8 +384,8 @@ public class PrintController extends HttpSecureAppServlet {
                 getComaSeparatedString(documentIds), reports);
           } else if (request.getServletPath().toLowerCase().indexOf(SEND_PATH) != -1
               || request.getServletPath().toLowerCase().indexOf(RESEND_PATH) != -1) {
-            createEmailOptionsPage(request, response, vars, documentType,
-                getComaSeparatedString(documentIds), reports, checks, fullDocumentIdentifier);
+            createEmailOptionsPage(request, response, vars, documentType, documentIds, reports,
+                checks, fullDocumentIdentifier);
           }
 
         } else if (vars.commandIn("ADD")) {
@@ -401,8 +393,8 @@ public class PrintController extends HttpSecureAppServlet {
             createPrintOptionsPage(request, response, vars, documentType,
                 getComaSeparatedString(documentIds), reports);
           } else {
-            createEmailOptionsPage(request, response, vars, documentType,
-                getComaSeparatedString(documentIds), reports, checks, fullDocumentIdentifier);
+            createEmailOptionsPage(request, response, vars, documentType, documentIds, reports,
+                checks, fullDocumentIdentifier);
           }
 
         } else if (vars.commandIn("DEL")) {
@@ -412,8 +404,8 @@ public class PrintController extends HttpSecureAppServlet {
           request.getSession().setAttribute("files", attachments);
 
           seekAndDestroy(attachments, documentToDelete);
-          createEmailOptionsPage(request, response, vars, documentType,
-              getComaSeparatedString(documentIds), reports, checks, fullDocumentIdentifier);
+          createEmailOptionsPage(request, response, vars, documentType, documentIds, reports,
+              checks, fullDocumentIdentifier);
 
         } else if (vars.commandIn("EMAIL")) {
           PocData[] pocData = (PocData[]) vars.getSessionObject("pocData" + fullDocumentIdentifier);
@@ -424,18 +416,18 @@ public class PrintController extends HttpSecureAppServlet {
             if (log4j.isDebugEnabled()) {
               log4j.debug("Processing document with id: " + documentId);
             }
-
             String templateInUse = "default";
-            if (differentDocTypes.size() == 1) {
+            boolean showTemplateSelector = canShowTemplateSelector(documentType, documentIds, vars);
+            if (showTemplateSelector) {
               templateInUse = vars.getRequestGlobalVariable("templates", "templates");
             }
 
             final Report report = buildReport(response, vars, documentId, reportManager,
-                documentType, OutputTypeEnum.EMAIL, templateInUse);
+                documentType, OutputTypeEnum.EMAIL, templateInUse, multiReports);
 
             // if there is only one document type id the user should be
             // able to choose between different templates
-            if (differentDocTypes.size() == 1) {
+            if (showTemplateSelector) {
               final String templateId = vars.getRequestGlobalVariable("templates", "templates");
               try {
                 final TemplateInfo usedTemplateInfo = new TemplateInfo(this, report.getDocTypeId(),
@@ -482,7 +474,7 @@ public class PrintController extends HttpSecureAppServlet {
               final String senderAddress = vars.getStringParameter("fromEmail");
               sendDocumentEmail(report, vars,
                   (List<AttachContent>) request.getSession().getAttribute("files"), documentData,
-                  senderAddress, checks, documentType);
+                  senderAddress, checks, showTemplateSelector);
               nrOfEmailsSend++;
             }
           }
@@ -558,8 +550,38 @@ public class PrintController extends HttpSecureAppServlet {
     }
   }
 
+  /**
+   * Checks the different document type IDs. If all the selected documents have the same document
+   * type ID, the template selector should appear.
+   * 
+   * @return true if the template selector should appear or false otherwise.
+   */
+  private boolean canShowTemplateSelector(DocumentType documentType, String[] documentIds,
+      VariablesSecureApp vars) {
+    return Arrays.stream(documentIds).map(documentId -> {
+      try {
+        return new Report(documentType, documentId, vars.getLanguage(), "default",
+            documentIds.length > 1, OutputTypeEnum.DEFAULT);
+      } catch (Exception ex) {
+        log4j.error("Error creating Report instance for document {}", documentId);
+        return null;
+      }
+    }).filter(r -> r != null).map(Report::getDocTypeId).collect(Collectors.toSet()).size() == 1;
+  }
+
+  public void printReports(HttpServletResponse response, Collection<JasperPrint> jrPrintReports,
+      Collection<Report> reports) {
+    printReports(response, jrPrintReports, reports, false);
+  }
+
   public void printReports(HttpServletResponse response, Collection<JasperPrint> jrPrintReports,
       Collection<Report> reports, boolean directPrint) {
+    printReports(response, jrPrintReports, reports, directPrint, false, false);
+  }
+
+  private void printReports(HttpServletResponse response, Collection<JasperPrint> jrPrintReports,
+      Collection<Report> reports, boolean directPrint, boolean multiReports,
+      boolean archivedReports) {
     ServletOutputStream os = null;
     String filename = "";
     Map<Object, Object> parameters = new HashMap<Object, Object>();
@@ -635,11 +657,6 @@ public class PrintController extends HttpSecureAppServlet {
     os.println(xmlDocument.print());
   }
 
-  public void printReports(HttpServletResponse response, Collection<JasperPrint> jrPrintReports,
-      Collection<Report> reports) {
-    printReports(response, jrPrintReports, reports, false);
-  }
-
   private void concatReport(Report[] reports, Collection<JasperPrint> jrPrintReports,
       HttpServletResponse response, boolean directPrint) {
     try {
@@ -686,6 +703,13 @@ public class PrintController extends HttpSecureAppServlet {
   public Report buildReport(HttpServletResponse response, VariablesSecureApp vars,
       String strDocumentId, final ReportManager reportManager, DocumentType documentType,
       OutputTypeEnum outputType, String templateId) {
+    return buildReport(response, vars, strDocumentId, reportManager, documentType, outputType,
+        templateId, false);
+  }
+
+  private Report buildReport(HttpServletResponse response, VariablesSecureApp vars,
+      String strDocumentId, final ReportManager reportManager, DocumentType documentType,
+      OutputTypeEnum outputType, String templateId, boolean multiReports) {
     String localStrDocumentId = strDocumentId;
     Report report = null;
     if (localStrDocumentId != null) {
@@ -784,7 +808,7 @@ public class PrintController extends HttpSecureAppServlet {
 
   void sendDocumentEmail(Report report, VariablesSecureApp vars,
       List<AttachContent> attachedContent, PocData documentData, String senderAddress,
-      HashMap<String, Boolean> checks, DocumentType documentType)
+      HashMap<String, Boolean> checks, boolean showTemplateSelector)
       throws IOException, ServletException {
     final String attachmentFileLocation = report.getTargetLocation();
     String emailSubject = null, emailBody = null;
@@ -815,7 +839,7 @@ public class PrintController extends HttpSecureAppServlet {
     } else {
       replyToEmail = vars.getStringParameter("replyToEmail");
     }
-    if (differentDocTypes.size() > 1) {
+    if (!showTemplateSelector) {
       try {
         EmailDefinition emailDefinition = report.getDefaultEmailDefinition();
         emailSubject = emailDefinition.getSubject();
@@ -995,15 +1019,10 @@ public class PrintController extends HttpSecureAppServlet {
   }
 
   void createEmailOptionsPage(HttpServletRequest request, HttpServletResponse response,
-      VariablesSecureApp vars, DocumentType documentType, String strDocumentId,
-      Map<String, Report> reports, HashMap<String, Boolean> checks) {
-    createEmailOptionsPage(request, response, vars, documentType, strDocumentId, reports, checks);
-  }
-
-  void createEmailOptionsPage(HttpServletRequest request, HttpServletResponse response,
-      VariablesSecureApp vars, DocumentType documentType, String strDocumentId,
+      VariablesSecureApp vars, DocumentType documentType, String[] documentIds,
       Map<String, Report> reports, HashMap<String, Boolean> checks, String fullDocumentIdentifier)
       throws IOException, ServletException, ReportingException {
+    String strDocumentId = getComaSeparatedString(documentIds);
     boolean hasMultipleEmailConfigurations = false;
     XmlDocument xmlDocument = null;
     PocData[] pocData = getContactDetails(documentType, strDocumentId);
@@ -1011,7 +1030,9 @@ public class PrintController extends HttpSecureAppServlet {
     List<AttachContent> attachments = (List<AttachContent>) request.getSession()
         .getAttribute("files");
 
-    final String[] hiddenTags = getHiddenTags(pocData, attachments, vars, checks);
+    boolean showTemplateSelector = canShowTemplateSelector(documentType, documentIds, vars);
+    final String[] hiddenTags = getHiddenTags(pocData, attachments, vars, checks,
+        showTemplateSelector);
     if (hiddenTags != null) {
       xmlDocument = xmlEngine
           .readXmlTemplate("org/openbravo/erpCommon/utility/reporting/printing/EmailOptions",
@@ -1321,7 +1342,7 @@ public class PrintController extends HttpSecureAppServlet {
     if (!hasMultipleEmailConfigurations) {
       xmlDocument.setParameter("useDefault", "Y");
     }
-    if (differentDocTypes.size() > 1) {
+    if (!showTemplateSelector) {
       xmlDocument.setParameter("multiDocType", "Y");
     }
 
@@ -1415,7 +1436,7 @@ public class PrintController extends HttpSecureAppServlet {
    * @author gmauleon
    */
   private String[] getHiddenTags(PocData[] pocData, List<AttachContent> attachedContent,
-      VariablesSecureApp vars, HashMap<String, Boolean> checks) {
+      VariablesSecureApp vars, HashMap<String, Boolean> checks, boolean showTemplateSelector) {
     String[] discard;
     final Map<String, PocData> customerMap = new HashMap<String, PocData>();
     final Map<String, PocData> salesRepMap = new HashMap<String, PocData>();
@@ -1453,8 +1474,7 @@ public class PrintController extends HttpSecureAppServlet {
     }
 
     // check the templates
-    if (differentDocTypes.size() > 1) { // the templates selector shouldn't
-      // appear
+    if (!showTemplateSelector) {
       final String[] discardAux = new String[discard.length + 1];
       for (int i = 0; i < discard.length; i++) {
         discardAux[i] = discard[i];
