@@ -23,7 +23,6 @@ import javax.enterprise.event.Observes;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
-import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
@@ -52,13 +51,6 @@ class OrganizationLanguageEventHandler extends EntityPersistenceEventObserver {
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
-    if (!isValidEvent(event)) {
-      return;
-    }
-    validateIsDefaultDefinition((OrganizationLanguage) event.getTargetInstance());
-  }
-
-  public void onDelete(final @Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
