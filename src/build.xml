@@ -106,13 +106,6 @@ build.war: build a war file in the lib directory.
     <available file="${deploy-version-file}" property="file.exists"/>
   </target>
 
-  <target name="set.system.version" depends="check.file.exists" if="file.exists">
-    <sequential>
-      <loadfile property="file.content" srcFile="${deploy-version-file}" failonerror="false"/>
-      <updatesystemversion v="${file.content}"/>
-    </sequential>
-  </target>
-
   <target name="trl.clean" if="translation">
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
       <arg line="'${base.config}/Openbravo.properties' clean" />
@@ -498,8 +491,13 @@ build.war: build a war file in the lib directory.
     <antcall target="deployment.version"/>
   </target>
 
-  <target name="deployment.version">
-    <antcall target="set.system.version"/>
+  <target name="deployment.version" depends="check.file.exists" if="file.exists">
+    <sequential>
+      <loadfile property="file.content" srcFile="${deploy-version-file}" failonerror="false"/>
+      <property name="file.content" value=""/>
+      <echo message="La variable file.content tiene el contenido : ${file.content}"/>
+      <updatesystemversion v="${file.content}"/>
+    </sequential>
   </target>
 
   <target name="build.web.folder.skins" if="do.skins">
