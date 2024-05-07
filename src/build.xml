@@ -102,10 +102,6 @@ build.war: build a war file in the lib directory.
     </sequential>
   </macrodef>
 
-  <target name="check.file.exists">
-    <available file="${deploy-version-file}" property="file.exists"/>
-  </target>
-
   <target name="trl.clean" if="translation">
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
       <arg line="'${base.config}/Openbravo.properties' clean" />
@@ -491,10 +487,11 @@ build.war: build a war file in the lib directory.
     <antcall target="deployment.version"/>
   </target>
 
-  <target name="deployment.version" depends="check.file.exists" if="file.exists">
+  <target name="deployment.version">
     <sequential>
       <loadfile property="file.content" srcFile="${deploy-version-file}" failonerror="false"/>
       <property name="file.content" value=""/>
+      <!-- The properties are immutable, if file.content already has a value the previous line will not take effect. -->
       <echo message="La variable file.content tiene el contenido : ${file.content}"/>
       <updatesystemversion v="${file.content}"/>
     </sequential>
