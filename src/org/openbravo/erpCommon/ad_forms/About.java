@@ -99,8 +99,10 @@ public class About extends HttpSecureAppServlet {
       xmlDocument.setParameter("paramLicensedTo", licenseInfo);
       xmlDocument.setParameter("ver", version.getMajorVersion() + " " + version.getMP());
       xmlDocument.setParameter("versionNo", version.getVersionNumber());
-      xmlDocument.setParameter("deploymentVersion",
-          OBDal.getInstance().get(System.class, "0").getVersion());
+      String deploymentVersion = OBDal.getInstance().get(System.class, "0").getVersion();
+      if (deploymentVersion != null && !deploymentVersion.isEmpty()) {
+        xmlDocument.setParameter("deploymentVersion", deploymentVersion);
+      }
       xmlDocument.setParameter("paraHostName", ConfigParameters.getMachineName());
       xmlDocument.setParameter("paraBackground",
           OBPropertiesProvider.getInstance()

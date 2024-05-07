@@ -492,7 +492,6 @@ build.war: build a war file in the lib directory.
       <loadfile property="file.content" srcFile="${deploy-version-file}" failonerror="false"/>
       <property name="file.content" value=""/>
       <!-- The properties are immutable, if file.content already has a value the previous line will not take effect. -->
-      <echo message="La variable file.content tiene el contenido : ${file.content}"/>
       <updatesystemversion v="${file.content}"/>
     </sequential>
   </target>
