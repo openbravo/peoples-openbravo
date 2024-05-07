@@ -58,6 +58,8 @@ build.war: build a war file in the lib directory.
   <property name="base.translate.structure" value="org/openbravo/erpWindows" />
   <property name="src" value="." />
   <property name="tr" value="yes" />
+  <property name="deploy-version-file" value="../config/deploy-version"/>
+
 
   <condition property="exclude.cdi">
     <equals arg1="wildfly" arg2="${application.server}" />
@@ -88,6 +90,28 @@ build.war: build a war file in the lib directory.
        </sql>
      </sequential>
   </macrodef>
+
+  <macrodef name="updatesystemversion">
+    <attribute name="v" default="NOT SET"/>
+    <sequential>
+      <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
+        <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
+        <transaction> UPDATE ad_system SET version=LEFT('@{v}', 20) ;
+        </transaction>
+      </sql>
+    </sequential>
+  </macrodef>
+
+  <target name="check.file.exists">
+    <available file="${deploy-version-file}" property="file.exists"/>
+  </target>
+
+  <target name="set.system.version" depends="check.file.exists" if="file.exists">
+    <sequential>
+      <loadfile property="file.content" srcFile="${deploy-version-file}" failonerror="false"/>
+      <updatesystemversion v="${file.content}"/>
+    </sequential>
+  </target>
 
   <target name="trl.clean" if="translation">
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
@@ -471,6 +495,11 @@ build.war: build a war file in the lib directory.
       </fileset>
       <mapper type="regexp" from="(.*)(\${file.separator}web)(\${file.separator}.*)" to="\3" />
     </copy>
+    <antcall target="deployment.version"/>
+  </target>
+
+  <target name="deployment.version">
+    <antcall target="set.system.version"/>
   </target>
 
   <target name="build.web.folder.skins" if="do.skins">

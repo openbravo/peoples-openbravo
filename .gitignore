@@ -30,6 +30,7 @@ config/eclipse/hibernate.cfg.xml
 src/result.xml
 config/log4j2.xml
 config/log4j2-web.xml
+config/deploy-version
 
 src-test/src/log4j2-test.xml
 src-db/database/formalChangesScript.xml
