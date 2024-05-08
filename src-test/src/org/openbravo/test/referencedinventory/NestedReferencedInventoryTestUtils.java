@@ -20,27 +20,20 @@
 package org.openbravo.test.referencedinventory;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
-import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
-import org.openbravo.base.provider.OBProvider;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.materialmgmt.refinventory.BoxProcessor;
+import org.openbravo.materialmgmt.refinventory.ContentRestriction;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryProcessor.StorageDetailJS;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
-import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
@@ -54,15 +47,14 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovement;
  *
  */
 
-public class NestedReferencedInventoryTestUtils {
+class NestedReferencedInventoryTestUtils {
 
   /**
    * validate referenced inventory after box transaction
    */
-
   static void validateRIAfterBoxTransaction(final ReferencedInventory refInv,
       JSONArray selectedStorageDetailsJS, String toBinId, Integer noOfLines, Long uniqueItemCount,
-      Long nestedRefInvCount) throws JSONException, Exception {
+      Long nestedRefInvCount) throws Exception {
     InternalMovement boxMovement = new BoxProcessor(refInv, selectedStorageDetailsJS, toBinId)
         .createAndProcessGoodsMovement();
 
@@ -90,56 +82,36 @@ public class NestedReferencedInventoryTestUtils {
   /**
    * get Storage details for Nested RI
    */
-
-  public static JSONArray getStorageDetailsforNestedRI(final ReferencedInventory refInv,
-      String toBinId) throws JSONException {
-    final JSONArray StorageDetailJS = new JSONArray();
+  static JSONArray getStorageDetailsforNestedRI(final ReferencedInventory refInv, String toBinId) {
+    final JSONArray storageDetailJS = new JSONArray();
     try (ScrollableResults sdScroll = ReferencedInventoryUtil.getStorageDetails(refInv.getId(),
         true)) {
       while (sdScroll.next()) {
         final StorageDetail sd = (StorageDetail) sdScroll.get(0);
         final StorageDetailJS sdJS = new StorageDetailJS(sd.getId(), sd.getQuantityOnHand(),
             toBinId);
-        StorageDetailJS.put(sdJS.toJSONObject());
+        storageDetailJS.put(sdJS.toJSONObject());
       }
     }
-    return StorageDetailJS;
+    return storageDetailJS;
   }
 
   /**
    * Add items in referenced inventory during boxing transaction
    */
-
-  static JSONArray addProductInBox(final Product product, final String attributeSetInstanceId)
-      throws Exception {
-    final BigDecimal receivedQty = new BigDecimal("10");
-    ReferencedInventoryTestUtils.receiveProduct(product, receivedQty, attributeSetInstanceId);
+  static JSONArray addProductInBox(final Product product, final BigDecimal qty,
+      final String attributeSetInstanceId) throws Exception {
+    ReferencedInventoryTestUtils.receiveProduct(product, qty, attributeSetInstanceId);
     final StorageDetail storageDetail = ReferencedInventoryTestUtils
         .getUniqueStorageDetail(product);
-    final JSONArray storageDetailsJS = ReferencedInventoryTestUtils
-        .getStorageDetailsToBoxJSArray(storageDetail, BigDecimal.ONE);
-    return storageDetailsJS;
-  }
-
-  /**
-   * Creates a referenced inventory with referenced inventory type having contentRestriction
-   */
-
-  public static ReferencedInventory createRI(String contentRestriction) {
-    final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.NONE, null, contentRestriction);
-
-    return ReferencedInventoryTestUtils
-        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
-
+    return ReferencedInventoryTestUtils.getStorageDetailsToBoxJSArray(storageDetail,
+        BigDecimal.ONE);
   }
 
   /**
    * Validate product and attribute set instance value in the referenced inventory
    */
-
-  public static void validateAttributeSetInstanceValue(final ReferencedInventory refInv,
+  static void validateAttributeSetInstanceValue(final ReferencedInventory refInv,
       final Product product, final BigDecimal qtyOnHand,
       final String attributeSetInstanceDescription) {
     assertThat(
@@ -152,7 +124,6 @@ public class NestedReferencedInventoryTestUtils {
    * Check whether storage detail exists for product and attribute set instance value in the
    * referenced inventory
    */
-
   static boolean storageDetailExists(final ReferencedInventory refInv, final Product product,
       final BigDecimal qtyOnHand, final String attributeSetInstanceDescription) {
     OBCriteria<StorageDetail> crit = OBDal.getInstance().createCriteria(StorageDetail.class);
@@ -176,8 +147,7 @@ public class NestedReferencedInventoryTestUtils {
    * Session is cleared when box and unbox RI processes are executed, so to get updated information
    * about RI we need to re-initialize RI object and get refreshed RI.
    */
-
-  public static ReferencedInventory getRefreshedReferencedInventory(String refInventoryId) {
+  static ReferencedInventory getRefreshedReferencedInventory(String refInventoryId) {
     ReferencedInventory refInventory = OBDal.getInstance()
         .get(ReferencedInventory.class, refInventoryId);
     OBDal.getInstance().refresh(refInventory);
@@ -185,57 +155,14 @@ public class NestedReferencedInventoryTestUtils {
   }
 
   /**
-   * creates Referenced Inventory Type based on Organization, sequence Type Sequence, content
-   * Restrictions, product
-   */
-
-  public static ReferencedInventoryType createReferencedInventoryType(Organization org,
-      SequenceType sequenceType, Sequence sequence, String contentRestriction, Product product) {
-    final ReferencedInventoryType refInvType = OBProvider.getInstance()
-        .get(ReferencedInventoryType.class);
-    refInvType.setClient(OBContext.getOBContext().getCurrentClient());
-    refInvType.setOrganization(org);
-    refInvType.setSequenceType(sequenceType.value);
-    refInvType.setSequence(sequence);
-    refInvType.setName(UUID.randomUUID().toString());
-    refInvType.setShared(true);
-    refInvType.setContentRestriction(contentRestriction);
-    refInvType.setObawoProduct(product);
-    OBDal.getInstance().save(refInvType);
-    assertThat("Referenced Inventory Type is successfully created", refInvType, notNullValue());
-    return refInvType;
-  }
-
-  /**
    * Creates a referenced inventory with referenced inventory type having contentRestriction
    */
-
-  public static ReferencedInventory createRI(String orgId, String contentRestriction,
-      Product product) {
-    final ReferencedInventoryType refInvType = createReferencedInventoryType(
-        OBDal.getInstance().getProxy(Organization.class, "0"), SequenceType.NONE, null,
-        contentRestriction, product);
-    return createReferencedInventory(orgId, refInvType);
+  static ReferencedInventory createReferencedInventory(String orgId,
+      ContentRestriction contentRestriction) {
+    final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
+        .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
+            SequenceType.NONE, null, contentRestriction);
+    return ReferencedInventoryTestUtils.createReferencedInventory(orgId, refInvType);
   }
 
-  /**
-   * Create referenced inventory for organization, referenced inventory type
-   */
-
-  public static ReferencedInventory createReferencedInventory(final String orgId,
-      final ReferencedInventoryType refInvType) {
-    String strSequence = ReferencedInventoryUtil.getProposedValueFromSequence(refInvType.getId(),
-        orgId, true);
-    final ReferencedInventory refInv = OBProvider.getInstance().get(ReferencedInventory.class);
-    refInv.setClient(OBContext.getOBContext().getCurrentClient());
-    refInv.setOrganization(OBDal.getInstance().getProxy(Organization.class, orgId));
-    refInv.setReferencedInventoryType(refInvType);
-    refInv.setSearchKey(strSequence == null || StringUtils.isEmpty(strSequence)
-        ? StringUtils.left(UUID.randomUUID().toString(), 30)
-        : strSequence);
-    OBDal.getInstance().save(refInv);
-    assertThat("Referenced Inventory is successfully created", refInv, notNullValue());
-    assertThat("Referenced Inventory is empty", refInv.getMaterialMgmtStorageDetailList(), empty());
-    return refInv;
-  }
 }

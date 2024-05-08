@@ -31,6 +31,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.SequenceUtil.CalculationMethod;
 import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
 import org.openbravo.erpCommon.utility.SequenceUtil.SequenceNumberLength;
+import org.openbravo.materialmgmt.refinventory.ContentRestriction;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
 import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.enterprise.Organization;
@@ -62,8 +63,7 @@ public class ReferencedInventoryTypeOrgSequenceTest extends ReferencedInventoryT
     // Create Referenced Inventory Type with Sequence Type as Per Organization
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.PER_ORGANIZATION, parentSequence,
-            ReferencedInventoryTestUtils.CONTENTRESTRICTION_ONLY_ITEMS);
+            SequenceType.PER_ORGANIZATION, parentSequence, ContentRestriction.ONLY_ITEMS);
     OBDal.getInstance().save(refInvType);
 
     ReferencedInventoryTestUtils.createReferencedInventoryTypeOrgSeq(refInvType,
@@ -114,8 +114,7 @@ public class ReferencedInventoryTypeOrgSequenceTest extends ReferencedInventoryT
         .createReferencedInventoryType(
             OBDal.getInstance()
                 .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_MAIN_ORG_ID),
-            SequenceType.PER_ORGANIZATION, parentSequence,
-            ReferencedInventoryTestUtils.CONTENTRESTRICTION_ONLY_ITEMS);
+            SequenceType.PER_ORGANIZATION, parentSequence, ContentRestriction.ONLY_ITEMS);
     OBDal.getInstance().save(refInvType);
 
     // Create Referenced Inventory Type Organization Sequence with Parent Sequence created above in

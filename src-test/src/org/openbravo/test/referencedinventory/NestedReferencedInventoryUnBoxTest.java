@@ -29,6 +29,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.materialmgmt.refinventory.ContentRestriction;
 import org.openbravo.materialmgmt.refinventory.UnboxProcessor;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
@@ -51,19 +52,22 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
     // Small Box
 
     ReferencedInventory smallBoxRefInv = NestedReferencedInventoryTestUtils
-        .createRI(ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID,
+            ContentRestriction.BOTH_ITEMS_OR_REFINVENTORIES);
 
     // Store first Product Storage Detail without Attribute set instance to be added later on
     final Product firstProduct = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[0][0]);
     JSONArray firstProductSD = new JSONArray();
-    firstProductSD.put(
-        NestedReferencedInventoryTestUtils.addProductInBox(firstProduct, PRODUCTS[0][1]).get(0));
+    firstProductSD.put(NestedReferencedInventoryTestUtils
+        .addProductInBox(firstProduct, BigDecimal.TEN, PRODUCTS[0][1])
+        .get(0));
     storageDetailsForSmallBox.put(firstProductSD.get(0));
 
     final Product secondProduct = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[1][0]);
     JSONArray secondProductSD = new JSONArray();
-    secondProductSD.put(
-        NestedReferencedInventoryTestUtils.addProductInBox(secondProduct, PRODUCTS[1][1]).get(0));
+    secondProductSD.put(NestedReferencedInventoryTestUtils
+        .addProductInBox(secondProduct, BigDecimal.TEN, PRODUCTS[1][1])
+        .get(0));
     storageDetailsForSmallBox.put(secondProductSD.get(0));
 
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(smallBoxRefInv,
@@ -72,15 +76,17 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
     // Medium Box
 
     ReferencedInventory mediumBoxRefInv = NestedReferencedInventoryTestUtils
-        .createRI(ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID,
+            ContentRestriction.BOTH_ITEMS_OR_REFINVENTORIES);
 
     final JSONArray storageDetailsForMediumBox = NestedReferencedInventoryTestUtils
         .getStorageDetailsforNestedRI(smallBoxRefInv, toBinId);
 
     final Product thirdProduct = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[2][0]);
     JSONArray thirdProductSD = new JSONArray();
-    thirdProductSD.put(
-        NestedReferencedInventoryTestUtils.addProductInBox(thirdProduct, PRODUCTS[2][1]).get(0));
+    thirdProductSD.put(NestedReferencedInventoryTestUtils
+        .addProductInBox(thirdProduct, BigDecimal.TEN, PRODUCTS[2][1])
+        .get(0));
     storageDetailsForMediumBox.put(thirdProductSD.get(0));
 
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(mediumBoxRefInv,
@@ -88,8 +94,9 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
 
     // Pallet
 
-    ReferencedInventory palletRefInv = NestedReferencedInventoryTestUtils
-        .createRI(ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+    ReferencedInventory palletRefInv = NestedReferencedInventoryTestUtils.createReferencedInventory(
+        ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID,
+        ContentRestriction.BOTH_ITEMS_OR_REFINVENTORIES);
 
     // Add products with and without attribute set instance which is already present in Box, added
     // during previous Box transaction in nested referenced inventory
@@ -203,7 +210,8 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
 
     // Box Transaction - Pallet into Big Pallet
     ReferencedInventory bigPalletRefInv = NestedReferencedInventoryTestUtils
-        .createRI(ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID,
+            ContentRestriction.BOTH_ITEMS_OR_REFINVENTORIES);
     JSONArray storageDetailsForBigPallet = NestedReferencedInventoryTestUtils
         .getStorageDetailsforNestedRI(palletRefInv, toBinId);
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(bigPalletRefInv,
@@ -257,12 +265,14 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
     // Small Box
 
     ReferencedInventory smallBoxRefInv = NestedReferencedInventoryTestUtils
-        .createRI(ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID,
+            ContentRestriction.BOTH_ITEMS_OR_REFINVENTORIES);
 
     final Product smallBoxProduct = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[0][0]);
     JSONArray smallBoxProductSD = new JSONArray();
-    smallBoxProductSD.put(
-        NestedReferencedInventoryTestUtils.addProductInBox(smallBoxProduct, PRODUCTS[0][1]).get(0));
+    smallBoxProductSD.put(NestedReferencedInventoryTestUtils
+        .addProductInBox(smallBoxProduct, BigDecimal.TEN, PRODUCTS[0][1])
+        .get(0));
     storageDetailsForSmallBox.put(smallBoxProductSD.get(0));
 
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(smallBoxRefInv,
@@ -270,16 +280,17 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
 
     // Medium Box 1
     ReferencedInventory mediumBox1RefInv = NestedReferencedInventoryTestUtils
-        .createRI(ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID,
+            ContentRestriction.BOTH_ITEMS_OR_REFINVENTORIES);
 
     final JSONArray storageDetailsForMediumBox1 = NestedReferencedInventoryTestUtils
         .getStorageDetailsforNestedRI(smallBoxRefInv, toBinId);
 
     final Product mediumBox1Product = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[1][0]);
     JSONArray mediumBox1ProductSD = new JSONArray();
-    mediumBox1ProductSD
-        .put(NestedReferencedInventoryTestUtils.addProductInBox(mediumBox1Product, PRODUCTS[1][1])
-            .get(0));
+    mediumBox1ProductSD.put(NestedReferencedInventoryTestUtils
+        .addProductInBox(mediumBox1Product, BigDecimal.TEN, PRODUCTS[1][1])
+        .get(0));
     storageDetailsForMediumBox1.put(mediumBox1ProductSD.get(0));
 
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(mediumBox1RefInv,
@@ -287,21 +298,23 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
 
     // Medium Box 2
     ReferencedInventory mediumBox2RefInv = NestedReferencedInventoryTestUtils
-        .createRI(ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID,
+            ContentRestriction.BOTH_ITEMS_OR_REFINVENTORIES);
 
     final Product mediumBox2Product = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[2][0]);
     JSONArray mediumBox2ProductSD = new JSONArray();
-    mediumBox2ProductSD
-        .put(NestedReferencedInventoryTestUtils.addProductInBox(mediumBox2Product, PRODUCTS[2][1])
-            .get(0));
+    mediumBox2ProductSD.put(NestedReferencedInventoryTestUtils
+        .addProductInBox(mediumBox2Product, BigDecimal.TEN, PRODUCTS[2][1])
+        .get(0));
 
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(mediumBox2RefInv,
         mediumBox2ProductSD, toBinId, 1, 1L, 0L);
 
     // Pallet - Medium Box 1 and Medium Box 2
 
-    ReferencedInventory palletRefInv = NestedReferencedInventoryTestUtils
-        .createRI(ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+    ReferencedInventory palletRefInv = NestedReferencedInventoryTestUtils.createReferencedInventory(
+        ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID,
+        ContentRestriction.BOTH_ITEMS_OR_REFINVENTORIES);
 
     JSONArray storageDetailsForPallet = NestedReferencedInventoryTestUtils
         .getStorageDetailsforNestedRI(mediumBox1RefInv, toBinId);
@@ -355,12 +368,14 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
     // Small Box
 
     ReferencedInventory smallBoxRefInv = NestedReferencedInventoryTestUtils
-        .createRI(ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID,
+            ContentRestriction.BOTH_ITEMS_OR_REFINVENTORIES);
 
     final Product smallBoxProduct = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[0][0]);
     JSONArray smallBoxProductSD = new JSONArray();
-    smallBoxProductSD.put(
-        NestedReferencedInventoryTestUtils.addProductInBox(smallBoxProduct, PRODUCTS[0][1]).get(0));
+    smallBoxProductSD.put(NestedReferencedInventoryTestUtils
+        .addProductInBox(smallBoxProduct, BigDecimal.TEN, PRODUCTS[0][1])
+        .get(0));
     storageDetailsForSmallBox.put(smallBoxProductSD.get(0));
 
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(smallBoxRefInv,
@@ -368,16 +383,17 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
 
     // Medium Box 1
     ReferencedInventory mediumBox1RefInv = NestedReferencedInventoryTestUtils
-        .createRI(ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID,
+            ContentRestriction.BOTH_ITEMS_OR_REFINVENTORIES);
 
     final JSONArray storageDetailsForMediumBox1 = NestedReferencedInventoryTestUtils
         .getStorageDetailsforNestedRI(smallBoxRefInv, toBinId);
 
     final Product mediumBox1Product = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[1][0]);
     JSONArray mediumBox1ProductSD = new JSONArray();
-    mediumBox1ProductSD
-        .put(NestedReferencedInventoryTestUtils.addProductInBox(mediumBox1Product, PRODUCTS[1][1])
-            .get(0));
+    mediumBox1ProductSD.put(NestedReferencedInventoryTestUtils
+        .addProductInBox(mediumBox1Product, BigDecimal.TEN, PRODUCTS[1][1])
+        .get(0));
     storageDetailsForMediumBox1.put(mediumBox1ProductSD.get(0));
 
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(mediumBox1RefInv,
@@ -385,21 +401,23 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
 
     // Medium Box 2
     ReferencedInventory mediumBox2RefInv = NestedReferencedInventoryTestUtils
-        .createRI(ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID,
+            ContentRestriction.BOTH_ITEMS_OR_REFINVENTORIES);
 
     final Product mediumBox2Product = ReferencedInventoryTestUtils.cloneProduct(PRODUCTS[2][0]);
     JSONArray mediumBox2ProductSD = new JSONArray();
-    mediumBox2ProductSD
-        .put(NestedReferencedInventoryTestUtils.addProductInBox(mediumBox2Product, PRODUCTS[2][1])
-            .get(0));
+    mediumBox2ProductSD.put(NestedReferencedInventoryTestUtils
+        .addProductInBox(mediumBox2Product, BigDecimal.TEN, PRODUCTS[2][1])
+        .get(0));
 
     NestedReferencedInventoryTestUtils.validateRIAfterBoxTransaction(mediumBox2RefInv,
         mediumBox2ProductSD, toBinId, 1, 1L, 0L);
 
     // Pallet - Medium Box 1 and Medium Box 2
 
-    ReferencedInventory palletRefInv = NestedReferencedInventoryTestUtils
-        .createRI(ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+    ReferencedInventory palletRefInv = NestedReferencedInventoryTestUtils.createReferencedInventory(
+        ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID,
+        ContentRestriction.BOTH_ITEMS_OR_REFINVENTORIES);
 
     JSONArray storageDetailsForPallet = NestedReferencedInventoryTestUtils
         .getStorageDetailsforNestedRI(mediumBox1RefInv, toBinId);

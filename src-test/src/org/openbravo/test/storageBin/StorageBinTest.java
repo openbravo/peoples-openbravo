@@ -41,6 +41,7 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.materialmgmt.refinventory.BoxProcessor;
+import org.openbravo.materialmgmt.refinventory.ContentRestriction;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.LocatorHandlingUnitType;
@@ -64,8 +65,8 @@ public class StorageBinTest extends WeldBaseTest {
   // Error messages
   private static final String ERROR_MESSAGE_NOT_EDITABLE = "NotEditableAllowStoringItemsHUType";
   private static final String ERROR_MESSAGE_NON_EMPTY_HU = "NonEmptyHUForTransactionAttributeSetInst";
-  private static final String ERROR_MESSAGE_Not_Valid_HU_TYPE = "Handling Unit Type is not valid for this storage bin";
-  private static final String ERROR_MESSAGE_No_Duplicate_Locator_HU_TYPE = "duplicate key value violates unique constraint";
+  private static final String ERROR_MESSAGE_NOT_VALID_HU_TYPE = "Handling Unit Type is not valid for this storage bin";
+  private static final String ERROR_MESSAGE_NO_DUPLICATE_LOCATOR_HU_TYPE = "duplicate key value violates unique constraint";
 
   @Before
   public void initialize() {
@@ -140,8 +141,7 @@ public class StorageBinTest extends WeldBaseTest {
     final ReferencedInventoryType huType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(
             OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
-            SequenceType.NONE, null,
-            ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+            SequenceType.NONE, null, ContentRestriction.BOTH_ITEMS_OR_REFINVENTORIES);
 
     StorageBinTestUtils.createStorageBinHUType(storageBin, huType);
 
@@ -151,7 +151,7 @@ public class StorageBinTest extends WeldBaseTest {
     });
 
     assertThat(DbUtility.getUnderlyingSQLException(thrown).getMessage(),
-        containsString(ERROR_MESSAGE_No_Duplicate_Locator_HU_TYPE));
+        containsString(ERROR_MESSAGE_NO_DUPLICATE_LOCATOR_HU_TYPE));
 
   }
 
@@ -167,14 +167,12 @@ public class StorageBinTest extends WeldBaseTest {
     final ReferencedInventoryType huType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(
             OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
-            SequenceType.NONE, null,
-            ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+            SequenceType.NONE, null, ContentRestriction.BOTH_ITEMS_OR_REFINVENTORIES);
 
     final ReferencedInventoryType huTypeForUpdateOrDelete = ReferencedInventoryTestUtils
         .createReferencedInventoryType(
             OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
-            SequenceType.NONE, null,
-            ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+            SequenceType.NONE, null, ContentRestriction.BOTH_ITEMS_OR_REFINVENTORIES);
 
     // Add
 
@@ -204,8 +202,7 @@ public class StorageBinTest extends WeldBaseTest {
     final ReferencedInventoryType huTypeForDelete = ReferencedInventoryTestUtils
         .createReferencedInventoryType(
             OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
-            SequenceType.NONE, null,
-            ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+            SequenceType.NONE, null, ContentRestriction.BOTH_ITEMS_OR_REFINVENTORIES);
 
     LocatorHandlingUnitType locatorHuTypeForDelete = StorageBinTestUtils
         .createStorageBinHUType(storageBin, huTypeForDelete);
@@ -239,8 +236,7 @@ public class StorageBinTest extends WeldBaseTest {
     final ReferencedInventoryType huTypeForInsert = ReferencedInventoryTestUtils
         .createReferencedInventoryType(
             OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
-            SequenceType.NONE, null,
-            ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+            SequenceType.NONE, null, ContentRestriction.BOTH_ITEMS_OR_REFINVENTORIES);
 
     Product product = StorageBinTestUtils.getNewProductForTest("SB005");
 
@@ -271,14 +267,12 @@ public class StorageBinTest extends WeldBaseTest {
     final ReferencedInventoryType huTypeForInsert = ReferencedInventoryTestUtils
         .createReferencedInventoryType(
             OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
-            SequenceType.NONE, null,
-            ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+            SequenceType.NONE, null, ContentRestriction.BOTH_ITEMS_OR_REFINVENTORIES);
 
     final ReferencedInventoryType huTypeForUpdate = ReferencedInventoryTestUtils
         .createReferencedInventoryType(
             OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
-            SequenceType.NONE, null,
-            ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+            SequenceType.NONE, null, ContentRestriction.BOTH_ITEMS_OR_REFINVENTORIES);
 
     LocatorHandlingUnitType locatorHuTypeForInsert = StorageBinTestUtils
         .createStorageBinHUType(storageBin, huTypeForInsert);
@@ -383,8 +377,7 @@ public class StorageBinTest extends WeldBaseTest {
     final ReferencedInventoryType huType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(
             OBDal.getInstance().getProxy(Organization.class, StorageBinTestUtils.ORG_ID),
-            SequenceType.NONE, null,
-            ReferencedInventoryTestUtils.CONTENTRESTRICTION_BOTH_ITEMS_OR_HU);
+            SequenceType.NONE, null, ContentRestriction.BOTH_ITEMS_OR_REFINVENTORIES);
 
     if (!isHandlingUnitTypeTabEmpty) {
       StorageBinTestUtils.createStorageBinHUType(newStorageBin, huType);
@@ -403,7 +396,7 @@ public class StorageBinTest extends WeldBaseTest {
                   storageDetail.getQuantityOnHand()),
               newStorageBin.getId()).createAndProcessGoodsMovement());
 
-      assertThat(thrown.getMessage(), containsString(ERROR_MESSAGE_Not_Valid_HU_TYPE));
+      assertThat(thrown.getMessage(), containsString(ERROR_MESSAGE_NOT_VALID_HU_TYPE));
     } else {
       try {
         new BoxProcessor(refInv,

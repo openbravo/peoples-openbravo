@@ -46,6 +46,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.materialmgmt.ReservationUtils;
+import org.openbravo.materialmgmt.refinventory.ContentRestriction;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
 import org.openbravo.model.ad.domain.Preference;
@@ -95,10 +96,6 @@ public class ReferencedInventoryTestUtils {
   static final String ATTRIBUTE_LAPTOP_SERIALNO = "2AC97E906A744C6E96EDE2E27A124818";
   static final String PRODUCT_RAWMATERIAL_LOTATTRIBUTE = "4028E6C72959682B01295ADC1AD40222";
   static final String ATTRIBUTE_RAWMATERIAL_LOT = "4028E6C72959682B01295ECFE4C60272";
-
-  public static final String CONTENTRESTRICTION_ONLY_ITEMS = "I";
-  public static final String CONTENTRESTRICTION_ONLY_HU = "RI";
-  public static final String CONTENTRESTRICTION_BOTH_ITEMS_OR_HU = "IRI";
 
   static void initializeReservationsPreferenceIfDoesnotExist() {
     if (!existsReservationsPreference()) {
@@ -170,7 +167,7 @@ public class ReferencedInventoryTestUtils {
   }
 
   public static ReferencedInventoryType createReferencedInventoryType(Organization org,
-      SequenceType sequenceType, Sequence sequence, String contentRestriction) {
+      SequenceType sequenceType, Sequence sequence, ContentRestriction contentRestriction) {
     final ReferencedInventoryType refInvType = OBProvider.getInstance()
         .get(ReferencedInventoryType.class);
     refInvType.setClient(OBContext.getOBContext().getCurrentClient());
@@ -179,7 +176,7 @@ public class ReferencedInventoryTestUtils {
     refInvType.setSequence(sequence);
     refInvType.setName(UUID.randomUUID().toString());
     refInvType.setShared(true);
-    refInvType.setContentRestriction(contentRestriction);
+    refInvType.setContentRestriction(contentRestriction.value);
     OBDal.getInstance().save(refInvType);
     assertThat("Referenced Inventory Type is successfully created", refInvType, notNullValue());
     return refInvType;
