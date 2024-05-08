@@ -70,7 +70,7 @@ public class About extends HttpSecureAppServlet {
       ActivationKey ak = ActivationKey.getInstance();
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
-      String discard[] = { "" };
+      String discard[] = { "", "" };
       XmlDocument xmlDocument = null;
 
       String licenseInfo = "";
@@ -88,6 +88,10 @@ public class About extends HttpSecureAppServlet {
         licenseInfo = Utility.messageBD(this, "OPSCommunityEdition", vars.getLanguage());
         discard[0] = "paramOPSInfo";
       }
+      String deploymentVersion = OBDal.getInstance().get(System.class, "0").getVersion();
+      if (deploymentVersion == null || deploymentVersion.isEmpty()) {
+        discard[1] = "deploymentInfo";
+      }
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/About", discard)
           .createXmlDocument();
 
@@ -99,7 +103,6 @@ public class About extends HttpSecureAppServlet {
       xmlDocument.setParameter("paramLicensedTo", licenseInfo);
       xmlDocument.setParameter("ver", version.getMajorVersion() + " " + version.getMP());
       xmlDocument.setParameter("versionNo", version.getVersionNumber());
-      String deploymentVersion = OBDal.getInstance().get(System.class, "0").getVersion();
       if (deploymentVersion != null && !deploymentVersion.isEmpty()) {
         xmlDocument.setParameter("deploymentVersion", deploymentVersion);
       }
