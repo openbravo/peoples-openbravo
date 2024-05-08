@@ -492,7 +492,18 @@ build.war: build a war file in the lib directory.
       <loadfile property="file.content" srcFile="${deploy-version-file}" failonerror="false"/>
       <property name="file.content" value=""/>
       <!-- The properties are immutable, if file.content already has a value the previous line will not take effect. -->
-      <updatesystemversion v="${file.content}"/>
+      <loadresource property="clean.file.content">
+        <propertyresource name="file.content"/>
+          <filterchain>
+            <tokenfilter>
+              <filetokenizer/>
+              <replacestring from="'" to="''"/>
+            </tokenfilter>
+          </filterchain>
+      </loadresource>
+     <!-- Replace one signle quote by two single quotes from file content in order to avoid escaped quotes. -->
+      <property name="clean.file.content" value=""/>
+      <updatesystemversion v="${clean.file.content}"/>
     </sequential>
   </target>
 
