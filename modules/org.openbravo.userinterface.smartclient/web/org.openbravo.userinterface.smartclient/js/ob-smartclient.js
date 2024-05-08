@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2018 Openbravo SLU
+ * All portions are Copyright (C) 2011-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -944,6 +944,20 @@ isc.RecordEditor.addProperties({
       }
     }
   });
+}());
+
+(function () {
+  var originalRequiredValidator = isc.Validator.getValidatorDefinition('required');
+  var updatedRequiredValidator = {
+	  ...originalRequiredValidator,
+	  action: originalRequiredValidator.action,
+	  condition: function (item, validator, value, record) {
+		  let updatedValue = isc.isA.String(value)? value.trim() : value;
+		  return originalRequiredValidator.condition(item, validator, updatedValue, record);
+      }
+  };
+  isc.Validator.addValidatorDefinition('required', updatedRequiredValidator);
+  
 }());
 
 isc.builtinTypes.textArea = {

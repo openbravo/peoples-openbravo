@@ -1164,6 +1164,13 @@ isc.OBToolbar.addProperties({
       }
     }
 
+    if (this.view.isShowingForm) {
+      // disable the prev/next buttons if the record is new or some fields have not been set
+      this.view.statusBar.setNewState(
+        this.view.viewForm.isNew || !this.view.viewForm.allRequiredFieldsSet()
+      );
+    }
+
     // and refresh the process toolbar buttons
     if (!changeEvent) {
       this.refreshCustomButtons(noSetSession);
