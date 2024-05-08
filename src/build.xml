@@ -501,7 +501,7 @@ build.war: build a war file in the lib directory.
             </tokenfilter>
           </filterchain>
       </loadresource>
-     <!-- Replace one signle quote by two single quotes from file content in order to avoid escaped quotes. -->
+     <!-- Replace one single quote by two single quotes from file content in order to avoid escaped quotes. -->
       <property name="clean.file.content" value=""/>
       <updatesystemversion v="${clean.file.content}"/>
     </sequential>
