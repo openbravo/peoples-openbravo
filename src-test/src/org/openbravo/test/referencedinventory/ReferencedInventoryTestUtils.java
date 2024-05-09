@@ -278,6 +278,7 @@ public class ReferencedInventoryTestUtils {
     final JSONObject storageDetailJS = new JSONObject();
     storageDetailJS.put("id", storageDetail.getId());
     storageDetailJS.put("quantityOnHand", qty);
+    storageDetailJS.put("productId", storageDetail.getProduct().getId());
     final JSONArray storageDetailsJS = new JSONArray();
     storageDetailsJS.put(storageDetailJS);
     return storageDetailsJS;

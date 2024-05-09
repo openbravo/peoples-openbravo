@@ -52,7 +52,7 @@ class NestedReferencedInventoryTestUtils {
   /**
    * validate referenced inventory after box transaction
    */
-  static void validateRIAfterBoxTransaction(final ReferencedInventory refInv,
+  static void boxAndValidateRefInventory(final ReferencedInventory refInv,
       JSONArray selectedStorageDetailsJS, String toBinId, Integer noOfLines, Long uniqueItemCount,
       Long nestedRefInvCount) throws Exception {
     InternalMovement boxMovement = new BoxProcessor(refInv, selectedStorageDetailsJS, toBinId)
