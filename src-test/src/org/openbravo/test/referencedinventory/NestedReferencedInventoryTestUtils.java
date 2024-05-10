@@ -47,7 +47,7 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovement;
  *
  */
 
-class NestedReferencedInventoryTestUtils {
+public class NestedReferencedInventoryTestUtils {
 
   /**
    * validate referenced inventory after box transaction
@@ -111,7 +111,7 @@ class NestedReferencedInventoryTestUtils {
   /**
    * Validate product and attribute set instance value in the referenced inventory
    */
-  static void validateAttributeSetInstanceValue(final ReferencedInventory refInv,
+  public static void validateAttributeSetInstanceValue(final ReferencedInventory refInv,
       final Product product, final BigDecimal qtyOnHand,
       final String attributeSetInstanceDescription) {
     assertThat(
@@ -147,7 +147,8 @@ class NestedReferencedInventoryTestUtils {
    * Session is cleared when box and unbox RI processes are executed, so to get updated information
    * about RI we need to re-initialize RI object and get refreshed RI.
    */
-  static ReferencedInventory getRefreshedReferencedInventory(String refInventoryId) {
+  public static ReferencedInventory getRefreshedReferencedInventory(String refInventoryId) {
+    OBDal.getInstance().getSession().clear();
     ReferencedInventory refInventory = OBDal.getInstance()
         .get(ReferencedInventory.class, refInventoryId);
     OBDal.getInstance().refresh(refInventory);
@@ -164,5 +165,4 @@ class NestedReferencedInventoryTestUtils {
             SequenceType.NONE, null, contentRestriction);
     return ReferencedInventoryTestUtils.createReferencedInventory(orgId, refInvType);
   }
-
 }
