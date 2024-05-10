@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2022 Openbravo SLU
+ * All portions are Copyright (C) 2009-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -94,6 +94,7 @@ public class ActivationKey {
 
   private static final String HEARTBEAT_URL = "https://butler.openbravo.com:443/heartbeat-server/heartbeat";
   private static final String STATELESS_REQUEST = "statelessRequest";
+  private static final String MMC_FORM = "25C886DA08E947F29AAC1D30D8B753A1";
 
   private boolean isActive = false;
   private boolean hasActivationKey = false;
@@ -1336,7 +1337,29 @@ public class ActivationKey {
       return FeatureRestriction.DISABLED_MODULE_RESTRICTION;
     }
 
+    if (artifactType == Artifacts.FORM && MMC_FORM.equals(id) && !isMmcEnabled()) {
+      log4j.trace("MMC disabled");
+      return FeatureRestriction.UNKNOWN_RESTRICTION;
+    }
+
     return FeatureRestriction.NO_RESTRICTION;
+  }
+
+  /**
+   * Check whether the mmc.enabled property exists in openbravo.properties or not, in case it exists
+   * and its value is false, MMC will be disabled.
+   *
+   * @return false if property exists and is false, true otherwise.
+   */
+  private boolean isMmcEnabled() {
+    String mmcEnabled = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
+        .getProperty("mmc.enabled");
+
+    if (mmcEnabled != null) {
+      return Boolean.valueOf(mmcEnabled);
+    }
+    return true;
   }
 
   /**
