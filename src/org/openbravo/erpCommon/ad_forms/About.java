@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,12 +34,14 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.modules.ModuleTreeData;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBVersion;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.system.System;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class About extends HttpSecureAppServlet {
@@ -68,7 +70,7 @@ public class About extends HttpSecureAppServlet {
       ActivationKey ak = ActivationKey.getInstance();
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
-      String discard[] = { "" };
+      String discard[] = { "", "" };
       XmlDocument xmlDocument = null;
 
       String licenseInfo = "";
@@ -86,6 +88,10 @@ public class About extends HttpSecureAppServlet {
         licenseInfo = Utility.messageBD(this, "OPSCommunityEdition", vars.getLanguage());
         discard[0] = "paramOPSInfo";
       }
+      String deploymentVersion = OBDal.getInstance().get(System.class, "0").getVersion();
+      if (deploymentVersion == null || deploymentVersion.isEmpty()) {
+        discard[1] = "deploymentInfo";
+      }
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/About", discard)
           .createXmlDocument();
 
@@ -97,6 +103,9 @@ public class About extends HttpSecureAppServlet {
       xmlDocument.setParameter("paramLicensedTo", licenseInfo);
       xmlDocument.setParameter("ver", version.getMajorVersion() + " " + version.getMP());
       xmlDocument.setParameter("versionNo", version.getVersionNumber());
+      if (deploymentVersion != null && !deploymentVersion.isEmpty()) {
+        xmlDocument.setParameter("deploymentVersion", deploymentVersion);
+      }
       xmlDocument.setParameter("paraHostName", ConfigParameters.getMachineName());
       xmlDocument.setParameter("paraBackground",
           OBPropertiesProvider.getInstance()
