@@ -11073,7 +11073,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--629F3BB39497465AB4C280B01700A202-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1C84B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--629F3BB39497465AB4C280B01700A202-->  <DATAORIGINTYPE><![CDATA[HQL]]></DATAORIGINTYPE>
 <!--629F3BB39497465AB4C280B01700A202-->  <ISTREE><![CDATA[N]]></ISTREE>
-<!--629F3BB39497465AB4C280B01700A202-->  <HQLQUERY><![CDATA[select distinct p.id as id, p.organization.name as organizationName, p.searchKey as searchKey, p.name as name, p.productCategory.name as productCategoryName, (case when p.productType = 'S' then 'Service' else 'Contribution' end) as productType, p.characteristicDescription as characteristicDescription, coalesce(sp.multiplicator, spc.multiplicator) as multiplicator from Product p
+<!--629F3BB39497465AB4C280B01700A202-->  <HQLQUERY><![CDATA[select distinct coalesce(sp.id, spc.id) as id, p.id as product, p.organization as organization, p.searchKey as searchKey, p.name as name, p.productType as productType, coalesce(sp.multiplicator, spc.multiplicator) as multiplicator from Product p
 left join p.serviceProductList sp
 left join p.serviceProductCategoryList spc
 where @additional_filters@
