@@ -421,8 +421,19 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ROW_CHARACTERISTIC" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="COLUMN_CHARACTERISTIC" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MPRODUCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_CHARACTERISTIC" name="COLUMN_CHARACTERISTIC_FK">
+        <reference local="COLUMN_CHARACTERISTIC" foreign="M_CHARACTERISTIC_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
@@ -486,6 +497,9 @@
       </foreign-key>
       <foreign-key foreignTable="MA_PROCESSPLAN" name="MA_PROCESSPLAN_MPRODUCT">
         <reference local="MA_PROCESSPLAN_ID" foreign="MA_PROCESSPLAN_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_CHARACTERISTIC" name="ROW_CHARACTERISTIC_FK">
+        <reference local="ROW_CHARACTERISTIC" foreign="M_CHARACTERISTIC_ID"/>
       </foreign-key>
       <index name="M_PRODUC_ISGENERID_IDX" unique="false">
         <index-column name="ISGENERIC"/>
