@@ -46,7 +46,7 @@ OB.MultiVariantPurchaseGrid = {
       recordIdList.push(selection[i].id);
     }
 
-    isc.MultiVariantGridProcessPopup.create({
+    isc.MultiVariantPurchaseGridProcessPopup.create({
       recordIdList: recordIdList,
       view: view,
       params: params
@@ -428,7 +428,7 @@ isc.defineClass('MultiVariantPurchaseGridProcessPopup', isc.OBPopup);
 isc.MultiVariantPurchaseGridProcessPopup.addProperties({
   width: 600,
   height: 600,
-  title: 'Create line variants',
+  title: 'Add Lines for Variants',
   showMinimizeButton: false,
   showMaximizeButton: false,
 
@@ -451,10 +451,10 @@ isc.MultiVariantPurchaseGridProcessPopup.addProperties({
 
   getGrid: function() {
     return {
-      type: 'MultiVariantPurchaseGridGridItem',
+      type: 'MultiVariantPurchaseGridItem',
       title: 'Characteristics grid',
       name: 'ch-grid',
-      editorType: 'MultiVariantPurchaseGridGridItem'
+      editorType: 'MultiVariantPurchaseGridItem'
     };
   },
 

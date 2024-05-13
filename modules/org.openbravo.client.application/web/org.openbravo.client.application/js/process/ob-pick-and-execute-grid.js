@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2022 Openbravo SLU
+ * All portions are Copyright (C) 2011-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -542,7 +542,9 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.pneSelectionUpdated(record, state);
 
     this.Super('selectionChanged', arguments);
-    this.view.theForm.markForRedraw();
+    if (this.view && this.view.theForm) {
+      this.view.theForm.markForRedraw();
+    }
   },
 
   // overriding selectRecord function because super.selectRecord to maintain selectedIds
