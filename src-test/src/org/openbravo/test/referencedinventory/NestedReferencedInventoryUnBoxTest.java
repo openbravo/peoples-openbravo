@@ -175,7 +175,6 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
     // Check attribute set instance after unbox
     NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(palletRefInv, firstProduct,
         BigDecimal.ONE, "[" + palletRefInv.getSearchKey() + "]");
-
     NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(palletRefInv,
         secondProduct, BigDecimal.ONE, "Yellow[" + palletRefInv.getSearchKey() + "]");
 
@@ -355,10 +354,14 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
     NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(mediumBox2RefInv,
         mediumBox2Product, BigDecimal.ONE, "#015[" + mediumBox2RefInv.getSearchKey() + "]");
 
+    palletRefInv = NestedReferencedInventoryTestUtils
+        .getRefreshedReferencedInventory(palletRefInv.getId());
     assertThat("Pallet is not empty",
         NestedReferencedInventoryTestUtils.storageDetailExists(palletRefInv, null, null, null),
         equalTo(false));
-
+    assertThat("Pallet is not empty", palletRefInv.getNestedReferencedInventoriesCount(),
+        equalTo(0L));
+    assertThat("Pallet is not empty", palletRefInv.getUniqueItemsCount(), equalTo(0L));
   }
 
   @Test
@@ -452,10 +455,14 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
     NestedReferencedInventoryTestUtils.validateAttributeSetInstanceValue(palletRefInv,
         smallBoxProduct, BigDecimal.ONE, "[" + palletRefInv.getSearchKey() + "]");
 
+    smallBoxRefInv = NestedReferencedInventoryTestUtils
+        .getRefreshedReferencedInventory(smallBoxRefInv.getId());
     assertThat("Small Box is not empty",
         NestedReferencedInventoryTestUtils.storageDetailExists(smallBoxRefInv, null, null, null),
         equalTo(false));
-
+    assertThat("Small Box is not empty", smallBoxRefInv.getUniqueItemsCount(), equalTo(0L));
+    assertThat("Small Box has no HU", smallBoxRefInv.getNestedReferencedInventoriesCount(),
+        equalTo(0L));
   }
 
   /**
