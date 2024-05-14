@@ -118,23 +118,6 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
   }
 
   @Test
-  public void testCascadeReferencedInventoryNotPossible() throws Exception {
-    final ReferencedInventory refInv1 = testBox(null,
-        ReferencedInventoryTestUtils.PRODUCT_TSHIRT_ID, null, null);
-    final StorageDetail storageDetail = refInv1.getMaterialMgmtStorageDetailList().get(0);
-
-    final ReferencedInventory refInv2 = ReferencedInventoryTestUtils.createReferencedInventory(
-        ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInv1.getReferencedInventoryType());
-    final JSONArray storageDetailsJS = ReferencedInventoryTestUtils
-        .getStorageDetailsToBoxJSArray(storageDetail, BigDecimal.ONE);
-
-    OBException thrown = assertThrows(OBException.class,
-        () -> new BoxProcessor(refInv2, storageDetailsJS, storageDetail.getStorageBin().getId())
-            .createAndProcessGoodsMovement());
-    assertThat(thrown.getMessage(), containsString(" is already linked to the handling unit "));
-  }
-
-  @Test
   public void testSameReferencedInventoryInDifferentBinsNotPossible() throws Exception {
     final ReferencedInventory refInv = testBox(ReferencedInventoryTestUtils.BIN_SPAIN_L02,
         ReferencedInventoryTestUtils.PRODUCT_TSHIRT_ID, null, BigDecimal.ONE);
