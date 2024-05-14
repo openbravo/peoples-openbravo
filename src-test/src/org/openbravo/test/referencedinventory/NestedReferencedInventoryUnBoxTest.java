@@ -140,6 +140,9 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
     storageDetailsForPallet = NestedReferencedInventoryTestUtils
         .getStorageDetailsforNestedRI(mediumBoxRefInv, toBinId);
 
+    mediumBoxRefInv = NestedReferencedInventoryTestUtils
+        .getRefreshedReferencedInventory(mediumBoxRefInv.getId());
+
     NestedReferencedInventoryTestUtils.boxAndValidateRefInventory(palletRefInv,
         storageDetailsForPallet, toBinId, 3, 3L, 2L);
 
@@ -162,8 +165,8 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
     palletRefInv = NestedReferencedInventoryTestUtils
         .getRefreshedReferencedInventory(palletRefInv.getId());
 
-    assertThat("Nested Referenced Inventory Count is not equal to 1L",
-        palletRefInv.getNestedReferencedInventoriesCount(), equalTo(1L));
+    assertThat("Nested Referenced Inventory Count is not equal to 0L",
+        palletRefInv.getNestedReferencedInventoriesCount(), equalTo(0L));
 
     assertThat("Medium Box is not empty",
         NestedReferencedInventoryTestUtils.storageDetailExists(mediumBoxRefInv, null, null, null),
