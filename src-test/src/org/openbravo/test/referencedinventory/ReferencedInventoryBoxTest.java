@@ -156,7 +156,7 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
     assertThat("New attribute set is related to the referenced inventory",
         attributeSetValue.getReferencedInventory().getId(), equalTo(refInv.getId()));
     assertThat("New attribute set is related to cloned one",
-        ReferencedInventoryUtil.getParentAttributeSetInstance(boxedStorageDetail).getId(),
+        ReferencedInventoryUtil.getAttributeSetInstanceTo(boxedStorageDetail, null).getId(),
         equalTo(originalAttributeId));
     assertThat("New attribute set description contains referenced inventory string",
         attributeSetValue.getDescription(),
