@@ -42,6 +42,53 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 
 public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest {
 
+  /**
+   * 3 Level Boxing, unbox/rebox intermediate box with unbox to individual items Yes / No.
+   *
+   * 1. Create a small box with 2 products. Process small box movement, verify no. of lines in the
+   * small box movement, verify unique items count and nested referenced inventories count in small
+   * box.
+   *
+   * 2. Box small box into medium box and different product than those in small box. Process medium
+   * box movement, verify no. of lines in the medium box movement, verify unique items count and
+   * nested referenced inventories count in medium box.
+   *
+   * 3. Box medium box and 2 products (those used in small box) into pallet. Process pallet
+   * movement, verify no. of lines in the pallet movement, verify unique items count and nested
+   * referenced inventories count in pallet.
+   *
+   * 4. Unbox medium box from pallet with unbox to individual items as No. Process the unbox
+   * movement. Verify nested referenced inventories count in pallet. Verify stock quantity and
+   * attribute set instance for stock products in small box and medium box.
+   *
+   * 5. Re-box medium into pallet. Process the box movement for pallet. Verify no. of lines for box
+   * movement. Verify unique items count and nested referenced inventories count in pallet. Verify
+   * stock quantity and attribute set instance for stock products in small box and medium box.
+   *
+   * 6. Unbox medium box from pallet with unbox to individual items as Yes. Process the unbox
+   * movement. Verify nested referenced inventories count in pallet. Verify that medium box is
+   * empty. Verify stock quantity and attribute set instance for stock products in pallet.
+   *
+   * 7. Re-box small box. Process small box movement, verify no. of lines in the small box movement,
+   * verify unique items count and nested referenced inventories count in small box.
+   *
+   * 8. Re-box small box into pallet. Add different product in pallet during re-boxing small box.
+   * Process pallet box movement, verify no. of lines in the small box movement, verify unique items
+   * count and nested referenced inventories count in pallet box. Verify stock quantity and
+   * attribute set instance for stock products in pallet that belongs to small box.
+   *
+   * 9. Box pallet into big pallet. Process big pallet box movement, verify no. of lines in the big
+   * pallet box movement, verify unique items count and nested referenced inventories count in big
+   * pallet box. Verify stock quantity and attribute set instance for stock products in big pallet
+   * that belongs to small box.
+   *
+   * 10. Partial Unbox - Unbox to individual items = Yes, select any one line from small box for
+   * unbox.
+   *
+   * 11. Total Unbox - Unbox to individual items = Yes. Verify that big pallet, pallet and small box
+   * all are empty.
+   */
+
   @Test
   public void testUnBoxNestedRI() throws Exception {
 
@@ -257,6 +304,30 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
 
   }
 
+  /**
+   * Unbox outermost parent HU:
+   *
+   * 1. Create a small box with 1 product. Process small box movement, verify no. of lines in the
+   * small box movement, verify unique items count and nested referenced inventories count in small
+   * box.
+   *
+   * 2. Box small box into medium box 1 and different product than that in small box. Process medium
+   * box 1 movement, verify no. of lines in the medium box 1 movement, verify unique items count and
+   * nested referenced inventories count in medium box 1.
+   *
+   * 3. Create a medium box 2 with 1 product. Process medium box 2 movement, verify no. of lines in
+   * the medium box 2 movement, verify unique items count and nested referenced inventories count in
+   * medium box 2.
+   *
+   * 4. Box medium box 1 and medium box 2, with 1 product (that is used in small box) into pallet.
+   * Process pallet movement, verify no. of lines in the pallet movement, verify unique items count
+   * and nested referenced inventories count in pallet.
+   *
+   * 5. Unbox pallet, unbox to individual items as No. Process the unbox movement. Verify that
+   * pallet is empty. Verify stock quantity and attribute set instance values for stock products in
+   * small box, medium 1 box, medium 2 box.
+   */
+
   @Test
   public void testUnBoxOuterMostParentHU() throws Exception {
 
@@ -363,6 +434,30 @@ public class NestedReferencedInventoryUnBoxTest extends ReferencedInventoryTest 
         equalTo(0L));
     assertThat("Pallet is not empty", palletRefInv.getUniqueItemsCount(), equalTo(0L));
   }
+
+  /**
+   * Unbox innermost HU:
+   *
+   * 1. Create a small box with 1 product. Process small box movement, verify no. of lines in the
+   * small box movement, verify unique items count and nested referenced inventories count in small
+   * box.
+   *
+   * 2. Box small box into medium box 1 and different product than that in small box. Process medium
+   * box 1 movement, verify no. of lines in the medium box 1 movement, verify unique items count and
+   * nested referenced inventories count in medium box 1.
+   *
+   * 3. Create a medium box 2 with 1 product. Process medium box 2 movement, verify no. of lines in
+   * the medium box 2 movement, verify unique items count and nested referenced inventories count in
+   * medium box 2.
+   *
+   * 4. Box medium box 1 and medium box 2, with 1 product (that is used in small box) into pallet.
+   * Process pallet movement, verify no. of lines in the pallet movement, verify unique items count
+   * and nested referenced inventories count in pallet.
+   *
+   * 5. Unbox small box, unbox to individual items as Yes. Process the unbox movement. Verify that
+   * small box is empty. Verify stock quantity and attribute set instance values for stock products
+   * in medium 1 box, medium 2 box and pallet box.
+   */
 
   @Test
   public void testUnBoxInnermostHU() throws Exception {

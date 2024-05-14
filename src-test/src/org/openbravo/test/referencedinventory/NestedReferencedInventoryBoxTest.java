@@ -46,7 +46,14 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
   }
 
   /**
-   * Create Individual Box referenced inventory with two items
+   *
+   * Individual Box Test: new box
+   *
+   * Create small box with 1 stock product without attribute set instance and 1 product with
+   * attribute set instance. Process the box movement. Verify the number of lines in the box
+   * movement, unique item count, nested referenced inventories count in referenced inventory.
+   * Verify storage details for Stock quantity, attribute set instance value for the product with
+   * and without attribute set instance.
    */
   private Entry<ReferencedInventory, JSONArray> executeIndividualBoxTest() throws Exception {
     final ReferencedInventory refInv = NestedReferencedInventoryTestUtils.createReferencedInventory(
@@ -76,6 +83,21 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
     return new SimpleEntry<>(refInv, selectedStorageDetailsJS);
   }
 
+  /**
+   * Individual Box Test: existing box
+   *
+   * Add product in existing Individual Box that contains 1 stock product without attribute set
+   * instance and 1 product with attribute set instance.
+   *
+   * 1. Add product without attribute set instance in existing small box.
+   *
+   * 2. Add product with attribute set instance in existing small box.
+   *
+   * Process the new box movement. Verify the number of lines in the box movement. Verify unique
+   * item count, nested referenced inventories count in referenced inventory. Verify Stock quantity
+   * and attribute set instance value for storage detail of the product.
+   */
+
   @Test
   public void testBoxSameProductInExistingRefInventory() throws Exception {
     final Entry<ReferencedInventory, JSONArray> refInvAndSelectedStorageDetails = executeIndividualBoxTest();
@@ -102,6 +124,18 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
         .getProxy(Product.class, selectedStorageDetailsJS.getJSONObject(0).getString("productId")),
         new BigDecimal(2), "Yellow[" + refInv.getSearchKey() + "]");
   }
+
+  /**
+   *
+   * Nested Box Test: new parent box
+   *
+   * 1. Create child box using Individual Box Test.
+   *
+   * 2. Add child box inside a parent box. Process the new parent box movement. Verify the number of
+   * lines in the parent box movement. Verify unique item count, nested referenced inventories count
+   * in parent referenced inventory. Verify Stock quantity, attribute set instance value for storage
+   * detail of the product with and without attribute set instance.
+   */
 
   @Test
   public void testNestedReferencedInventory() throws Exception {
@@ -130,6 +164,21 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
 
     return new SimpleEntry<>(refInvParent, innerRIInfo.getValue());
   }
+
+  /**
+   * Nested Box Test: existing parent box
+   *
+   * Add product in existing Nested Box that contains a small box with 1 stock product without
+   * attribute set instance and 1 product with attribute set instance.
+   *
+   * 1. Add product without attribute set instance in existing nested box.
+   *
+   * 2. Add product with attribute set instance in existing nested box.
+   *
+   * Process the new box movement. Verify the number of lines in the box movement. Verify unique
+   * item count, nested referenced inventories count in parent referenced inventory. Verify Stock
+   * quantity and attribute set instance value for storage detail of the product.
+   */
 
   @Test
   public void testAddProductInNestedReferencedInventory() throws Exception {
@@ -161,6 +210,19 @@ public class NestedReferencedInventoryBoxTest extends ReferencedInventoryTest {
                 previousSelectedStorageDetailsJS.getJSONObject(1).getString("productId")),
         BigDecimal.ONE, "Yellow[" + refInvParent.getSearchKey() + "]");
   }
+
+  /**
+   * 3 Level Boxing: add product & box at the same time in nested box.
+   *
+   * 1. Add product and individual box in medium box at the same time
+   *
+   * 2. Add medium box, 1 product without attribute and 1 product with attribute in Pallet
+   *
+   * Process the box movement at each step. Verify the number of lines in the box movement. Verify
+   * unique item count, nested referenced inventories count in outer most referenced inventory.
+   * Verify Stock quantity and attribute set instance value for storage detail of all stock product
+   * in the referenced inventory.
+   */
 
   @Test
   public void testAddProductAndNestedReferencedInventoryAtSameTime() throws Exception {
