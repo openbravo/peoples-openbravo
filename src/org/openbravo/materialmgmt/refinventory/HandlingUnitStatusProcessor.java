@@ -44,13 +44,12 @@ public class HandlingUnitStatusProcessor {
    * @param status
    *          the new status to be set
    * @throws OBException
-   *           if the handling unit is destroyed or if any of the parents of the handling unit is
-   *           closed.
+   *           if the handling unit is destroyed or if the parent of the handling unit is closed
    */
   public void changeHandlingUnitStatus(ReferencedInventory handlingUnit,
       HandlingUnitStatus status) {
     checkIsDestroyed(handlingUnit);
-    checkIsAnyParentClosed(handlingUnit);
+    checkIsParentClosed(handlingUnit);
     changeStatusInCascade(handlingUnit, status);
   }
 
@@ -74,24 +73,25 @@ public class HandlingUnitStatusProcessor {
     }
   }
 
-  private void checkIsAnyParentClosed(ReferencedInventory handlingUnit) {
-    ReferencedInventoryUtil.findFirstParent(handlingUnit, this::isClosed).ifPresent(hu -> {
+  private void checkIsParentClosed(ReferencedInventory handlingUnit) {
+    ReferencedInventory parent = handlingUnit.getParentRefInventory();
+    if (parent != null && isClosed(parent)) {
       throw new OBException(
           "Cannot change the status of the handling unit " + handlingUnit.getSearchKey()
-              + " because its parent handling unit " + hu.getSearchKey() + " is closed");
-    });
+              + " because its parent handling unit " + parent.getSearchKey() + " is closed");
+    }
   }
 
   private boolean isClosed(ReferencedInventory handlingUnit) {
     return isInStatus(handlingUnit, HandlingUnitStatus.CLOSED);
   }
 
-  private boolean isDestroyed(ReferencedInventory handlingUnit) {
-    return isInStatus(handlingUnit, HandlingUnitStatus.DESTROYED);
-  }
-
   private boolean isNotDestroyed(ReferencedInventory handlingUnit) {
     return !isDestroyed(handlingUnit);
+  }
+
+  private boolean isDestroyed(ReferencedInventory handlingUnit) {
+    return isInStatus(handlingUnit, HandlingUnitStatus.DESTROYED);
   }
 
   private boolean isInStatus(ReferencedInventory handlingUnit, HandlingUnitStatus newStatus) {

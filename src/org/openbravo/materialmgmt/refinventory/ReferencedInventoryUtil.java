@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
@@ -300,29 +298,6 @@ public class ReferencedInventoryUtil {
       parentRI = parentRI.getParentRefInventory();
     }
     return parentList;
-  }
-
-  /**
-   * Given a referenced inventory, returns the first parent that meets the given condition.
-   * 
-   * @param refInventory
-   *          the referenced inventory
-   * @param condition
-   *          the condition to be met
-   * 
-   * @return an Optional describing the first parent referenced inventory meeting the given
-   *         condition or an empty Optional if there is no parent that meets the condition.
-   */
-  public static Optional<ReferencedInventory> findFirstParent(ReferencedInventory refInventory,
-      Predicate<ReferencedInventory> condition) {
-    ReferencedInventory parent = refInventory.getParentRefInventory();
-    if (parent == null) {
-      return Optional.empty();
-    }
-    if (condition.test(parent)) {
-      return Optional.of(parent);
-    }
-    return findFirstParent(parent, condition);
   }
 
   /**
