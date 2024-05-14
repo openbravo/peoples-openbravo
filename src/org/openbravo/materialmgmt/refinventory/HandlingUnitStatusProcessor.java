@@ -23,6 +23,7 @@ import javax.enterprise.context.ApplicationScoped;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 
 /**
@@ -69,16 +70,15 @@ public class HandlingUnitStatusProcessor {
     if (isDestroyed(handlingUnit)) {
       log.error("Cannot change the status of the handling unit {} because it is destroyed",
           handlingUnit.getSearchKey());
-      throw new OBException("Cannot change the status of a destroyed handling unit");
+      throw new OBException(OBMessageUtils.getI18NMessage("HandlingUnitIsDestroyed"));
     }
   }
 
   private void checkIsParentClosed(ReferencedInventory handlingUnit) {
     ReferencedInventory parent = handlingUnit.getParentRefInventory();
     if (parent != null && isClosed(parent)) {
-      throw new OBException(
-          "Cannot change the status of the handling unit " + handlingUnit.getSearchKey()
-              + " because its parent handling unit " + parent.getSearchKey() + " is closed");
+      throw new OBException(OBMessageUtils.getI18NMessage("ParentHandlingUnitIsClosed",
+          new String[] { handlingUnit.getSearchKey(), parent.getSearchKey() }));
     }
   }
 

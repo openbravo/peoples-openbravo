@@ -55,14 +55,14 @@ public class ChangeHandlingUnitStatus extends BaseProcessActionHandler {
 
       return getResponseBuilder()
           .showMsgInProcessView(ResponseActionsBuilder.MessageType.SUCCESS,
-              OBMessageUtils.messageBD("Success"))
+              OBMessageUtils.messageBD("HandlingUnitStatusChanged"))
           .refreshGrid()
           .build();
     } catch (JSONException ex) {
       log.error("Error changing handling unit status", ex);
       return getResponseBuilder()
-          .showMsgInView(ResponseActionsBuilder.MessageType.ERROR,
-              OBMessageUtils.messageBD("Error"), OBMessageUtils.messageBD("Error"))
+          .showMsgInProcessView(ResponseActionsBuilder.MessageType.ERROR,
+              OBMessageUtils.messageBD("OBUIAPP_Error"))
           .build();
     }
   }
