@@ -25,6 +25,7 @@ import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
+import org.openbravo.synchronization.event.SynchronizationEvent;
 
 /**
  * In charge of updating the status of a handling unit
@@ -49,21 +50,15 @@ public class HandlingUnitStatusProcessor {
    */
   public void changeHandlingUnitStatus(ReferencedInventory handlingUnit,
       HandlingUnitStatus status) {
-    checkIsDestroyed(handlingUnit);
-    checkIsParentClosed(handlingUnit);
-    changeStatusInCascade(handlingUnit, status);
-  }
-
-  private void changeStatusInCascade(ReferencedInventory handlingUnit, HandlingUnitStatus status) {
     if (isInStatus(handlingUnit, status)) {
       log.warn("Skipping status change. The current status of the handling unit {} is already {}",
           handlingUnit.getSearchKey(), status);
       return;
     }
-    handlingUnit.setStatus(status.name());
-    ReferencedInventoryUtil.getDirectChildReferencedInventories(handlingUnit)
-        .filter(this::isNotDestroyed)
-        .forEach(child -> changeStatusInCascade(child, status));
+    checkIsDestroyed(handlingUnit);
+    checkIsParentClosed(handlingUnit);
+    changeStatusInCascade(handlingUnit, status);
+    triggerEvent(handlingUnit);
   }
 
   private void checkIsDestroyed(ReferencedInventory handlingUnit) {
@@ -80,6 +75,18 @@ public class HandlingUnitStatusProcessor {
       throw new OBException(OBMessageUtils.getI18NMessage("ParentHandlingUnitIsClosed",
           new String[] { handlingUnit.getSearchKey(), parent.getSearchKey() }));
     }
+  }
+
+  private void changeStatusInCascade(ReferencedInventory handlingUnit, HandlingUnitStatus status) {
+    handlingUnit.setStatus(status.name());
+    ReferencedInventoryUtil.getDirectChildReferencedInventories(handlingUnit)
+        .filter(this::isNotDestroyed)
+        .forEach(child -> changeStatusInCascade(child, status));
+  }
+
+  private void triggerEvent(ReferencedInventory handlingUnit) {
+    SynchronizationEvent.getInstance()
+        .triggerEvent("API_HandlingUnitStatusChange", handlingUnit.getId());
   }
 
   private boolean isClosed(ReferencedInventory handlingUnit) {

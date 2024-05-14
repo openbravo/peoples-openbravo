@@ -21,6 +21,10 @@ package org.openbravo.materialmgmt.refinventory;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.openbravo.materialmgmt.refinventory.HandlingUnitTestUtils.createHandlingUnit;
 import static org.openbravo.materialmgmt.refinventory.HandlingUnitTestUtils.createHandlingUnitType;
 
@@ -29,11 +33,13 @@ import javax.inject.Inject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.verification.VerificationMode;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.materialmgmt.refinventory.HandlingUnitStatusProcessor.HandlingUnitStatus;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
+import org.openbravo.synchronization.event.SynchronizationEvent;
 
 /**
  * Test cases to cover the handling unit status changing using the
@@ -169,10 +175,25 @@ public class HandlingUnitStatusProcessorTest extends WeldBaseTest {
   }
 
   @Test
-  public void eventIsNotFiredIfStatusIsNotChanging() {
-    statusProcessor.changeHandlingUnitStatus(pallet, HandlingUnitStatus.CLOSED);
+  public void eventIsTriggeredWhenExpected() {
+    changeStatusAndVerifyTriggeredEvent(container, HandlingUnitStatus.CLOSED, times(1));
+    changeStatusAndVerifyTriggeredEvent(container, HandlingUnitStatus.CLOSED, never());
+    changeStatusAndVerifyTriggeredEvent(container, HandlingUnitStatus.OPEN, times(1));
+    changeStatusAndVerifyTriggeredEvent(container, HandlingUnitStatus.OPEN, never());
+    changeStatusAndVerifyTriggeredEvent(pallet, HandlingUnitStatus.OPEN, never());
+    changeStatusAndVerifyTriggeredEvent(box, HandlingUnitStatus.OPEN, never());
+    changeStatusAndVerifyTriggeredEvent(box, HandlingUnitStatus.DESTROYED, times(1));
+    changeStatusAndVerifyTriggeredEvent(pallet, HandlingUnitStatus.CLOSED, times(1));
+    changeStatusAndVerifyTriggeredEvent(container, HandlingUnitStatus.CLOSED, times(1));
+  }
 
-    statusProcessor.changeHandlingUnitStatus(pallet, HandlingUnitStatus.CLOSED);
-    // TODO: event not fired
+  private void changeStatusAndVerifyTriggeredEvent(ReferencedInventory handlingUnit,
+      HandlingUnitStatus status, VerificationMode mode) {
+    mockStatic(SynchronizationEvent.class, synchronizationEventMock -> {
+      SynchronizationEvent instanceMock = mock(SynchronizationEvent.class);
+      synchronizationEventMock.when(SynchronizationEvent::getInstance).thenReturn(instanceMock);
+      statusProcessor.changeHandlingUnitStatus(handlingUnit, status);
+      verify(instanceMock, mode).triggerEvent("API_HandlingUnitStatusChange", handlingUnit.getId());
+    });
   }
 }
