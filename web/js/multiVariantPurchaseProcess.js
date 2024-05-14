@@ -338,29 +338,6 @@ const viewPropertiesToBeAdded = {
       type: '_id_800060'
     },
     {
-      name: 'searchKey',
-      id: 'searchKey',
-      title: 'Search Key',
-      disabled: false,
-      canEdit: true,
-      updatable: true,
-      columnName: 'searchKey',
-      inpColumnName: 'inpsearchkey',
-      length: 60,
-      gridProps: {
-        sort: 1,
-        autoExpand: true,
-        length: 60,
-        displaylength: 60,
-        selectOnClick: false,
-        canFilter: true,
-        showHover: true,
-        canSort: false,
-        width: 100
-      },
-      type: '_id_10'
-    },
-    {
       name: 'quantity',
       id: 'quantity',
       title: 'Quantity',
