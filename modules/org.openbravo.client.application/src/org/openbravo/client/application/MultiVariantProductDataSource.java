@@ -18,38 +18,54 @@
  */
 package org.openbravo.client.application;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.ModelProvider;
-import org.openbravo.service.datasource.DefaultDataSourceService;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.order.Order;
+import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.common.plm.Product;
+import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 
 /**
- * Datasource used by the Purchase Order view "Model Mode" process
- * TODO: Requires further development
+ * Datasource used by the Purchase Order view "Model Mode" process TODO: Requires further
+ * development
  */
-public class MultiVariantProductDataSource extends DefaultDataSourceService {
-  private static final Logger log = LogManager.getLogger();
-
-  // M_PRODUCT_ID table id
-  private static final String AD_TABLE_ID = "208";
-
-  @Override
-  public Entity getEntity() {
-    return ModelProvider.getInstance().getEntityByTableId(AD_TABLE_ID);
-  }
+public class MultiVariantProductDataSource extends ReadOnlyDataSourceService {
 
   @Override
   public void checkFetchDatasourceAccess(Map<String, String> parameter) {
     // Product datasource is accessible by all roles.
     // TODO: Might need rechecking
   }
+  @Override
+  protected int getCount(Map<String, String> parameters) {
+    return getData(parameters, 0, Integer.MAX_VALUE).size();
+  }
 
   @Override
-  protected String getWhereAndFilterClause(Map<String, String> parameters) {
-    return "";
+  protected List<Map<String, Object>> getData(Map<String, String> parameters, int startRow, int endRow) {
+    String orderRecordId = parameters.get("recordId");
+    Order order = OBDal.getInstance().get(Order.class, orderRecordId);
+    List<OrderLine> orderLineList = order.getOrderLineList();
+
+    Set<String> genericProductIds = new HashSet<>();
+    List<Map<String, Object>> genericProducts = new ArrayList<>();
+
+    orderLineList.forEach(orderLine -> {
+      Product orderLineProduct = orderLine.getProduct();
+      if (orderLineProduct.getGenericProduct() != null
+              && (orderLineProduct.getGenericProduct().getRowCharacteristic() != null
+              || orderLineProduct.getGenericProduct().getColumnCharacteristic() != null)) {
+        if (!genericProductIds.contains(orderLineProduct.getGenericProduct().getId())) {
+          genericProductIds.add(orderLineProduct.getGenericProduct().getId());
+          genericProducts.add(Map.of("product", orderLineProduct.getGenericProduct()));
+        }
+      }
+    });
+    return genericProducts;
   }
 }

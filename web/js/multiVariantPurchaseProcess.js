@@ -65,7 +65,7 @@ OB.MultiVariantPurchaseGrid = {
 // 22803EBEEC804A648723B2B7070DBB7D is the id for the ProductVariantDataSource
 const PRODUCT_VARIANT_DATA_SOURCE_ID = '22803EBEEC804A648723B2B7070DBB7D';
 
-const viewPropertiesToBeAdded = {
+const getViewProperties = recordId => ({
   allowAdd: true,
   allowDelete: true,
   showSelect: false,
@@ -75,7 +75,11 @@ const viewPropertiesToBeAdded = {
     createClassName: '',
     dataURL: `/openbravo/org.openbravo.service.datasource/${PRODUCT_VARIANT_DATA_SOURCE_ID}`,
     requestProperties: {
-      params: {}
+      params: {
+        Constants_IDENTIFIER: OB.Constants.IDENTIFIER,
+        Constants_FIELDSEPARATOR: OB.Constants.FIELDSEPARATOR,
+        recordId: recordId
+      }
     },
     fields: [
       {
@@ -85,16 +89,7 @@ const viewPropertiesToBeAdded = {
       },
       {
         name: 'product',
-        type: '_id_19'
-      },
-      {
-        name: 'searchKey',
-        type: '_id_19'
-      },
-      {
-        name: 'quantity',
-        type: '_id_14',
-        additional: true
+        type: '_id_800060'
       }
     ]
   },
@@ -181,63 +176,8 @@ const viewPropertiesToBeAdded = {
           required: false,
           filterEditorType: 'OBSelectorFilterSelectItem',
           filterEditorProperties: { entity: 'PricingPriceListVersion' }
-        },
-        {
-          title: 'Warehouse Qty.',
-          name: 'qtyOnHand',
-          type: '_id_29',
-          showHover: true,
-          filterOnKeypress: false
-        },
-        {
-          title: 'Ordered Qty.',
-          name: 'qtyOrdered',
-          type: '_id_29',
-          showHover: true,
-          filterOnKeypress: false
-        },
-        {
-          title: 'Lower Limit Price',
-          name: 'priceLimit',
-          type: '_id_800008',
-          showHover: true,
-          filterOnKeypress: false
-        },
-        {
-          title: 'Generic Product',
-          name: 'product$genericProduct',
-          type: '_id_84ECA724EF074F679DFD69556C6DAF21',
-          displayField: 'product$genericProduct$_identifier',
-          showHover: true,
-          canFilter: true,
-          required: false,
-          filterEditorType: 'OBSelectorFilterSelectItem',
-          filterEditorProperties: { entity: 'Product' }
         }
       ],
-      outFields: {
-        productPrice$priceListVersion$priceList$currency$id: {
-          fieldName: 'productPrice$priceListVersion$priceList$currency$id',
-          suffix: '_CURR',
-          formatType: ''
-        },
-        product$uOM$id: {
-          fieldName: 'product$uOM$id',
-          suffix: '_UOM',
-          formatType: ''
-        },
-        standardPrice: {
-          fieldName: 'standardPrice',
-          suffix: '_PSTD',
-          formatType: ''
-        },
-        netListPrice: {
-          fieldName: 'netListPrice',
-          suffix: '_PLIST',
-          formatType: ''
-        },
-        priceLimit: { fieldName: 'priceLimit', suffix: '_PLIM', formatType: '' }
-      },
       extraSearchFields: [
         'product$searchKey',
         'product$name',
@@ -345,7 +285,7 @@ const viewPropertiesToBeAdded = {
       canEdit: false,
       updatable: false,
       columnName: 'quantity',
-      inpColumnName: 'inpquantity',
+      inpColumnName: 'quantity',
       length: 16,
       gridProps: {
         sort: 3,
@@ -371,7 +311,7 @@ const viewPropertiesToBeAdded = {
   standardProperties: {},
   statusTabFields: [],
   tabId: ''
-};
+});
 
 isc.ClassFactory.defineClass('ProductSelectionGridItem', isc.CanvasItem);
 isc.ProductSelectionGridItem.addProperties({
@@ -393,7 +333,7 @@ isc.ProductSelectionGridItem.addProperties({
     this.canvas = isc.OBPickAndExecuteView.create({
       height: 300,
       view: modifiedView,
-      viewProperties: viewPropertiesToBeAdded
+      viewProperties: getViewProperties(this.recordId)
     });
     this.Super('init', arguments);
     this.selectionLayout = this.canvas;
@@ -416,13 +356,14 @@ isc.MultiVariantPurchaseGridProcessPopup.addProperties({
   okButton: null,
   cancelButton: null,
 
-  getProductGrid: function(view) {
+  getProductGrid: function(view, recordId) {
     return {
       type: 'ProductSelectionGridItem',
       title: 'Product grid',
       name: 'product-grid',
       editorType: 'ProductSelectionGridItem',
-      view: view
+      view: view,
+      recordId: recordId
     };
   },
 
@@ -444,7 +385,10 @@ isc.MultiVariantPurchaseGridProcessPopup.addProperties({
       view: originalView,
       numCols: 1,
       colWidths: ['100%'],
-      fields: [this.getProductGrid(originalView), this.getGrid()]
+      fields: [
+        this.getProductGrid(originalView, recordIdList[0]),
+        this.getGrid()
+      ]
     });
 
     this.okButton = isc.OBFormButton.create({
