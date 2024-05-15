@@ -60,12 +60,13 @@ public abstract class ReferencedInventoryHandler extends BaseProcessActionHandle
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     try {
+      OBContext.setAdminMode(true);
+
       this.requestJson = new JSONObject(content);
       this.paramsJson = requestJson.getJSONObject(PARAMS);
       this.storageDetailsToProcess = paramsJson.getJSONObject(PARAM_GRID_STOCK)
           .getJSONArray(PARAM_GRID_SELECTION);
 
-      OBContext.setAdminMode(true);
       validateSelectionOrThrowException();
       appendNestedStorageDetailsFromSelectedRefInventories();
       run();

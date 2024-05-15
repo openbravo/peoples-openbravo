@@ -25,16 +25,13 @@ import java.util.HashSet;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryProcessor.GridJS;
-import org.openbravo.materialmgmt.refinventory.ReferencedInventoryProcessor.StorageDetailJS;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
 import org.openbravo.materialmgmt.refinventory.UnboxProcessor;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
-import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 
 /**
  * Action handler for unboxing storage details or referenced inventories from a Referenced Inventory
@@ -74,10 +71,9 @@ public class ReferencedInventoryUnBoxHandler extends ReferencedInventoryHandler 
           .filter(selectedRIs::contains)
           .findAny()
           .ifPresent(match -> {
-            throw new OBException(OBMessageUtils.getI18NMessage("UnboxToRIParentTreeSelectionError",
-                new String[] { OBDal.getInstance()
-                    .getProxy(ReferencedInventory.class, match)
-                    .getIdentifier() }));
+            throw new OBException(
+                OBMessageUtils.getI18NMessage("UnboxToRIParentTreeSelectionError", new String[] {
+                    OBDal.getInstance().get(ReferencedInventory.class, match).getIdentifier() }));
           });
     }
   }
@@ -95,29 +91,6 @@ public class ReferencedInventoryUnBoxHandler extends ReferencedInventoryHandler 
     } catch (JSONException noParameterFound) {
       return true;
     }
-  }
-
-  /**
-   * The storage detail's quantity is always the total quantity available in the referenced
-   * inventory. The new bin to store the stock after unboxing is a parameter of each selected
-   * referenced inventory
-   */
-  @Override
-  protected Collection<StorageDetailJS> generateNewStorageDetailJS(final JSONArray selectedRIs)
-      throws JSONException {
-    final Collection<StorageDetailJS> sdsInNestedRIs = new HashSet<>();
-    for (int i = 0; i < selectedRIs.length(); i++) {
-      try (ScrollableResults sdScroll = ReferencedInventoryUtil
-          .getStorageDetails(selectedRIs.getJSONObject(i).getString(GridJS.ID), true)) {
-        while (sdScroll.next()) {
-          final StorageDetail sd = (StorageDetail) sdScroll.get(0);
-          final StorageDetailJS sdJS = new StorageDetailJS(sd.getId(), sd.getQuantityOnHand(),
-              getNewStorageBin(selectedRIs.getJSONObject(i)));
-          sdsInNestedRIs.add(sdJS);
-        }
-      }
-    }
-    return sdsInNestedRIs;
   }
 
   /**

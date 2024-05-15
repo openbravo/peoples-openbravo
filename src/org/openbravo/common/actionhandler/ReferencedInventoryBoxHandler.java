@@ -45,13 +45,9 @@ public class ReferencedInventoryBoxHandler extends ReferencedInventoryHandler {
 
   @Override
   protected void validateSelectionOrThrowException() throws Exception {
-    throwExceptionIfInnerRIsOrEmptyRIsAreSelected();
+    throwExceptionIfInnerRIsOrEmptyRIsAreSelected(getSelectedReferencedInventories());
     throwExceptionIfContentRestrictionsAreNotRespected();
     super.validateSelectionOrThrowException();
-  }
-
-  private void throwExceptionIfInnerRIsOrEmptyRIsAreSelected() throws JSONException {
-    throwExceptionIfInnerRIsOrEmptyRIsAreSelected(getSelectedReferencedInventories());
   }
 
   public static void throwExceptionIfInnerRIsOrEmptyRIsAreSelected(

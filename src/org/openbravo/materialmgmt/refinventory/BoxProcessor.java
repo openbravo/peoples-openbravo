@@ -80,11 +80,8 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
       final JSONObject storageDetailJS = selectedStorageDetails.getJSONObject(i);
       final StorageDetail storageDetail = getStorageDetail(storageDetailJS);
       try {
-        final ReferencedInventory outermostRI = ReferencedInventoryUtil
-            .getOutermostRefInventory(storageDetail);
-        if (outermostRI.getParentRefInventory() == null) {
-          outterMostRefInventoryIdsToBox.add(outermostRI.getId());
-        }
+        outterMostRefInventoryIdsToBox
+            .add(ReferencedInventoryUtil.getOutermostRefInventory(storageDetail).getId());
       } catch (NullPointerException storageDetailWithoutRI) {
         // Storage Details without RI are not affected
       }

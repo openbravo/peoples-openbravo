@@ -267,14 +267,12 @@ public class ReferencedInventoryUtil {
         "Storage detail is not linked to a referenced inventory. "
             + "This method only accepts storage details within a referenced inventory.");
 
-    final AttributeSetInstance innerMostAttributeSetInstance = ReferencedInventoryUtil
-        .getInnerAttributeSetInstance(storageDetail, null);
     final boolean isStorageDetailInTheOuterMostRI = storageDetail.getReferencedInventory()
         .getParentRefInventory() == null;
 
     if (referencedInventoryToKeep == null || isStorageDetailInTheOuterMostRI) {
       // Unbox from all the boxes
-      return innerMostAttributeSetInstance;
+      return ReferencedInventoryUtil.getInnerAttributeSetInstance(storageDetail, null);
     } else {
       // Unbox the selected box, but keep the stock inside
       return ReferencedInventoryUtil.getInnerAttributeSetInstance(storageDetail,

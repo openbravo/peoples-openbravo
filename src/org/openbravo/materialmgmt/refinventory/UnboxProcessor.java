@@ -111,14 +111,14 @@ public class UnboxProcessor extends ReferencedInventoryProcessor {
       for (int i = 0; i < selectedStorageDetails.length(); i++) {
         final JSONObject storageDetailJS = selectedStorageDetails.getJSONObject(i);
         final StorageDetail storageDetail = getStorageDetail(storageDetailJS);
-        try {
+        final ReferencedInventory storageDetailRefInventory = storageDetail
+            .getReferencedInventory();
+        if (storageDetailRefInventory != null) {
           affectedRefInventoryIds.addAll(ReferencedInventoryUtil
-              .getParentReferencedInventories(storageDetail.getReferencedInventory(), true)
+              .getParentReferencedInventories(storageDetailRefInventory, true)
               .stream()
               .map(ReferencedInventory::getId)
               .collect(Collectors.toList()));
-        } catch (NullPointerException storageDetailWithoutRI) {
-          // Storage Details without RI are not affected
         }
       }
     }
