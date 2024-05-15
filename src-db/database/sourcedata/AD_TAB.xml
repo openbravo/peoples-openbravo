@@ -18783,7 +18783,7 @@ AND (e.storageBin is null OR ad_org_isinnaturaltree(@MaterialMgmtShipmentInOut.o
 <!--A13D2A1F90E24382AEE508E750FEF9EB-->  <NAME><![CDATA[Related Services and Contributions]]></NAME>
 <!--A13D2A1F90E24382AEE508E750FEF9EB-->  <DESCRIPTION><![CDATA[Products of type service/contribution in relation to the current product]]></DESCRIPTION>
 <!--A13D2A1F90E24382AEE508E750FEF9EB-->  <HELP><![CDATA[This table is used to view products of the 'Relatable Product' types (e.g. Services and Contributions) that are related to the given main product. The inverse relationship can be viewed from the service/contribution, i.e. the table shows the main products instead of the services/contributions.]]></HELP>
-<!--A13D2A1F90E24382AEE508E750FEF9EB-->  <AD_TABLE_ID><![CDATA[629F3BB39497465AB4C280B01700A202]]></AD_TABLE_ID>
+<!--A13D2A1F90E24382AEE508E750FEF9EB-->  <AD_TABLE_ID><![CDATA[A5538F88639C4606B36209837D1E560C]]></AD_TABLE_ID>
 <!--A13D2A1F90E24382AEE508E750FEF9EB-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--A13D2A1F90E24382AEE508E750FEF9EB-->  <SEQNO><![CDATA[260]]></SEQNO>
 <!--A13D2A1F90E24382AEE508E750FEF9EB-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
