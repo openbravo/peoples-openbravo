@@ -30,8 +30,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
         UPDATE c_extbp_config_filter
-      	SET crmscanhandler = (CASE WHEN isscanidentifier = 'Y' THEN 'primary'
-      	ELSE 'none' END)
+        SET crmscanhandler = (CASE WHEN (isscanidentifier = 'Y' AND crmscanhandler = 'none') THEN 'primary'
+        ELSE crmscanhandler END)
       ]]>
     </Sql>
   </SqlMethod>
