@@ -49,6 +49,30 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
   // RIs in the storage details to box without a parent RI
   private final Set<String> outterMostRefInventoryIdsToBox = new HashSet<>();
 
+  /**
+   * Updates the affectedRefInventoryIds' parent referenced inventory with the
+   * newParentRefInventoryId. This process should be executed after the Box activity took place, and
+   * it is actually needed only when handling unit(s) (affectedRefInventoryIds) have been boxed into
+   * another handling unit (newParentRefInventoryId).
+   * 
+   * @return the number of referenced inventories updated
+   */
+  public static int updateParentReferenceInventory(final String newParentRefInventoryId,
+      final Collection<String> affectedRefInventoryIds) {
+    //@formatter:off
+    final String hql =
+                  " update MaterialMgmtReferencedInventory" +
+                  " set parentRefInventory.id = :thisRefInventoryId" +
+                  " where id in (:affectedRefInventoryIds)";
+    //@formatter:on
+    return OBDal.getInstance()
+        .getSession()
+        .createQuery(hql)
+        .setParameter("thisRefInventoryId", newParentRefInventoryId)
+        .setParameter("affectedRefInventoryIds", affectedRefInventoryIds)
+        .executeUpdate();
+  }
+
   public BoxProcessor(final ReferencedInventory referencedInventory,
       final JSONArray selectedStorageDetails, final String newStorageBinId) throws JSONException {
     super(referencedInventory, selectedStorageDetails);
@@ -130,27 +154,4 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
         outterMostRefInventoryIdsToBox);
   }
 
-  /**
-   * Updates the affectedRefInventoryIds' parent referenced inventory with the
-   * newParentRefInventoryId. This process should be executed after the Box activity took place, and
-   * it is actually needed only when handling unit(s) (affectedRefInventoryIds) have been boxed into
-   * another handling unit (newParentRefInventoryId).
-   * 
-   * @return the number of referenced inventories updated
-   */
-  public static int updateParentReferenceInventory(final String newParentRefInventoryId,
-      final Collection<String> affectedRefInventoryIds) {
-    //@formatter:off
-    final String hql =
-                  " update MaterialMgmtReferencedInventory" +
-                  " set parentRefInventory.id = :thisRefInventoryId" +
-                  " where id in (:affectedRefInventoryIds)";
-    //@formatter:on
-    return OBDal.getInstance()
-        .getSession()
-        .createQuery(hql)
-        .setParameter("thisRefInventoryId", newParentRefInventoryId)
-        .setParameter("affectedRefInventoryIds", affectedRefInventoryIds)
-        .executeUpdate();
-  }
 }
