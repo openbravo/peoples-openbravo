@@ -33,43 +33,27 @@ import org.hibernate.ScrollableResults;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryProcessor.GridJS;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryProcessor.StorageDetailJS;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
-import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.service.db.DbUtility;
 
 /**
  * Handler to centralize common things for Box and Unbox activities
  */
-public abstract class ReferencedInventoryHandler extends BaseProcessActionHandler {
+abstract class ReferencedInventoryHandler extends BaseProcessActionHandler {
   private static final Logger logger = LogManager.getLogger();
-
-  private static final String PARAMS = "_params";
-  private static final String PARAM_GRID_STOCK = "stock";
-  private static final String PARAM_GRID_REFINVENTORY = "referencedInventory";
-  private static final String PARAM_GRID_SELECTION = "_selection";
-
-  protected JSONObject requestJson;
-  protected JSONObject paramsJson;
-  private JSONArray storageDetailsToProcess;
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     try {
       OBContext.setAdminMode(true);
-
-      this.requestJson = new JSONObject(content);
-      this.paramsJson = requestJson.getJSONObject(PARAMS);
-      this.storageDetailsToProcess = paramsJson.getJSONObject(PARAM_GRID_STOCK)
-          .getJSONArray(PARAM_GRID_SELECTION);
-
-      validateSelectionOrThrowException();
-      appendNestedStorageDetailsFromSelectedRefInventories();
-      run();
+      final ReferencedInventoryHandlerData data = new ReferencedInventoryHandlerData(content);
+      validateSelectionOrThrowException(data);
+      data.appendNestedStorageDetailsFromSelectedRefInventories(generateNewStorageDetailJS(data));
+      run(data);
     } catch (Exception e) {
       try {
         final Throwable ex = DbUtility.getUnderlyingSQLException(e);
@@ -96,21 +80,8 @@ public abstract class ReferencedInventoryHandler extends BaseProcessActionHandle
   /**
    * Hook to validate user selection. Throw an exception in case of errors
    */
-  protected void validateSelectionOrThrowException() throws Exception {
-  }
-
-  /**
-   * Adds the nested storage details within the selected referenced inventories into the storage
-   * details to process. The selected storage details will be later on boxed or unboxed
-   */
-  private void appendNestedStorageDetailsFromSelectedRefInventories() throws JSONException {
-    generateNewStorageDetailJS(getSelectedReferencedInventories()).stream()
-        .forEach(sd -> storageDetailsToProcess.put(sd.toJSONObject()));
-  }
-
-  protected JSONArray getSelectedReferencedInventories() throws JSONException {
-    return paramsJson.getJSONObject(PARAM_GRID_REFINVENTORY).getJSONArray(PARAM_GRID_SELECTION);
-  }
+  protected abstract void validateSelectionOrThrowException(
+      final ReferencedInventoryHandlerData data) throws Exception;
 
   /**
    * Returns a collection of StorageDetailJS representation of all the storage details included in
@@ -120,8 +91,9 @@ public abstract class ReferencedInventoryHandler extends BaseProcessActionHandle
    * The storage detail's quantity is always the total quantity available in the referenced
    * inventory. The new storage bin will vary for box and unbox.
    */
-  protected Collection<StorageDetailJS> generateNewStorageDetailJS(final JSONArray selectedRIs)
-      throws JSONException {
+  private Collection<StorageDetailJS> generateNewStorageDetailJS(
+      final ReferencedInventoryHandlerData data) throws JSONException {
+    final JSONArray selectedRIs = data.getSelectedReferencedInventories();
     final Collection<StorageDetailJS> sdInNestedRIs = new HashSet<>();
     for (int i = 0; i < selectedRIs.length(); i++) {
       try (ScrollableResults sdScroll = ReferencedInventoryUtil
@@ -129,7 +101,7 @@ public abstract class ReferencedInventoryHandler extends BaseProcessActionHandle
         while (sdScroll.next()) {
           final StorageDetail sd = (StorageDetail) sdScroll.get(0);
           final StorageDetailJS sdJS = new StorageDetailJS(sd.getId(), sd.getQuantityOnHand(),
-              getNewStorageBin(selectedRIs.getJSONObject(i)));
+              getNewStorageBin(data, selectedRIs.getJSONObject(i)));
           sdInNestedRIs.add(sdJS);
         }
       }
@@ -140,21 +112,12 @@ public abstract class ReferencedInventoryHandler extends BaseProcessActionHandle
   /**
    * The new storage bin will vary for box and unbox, so each one should implement the right logic.
    */
-  protected abstract String getNewStorageBin(final JSONObject selectedRefInventoryJS)
-      throws JSONException;
+  protected abstract String getNewStorageBin(final ReferencedInventoryHandlerData data,
+      final JSONObject selectedRefInventoryJS) throws JSONException;
 
   /**
    * Executes the box / unbox logic
    */
-  protected abstract void run() throws Exception;
-
-  protected ReferencedInventory getReferencedInventory() throws JSONException {
-    return OBDal.getInstance()
-        .getProxy(ReferencedInventory.class, requestJson.getString("inpmRefinventoryId"));
-  }
-
-  protected JSONArray getSelectedStorageDetails() {
-    return storageDetailsToProcess;
-  }
+  protected abstract void run(final ReferencedInventoryHandlerData data) throws Exception;
 
 }

@@ -38,17 +38,19 @@ import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
  *
  */
 public class ReferencedInventoryUnBoxHandler extends ReferencedInventoryHandler {
-  private static final String PARAM_UNBOXTOINDIVIDUALITEMS = "unboxToIndividualItems";
-
   @Override
-  protected void validateSelectionOrThrowException() throws Exception {
-    final JSONArray selectedRIsJS = getSelectedReferencedInventories();
-    final JSONArray selectedStorageDetailsJS = getSelectedStorageDetails();
+  protected void validateSelectionOrThrowException(final ReferencedInventoryHandlerData data)
+      throws Exception {
+    final JSONArray selectedRIsJS = data.getSelectedReferencedInventories();
+    validateRIsAndStockAreNotSelectedAtTheSameTime(data.getSelectedStorageDetails(), selectedRIsJS);
+    validateNotNestedRIsAreSelected(selectedRIsJS);
+  }
+
+  private void validateRIsAndStockAreNotSelectedAtTheSameTime(
+      final JSONArray selectedStorageDetailsJS, final JSONArray selectedRIsJS) {
     if (selectedRIsJS.length() > 0 && selectedStorageDetailsJS.length() > 0) {
       throw new OBException("@UnboxRIsAndStockAtTheSameTimeError@");
     }
-    validateNotNestedRIsAreSelected(selectedRIsJS);
-    super.validateSelectionOrThrowException();
   }
 
   /**
@@ -79,25 +81,19 @@ public class ReferencedInventoryUnBoxHandler extends ReferencedInventoryHandler 
   }
 
   @Override
-  protected void run() throws Exception {
-    new UnboxProcessor(getReferencedInventory(), getSelectedStorageDetails(),
-        getSelectedReferencedInventories(), getUnboxToIndividualItemsFlag())
+  protected void run(final ReferencedInventoryHandlerData data) throws Exception {
+    new UnboxProcessor(data.getReferencedInventory(), data.getSelectedStorageDetails(),
+        data.getSelectedReferencedInventories(), data.getUnboxToIndividualItemsFlag())
             .createAndProcessGoodsMovement();
   }
 
-  private boolean getUnboxToIndividualItemsFlag() {
-    try {
-      return paramsJson.getBoolean(PARAM_UNBOXTOINDIVIDUALITEMS);
-    } catch (JSONException noParameterFound) {
-      return true;
-    }
-  }
-
   /**
-   * In Unbox, each selected referenced inventory contains the new storage bin
+   * In Unbox, each selected referenced inventory contains the new storage bin. The data parameter
+   * is totally ignored
    */
   @Override
-  protected String getNewStorageBin(final JSONObject selectedRefInventoryJS) throws JSONException {
+  protected String getNewStorageBin(final ReferencedInventoryHandlerData data,
+      final JSONObject selectedRefInventoryJS) throws JSONException {
     return selectedRefInventoryJS.getString(GridJS.STORAGEBIN_ID);
   }
 }

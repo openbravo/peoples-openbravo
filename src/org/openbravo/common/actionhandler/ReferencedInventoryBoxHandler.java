@@ -41,13 +41,12 @@ import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
  *
  */
 public class ReferencedInventoryBoxHandler extends ReferencedInventoryHandler {
-  private static final String PARAM_NEWSTORAGEBIN = "M_LocatorTo_ID";
 
   @Override
-  protected void validateSelectionOrThrowException() throws Exception {
-    throwExceptionIfInnerRIsOrEmptyRIsAreSelected(getSelectedReferencedInventories());
-    throwExceptionIfContentRestrictionsAreNotRespected();
-    super.validateSelectionOrThrowException();
+  protected void validateSelectionOrThrowException(final ReferencedInventoryHandlerData data)
+      throws Exception {
+    throwExceptionIfInnerRIsOrEmptyRIsAreSelected(data.getSelectedReferencedInventories());
+    throwExceptionIfContentRestrictionsAreNotRespected(data);
   }
 
   public static void throwExceptionIfInnerRIsOrEmptyRIsAreSelected(
@@ -75,9 +74,11 @@ public class ReferencedInventoryBoxHandler extends ReferencedInventoryHandler {
     }
   }
 
-  private void throwExceptionIfContentRestrictionsAreNotRespected() throws JSONException {
-    throwExceptionIfContentRestrictionsAreNotRespected(getReferencedInventory(),
-        getSelectedStorageDetails().length(), getSelectedReferencedInventories().length());
+  private void throwExceptionIfContentRestrictionsAreNotRespected(
+      final ReferencedInventoryHandlerData data) throws JSONException {
+    throwExceptionIfContentRestrictionsAreNotRespected(data.getReferencedInventory(),
+        data.getSelectedStorageDetails().length(),
+        data.getSelectedReferencedInventories().length());
   }
 
   public static void throwExceptionIfContentRestrictionsAreNotRespected(
@@ -96,9 +97,9 @@ public class ReferencedInventoryBoxHandler extends ReferencedInventoryHandler {
   }
 
   @Override
-  protected void run() throws Exception {
-    new BoxProcessor(getReferencedInventory(), getSelectedStorageDetails(), getNewStorageBin(null))
-        .createAndProcessGoodsMovement();
+  protected void run(final ReferencedInventoryHandlerData data) throws Exception {
+    new BoxProcessor(data.getReferencedInventory(), data.getSelectedStorageDetails(),
+        getNewStorageBin(data, null)).createAndProcessGoodsMovement();
   }
 
   /**
@@ -106,8 +107,9 @@ public class ReferencedInventoryBoxHandler extends ReferencedInventoryHandler {
    * inventories, so the selectedRefInventoryJS param is totally ignored by this method
    */
   @Override
-  protected String getNewStorageBin(final JSONObject selectedRefInventoryJS) throws JSONException {
-    final String newStorageBinId = paramsJson.getString(PARAM_NEWSTORAGEBIN);
+  protected String getNewStorageBin(final ReferencedInventoryHandlerData data,
+      final JSONObject selectedRefInventoryJS) throws JSONException {
+    final String newStorageBinId = data.getNewStorageBinId();
     return StringUtils.isBlank(newStorageBinId) || StringUtils.equals(newStorageBinId, "null")
         ? null
         : newStorageBinId;
