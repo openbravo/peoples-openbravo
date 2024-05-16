@@ -77,6 +77,12 @@ public class NestedReferencedInventoryTestUtils {
           "Nested Referenced Inventory Count is not equal to " + nestedRefInvCount.intValue(),
           refInv.getNestedReferencedInventoriesCount(), equalTo(nestedRefInvCount));
     }
+
+    assertThat("Expected Referenced Inventory Locator", refInv.getStorageBin().getId(),
+        equalTo(toBinId));
+    assertThat("Expected Referenced Inventory Warehouse",
+        refInv.getStorageBin().getWarehouse().getId(),
+        equalTo(ReferencedInventoryTestUtils.QA_SPAIN_WAREHOUSE_ID));
   }
 
   /**
