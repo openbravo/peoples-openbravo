@@ -147,8 +147,9 @@ public class UnboxProcessor extends ReferencedInventoryProcessor {
     //@formatter:off
     final String hql = "update MaterialMgmtReferencedInventory ri "
                      + "set ri.parentRefInventory.id = null "
+                     + "where ri.parentRefInventory.id is not null "
                      // Affected referenced inventories..
-                     + "where ri.id in (:affectedRefInventoryIds) "
+                     + "and ri.id in (:affectedRefInventoryIds) "
                      // ...that have no stock remaining in unboxToIndividualItems
                      + (isUnboxToIndividualItems 
                          ? " and not exists (select 1 "
