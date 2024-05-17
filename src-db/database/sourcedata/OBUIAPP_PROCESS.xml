@@ -1005,7 +1005,7 @@ Sets all transactions prior to the reference date as permanently adjusted.]]></H
 <!--E2F60DCF6D204FC79124C18E084509F0-->  <HELP><![CDATA[Changes the status of a handling unit and its children in cascade. Depending on the current status of the handling unit, different status transitions are allowed:
 - If the handling unit is in open status: to close or destroyed
 - If the handling unit is in closed status: to open or destroyed
-- It the handling unit is in destroyed status: to status change is allowed]]></HELP>
+- It the handling unit is in destroyed status: no status change is allowed]]></HELP>
 <!--E2F60DCF6D204FC79124C18E084509F0-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--E2F60DCF6D204FC79124C18E084509F0-->  <CLASSNAME><![CDATA[org.openbravo.materialmgmt.refinventory.ChangeHandlingUnitStatus]]></CLASSNAME>
 <!--E2F60DCF6D204FC79124C18E084509F0-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
