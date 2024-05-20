@@ -61,7 +61,8 @@ BEGIN
  )
  select string_agg(m_refinventory_id, ',')
  into v_refinventory_id
- from riTree;
+ from riTree
+ where m_refinventory_id is not null;
 
  RETURN v_refinventory_id;
 END M_REFINVENTORY_PARENTS
