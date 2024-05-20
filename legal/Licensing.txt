@@ -175,11 +175,6 @@ Under MIT license. (available at http://www.slf4j.org/license.html)
 # freemarker-2.3.16.jar
 Under a BSD style license (available at http://freemarker.sourceforge.net/docs/app_license.html)
 
-In addition, the distribution includes 
-- ojdbc8-19.3.0.0.jar under the OTN Development and Distribution
-  License Agreement (in /legal folder and available at
-  https://www.oracle.com/downloads/licenses/distribution-license.html)
-
 # jboss-ejb3-api-3.1.0.jar
 Under the LGPL license (included as LGPL-2.1.txt in this folder)
 
