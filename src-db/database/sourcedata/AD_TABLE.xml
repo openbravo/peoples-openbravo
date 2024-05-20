@@ -12633,7 +12633,7 @@ HAVING Sum(fa.credit - fa.debit) <> 0]]></HQLQUERY>
 <!--A5538F88639C4606B36209837D1E560C-->  <HELP><![CDATA[This table is used to view products of the 'Relatable Product' types (e.g. Services and Contributions) that are related to the given main product. The inverse relationship can be viewed from the service/contribution, i.e. the table shows the main products instead of the services/contributions.]]></HELP>
 <!--A5538F88639C4606B36209837D1E560C-->  <TABLENAME><![CDATA[M_ProductRelation]]></TABLENAME>
 <!--A5538F88639C4606B36209837D1E560C-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--A5538F88639C4606B36209837D1E560C-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
+<!--A5538F88639C4606B36209837D1E560C-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--A5538F88639C4606B36209837D1E560C-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--A5538F88639C4606B36209837D1E560C-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--A5538F88639C4606B36209837D1E560C-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
