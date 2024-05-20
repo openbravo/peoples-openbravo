@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,8 +20,13 @@
 @import url(../../../../images/Logos.css);
 @import url(../../Default/Openbravo_ERP_250.css);
 
+:root {
+  --obuiapp-type-font-family: 'lucida sans', sans-serif;
+  --obuiapp-type-font-family-variant: arial, sans-serif;
+}
+
 body {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
   font-weight: normal;
   color: #000000;
@@ -57,7 +62,7 @@ button.ButtonLink table.Button .Button_left, table.Button .Button_left {
 button.ButtonLink table.Button .Button_text, table.Button .Button_text {
   background-image: url(Common/Button/buttonBody.normal.png);
   height: 30px;
-  font-family: 'lucida sans',sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 1.2em;
   font-weight: normal;
 }
@@ -81,7 +86,7 @@ button.ButtonLink_hover table.Button .Button_left, table.Button_hover .Button_le
 button.ButtonLink_hover table.Button .Button_text, table.Button_hover .Button_text {
   background-image: url(Common/Button/buttonBody.rollover.png);
   height: 30px;
-  font-family: 'lucida sans',sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 1.2em;
   font-weight: normal;
 }
@@ -105,7 +110,7 @@ button.ButtonLink_active table.Button .Button_left, .Button_active .Button_left 
 button.ButtonLink_active table.Button .Button_text, table.Button_active .Button_text {
   background-image: url(Common/Button/buttonBody.pressed.png);  
   height: 30px;
-  font-family: 'lucida sans',sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 1.2em;
   font-weight: normal;
 }
@@ -129,7 +134,7 @@ button.ButtonLink_focus table.Button .Button_left, .Button_focus .Button_left {
 button.ButtonLink_focus table.Button .Button_text, table.Button_focus .Button_text {
   background-image: url(Common/Button/buttonBody.focused.png);  
   height: 30px;
-  font-family: 'lucida sans',sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 1.2em;
   font-weight: normal;
 }
@@ -153,7 +158,7 @@ button.ButtonLink_default table.Button .Button_left, .Button_default .Button_lef
 button.ButtonLink_default table.Button .Button_text, table.Button_default .Button_text {
   background-image: url(Common/Button/buttonBody.default.png);  
   height: 30px;
-  font-family: 'lucida sans',sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 1.2em;
   font-weight: normal;
 }
@@ -177,7 +182,7 @@ button.ButtonLink_disabled table.Button .Button_left, table.ButtonLink_disabled 
 button.ButtonLink_disabled table.Button .Button_text, table.ButtonLink_disabled .Button_text {
   background-image: url(Common/Button/buttonBody.disabled.png);  
   height: 30px;
-  font-family: 'lucida sans',sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 1.2em;
   font-weight: normal;
 }
@@ -242,7 +247,7 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
 .ComboKey,
 .Combo,
 .Combo_focus {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
   font-weight: normal;
   padding: 1px 0px 0px 0px;
@@ -329,7 +334,7 @@ tr.DataGrid_Body_Row_selected {
 }
 
 th.DataGrid_Header_Cell {
-  font-family: 'lucida sans', sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 11px;
   text-align: center;
   border-top: 1px solid #CDD7BB;
@@ -343,7 +348,7 @@ th.DataGrid_Header_Cell {
 }
 
 th.DataGrid_Header_Cell_Amount {
-  font-family: 'lucida sans', sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 11px;
   text-align: center;
   border-top: 1px solid #CDD7BB;
@@ -392,7 +397,7 @@ th.DataGrid_Header_LineNoCell {
 }
 
 td.DataGrid_Body_Cell {
-  font-family: arial, sans-serif !important;
+  font-family: var(--obuiapp-type-font-family-variant) !important;
   font-size: 12px !important;
   border-top: 1px solid #CDD7BB;
   border-bottom: 1px solid #CDD7BB;
@@ -401,7 +406,7 @@ td.DataGrid_Body_Cell {
 }
 
 td.DataGrid_Body_Cell_Amount {
-  font-family: arial, sans-serif !important;
+  font-family: var(--obuiapp-type-font-family-variant) !important;
   font-size: 12px !important;
   border-top: 1px solid #CDD7BB;
   border-bottom: 1px solid #CDD7BB;
@@ -410,7 +415,7 @@ td.DataGrid_Body_Cell_Amount {
 }
 
 td.DataGrid_Body_Cell_hover {
-  font-family: arial, sans-serif !important;
+  font-family: var(--obuiapp-type-font-family-variant) !important;
   font-size: 12px !important;
   color: #000000 !important;
   background-image: none;
@@ -434,7 +439,7 @@ td.DataGrid_Body_LineNoCell {
 
 .Dimension_LeftSelect_width {
   color: #333333;
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
   padding-left: 3px;
   border: 1px solid #CDD7BB;
@@ -443,7 +448,7 @@ td.DataGrid_Body_LineNoCell {
 
 .Dimension_RightSelect_width {
   color: #333333;
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
   padding-left: 3px;
   border: 1px solid #CDD7BB;
@@ -553,21 +558,21 @@ a.FieldButtonLink_focus table.FieldButton .FieldButton_bg, table.FieldButton_foc
 */
 
 .PlainText_normal {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
   font-weight: normal;
   color: #404040;
 }
 
 .LabelText {
-  font-family: 'lucida sans', sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   color: #333333;
   font-size: 8pt;
   font-weight: bold;
 }
 
 .Label_ReadOnly_Text {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
   font-weight: normal;
   color: #606060;
@@ -632,12 +637,12 @@ a.LabelLink_noicon_focus {
 }
 
 .Regular_Paragraph {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 
 .Wide_Paragraph {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 
@@ -649,7 +654,7 @@ a.LabelLink_noicon_focus {
 
 .List_width {
   color: #333333;
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
   padding-left: 3px;
   border-color: #CDD7BB;
@@ -677,122 +682,122 @@ a.List_Button_BottomLink_focus table.List_Button_Bottom .List_Button_Bottom_bg, 
 */
 
 table.MessageBoxERROR .MessageBox_TextTitle {
-  font-family: 'lucida sans',sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 9pt;
 }
 
 table.MessageBoxERROR .MessageBox_TextDescription {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 
 table.MessageBoxERROR a.MessageBox_TextLink:active {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 
 table.MessageBoxERROR a.MessageBox_TextLink:visited {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 
 table.MessageBoxERROR a.MessageBox_TextLink:hover {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 
 table.MessageBoxERROR a.MessageBox_TextLink_focus {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 
 table.MessageBoxINFO .MessageBox_TextTitle {
-  font-family: 'lucida sans',sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 9pt;
 }
 
 table.MessageBoxINFO .MessageBox_TextDescription {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 
 table.MessageBoxINFO a.MessageBox_TextLink:active {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 
 table.MessageBoxINFO a.MessageBox_TextLink:visited {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 
 table.MessageBoxINFO a.MessageBox_TextLink:hover {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 
 table.MessageBoxINFO a.MessageBox_TextLink_focus {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 
 table.MessageBoxSUCCESS .MessageBox_TextTitle {
-  font-family: 'lucida sans',sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 9pt;
 }
 
 table.MessageBoxSUCCESS .MessageBox_TextDescription {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 
 table.MessageBoxSUCCESS a.MessageBox_TextLink:active {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 
 table.MessageBoxSUCCESS a.MessageBox_TextLink:visited {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 
 table.MessageBoxSUCCESS a.MessageBox_TextLink:hover {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 
 table.MessageBoxSUCCESS a.MessageBox_TextLink_focus {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 
 table.MessageBoxWARNING .MessageBox_TextTitle {
-  font-family: 'lucida sans',sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 9pt;
 }
 
 table.MessageBoxWARNING .MessageBox_TextDescription {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 
 table.MessageBoxWARNING a.MessageBox_TextLink:active {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 
 table.MessageBoxWARNING a.MessageBox_TextLink:visited {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 
 table.MessageBoxWARNING a.MessageBox_TextLink:hover {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 
 table.MessageBoxWARNING a.MessageBox_TextLink_focus {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 
@@ -918,7 +923,7 @@ table.MessageBoxWARNING a.MessageBox_TextLink_focus {
 .dojoValidateInvalid_focus,
 .dojoValidateRange_focus {
   border: 1px solid #CDD7BB;
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
   color: #333333;
   background-color: #F5F7F1 !important;
@@ -959,21 +964,21 @@ table.MessageBoxWARNING a.MessageBox_TextLink_focus {
 }
 
 .invalid {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 11px;
   font-weight: normal;
 
 }
 
 .missing {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 11px;
   font-weight: normal;
 
 }
 
 .range {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 11px;
   font-weight: normal;
 }
@@ -1135,7 +1140,7 @@ table.MessageBoxWARNING a.MessageBox_TextLink_focus {
 /*dojoTabcurrent*/
 
 .dojoTabcurrent {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 9pt;
   font-weight: bold;
   color: #000000 !important;
@@ -1154,7 +1159,7 @@ table.MessageBoxWARNING a.MessageBox_TextLink_focus {
 /*dojoTabparent*/
 
 .dojoTabparent {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 9pt;
   font-weight: bold;
   color: #333333 !important;
@@ -1173,7 +1178,7 @@ table.MessageBoxWARNING a.MessageBox_TextLink_focus {
 /*dojoTabcurrent*/
 
 .dojoTabcurrentfirst {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 9pt;
   font-weight: bold;
   color: #000000 !important;
@@ -1192,7 +1197,7 @@ table.MessageBoxWARNING a.MessageBox_TextLink_focus {
 /*dojoTabparent*/
 
 .dojoTabparentfirst {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 9pt;
   font-weight: bold;
   color: #333333 !important;
@@ -1212,7 +1217,7 @@ table.MessageBoxWARNING a.MessageBox_TextLink_focus {
 /*dojoTabcurrent_focus*/
 
 .dojoTabcurrent_focus {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 9pt;
   font-weight: bold;
   color: #000000 !important;
@@ -1231,7 +1236,7 @@ table.MessageBoxWARNING a.MessageBox_TextLink_focus {
 /*dojoTabparent_focus*/
 
 .dojoTabparent_focus {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 9pt;
   font-weight: bold;
   color: #333333 !important;
@@ -1250,7 +1255,7 @@ table.MessageBoxWARNING a.MessageBox_TextLink_focus {
 /*dojoTabcurrent_focus*/
 
 .dojoTabcurrentfirst_focus {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 9pt;
   font-weight: bold;
   color: #000000 !important;
@@ -1269,7 +1274,7 @@ table.MessageBoxWARNING a.MessageBox_TextLink_focus {
 /*dojoTabparent_focus*/
 
 .dojoTabparentfirst_focus {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 9pt;
   font-weight: bold;
   color: #333333 !important;
@@ -1570,14 +1575,14 @@ a.Popup_Client_Help_LabelLink_focus {
 */
 
 .RelationInfoTitle {
-  font-family: 'lucida sans', sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 8pt;
   font-weight: bold;
   padding: 0px 0px 5px 0px;
 }
 
 .RelationInfoContent {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
   font-weight: normal;
   padding: 0px 0px 5px 5px;
@@ -1703,7 +1708,7 @@ a.Popup_Client_Help_LabelLink_focus {
 .ob_gridSummaryCellDisabled,
 .ob_groupSummaryCell,
 .ob_groupSummaryCellDisabled {
-  font-family: arial, sans-serif !important;
+  font-family: var(--obuiapp-type-font-family-variant) !important;
   font-size: 12px !important;
   font-weight: normal !important;
   color: #333333 !important;
@@ -1744,7 +1749,7 @@ a.Popup_Client_Help_LabelLink_focus {
 .ob_headerbuttondown,
 .ob_headerbuttonselectedover,
 .ob_headerbuttonselecteddown {
-  font-family: arial, sans-serif !important;
+  font-family: var(--obuiapp-type-font-family-variant) !important;
   font-size: 12px !important;
   border-top: 1px solid #CDD7BB !important;
   border-bottom: 1px solid #CDD7BB !important;
@@ -1791,7 +1796,7 @@ a.Popup_Client_Help_LabelLink_focus {
 .labelAnchorDisabled,
 .labelAnchorError,
 .labelAnchorFocused {
-  font-family: arial, sans-serif !important;
+  font-family: var(--obuiapp-type-font-family-variant) !important;
   font-size: 12px !important;
   font-weight: normal !important;
   color: #333333 !important;

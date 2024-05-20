@@ -11,17 +11,22 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2017-2023 Openbravo SLU
+ * All portions are Copyright (C) 2017-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
 
+:root {
+  --obuiapp-type-font-family: 'lucida sans', sans-serif;
+  --obuiapp-type-font-family-variant: arial, sans-serif;
+}
+
 * {margin: 0px; padding: 0px;}
 
 body {
   margin-top: 0px;
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
   font-weight: normal;
   color: #000000;
@@ -99,7 +104,7 @@ button.ButtonLink_default, button.ButtonLink_default:active, button.ButtonLink_d
 
 button.ButtonLink table.Button, .Button {
   border-collapse: collapse;
-  font-family: tahoma, arial, helvetica, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 8pt;
   color: #000000;
   font-weight: bold;
@@ -125,7 +130,7 @@ button.ButtonLink table.Button .Button_text, table.Button .Button_text {
   background-image: url(Common/Button/buttonBody.normal.png);  
   text-align: center;
   height: 30px;
-  font-family: 'lucida sans',sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 1.2em;
   font-weight: normal;
   text-align: center;
@@ -142,7 +147,7 @@ button.ButtonLink table.Button .Button_right, table.Button .Button_right {
 button.ButtonLink_hover table.Button, .Button_hover {
   border-collapse: collapse;
   text-align: center;
-  font-family: tahoma, arial, helvetica, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 8pt;
   color: #000000;
   font-weight: bold;
@@ -165,7 +170,7 @@ button.ButtonLink_hover table.Button .Button_text, table.Button_hover .Button_te
   background-position: center center;
   background-image: url(Common/Button/buttonBody.rollover.png);
   height: 30px;
-  font-family: 'lucida sans',sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 1.2em;
   font-weight: normal;
 }
@@ -191,7 +196,7 @@ button.ButtonLink_active table.Button .Button_left, .Button_active .Button_left 
 button.ButtonLink_active table.Button .Button_text, table.Button_active .Button_text {
   background-image: url(Common/Button/buttonBody.pressed.png);
   height: 30px;
-  font-family: 'lucida sans',sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 1.2em;
   font-weight: normal;
 }
@@ -215,7 +220,7 @@ button.ButtonLink_focus table.Button .Button_text, table.Button_focus .Button_te
   background-position: center center;
   background-image: url(Common/Button/buttonBody.focused.png);
   height: 30px;
-  font-family: 'lucida sans',sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 1.2em;
   font-weight: normal;  
 }
@@ -231,7 +236,7 @@ button.ButtonLink_focus table.Button .Button_right, table.Button_focus .Button_r
 button.ButtonLink_default table.Button, .Button_default {
   border-collapse: collapse;
   text-align: center;
-  font-family: tahoma, arial, helvetica, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 8pt;
   color: #000000;
   font-weight: bold;
@@ -254,7 +259,7 @@ button.ButtonLink_default table.Button .Button_text, table.Button_default .Butto
   background-position: center center;
   background-image: url(Common/Button/buttonBody.default.png);
   height: 30px;
-  font-family: 'lucida sans',sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 1.2em;
   font-weight: normal;  
 }
@@ -270,7 +275,7 @@ button.ButtonLink_default table.Button .Button_right, table.Button_default .Butt
 button.ButtonLink_disabled table.Button, .Button_disabled {
   border-collapse: collapse;
   text-align: center;
-  font-family: tahoma, arial, helvetica, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 8pt;
   color: #777777;
   font-weight: bold;
@@ -293,7 +298,7 @@ button.ButtonLink_disabled table.Button .Button_text, table.Button_disabled .But
   background-position: center center;
   background-image: url(Common/Button/buttonBody.disabled.png);
   height: 30px;
-  font-family: 'lucida sans',sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 1.2em;
   font-weight: normal;
 }
@@ -333,7 +338,7 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
 .dojoValidateInvalid_focus,
 .dojoValidateRange_focus {
   border: 1px solid #CDD7BB;
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
   color: #333333;
   background-color: #F5F7F1 !important;
@@ -364,7 +369,7 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
 */
 
 .LabelText {
-  font-family: 'lucida sans', sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   color: #333333;
   font-size: 8pt;
   font-weight: bold;
@@ -564,7 +569,7 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
   margin: 0 auto;
   padding: 50px 0px 0px 0px;
   text-align: center;
-  font-family: lucida sans unicode;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 28px;
   color: red;
 }

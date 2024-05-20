@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -58,7 +58,7 @@
 .OBFormFieldRequired,
 .OBFormFieldFocused,
 .OBFormFieldError {
-  font-family: 'lucida sans', sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   padding: 4px 8px 4px 8px;
   vertical-align: top;
   line-height: 1.4em;
@@ -69,7 +69,7 @@
 .OBFormFieldLabelRequired,
 .OBFormFieldLabelError,
 .OBFormFieldLabelFocused {
-  font-family: 'lucida sans', sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 11px;
   font-weight: bold;
 }
@@ -140,7 +140,7 @@
 .OBFormFieldNumberInputRequiredDisabled,
 .OBFormFieldNumberInputRequiredError,
 .OBFormFieldNumberInputRequiredHint {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
   padding: 2px 2px 0px 2px;
   margin-right: 0px;
@@ -318,7 +318,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBFormFieldSelectControlSelectedFocused,
 .OBFormFieldSelectControlError,
 .OBFormFieldSelectControlFocused {
-  font-family: arial, sans-serif; 
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
   color: #333;
   border: 0px;
@@ -447,7 +447,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBFormFieldPickListCellSelectedOver,
 .OBFormFieldPickListCellSelectedOverDark {
   padding-left: 2px;
-  font-family: 'lucida sans',sans-serif; 
+  font-family: var(--obuiapp-type-font-family);
   font-size:11px;
 }
 
@@ -558,7 +558,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBDateChooserWeekendDisabled,
 .OBDateChooserWeekendDisabledOver,
 .OBDateChooserWeekendDisabledDown {
-  font-family: 'lucida sans', sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 11px;
   background-color: white;
   color: #333333;
@@ -573,7 +573,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBDateChooserBottomButtonSelected,
 .OBDateChooserBottomButtonSelectedOver,
 .OBDateChooserBottomButtonSelectedDown {
-  font-family: 'lucida sans', sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 11px;
   background-color: transparent;
   color: #333333;
@@ -612,7 +612,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBDateChooserNavButtonSelected,
 .OBDateChooserNavButtonSelectedOver,
 .OBDateChooserNavButtonSelectedDown {
-  font-family: 'lucida sans', sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 11px;
   background-color: transparent;
   color: #333333;
@@ -807,7 +807,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBFormButtonDisabled,
 .OBFormButtonSelectedDisabled {
   padding: 5px 20px 5px;
-  font-family:'lucida sans',sans-serif; 
+  font-family: var(--obuiapp-type-font-family);
   font-size:12px;
   background-image:url(./images/form/textButton-bg-normal.png);
   color:#000000;
@@ -862,7 +862,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBFormButtonTitleDisabled,
 .OBFormButtonTitleSelectedDisabled {
   color: #000000;
-  font-family: 'lucida sans', sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 12px;
 }
 
@@ -886,7 +886,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBLinkButtonItemFocused,
 .OBLinkButtonItemFocusedOver,
 .OBLinkButtonItemFocusedDown {
-  font-family: 'lucida sans', sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 12px;
   vertical-align: middle;
   background: transparent;
@@ -928,7 +928,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBSectionItemButton_Title_Disabledclosed,
 .OBSectionItemButton_Title_Overopened,
 .OBSectionItemButton_Title_Overclosed {
-  font-family: 'lucida sans', sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 12px;
   font-weight: bold;
 }
@@ -970,7 +970,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
    border: 0px;
    background-color: transparent;
    padding: 5px;
-   font-family: arial, sans-serif;
+   font-family: var(--obuiapp-type-font-family-variant);
    font-size: 12px;
 }
 
@@ -986,14 +986,14 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 }
 
 .OBNoteListGridAuthor {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-style: italic;
   font-size: 11px;
   margin-left: 3px;
 }
 
 .OBNoteListGridDelete {
-  font-family: 'lucida sans', sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-style: normal;
   font-size: 12px;
   color: #58a618;

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -64,7 +64,7 @@
 .OBTreeGridCellErrorEditSelectedOverDark,
 .OBTreeGridCellErrorEditDisabled,
 .OBTreeGridCellErrorEditDisabledDark {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
   vertical-align: middle;  
   border: 1px solid #cdd7bb;
@@ -86,7 +86,7 @@
 .OBTreeGridHeaderCellTitleDisabled,
 .OBTreeGridHeaderCellTitleSelectedDisabled {
   font-size: 11px;
-  font-family: 'lucida sans', sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-weight: bold;
   border: 1px solid #BBBFB6;
   border-width: 0px 1px 0px 0px;

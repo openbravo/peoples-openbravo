@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,7 +41,7 @@
 
 
 .OBMessageBarDescriptionText {
-  font-family: arial, sans-serif; 
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
   font-weight: normal;
   margin: 4px 2px 2px 6px;

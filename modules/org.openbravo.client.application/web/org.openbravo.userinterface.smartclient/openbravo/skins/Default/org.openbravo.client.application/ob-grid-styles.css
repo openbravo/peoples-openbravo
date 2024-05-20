@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -83,7 +83,7 @@
 .OBGridCellErrorEditSelectedOverDark,
 .OBGridCellErrorEditDisabled,
 .OBGridCellErrorEditDisabledDark {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
   vertical-align: middle;
   border: 1px solid #cdd7bb;
@@ -189,7 +189,7 @@
 
 .OBGridFilterStaticText,
 .OBGridFilterStaticTextLink {
-  font-family: 'lucida sans', sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 11px;
   font-weight: normal;
   color: #333333;
@@ -228,7 +228,7 @@
 .OBGridHeaderCellTitleDisabled,
 .OBGridHeaderCellTitleSelectedDisabled {
   font-size: 11px;
-  font-family: 'lucida sans', sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-weight: bold;
   border: 1px solid #BBBFB6;
   border-width: 0px 1px 0px 0px;
@@ -265,7 +265,7 @@
 .OBGridSummaryCell_sum,
 .OBGridSummaryCell_avg,
 .OBGridSummaryCell_count {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   vertical-align: middle;
   border: 1px solid #cdd7bb;
   border-width: 0px 1px 1px 0px;
@@ -317,7 +317,7 @@
 .OBGridLinkButtonFocused,
 .OBGridLinkButtonFocusedOver,
 .OBGridLinkButtonFocusedDown {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   vertical-align: middle;
   background: transparent;
   padding: 0px 4px 2px 4px;
@@ -345,7 +345,7 @@
 
 .OBGridNotificationText,
 .OBGridNotificationTextError {
-  font-family: 'lucida sans', sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 12px;
   vertical-align: middle;
   background: transparent;
@@ -366,7 +366,7 @@
 .OBGridNotificationTextLinkFocused,
 .OBGridNotificationTextLinkFocusedOver,
 .OBGridNotificationTextLinkFocusedDown {
-  font-family: 'lucida sans', sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 12px;
   vertical-align: middle;
   background: transparent;
@@ -410,7 +410,7 @@
 .OBGridLinkCellOverDark,
 .OBGridLinkCellSelectedDark,
 .OBGridLinkCellSelectedOverDark {
-  font-family:Arial;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size:12px;
   text-overflow: ellipsis;
   color: #58A618;
@@ -450,7 +450,7 @@
 .OBGridFormLabelDisabled,
 .OBGridFormLabelFocused,
 .OBGridFormLabelError {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
   padding: 0px 4px 0px 4px;
 }
@@ -470,7 +470,7 @@
 .OBGridFormButtonDisabled,
 .OBGridFormButtonSelectedDisabled {
   padding: 2px 5px 2px 5px;
-  font-family:'lucida sans',sans-serif; 
+  font-family: var(--obuiapp-type-font-family);
   font-size:12px;
   background-image:url(./images/form/textButton-bg-normal.png);
   color:#000000;

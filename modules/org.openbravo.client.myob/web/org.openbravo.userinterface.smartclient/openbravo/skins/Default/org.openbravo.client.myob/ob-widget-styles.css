@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,7 +30,7 @@
 .OBWidgetHeaderText {
   line-height: 18px;
   font-size: 14px;
-  font-family: 'lucida sans', sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-weight: bold;
   padding: 4px 0px 0px 5px;
   vertical-align: top;
@@ -85,7 +85,7 @@
 
 .xOBWidgetMenuTable td {
   font-size: 12px;
-  font-family:'lucida sans', sans-serif;
+  font-family: var(--obuiapp-type-font-family);
 }
 
 .OBWidgetMenuTable img {
@@ -110,7 +110,7 @@
 .OBWidgetMenuCellTitleFieldOverDark,
 .OBWidgetMenuCellTitleFieldSelectedOver,
 .OBWidgetMenuCellTitleFieldSelectedOverDark {
-  font-family: 'lucida sans', sans-serif; 
+  font-family: var(--obuiapp-type-font-family);
   font-size: 12px;
   color: #fff;
   padding: 0px 0px 0px 4px;
@@ -239,13 +239,13 @@
 }
 
 .OBWidgetAboutLabels {
-  font-family: 'lucida sans', sans-serif;
+  font-family: var(--obuiapp-type-font-family);
   font-size: 11px;
   font-weight: bold;
 }
 
 .OBWidgetAboutFields {
-  font-family: arial, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 12px;
 }
 

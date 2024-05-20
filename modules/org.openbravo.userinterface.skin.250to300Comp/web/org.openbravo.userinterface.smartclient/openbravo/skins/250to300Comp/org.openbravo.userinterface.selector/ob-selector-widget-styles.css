@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -43,7 +43,7 @@
 .ob_gridSummaryCellDisabled,
 .ob_groupSummaryCell,
 .ob_groupSummaryCellDisabled {
-  font-family: tahoma, arial, helvetica, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 8pt;
   color: #000000;
   font-weight: normal;
@@ -134,7 +134,7 @@
 .ob_headerbuttondown,
 .ob_headerbuttonselectedover,
 .ob_headerbuttonselecteddown {
-  font-family: tahoma, arial, helvetica, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 8pt;
   font-weight: 700;
   padding: 0px 3px 0px 3px;
@@ -189,7 +189,7 @@
 .ob_buttonTitleSelectedFocusedDown,
 .ob_buttonTitleDisabled,
 .ob_buttonTitleSelectedDisabled {
-  font-family: tahoma, arial, helvetica, sans-serif;
+  font-family: var(--obuiapp-type-font-family-variant);
   font-size: 8pt;
   font-weight: bold;
   color: #1B4106;
