@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2022-2023 Openbravo SLU
+ * All portions are Copyright (C) 2022-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -61,6 +61,23 @@ public class CompanyLogoUtils {
 
   public static Image getCompanyLogoForReceipts(Organization org) {
     return getCompanyLogoByProperties(org, "companyLogoForReceipts", null, false);
+  }
+
+  public static Image getAdditionalDocumentImage(Organization org) {
+    return getCompanyLogoByOrg(org, "additionalDocumentImage", null, false);
+  }
+
+  private static Image getCompanyLogoByOrg(Organization org, String propertyLight,
+      String propertyDark, boolean isDarkMode) {
+    Image img = null;
+    // first look for the logo in org
+    if (org != null) {
+      OrganizationInformation orgInfo = org.getOrganizationInformationList().get(0);
+      img = getLogoImageFromEntity(orgInfo, propertyLight, propertyDark, isDarkMode);
+    }
+    // Does not try in Client info from the current client
+    // or in SystemInfo if no logo is found for this organization
+    return img;
   }
 
   private static Image getCompanyLogoByProperties(Organization org, String propertyLight,

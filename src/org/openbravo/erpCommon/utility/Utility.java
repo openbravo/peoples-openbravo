@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2023 Openbravo SLU
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,8 +42,8 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
@@ -2207,8 +2207,8 @@ public class Utility {
    * 
    * @param logo
    *          The name of the logo to display This can be one of the following: companylogo,
-   *          companylogosubmark, companylogodocs, companylogoreceipts, youritservicelogin or
-   *          banner-production
+   *          companylogosubmark, companylogodocs, companylogoreceipts, additionalDocumentImage,
+   *          youritservicelogin or banner-production
    *
    *          The following values are also supported but they are deprecated in favor of the values
    *          above: yourcompanylogin, yourcompanymenu, yourcompanybig, yourcompanydoc,
@@ -2257,6 +2257,8 @@ public class Utility {
         img = CompanyLogoUtils.getCompanyLogoForDocuments(organization);
       } else if ("companylogoreceipts".equals(logo)) {
         img = CompanyLogoUtils.getCompanyLogoForReceipts(organization);
+      } else if ("additionalDocumentImage".equals(logo)) {
+        img = CompanyLogoUtils.getAdditionalDocumentImage(organization);
       } else {
         log4j.error("Logo key does not exist: " + logo);
       }
