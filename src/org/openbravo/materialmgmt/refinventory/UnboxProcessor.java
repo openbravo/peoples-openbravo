@@ -66,7 +66,10 @@ public class UnboxProcessor extends ReferencedInventoryProcessor {
       final String riId = selectedRIs.getJSONObject(i).getString(GridJS.ID);
       final ReferencedInventory ri = OBDal.getInstance().getProxy(ReferencedInventory.class, riId);
       if (ri.getParentRefInventory() == null) {
-        // Add immediate inner RIs if RI is the outermost
+        // Add immediate inner RIs if RI is the outermost.
+        // This is for the special case of selecting the outermost HU, in order to unbox the
+        // immediate inner HUs outside of it. Without this hack the user would be forced to select
+        // the n immediate inner HUs to do the same stuff.
         affectedRefInventoryIds.addAll(getImmediateNestedRefInventories(riId));
       } else {
         // Selected RI
@@ -128,6 +131,10 @@ public class UnboxProcessor extends ReferencedInventoryProcessor {
 
   /**
    * Updates the parent referenced inventory of the affected referenced inventories.
+   * 
+   * Warning: This method internally executes an update query on the database the Referenced
+   * Inventory objects. It is crucial to avoid any subsequent updates to these objects using
+   * Hibernate, as doing so may overwrite these changes made directly to the database.
    */
   public static int clearParentReferenceInventory(boolean isUnboxToIndividualItems,
       Collection<String> affectedRefInventoryIdCollection) {

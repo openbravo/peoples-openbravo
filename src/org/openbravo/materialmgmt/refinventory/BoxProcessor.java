@@ -55,6 +55,10 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
    * it is actually needed only when handling unit(s) (affectedRefInventoryIds) have been boxed into
    * another handling unit (newParentRefInventoryId).
    * 
+   * Warning: This method internally executes an update query on the database the Referenced
+   * Inventory objects. It is crucial to avoid any subsequent updates to these objects using
+   * Hibernate, as doing so may overwrite these changes made directly to the database.
+   * 
    * @return the number of referenced inventories updated
    */
   public static int updateParentReferenceInventory(final String newParentRefInventoryId,
