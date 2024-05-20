@@ -41,7 +41,7 @@
 .OBToolbarIconButtonSelectedDisabled,
 .OBToolbarIconButtonDisabled {
   color: transparent;
-  font-size: 0pt;
+  font-size: 0;
 }
 
 .OBToolbarIconButton {
@@ -338,7 +338,7 @@ html[data-useragent*=' Edge/'] .OBToolbarIconButtonSelectedDisabled {
     background-position: left top;
     background-repeat: no-repeat;
     color: #000000;
-    font-size: 9pt;
+    font-size: var(--obuiapp-type-m-font-size);
     font-family: var(--obuiapp-type-font-family);
 }
 

@@ -38,7 +38,7 @@
 
 .OBPopupHeaderText {
   font-family: var(--obuiapp-type-font-family);
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
   background: #4d7607;
   color: #fff;
   font-weight: bold;

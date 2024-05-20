@@ -23,6 +23,11 @@
 :root {
   --obuiapp-type-font-family: 'lucida sans', sans-serif;
   --obuiapp-type-font-family-variant: arial, sans-serif;
+  --obuiapp-type-xs-font-size: 9px;
+  --obuiapp-type-s-font-size: 11px;
+  --obuiapp-type-m-font-size: 12px;
+  --obuiapp-type-l-font-size: 14px;
+  --obuiapp-type-xl-font-size: 16px;
 }
 
 html {
@@ -54,7 +59,7 @@ body {
 /* default text */
 .normal {
   font-family: var(--obuiapp-type-font-family);
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
   color: #333333;
 }
 
@@ -66,7 +71,7 @@ body {
 /* Style used in file input when focused */
 .normalFocused {
   font-family: var(--obuiapp-type-font-family);
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
   color: #333333;
 }
 
@@ -137,7 +142,7 @@ body {
  ============================================================*/
 .OBLoadingPromptLabel {
   font-family: var(--obuiapp-type-font-family-variant);
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
   color: #ccd0d4;
 }
 

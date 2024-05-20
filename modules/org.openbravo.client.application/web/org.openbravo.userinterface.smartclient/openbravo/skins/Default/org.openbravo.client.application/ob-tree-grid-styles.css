@@ -65,7 +65,7 @@
 .OBTreeGridCellErrorEditDisabled,
 .OBTreeGridCellErrorEditDisabledDark {
   font-family: var(--obuiapp-type-font-family-variant);
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
   vertical-align: middle;  
   border: 1px solid #cdd7bb;
   border-width: 0px 1px 1px 0px;
@@ -85,7 +85,7 @@
 .OBTreeGridHeaderCellTitleSelectedDown,
 .OBTreeGridHeaderCellTitleDisabled,
 .OBTreeGridHeaderCellTitleSelectedDisabled {
-  font-size: 11px;
+  font-size: var(--obuiapp-type-s-font-size);
   font-family: var(--obuiapp-type-font-family);
   font-weight: bold;
   border: 1px solid #BBBFB6;

@@ -20,7 +20,7 @@
 .OBMultiSelectorItemLabel,
 .OBMultiSelectorItemLabelDisabled {
   font-family: var(--obuiapp-type-font-family-variant);
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
   padding: 2px 2px 0px 2px;
 }
 

@@ -26,7 +26,7 @@
 
 .OBStatusBarTextLabel {
   font-family: var(--obuiapp-type-font-family);
-  font-size: 11px;
+  font-size: var(--obuiapp-type-s-font-size);
   color: #333333;
   font-weight: normal;  /* Don't change, property set via OBStatusBarTextLabel_Status, OBStatusBarTextLabel_Title and OBStatusBarTextLabel_Field */
   text-align: left;

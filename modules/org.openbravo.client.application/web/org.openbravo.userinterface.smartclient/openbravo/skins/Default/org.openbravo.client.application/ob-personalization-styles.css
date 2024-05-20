@@ -124,7 +124,7 @@
 .OBPersonalizationPullDownMenuCellSeparatorSelectedOver,
 .OBPersonalizationPullDownMenuCellSeparatorDisabled {
   color: #ffffff;
-  font-size: 11px;
+  font-size: var(--obuiapp-type-s-font-size);
   font-family: var(--obuiapp-type-font-family);
   cursor: pointer;
   padding-left: 5px;

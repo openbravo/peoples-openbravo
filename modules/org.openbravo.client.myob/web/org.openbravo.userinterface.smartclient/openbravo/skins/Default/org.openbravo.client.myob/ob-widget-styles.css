@@ -29,7 +29,7 @@
 
 .OBWidgetHeaderText {
   line-height: 18px;
-  font-size: 14px;
+  font-size: var(--obuiapp-type-l-font-size);
   font-family: var(--obuiapp-type-font-family);
   font-weight: bold;
   padding: 4px 0px 0px 5px;
@@ -84,7 +84,7 @@
 }
 
 .xOBWidgetMenuTable td {
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
   font-family: var(--obuiapp-type-font-family);
 }
 
@@ -111,7 +111,7 @@
 .OBWidgetMenuCellTitleFieldSelectedOver,
 .OBWidgetMenuCellTitleFieldSelectedOverDark {
   font-family: var(--obuiapp-type-font-family);
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
   color: #fff;
   padding: 0px 0px 0px 4px;
 }
@@ -190,13 +190,13 @@
 /* Community branding widget */
 .OBWidgetCommunityBranding{
   font-weight: bold;
-  font-size: 16px;
+  font-size: var(--obuiapp-type-xl-font-size);
 }
 
 .OBWidgetCommunityBrandingUnknown {
   padding-top: 32px;
   font-weight: bold;
-  font-size: 16px;
+  font-size: var(--obuiapp-type-xl-font-size);
   background-repeat: no-repeat;
   background-position: center 6px;
   background-image: url(images/purpose/banner-unknown.png);
@@ -205,7 +205,7 @@
 .OBWidgetCommunityBrandingDevelopment {
   padding-top: 32px;
   font-weight: bold;
-  font-size: 16px;
+  font-size: var(--obuiapp-type-xl-font-size);
   background-repeat: no-repeat;
   background-position: center 6px;
   background-image: url(images/purpose/banner-development.png);
@@ -214,7 +214,7 @@
 .OBWidgetCommunityBrandingEvaluation {
   padding-top: 32px;
   font-weight: bold;
-  font-size: 16px;
+  font-size: var(--obuiapp-type-xl-font-size);
   background-repeat: no-repeat;
   background-position: center 6px;
   background-image: url(images/purpose/banner-evaluation.png);
@@ -223,7 +223,7 @@
 .OBWidgetCommunityBrandingTesting {
   padding-top: 32px;
   font-weight: bold;
-  font-size: 16px;
+  font-size: var(--obuiapp-type-xl-font-size);
   background-repeat: no-repeat;
   background-position: center 6px;
   background-image: url(images/purpose/banner-testing.png);
@@ -232,7 +232,7 @@
 .OBWidgetCommunityBrandingProduction {
   padding-top: 32px;
   font-weight: bold;
-  font-size: 16px;
+  font-size: var(--obuiapp-type-xl-font-size);
   background-repeat: no-repeat;
   background-position: center 6px;
   background-image: url(../../utility/ShowImageLogo?logo=banner-production);
@@ -240,12 +240,12 @@
 
 .OBWidgetAboutLabels {
   font-family: var(--obuiapp-type-font-family);
-  font-size: 11px;
+  font-size: var(--obuiapp-type-s-font-size);
   font-weight: bold;
 }
 
 .OBWidgetAboutFields {
   font-family: var(--obuiapp-type-font-family-variant);
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
 }
 

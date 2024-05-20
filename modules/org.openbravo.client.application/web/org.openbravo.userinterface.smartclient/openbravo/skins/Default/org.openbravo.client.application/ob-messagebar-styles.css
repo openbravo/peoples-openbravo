@@ -42,7 +42,7 @@
 
 .OBMessageBarDescriptionText {
   font-family: var(--obuiapp-type-font-family-variant);
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
   font-weight: normal;
   margin: 4px 2px 2px 6px;
   line-height: 16px;

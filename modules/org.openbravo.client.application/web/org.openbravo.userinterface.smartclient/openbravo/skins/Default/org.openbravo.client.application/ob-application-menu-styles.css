@@ -25,12 +25,12 @@
 .OBApplicationMenuTree {
   background-color: #fff;
   border: 1px solid #72ab10;
-  font-size: 11px;
+  font-size: var(--obuiapp-type-s-font-size);
   font-family: var(--obuiapp-type-font-family);
 }
 
 .OBApplicationMenuTreeBody {
-  font-size: 11px;
+  font-size: var(--obuiapp-type-s-font-size);
   font-family: var(--obuiapp-type-font-family);
 }
 
@@ -44,7 +44,7 @@
 .OBApplicationMenuTreeItemCellTitleFieldOver,
 .OBApplicationMenuTreeItemCellTitleFieldSelectedOver,
 .OBApplicationMenuTreeItemCellTitleFieldDisabled {
-  font-size: 11px;
+  font-size: var(--obuiapp-type-s-font-size);
   font-family: var(--obuiapp-type-font-family);
   cursor: pointer;
 }

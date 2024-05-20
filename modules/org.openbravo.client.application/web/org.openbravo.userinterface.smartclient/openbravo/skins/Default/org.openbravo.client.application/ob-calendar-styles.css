@@ -24,13 +24,13 @@
 .OBEventWindowHeader {
   font-family: var(--obuiapp-type-font-family-variant);
   font-weight: bold;
-  font-size: 9px;
+  font-size: var(--obuiapp-type-xs-font-size);
   background-color: #FFE1C0;
 }
 
 .OBEventWindowBody {
   font-family: var(--obuiapp-type-font-family-variant);
-  font-size: 9px;
+  font-size: var(--obuiapp-type-xs-font-size);
   background-color: #FFE1C0;
   padding: 0px 3px 0px 3px;
 }
@@ -52,7 +52,7 @@
   border: 1px solid #cdd7bb;
   border-width: 0px 1px 1px 0px;
   font-family: var(--obuiapp-type-font-family-variant);
-  font-size: 11px;
+  font-size: var(--obuiapp-type-s-font-size);
 }
 
 .OBCalendarGridCell,
@@ -67,7 +67,7 @@
 }
 
 .OBCalendarGridHeaderCell {
-  font-size: 11px;
+  font-size: var(--obuiapp-type-s-font-size);
   font-family: var(--obuiapp-type-font-family);
   font-weight: bold;
   border: 1px solid #BBBFB6;
@@ -77,7 +77,7 @@
 }
 
 .OBCalendarGridHeaderCellOver {
-  font-size: 11px;
+  font-size: var(--obuiapp-type-s-font-size);
   font-family: var(--obuiapp-type-font-family);
   font-weight: bold;
   border: 1px solid #BBBFB6;

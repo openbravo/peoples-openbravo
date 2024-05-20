@@ -70,7 +70,7 @@
 .OBFormFieldLabelError,
 .OBFormFieldLabelFocused {
   font-family: var(--obuiapp-type-font-family);
-  font-size: 11px;
+  font-size: var(--obuiapp-type-s-font-size);
   font-weight: bold;
 }
 
@@ -141,7 +141,7 @@
 .OBFormFieldNumberInputRequiredError,
 .OBFormFieldNumberInputRequiredHint {
   font-family: var(--obuiapp-type-font-family-variant);
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
   padding: 2px 2px 0px 2px;
   margin-right: 0px;
   resize: none; /* CSS3 Property to avoid the browser capability of resize textareas */
@@ -319,7 +319,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBFormFieldSelectControlError,
 .OBFormFieldSelectControlFocused {
   font-family: var(--obuiapp-type-font-family-variant);
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
   color: #333;
   border: 0px;
 }
@@ -448,7 +448,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBFormFieldPickListCellSelectedOverDark {
   padding-left: 2px;
   font-family: var(--obuiapp-type-font-family);
-  font-size:11px;
+  font-size: var(--obuiapp-type-s-font-size);
 }
 
 .OBFormFieldPickListCell,
@@ -559,7 +559,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBDateChooserWeekendDisabledOver,
 .OBDateChooserWeekendDisabledDown {
   font-family: var(--obuiapp-type-font-family);
-  font-size: 11px;
+  font-size: var(--obuiapp-type-s-font-size);
   background-color: white;
   color: #333333;
 }
@@ -574,7 +574,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBDateChooserBottomButtonSelectedOver,
 .OBDateChooserBottomButtonSelectedDown {
   font-family: var(--obuiapp-type-font-family);
-  font-size: 11px;
+  font-size: var(--obuiapp-type-s-font-size);
   background-color: transparent;
   color: #333333;
 }
@@ -613,7 +613,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBDateChooserNavButtonSelectedOver,
 .OBDateChooserNavButtonSelectedDown {
   font-family: var(--obuiapp-type-font-family);
-  font-size: 11px;
+  font-size: var(--obuiapp-type-s-font-size);
   background-color: transparent;
   color: #333333;
 }
@@ -808,7 +808,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBFormButtonSelectedDisabled {
   padding: 5px 20px 5px;
   font-family: var(--obuiapp-type-font-family);
-  font-size:12px;
+  font-size: var(--obuiapp-type-m-font-size);
   background-image:url(./images/form/textButton-bg-normal.png);
   color:#000000;
   background-position:right top;
@@ -863,7 +863,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBFormButtonTitleSelectedDisabled {
   color: #000000;
   font-family: var(--obuiapp-type-font-family);
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
 }
 
 .OBFormButtonTitleDisabled,
@@ -887,7 +887,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBLinkButtonItemFocusedOver,
 .OBLinkButtonItemFocusedDown {
   font-family: var(--obuiapp-type-font-family);
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
   vertical-align: middle;
   background: transparent;
   padding: 5px 5px 5px 5px;
@@ -929,7 +929,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBSectionItemButton_Title_Overopened,
 .OBSectionItemButton_Title_Overclosed {
   font-family: var(--obuiapp-type-font-family);
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
   font-weight: bold;
 }
 
@@ -971,7 +971,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
    background-color: transparent;
    padding: 5px;
    font-family: var(--obuiapp-type-font-family-variant);
-   font-size: 12px;
+   font-size: var(--obuiapp-type-m-font-size);
 }
 
 .OBNoteListGridCurrentUserNoteCell,
@@ -988,14 +988,14 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBNoteListGridAuthor {
   font-family: var(--obuiapp-type-font-family-variant);
   font-style: italic;
-  font-size: 11px;
+  font-size: var(--obuiapp-type-s-font-size);
   margin-left: 3px;
 }
 
 .OBNoteListGridDelete {
   font-family: var(--obuiapp-type-font-family);
   font-style: normal;
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
   color: #58a618;
   margin-left: 0px;
 }

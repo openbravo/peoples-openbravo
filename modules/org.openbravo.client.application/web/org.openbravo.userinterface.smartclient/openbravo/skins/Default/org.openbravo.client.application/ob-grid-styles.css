@@ -84,7 +84,7 @@
 .OBGridCellErrorEditDisabled,
 .OBGridCellErrorEditDisabledDark {
   font-family: var(--obuiapp-type-font-family-variant);
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
   vertical-align: middle;
   border: 1px solid #cdd7bb;
   border-width: 0px 1px 1px 0px;
@@ -190,7 +190,7 @@
 .OBGridFilterStaticText,
 .OBGridFilterStaticTextLink {
   font-family: var(--obuiapp-type-font-family);
-  font-size: 11px;
+  font-size: var(--obuiapp-type-s-font-size);
   font-weight: normal;
   color: #333333;
   padding: 3px 0px 0px 0px;
@@ -227,7 +227,7 @@
 .OBGridHeaderCellTitleSelectedDown,
 .OBGridHeaderCellTitleDisabled,
 .OBGridHeaderCellTitleSelectedDisabled {
-  font-size: 11px;
+  font-size: var(--obuiapp-type-s-font-size);
   font-family: var(--obuiapp-type-font-family);
   font-weight: bold;
   border: 1px solid #BBBFB6;
@@ -346,7 +346,7 @@
 .OBGridNotificationText,
 .OBGridNotificationTextError {
   font-family: var(--obuiapp-type-font-family);
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
   vertical-align: middle;
   background: transparent;
 }
@@ -367,7 +367,7 @@
 .OBGridNotificationTextLinkFocusedOver,
 .OBGridNotificationTextLinkFocusedDown {
   font-family: var(--obuiapp-type-font-family);
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
   vertical-align: middle;
   background: transparent;
   padding: 5px 5px 5px 5px;
@@ -411,7 +411,7 @@
 .OBGridLinkCellSelectedDark,
 .OBGridLinkCellSelectedOverDark {
   font-family: var(--obuiapp-type-font-family-variant);
-  font-size:12px;
+  font-size: var(--obuiapp-type-m-font-size);
   text-overflow: ellipsis;
   color: #58A618;
   border: 1px solid #cdd7bb;
@@ -451,7 +451,7 @@
 .OBGridFormLabelFocused,
 .OBGridFormLabelError {
   font-family: var(--obuiapp-type-font-family-variant);
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
   padding: 0px 4px 0px 4px;
 }
 
@@ -471,7 +471,7 @@
 .OBGridFormButtonSelectedDisabled {
   padding: 2px 5px 2px 5px;
   font-family: var(--obuiapp-type-font-family);
-  font-size:12px;
+  font-size: var(--obuiapp-type-m-font-size);
   background-image:url(./images/form/textButton-bg-normal.png);
   color:#000000;
   background-position:right top;

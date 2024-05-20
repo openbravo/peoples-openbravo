@@ -20,6 +20,11 @@
 :root {
   --obuiapp-type-font-family: 'lucida sans', sans-serif;
   --obuiapp-type-font-family-variant: arial, sans-serif;
+  --obuiapp-type-xs-font-size: 9px;
+  --obuiapp-type-s-font-size: 11px;
+  --obuiapp-type-m-font-size: 12px;
+  --obuiapp-type-l-font-size: 14px;
+  --obuiapp-type-xl-font-size: 16px;
 }
 
 * {margin: 0px; padding: 0px;}
@@ -27,7 +32,7 @@
 body {
   margin-top: 0px;
   font-family: var(--obuiapp-type-font-family-variant);
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
   font-weight: normal;
   color: #000000;
   background-color: #FFFFFF;
@@ -105,7 +110,7 @@ button.ButtonLink_default, button.ButtonLink_default:active, button.ButtonLink_d
 button.ButtonLink table.Button, .Button {
   border-collapse: collapse;
   font-family: var(--obuiapp-type-font-family-variant);
-  font-size: 8pt;
+  font-size: var(--obuiapp-type-s-font-size);
   color: #000000;
   font-weight: bold;
   cursor: pointer;
@@ -131,7 +136,7 @@ button.ButtonLink table.Button .Button_text, table.Button .Button_text {
   text-align: center;
   height: 30px;
   font-family: var(--obuiapp-type-font-family);
-  font-size: 1.2em;
+  font-size: var(--obuiapp-type-m-font-size);
   font-weight: normal;
   text-align: center;
 }
@@ -148,7 +153,7 @@ button.ButtonLink_hover table.Button, .Button_hover {
   border-collapse: collapse;
   text-align: center;
   font-family: var(--obuiapp-type-font-family-variant);
-  font-size: 8pt;
+  font-size: var(--obuiapp-type-s-font-size);
   color: #000000;
   font-weight: bold;
   cursor: pointer;
@@ -171,7 +176,7 @@ button.ButtonLink_hover table.Button .Button_text, table.Button_hover .Button_te
   background-image: url(Common/Button/buttonBody.rollover.png);
   height: 30px;
   font-family: var(--obuiapp-type-font-family);
-  font-size: 1.2em;
+  font-size: var(--obuiapp-type-m-font-size);
   font-weight: normal;
 }
 
@@ -197,7 +202,7 @@ button.ButtonLink_active table.Button .Button_text, table.Button_active .Button_
   background-image: url(Common/Button/buttonBody.pressed.png);
   height: 30px;
   font-family: var(--obuiapp-type-font-family);
-  font-size: 1.2em;
+  font-size: var(--obuiapp-type-m-font-size);
   font-weight: normal;
 }
 
@@ -221,7 +226,7 @@ button.ButtonLink_focus table.Button .Button_text, table.Button_focus .Button_te
   background-image: url(Common/Button/buttonBody.focused.png);
   height: 30px;
   font-family: var(--obuiapp-type-font-family);
-  font-size: 1.2em;
+  font-size: var(--obuiapp-type-m-font-size);
   font-weight: normal;  
 }
 
@@ -237,7 +242,7 @@ button.ButtonLink_default table.Button, .Button_default {
   border-collapse: collapse;
   text-align: center;
   font-family: var(--obuiapp-type-font-family-variant);
-  font-size: 8pt;
+  font-size: var(--obuiapp-type-s-font-size);
   color: #000000;
   font-weight: bold;
   cursor: pointer;
@@ -260,7 +265,7 @@ button.ButtonLink_default table.Button .Button_text, table.Button_default .Butto
   background-image: url(Common/Button/buttonBody.default.png);
   height: 30px;
   font-family: var(--obuiapp-type-font-family);
-  font-size: 1.2em;
+  font-size: var(--obuiapp-type-m-font-size);
   font-weight: normal;  
 }
 
@@ -276,7 +281,7 @@ button.ButtonLink_disabled table.Button, .Button_disabled {
   border-collapse: collapse;
   text-align: center;
   font-family: var(--obuiapp-type-font-family-variant);
-  font-size: 8pt;
+  font-size: var(--obuiapp-type-s-font-size);
   color: #777777;
   font-weight: bold;
   cursor: default;
@@ -299,7 +304,7 @@ button.ButtonLink_disabled table.Button .Button_text, table.Button_disabled .But
   background-image: url(Common/Button/buttonBody.disabled.png);
   height: 30px;
   font-family: var(--obuiapp-type-font-family);
-  font-size: 1.2em;
+  font-size: var(--obuiapp-type-m-font-size);
   font-weight: normal;
 }
 
@@ -339,7 +344,7 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
 .dojoValidateRange_focus {
   border: 1px solid #CDD7BB;
   font-family: var(--obuiapp-type-font-family-variant);
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
   color: #333333;
   background-color: #F5F7F1 !important;
   background-image: none;
@@ -371,7 +376,7 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
 .LabelText {
   font-family: var(--obuiapp-type-font-family);
   color: #333333;
-  font-size: 8pt;
+  font-size: var(--obuiapp-type-s-font-size);
   font-weight: bold;
 }
 
@@ -509,7 +514,7 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
 .Login_BottomLogos_CopyrightText {
   display: block;
   color: #afafaf;
-  font-size: .9em;
+  font-size: var(--obuiapp-type-s-font-size);
   line-height: 0.9em;
   text-align: center;
 }
@@ -529,17 +534,17 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
 .Login_ErrorMsg_Title {
   color: red !important;
   font-weight: bold;
-  font-size: 10px;
+  font-size: var(--obuiapp-type-s-font-size);
 }
 
 .Login_ErrorMsg_Content {
   color: red !important;
   font-weight: normal;
-  font-size: 10px;
+  font-size: var(--obuiapp-type-s-font-size);
 }
 
 .Login_LabelText {
-  font-size: 9pt;
+  font-size: var(--obuiapp-type-m-font-size);
 }
 
 .Login_TextBox,

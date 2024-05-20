@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2016 Openbravo SLU
+ * All portions are Copyright (C) 2011-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -73,8 +73,8 @@
 .OBMyOBRecentViewsEntryOver,
 .OBMyOBRecentViewsEntry {
   cursor: pointer;
-  font-family: 'lucida sans', sans-serif;
-  font-size: 12px;
+  font-family: var(--obuiapp-type-font-family);
+  font-size: var(--obuiapp-type-m-font-size);
   padding: 4px;
 }
 

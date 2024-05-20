@@ -20,7 +20,7 @@
 .OBDialogLabel,
 .OBDialogLabelRequired {
   font-family: var(--obuiapp-type-font-family);
-  font-size: 12px;
+  font-size: var(--obuiapp-type-m-font-size);
   color: #333333;
   line-height: 1.4em;
 }
