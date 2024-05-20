@@ -65,12 +65,52 @@ OB.MultiVariantPurchaseGrid = {
 // 22803EBEEC804A648723B2B7070DBB7D is the id for the ProductVariantDataSource
 const PRODUCT_VARIANT_DATA_SOURCE_ID = '22803EBEEC804A648723B2B7070DBB7D';
 
-const getViewProperties = recordId => ({
+const getViewProperties = (recordId, view) => ({
   allowAdd: true,
   allowDelete: true,
   showSelect: false,
   selectionType: 'S',
   arrowKeyAction: 'select',
+  autoFetchData: true,
+  selectionFn: (ignored, record, state) => {
+    if (state === true) {
+      console.log(record, state);
+      if (record.newRow) {
+        // TODO: Add row and column characteristics
+        const requestProperties = {};
+        requestProperties.params = {};
+        requestProperties.params._startRow = 0;
+        requestProperties.params._endRow = 200;
+        const o = {
+          setDataSource: dataS => {
+            this.dataSource = dataS;
+            this.dataSource.fetchData(
+              {},
+              response => {
+                console.log('DATA FETCHED: ', response);
+              },
+              requestProperties
+            );
+          }
+        };
+        OB.Datasource.get('CharacteristicValue', o, null, false);
+
+        return;
+      }
+      // Record has been selected, reset the bottom table
+      OB.MultiVariantPurchaseGridItem.selectProduct(
+        record.product,
+        record.listOfItems[0],
+        record.listOfItems[1]
+      );
+    }
+  },
+  newFn: grid => {
+    var returnObject = isc.addProperties({}, grid.data[0]);
+    returnObject.newRow = true;
+    returnObject.quantity = 0;
+    return returnObject;
+  },
   dataSourceProperties: {
     createClassName: '',
     dataURL: `/openbravo/org.openbravo.service.datasource/${PRODUCT_VARIANT_DATA_SOURCE_ID}`,
@@ -83,13 +123,8 @@ const getViewProperties = recordId => ({
     },
     fields: [
       {
-        name: 'id',
-        type: '_id_13',
-        primaryKey: true
-      },
-      {
         name: 'product',
-        type: '_id_800060'
+        type: '_id_AA08D5AFC89D4F6CB838064FC06EF5E4'
       }
     ]
   },
@@ -105,77 +140,62 @@ const getViewProperties = recordId => ({
       refColumnName: 'M_Product_ID',
       targetEntity: 'Product',
       firstFocusedField: true,
-      selectorDefinitionId: '2E64F551C7C4470C80C29DBA24B34A5F',
+      selectorDefinitionId: 'D55B3817C9CF4AC4AFEE7B0222C1453A',
       popupTextMatchStyle: 'substring',
       textMatchStyle: 'substring',
       defaultPopupFilterField: '_identifier',
       displayField: '_identifier',
-      valueField: 'product$id',
+      valueField: 'id',
       sortByField: '_identifier',
-      pickListFields: [{ title: ' ', name: '_identifier', type: 'text' }],
+      pickListFields: [
+        { title: 'Product', name: '_identifier', type: 'text' },
+        {
+          title: 'Row characteristic',
+          name: 'rowCharacteristic',
+          displayField: 'name',
+          type: 'text'
+        },
+        {
+          title: 'Column characteristic',
+          name: 'columnCharacteristic',
+          displayField: 'name',
+          type: 'text'
+        }
+      ],
       showSelectorGrid: true,
       // TODO: Reduce the amount of selector grid fields to only those necessary
       selectorGridFields: [
         {
           title: 'Search Key',
-          name: 'product$searchKey',
+          name: 'searchKey',
           type: '_id_10',
           showHover: true
         },
         {
           title: 'Name',
-          name: 'product$name',
+          name: 'name',
           type: '_id_10',
           showHover: true
         },
         {
           title: 'Characteristic Description',
-          name: 'product$characteristicDescription',
+          name: 'characteristicDescription',
           type: '_id_C632F1CFF5A1453EB28BDF44A70478F8',
           showHover: true
         },
         {
-          title: 'Available',
-          name: 'available',
-          type: '_id_29',
-          showHover: true,
-          filterOnKeypress: false
+          title: 'Row Characteristic',
+          name: 'rowCharacteristic',
+          displayField: 'rowCharacteristic$_identifier',
+          type: '_id_10',
+          showHover: true
         },
         {
-          title: 'Warehouse',
-          name: 'warehouse',
-          type: '_id_19',
-          displayField: 'warehouse$_identifier',
-          showHover: true,
-          canFilter: true,
-          required: false,
-          filterEditorType: 'OBSelectorFilterSelectItem',
-          filterEditorProperties: { entity: 'Warehouse' }
-        },
-        {
-          title: 'Unit Price',
-          name: 'standardPrice',
-          type: '_id_800008',
-          showHover: true,
-          filterOnKeypress: false
-        },
-        {
-          title: 'List Price',
-          name: 'netListPrice',
-          type: '_id_800008',
-          showHover: true,
-          filterOnKeypress: false
-        },
-        {
-          title: 'Price List Version',
-          name: 'productPrice$priceListVersion',
-          type: '_id_19',
-          displayField: 'productPrice$priceListVersion$_identifier',
-          showHover: true,
-          canFilter: true,
-          required: false,
-          filterEditorType: 'OBSelectorFilterSelectItem',
-          filterEditorProperties: { entity: 'PricingPriceListVersion' }
+          title: 'Column Characteristic',
+          name: 'columnCharacteristic',
+          displayField: 'columnCharacteristic$_identifier',
+          type: '_id_10',
+          showHover: true
         }
       ],
       extraSearchFields: [
@@ -186,16 +206,14 @@ const getViewProperties = recordId => ({
       init: function() {
         this.optionDataSource = OB.Datasource.create({
           createClassName: '',
-          dataURL:
-            '/openbravo/org.openbravo.service.datasource/ProductByPriceAndWarehouse',
+          dataURL: '/openbravo/org.openbravo.service.datasource/Product',
           requestProperties: {
             params: {
               adTabId: '187',
               Constants_IDENTIFIER: '_identifier',
               Constants_FIELDSEPARATOR: '$',
               targetProperty: 'product',
-              _extraProperties:
-                'product$searchKey,product$id,productPrice$priceListVersion$_identifier,available,productPrice$priceListVersion$priceList$currency$id,product$genericProduct$_identifier,warehouse$_identifier,priceLimit,product$name,qtyOnHand,product$uOM$id,product$_identifier,product$characteristicDescription,qtyOrdered,standardPrice,netListPrice',
+              _extraProperties: '',
               columnName: 'M_Product_ID',
               IsSelectorItem: 'true'
             }
@@ -213,52 +231,7 @@ const getViewProperties = recordId => ({
             { name: 'creationDate', type: '_id_16' },
             { name: 'createdBy', type: '_id_30' },
             { name: 'createdBy$_identifier' },
-            { name: 'product', type: '_id_800060' },
-            { name: 'product$_identifier' },
-            { name: 'warehouse', type: '_id_19' },
-            { name: 'warehouse$_identifier' },
-            { name: 'productPrice', type: '_id_19' },
-            { name: 'productPrice$_identifier' },
-            { name: 'available', type: '_id_29' },
-            { name: 'qtyOnHand', type: '_id_29' },
-            { name: 'qtyReserved', type: '_id_29' },
-            { name: 'qtyOrdered', type: '_id_29' },
-            { name: 'netListPrice', type: '_id_800008' },
-            { name: 'standardPrice', type: '_id_800008' },
-            { name: 'priceLimit', type: '_id_800008' },
-            { name: 'orgwarehouse', type: '_id_10' },
-            { name: 'product$searchKey', type: '_id_10', additional: true },
-            { name: 'product$id', type: '_id_13', additional: true },
-            {
-              name: 'productPrice$priceListVersion$_identifier',
-              type: '_id_10',
-              additional: true
-            },
-            { name: 'available', type: '_id_29', additional: true },
-            {
-              name: 'productPrice$priceListVersion$priceList$currency$id',
-              type: '_id_13',
-              additional: true
-            },
-            {
-              name: 'product$genericProduct$_identifier',
-              type: '_id_10',
-              additional: true
-            },
-            { name: 'warehouse$_identifier', type: '_id_10', additional: true },
-            { name: 'priceLimit', type: '_id_800008', additional: true },
-            { name: 'product$name', type: '_id_10', additional: true },
-            { name: 'qtyOnHand', type: '_id_29', additional: true },
-            { name: 'product$uOM$id', type: '_id_13', additional: true },
-            { name: 'product$_identifier', type: '_id_10', additional: true },
-            {
-              name: 'product$characteristicDescription',
-              type: '_id_C632F1CFF5A1453EB28BDF44A70478F8',
-              additional: true
-            },
-            { name: 'qtyOrdered', type: '_id_29', additional: true },
-            { name: 'standardPrice', type: '_id_800008', additional: true },
-            { name: 'netListPrice', type: '_id_800008', additional: true }
+            { name: '_identifier' }
           ]
         });
         this.Super('init', arguments);
@@ -275,7 +248,7 @@ const getViewProperties = recordId => ({
         showHover: true,
         filterEditorProperties: { keyProperty: 'id' }
       },
-      type: '_id_800060'
+      type: '_id_AA08D5AFC89D4F6CB838064FC06EF5E4'
     },
     {
       name: 'quantity',
@@ -299,7 +272,8 @@ const getViewProperties = recordId => ({
         width: 50
       },
       type: '_id_29'
-    }
+    },
+    { name: 'listOfOptions', visible: false }
   ],
   gridProperties: {
     orderByClause: '',
@@ -333,7 +307,7 @@ isc.ProductSelectionGridItem.addProperties({
     this.canvas = isc.OBPickAndExecuteView.create({
       height: 300,
       view: modifiedView,
-      viewProperties: getViewProperties(this.recordId)
+      viewProperties: getViewProperties(this.recordId, modifiedView)
     });
     this.Super('init', arguments);
     this.selectionLayout = this.canvas;

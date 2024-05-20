@@ -28,6 +28,7 @@ isc.MultiVariantPurchaseGridItem.addProperties({
     this.disabled = false;
     this.grid = this.createGrid();
     this.Super('init', arguments);
+    OB.MultiVariantPurchaseGridItem = this;
   },
   createGrid: function(columns = [], rows = [], initialValues = []) {
     // Create or recreate ListGrid based on new or existing configuration
