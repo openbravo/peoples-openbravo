@@ -85,7 +85,7 @@ isc.MultiVariantPurchaseGridItem.addProperties({
       fields: [
         {
           name: 'color',
-          title: '',
+          title: 'Ch',
           canEdit: false,
           width: 100,
           canSort: false

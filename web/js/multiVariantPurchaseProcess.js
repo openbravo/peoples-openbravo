@@ -64,6 +64,8 @@ OB.MultiVariantPurchaseGrid = {
 
 // 22803EBEEC804A648723B2B7070DBB7D is the id for the ProductVariantDataSource
 const PRODUCT_VARIANT_DATA_SOURCE_ID = '22803EBEEC804A648723B2B7070DBB7D';
+const PRODUCT_CHARACTERISTIC_VALUE_DATA_SOURCE_ID =
+  'B87CFEF81AC347C28EF5C5BCECE0637C';
 
 const getViewProperties = (recordId, view) => ({
   allowAdd: true,
@@ -74,35 +76,56 @@ const getViewProperties = (recordId, view) => ({
   autoFetchData: true,
   selectionFn: (ignored, record, state) => {
     if (state === true) {
-      console.log(record, state);
       if (record.newRow) {
-        // TODO: Add row and column characteristics
         const requestProperties = {};
         requestProperties.params = {};
         requestProperties.params._startRow = 0;
-        requestProperties.params._endRow = 200;
+        requestProperties.params._endRow = 10; // Actually only 1 row will be returned, because of filtering by the product
+        requestProperties.params.productId = record.product;
         const o = {
           setDataSource: dataS => {
             this.dataSource = dataS;
             this.dataSource.fetchData(
               {},
-              response => {
-                console.log('DATA FETCHED: ', response);
+              (response, data) => {
+                const dataReceived = data[0];
+                const rowCharacteristics = dataReceived.rowCharacteristics.map(
+                  r => ({
+                    name: r.id,
+                    title: r._identifier
+                  })
+                );
+                const columnCharacteristics = dataReceived.columnCharacteristics.map(
+                  r => ({
+                    name: r.id,
+                    title: r._identifier
+                  })
+                );
+                OB.MultiVariantPurchaseGridItem.selectProduct(
+                  record.product,
+                  rowCharacteristics,
+                  columnCharacteristics
+                );
               },
               requestProperties
             );
           }
         };
-        OB.Datasource.get('CharacteristicValue', o, null, false);
-
-        return;
+        OB.Datasource.get(
+          PRODUCT_CHARACTERISTIC_VALUE_DATA_SOURCE_ID,
+          o,
+          null,
+          false
+        );
+      } else {
+        // Record selected, comes from backend, so it should already contain rowCharacteristics and columnCharacteristics
+        // TODO: this still requires implementation
+        OB.MultiVariantPurchaseGridItem.selectProduct(
+          record.product,
+          record.rowCharacteristics,
+          record.columnCharacteristics
+        );
       }
-      // Record has been selected, reset the bottom table
-      OB.MultiVariantPurchaseGridItem.selectProduct(
-        record.product,
-        record.listOfItems[0],
-        record.listOfItems[1]
-      );
     }
   },
   newFn: grid => {
@@ -151,14 +174,12 @@ const getViewProperties = (recordId, view) => ({
         { title: 'Product', name: '_identifier', type: 'text' },
         {
           title: 'Row characteristic',
-          name: 'rowCharacteristic',
-          displayField: 'name',
+          name: 'rowCharacteristic$_identifier',
           type: 'text'
         },
         {
           title: 'Column characteristic',
-          name: 'columnCharacteristic',
-          displayField: 'name',
+          name: 'columnCharacteristic$_identifier',
           type: 'text'
         }
       ],
@@ -231,7 +252,9 @@ const getViewProperties = (recordId, view) => ({
             { name: 'creationDate', type: '_id_16' },
             { name: 'createdBy', type: '_id_30' },
             { name: 'createdBy$_identifier' },
-            { name: '_identifier' }
+            { name: '_identifier' },
+            { name: 'rowCharacteristic', type: '_id_30' },
+            { name: 'columnCharacteristic', type: '_id_30' }
           ]
         });
         this.Super('init', arguments);
@@ -284,7 +307,11 @@ const getViewProperties = (recordId, view) => ({
   },
   standardProperties: {},
   statusTabFields: [],
-  tabId: ''
+  tabId: '294',
+  handleReadOnlyLogic: (formValues, contextInfo, form) => {
+    // TODO: Handle disabling the field if it has already been edited before
+    // console.log('[HANDLE-READ-ONLY-LOGIC]', formValues, contextInfo, form);
+  }
 });
 
 isc.ClassFactory.defineClass('ProductSelectionGridItem', isc.CanvasItem);
