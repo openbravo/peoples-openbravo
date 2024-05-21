@@ -25,10 +25,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 
 /**
@@ -65,15 +68,64 @@ public class MultiVariantProductDataSource extends ReadOnlyDataSourceService {
               || orderLineProduct.getGenericProduct().getColumnCharacteristic() != null)) {
         if (!genericProductIds.contains(orderLineProduct.getGenericProduct().getId())) {
           genericProductIds.add(orderLineProduct.getGenericProduct().getId());
-          genericProducts.add( //
-              Map.of("product", orderLineProduct.getGenericProduct(), //
-                  "quantity", 0, //
-                  "listOfItems", (new JSONArray()).put(new JSONArray()).put(new JSONArray()))); //
-          // TODO: Include product data, computed using row/col characteristics + variant orderline
-          // products + quantities
+
+          // Calculate row and column characteristics and initial quantities
+          Product genericProduct = orderLineProduct.getGenericProduct();
+          JSONObject characteristicValues = getProductCharacteristicValuesForRowAndColumnCharacteristic(
+              genericProduct);
+
+          try {
+            JSONArray rowCharacteristics = characteristicValues.getJSONArray("rowCharacteristics");
+
+            JSONArray columnCharacteristics = characteristicValues
+                .getJSONArray("columnCharacteristics");
+
+            genericProducts.add( //
+                Map.of("product", genericProduct, //
+                    "quantity", 0, //
+                    "rowCharacteristics", rowCharacteristics, //
+                    "columnCharacteristics", columnCharacteristics)); //
+            // TODO: Include initialValues for each row/column present as variant
+          } catch (JSONException e) {
+            throw new RuntimeException(e);
+          }
         }
       }
     });
     return genericProducts;
+  }
+
+  private JSONObject getProductCharacteristicValuesForRowAndColumnCharacteristic(Product product) {
+    String prodRowCharacteristicId = product.getRowCharacteristic() != null
+        ? product.getRowCharacteristic().getId()
+        : null;
+    String prodColumnCharacteristicId = product.getColumnCharacteristic() != null
+        ? product.getColumnCharacteristic().getId()
+        : null;
+
+    List<ProductCharacteristic> productCharacteristics = product.getProductCharacteristicList();
+    JSONArray rowCharacteristics = new JSONArray();
+    JSONArray columnCharacteristics = new JSONArray();
+
+    for (ProductCharacteristic productCharacteristic : productCharacteristics) {
+      if (productCharacteristic.getCharacteristic().getId().equals(prodRowCharacteristicId)) {
+        productCharacteristic.getProductCharacteristicConfList().forEach(chConf -> {
+          rowCharacteristics
+              .put(new JSONObject(Map.of("id", chConf.getCharacteristicValue().getId(),
+                  "_identifier", chConf.getCharacteristicValue().getIdentifier())));
+        });
+      } else if (productCharacteristic.getCharacteristic()
+          .getId()
+          .equals(prodColumnCharacteristicId)) {
+        productCharacteristic.getProductCharacteristicConfList().forEach(chConf -> {
+          columnCharacteristics
+              .put(new JSONObject(Map.of("id", chConf.getCharacteristicValue().getId(),
+                  "_identifier", chConf.getCharacteristicValue().getIdentifier())));
+        });
+      }
+    }
+
+    return new JSONObject(Map.of("rowCharacteristics", rowCharacteristics, "columnCharacteristics",
+        columnCharacteristics));
   }
 }

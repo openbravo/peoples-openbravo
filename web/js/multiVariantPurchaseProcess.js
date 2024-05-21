@@ -118,12 +118,20 @@ const getViewProperties = (recordId, view) => ({
           false
         );
       } else {
+        const rowCharacteristics = record.rowCharacteristics.map(r => ({
+          name: r.id,
+          title: r._identifier
+        }));
+        const columnCharacteristics = record.columnCharacteristics.map(r => ({
+          name: r.id,
+          title: r._identifier
+        }));
         // Record selected, comes from backend, so it should already contain rowCharacteristics and columnCharacteristics
         // TODO: this still requires implementation
         OB.MultiVariantPurchaseGridItem.selectProduct(
           record.product,
-          record.rowCharacteristics,
-          record.columnCharacteristics
+          rowCharacteristics,
+          columnCharacteristics
         );
       }
     }

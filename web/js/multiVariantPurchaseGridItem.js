@@ -44,16 +44,20 @@ isc.MultiVariantPurchaseGridItem.addProperties({
 
     let rowsData = rows.map(row => ({
       // TODO: Remove mentions to color
-      color: row.title,
+      characteristicName: row.title,
+      characteristicValue: row.name,
       ...columns.reduce((acc, col) => ({ ...acc, [col.name]: 0 }), {})
     }));
 
+    // initialValues: [{ rowCharacteristicValue: 'X', columnCharacteristicValue: 'Y', quantity: 2 }]
     initialValues.forEach(item => {
       let row = rowsData.find(
-        r => r.color.toLowerCase() === item.color.toLowerCase()
+        r =>
+          r.characteristicValue.toLowerCase() ===
+          item.rowCharacteristicValue.toLowerCase()
       );
-      if (row && row.hasOwnProperty(item.size)) {
-        row[item.size] = item.quantity;
+      if (row && row.hasOwnProperty(item.columnCharacteristicValue)) {
+        row[item.columnCharacteristicValue] = item.quantity;
       }
     });
 
@@ -71,7 +75,7 @@ isc.MultiVariantPurchaseGridItem.addProperties({
       canResizeFields: false, // Optionally disable resizing columns
       leaveScrollbarGap: false, // If you expect to never exceed 10, setting to false can remove unnecessary scrollbar space
       bodyOverflow: 'visible',
-      overflow: 'hidden', // Use hidden to cut off any excess but consider "auto" if exceeding
+      overflow: 'auto', // Use hidden to cut off any excess but consider "auto" if exceeding
       redraw: function() {
         this.Super('redraw', arguments);
         this.adjustHeight();
@@ -84,8 +88,9 @@ isc.MultiVariantPurchaseGridItem.addProperties({
       },
       fields: [
         {
-          name: 'color',
-          title: 'Ch',
+          name: 'characteristicValue',
+          title: 'Characteristic',
+          displayField: 'characteristicName',
           canEdit: false,
           width: 100,
           canSort: false
@@ -126,15 +131,17 @@ isc.MultiVariantPurchaseGridItem.addProperties({
 
   transformObjectToArray: function(obj) {
     // Extract the color value first
-    const color = obj.color;
+    const rowCh = obj.characteristicValue;
 
-    // Use Object.keys() to get all keys, filter out 'color', and map to new array format
+    // Use Object.keys() to get all keys, filter out 'characteristic' key, and map to new array format
     return Object.keys(obj)
-      .filter(key => key !== 'color') // Ignore the 'color' key
-      .map(size => ({
-        color: color,
-        size: size,
-        quantity: obj[size]
+      .filter(
+        key => key !== 'characteristicValue' && key !== 'characteristicName'
+      ) // Ignore the 'characteristic' keys
+      .map(colCh => ({
+        rowCharacteristicValue: rowCh,
+        columnCharacteristicValue: colCh,
+        quantity: obj[colCh]
       }));
   },
 
