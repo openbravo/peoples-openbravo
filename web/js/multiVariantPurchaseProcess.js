@@ -275,7 +275,7 @@ const getViewProperties = (recordId, view) => ({
         fkField: true,
         selectOnClick: true,
         canSort: true,
-        canFilter: true,
+        canFilter: false,
         showHover: true,
         filterEditorProperties: { keyProperty: 'id' }
       },
@@ -328,7 +328,7 @@ isc.ProductSelectionGridItem.addProperties({
   showTitle: false,
   isPickAndExecuteWindow: true,
   alternateRecordStyles: true,
-  showFilterEditor: true,
+  showFilterEditor: false,
   canReorderFields: false,
   canFreezeFields: false,
   canGroupBy: false,
@@ -399,6 +399,8 @@ isc.MultiVariantPurchaseGridProcessPopup.addProperties({
         this.getGrid()
       ]
     });
+    // Initially do a fetchData to show order line related products
+    this.mainform.items[0].canvas.viewGrid.fetchData();
 
     this.okButton = isc.OBFormButton.create({
       title: OB.I18N.getLabel('OK'),
