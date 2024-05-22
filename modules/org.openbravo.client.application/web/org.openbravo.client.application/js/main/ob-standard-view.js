@@ -732,7 +732,8 @@ isc.OBStandardView.addProperties({
       this.activeGridFormMessageLayout = isc.HLayout.create({
         height: this.hasChildTabs ? '50%' : '100%',
         width: '100%',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        styleName: 'OBStandardView_activeGridFormMessageLayout'
       });
 
       this.activeGridFormMessageLayout.addMember(this.activeBar);

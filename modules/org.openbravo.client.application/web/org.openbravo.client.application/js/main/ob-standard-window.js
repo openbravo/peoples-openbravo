@@ -112,7 +112,8 @@ isc.OBStandardWindow.addProperties({
       'AllowAttachment',
       this.windowId
     );
-    this.viewProperties.margin = this.globalMargin;
+    this.viewProperties.margin = this.firstLevelViewMargin;
+    this.viewProperties.styleName = this.firstLevelViewStyleName;
 
     this.view = isc.OBStandardView.create(this.viewProperties);
     this.addView(this.view);

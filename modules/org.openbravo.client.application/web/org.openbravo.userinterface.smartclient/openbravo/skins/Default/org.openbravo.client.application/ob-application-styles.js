@@ -79,8 +79,10 @@ isc.OBPopup.addProperties({
 });
 
 isc.OBStandardWindow.addProperties({
+  styleName: 'OBStandardWindow',
   toolBarHeight: 40,
-  globalMargin: 0
+  firstLevelViewStyleName: 'OBStandardWindow_firstLevelView',
+  firstLevelViewMargin: 0
 });
 
 
