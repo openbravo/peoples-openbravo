@@ -317,8 +317,15 @@ const getViewProperties = (recordId, view) => ({
   statusTabFields: [],
   tabId: '294',
   handleReadOnlyLogic: (formValues, contextInfo, form) => {
-    // TODO: Handle disabling the field if it has already been edited before
-    // console.log('[HANDLE-READ-ONLY-LOGIC]', formValues, contextInfo, form);
+    // Handles disabling the field if it has already been edited before
+    const fields = form.getFields();
+    for (let i = 0; i < fields.length; i++) {
+      const field = form.getField(i);
+      if (field.id === '1127' && formValues.product != null) {
+        field.setDisabled(true);
+      }
+    }
+    form.markForRedraw();
   }
 });
 
