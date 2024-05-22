@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -79,7 +79,8 @@ isc.OBPopup.addProperties({
 });
 
 isc.OBStandardWindow.addProperties({
-  toolBarHeight: 40
+  toolBarHeight: 40,
+  globalMargin: 0
 });
 
 
