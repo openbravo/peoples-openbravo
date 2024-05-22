@@ -28,6 +28,10 @@
   --obuiapp-type-m-font-size: 12px;
   --obuiapp-type-l-font-size: 14px;
   --obuiapp-type-xl-font-size: 16px;
+
+  --obuiapp-color-primary: #72ab10;
+  --obuiapp-color-primary-variant: #cdd7bb;
+  --obuiapp-color-secondary: #fa962f;
 }
 
 html {
@@ -130,11 +134,11 @@ body {
  Active view
  ============================================================*/
 .OBViewActive {
-  background-color: #FA962F;
+  background-color: var(--obuiapp-color-secondary);
 }
 
 .OBViewInActive {
-  background-color: #CDD7BB;
+  background-color: var(--obuiapp-color-primary-variant);
 }
 
 /*============================================================

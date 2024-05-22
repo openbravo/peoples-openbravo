@@ -60,7 +60,7 @@
 .OBStatusBarTextLink_TitleFocusedOver,
 .OBStatusBarTextLink_TitleFocusedDown,
 .OBStatusBarTextLink_Title:focus {
-  color: #fa962f;
+  color: var(--obuiapp-color-secondary);
 }
 
 .OBStatusBarTextLabel_Field {

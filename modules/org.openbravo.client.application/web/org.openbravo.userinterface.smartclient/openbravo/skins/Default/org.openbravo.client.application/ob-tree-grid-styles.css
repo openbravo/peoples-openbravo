@@ -67,7 +67,7 @@
   font-family: var(--obuiapp-type-font-family-variant);
   font-size: var(--obuiapp-type-m-font-size);
   vertical-align: middle;  
-  border: 1px solid #cdd7bb;
+  border: 1px solid var(--obuiapp-color-primary-variant);
   border-width: 0px 1px 1px 0px;
   border-top-style:solid;
   border-right-style:solid;

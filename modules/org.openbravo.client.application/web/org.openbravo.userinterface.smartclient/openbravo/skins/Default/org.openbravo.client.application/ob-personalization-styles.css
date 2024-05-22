@@ -51,7 +51,7 @@
 .OBFormPersonalizerPreviewPanel {
   border-width: 0px 0px 0px 5px;
   border-style: solid;
-  border-color: #72ab10;
+  border-color: var(--obuiapp-color-primary);
 }
 
 .OBPersonalizationTreeGridCell,
@@ -97,7 +97,7 @@
 
 .OBPersonalizationPullDownMenu {
   background-color: #3a6b01;
-  border: 1px solid #fa962f;
+  border: 1px solid var(--obuiapp-color-secondary);
 }
 
 .OBPersonalizationPullDownMenuTable {

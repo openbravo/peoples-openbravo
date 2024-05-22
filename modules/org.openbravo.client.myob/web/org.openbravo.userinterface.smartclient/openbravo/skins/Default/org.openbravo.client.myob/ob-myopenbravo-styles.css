@@ -57,13 +57,13 @@
 .OBMyOBLeftColumnLinkFocusedOver,
 .OBMyOBLeftColumnLinkFocused,
 .OBMyOBLeftColumnLink:focus {
-  color: #fa962f;
+  color: var(--obuiapp-color-secondary);
 }
 
 
 /* RecentViews */
 .OBMyOBRecentViews {
-  border-bottom: 2px solid #72AB10;
+  border-bottom: 2px solid var(--obuiapp-color-primary);
   padding: 10px 0px 0px 4px;
   font-weight: bold;
 }
@@ -87,7 +87,7 @@
 .OBMyOBRecentViewsEntryFocusedOver,
 .OBMyOBRecentViewsEntryFocused,
 .OBMyOBRecentViewsEntry:focus {
-  color: #fa962f;
+  color: var(--obuiapp-color-secondary);
 }
 
 

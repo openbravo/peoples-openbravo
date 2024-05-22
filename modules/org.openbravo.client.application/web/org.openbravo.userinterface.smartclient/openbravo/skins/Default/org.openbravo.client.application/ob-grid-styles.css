@@ -86,7 +86,7 @@
   font-family: var(--obuiapp-type-font-family-variant);
   font-size: var(--obuiapp-type-m-font-size);
   vertical-align: middle;
-  border: 1px solid #cdd7bb;
+  border: 1px solid var(--obuiapp-color-primary-variant);
   border-width: 0px 1px 1px 0px;
   
 /*  margin: 0px; */
@@ -182,7 +182,7 @@
 }
 
 .OBGridFilterBase {
-  background-color: #CDD7BB;
+  background-color: var(--obuiapp-color-primary-variant);
   border: 1px solid #b2b5b0;
   border-width: 0px 0px 1px 0px;
 }
@@ -207,7 +207,7 @@
 }
 
 .OBGridFilterFunnelIcon {
-  background-color: #CDD7BB;
+  background-color: var(--obuiapp-color-primary-variant);
   cursor: pointer;
 }
 
@@ -267,7 +267,7 @@
 .OBGridSummaryCell_count {
   font-family: var(--obuiapp-type-font-family-variant);
   vertical-align: middle;
-  border: 1px solid #cdd7bb;
+  border: 1px solid var(--obuiapp-color-primary-variant);
   border-width: 0px 1px 1px 0px;
   background-color: #ffffff;
 }
@@ -335,7 +335,7 @@
 .OBGridLinkButtonFocused,
 .OBGridLinkButtonFocusedOver,
 .OBGridLinkButtonFocusedDown {
-  color: #fa962f;
+  color: var(--obuiapp-color-secondary);
 }
 
 .OBGridLinkButtonOver,
@@ -389,7 +389,7 @@
 .OBGridNotificationTextLinkFocusedOver,
 .OBGridNotificationTextLinkFocusedDown,
 .OBGridNotificationTextLink:focus {
-  color: #fa962f;
+  color: var(--obuiapp-color-secondary);
 }
 
 .OBGridNotificationTextLinkOver,
@@ -414,7 +414,7 @@
   font-size: var(--obuiapp-type-m-font-size);
   text-overflow: ellipsis;
   color: #58A618;
-  border: 1px solid #cdd7bb;
+  border: 1px solid var(--obuiapp-color-primary-variant);
   border-width: 0px 1px 1px 0px;
   cursor: pointer;
   padding: 0px 0px 1px 3px;
@@ -493,7 +493,7 @@
 .OBGridFormButtonSelectedFocused,
 .OBGridFormButtonSelectedFocusedOver,
 .OBGridFormButtonSelectedFocusedDown {
-  border:2px solid #fa962f;
+  border:2px solid var(--obuiapp-color-secondary);
 }
 
 .OBGridFormButtonOver,

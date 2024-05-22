@@ -49,7 +49,7 @@
 .OBCalendarGridCellSelected,
 .OBCalendarGridCellDark,
 .OBCalendarGridCellDisabled {
-  border: 1px solid #cdd7bb;
+  border: 1px solid var(--obuiapp-color-primary-variant);
   border-width: 0px 1px 1px 0px;
   font-family: var(--obuiapp-type-font-family-variant);
   font-size: var(--obuiapp-type-s-font-size);

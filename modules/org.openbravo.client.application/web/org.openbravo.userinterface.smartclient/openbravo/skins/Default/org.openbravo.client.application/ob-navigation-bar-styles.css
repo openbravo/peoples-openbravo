@@ -96,7 +96,7 @@
 .OBNavBarComponent:hover {
   border-width: 1px 0px 1px 1px;
   border-style: solid;
-  border-color: #72ab10;
+  border-color: var(--obuiapp-color-primary);
 
   margin-left: -1px;
   margin-right: 0px;
@@ -115,7 +115,7 @@
 .OBNavBarComponentSelected {
   border-width: 1px 0px 0px 1px;
   border-style: solid;
-  border-color: #72ab10;
+  border-color: var(--obuiapp-color-primary);
 
   margin-left: -1px;
   margin-right: 0px;
@@ -133,7 +133,7 @@
   font-size: var(--obuiapp-type-m-font-size);
   font-family: var(--obuiapp-type-font-family);
   background-color: transparent;
-  border-top: 2px solid #72ab10;
+  border-top: 2px solid var(--obuiapp-color-primary);
   margin-top: -2px;
 }
 
@@ -147,10 +147,10 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBNavBarComponentFormTabButtonTopSelectedDown,
 .OBNavBarComponentFormTabButtonTopSelectedDisabled,
 .OBNavBarComponentFormTabButtonTopSelectedOver {
-  border-top: 1px solid #72ab10;
-  border-right: 1px solid #72ab10;
+  border-top: 1px solid var(--obuiapp-color-primary);
+  border-right: 1px solid var(--obuiapp-color-primary);
   border-bottom: 4px solid #fff;
-  border-left: 1px solid #72ab10;
+  border-left: 1px solid var(--obuiapp-color-primary);
   margin-bottom: -2px;
   font-weight: bold;
   font-size: var(--obuiapp-type-m-font-size);
@@ -179,11 +179,11 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBNavBarComponentFormTabButtonTopSelectedFocused,
 .OBNavBarComponentFormTabButtonTopSelectedFocusedOver,
 .OBNavBarComponentFormTabButtonTopSelectedFocusedDown {
-  border-top-color: #fa962f;
-  border-right-color: #fa962f;
+  border-top-color: var(--obuiapp-color-secondary);
+  border-right-color: var(--obuiapp-color-secondary);
   border-bottom-color: #fff;
-  border-left-color: #fa962f;
-  color: #fa962f;
+  border-left-color: var(--obuiapp-color-secondary);
+  color: var(--obuiapp-color-secondary);
 }
 
 /*============================================================
@@ -192,7 +192,7 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 
 .OBFlyoutLayout {
   background-color: #fff;
-  border: 1px solid #72ab10;
+  border: 1px solid var(--obuiapp-color-primary);
 }
 
 /*=======================================================================
@@ -228,7 +228,7 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBQuickLaunchRecentLinkButtonFocusedOver,
 .OBQuickLaunchRecentLinkButtonFocusedDown,
 .OBQuickLaunchRecentLinkButton:focus {
-  color: #fa962f;
+  color: var(--obuiapp-color-secondary);
 }
 
 .OBQuickLaunchRecentLinkButtonOver,
@@ -270,7 +270,7 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBHelpAboutLinkButtonFocusedOver,
 .OBHelpAboutLinkButtonFocusedDown,
 .OBHelpAboutLinkButton:focus {
-  color: #fa962f;
+  color: var(--obuiapp-color-secondary);
 }
 
 .OBHelpAboutLinkButtonOver,

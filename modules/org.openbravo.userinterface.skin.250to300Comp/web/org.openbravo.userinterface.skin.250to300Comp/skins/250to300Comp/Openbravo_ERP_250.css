@@ -28,6 +28,10 @@
   --obuiapp-type-m-font-size: 12px;
   --obuiapp-type-l-font-size: 14px;
   --obuiapp-type-xl-font-size: 16px;
+
+  --obuiapp-color-primary: #72ab10;
+  --obuiapp-color-primary-variant: #cdd7bb;
+  --obuiapp-color-secondary: #fa962f;
 }
 
 body {
@@ -229,8 +233,8 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
 */
 
 .Checkbox_focused, .Radio_focused {
-  border: 2px solid #FA962F;
-  outline-color: #FA962F;
+  border: 2px solid var(--obuiapp-color-secondary);
+  outline-color: var(--obuiapp-color-secondary);
 }
 
 /*
@@ -263,7 +267,7 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
 .ComboKey,
 .Combo,
 .Combo_focus {
-  border: 1px solid #CDD7BB;
+  border: 1px solid var(--obuiapp-color-primary-variant);
   color: #333333;
   background-color: #F5F7F1;
 }
@@ -283,7 +287,7 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
 
 .Combo_focus {
   padding: 1px 0px 0px 0px;
-  border: 1px solid #FA962F !important;
+  border: 1px solid var(--obuiapp-color-secondary) !important;
 }
 
 /*
@@ -293,9 +297,9 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
 */
 
 table.DataGrid_Header_Table {
-  border-top: #CDD7BB 2px solid;
-  border-right: #CDD7BB 2px solid;
-  border-left: #CDD7BB 2px solid;
+  border-top: var(--obuiapp-color-primary-variant) 2px solid;
+  border-right: var(--obuiapp-color-primary-variant) 2px solid;
+  border-left: var(--obuiapp-color-primary-variant) 2px solid;
 }
 
 table.DataGrid_Header_Table_focus {
@@ -305,9 +309,9 @@ table.DataGrid_Header_Table_focus {
 }
 
 table.DataGrid_Body_Table {
-  border-bottom: #CDD7BB 2px solid;
-  border-right: #CDD7BB 2px solid;
-  border-left: #CDD7BB 2px solid;
+  border-bottom: var(--obuiapp-color-primary-variant) 2px solid;
+  border-right: var(--obuiapp-color-primary-variant) 2px solid;
+  border-left: var(--obuiapp-color-primary-variant) 2px solid;
 }
 
 table.DataGrid_Body_Table_focus {
@@ -342,7 +346,7 @@ th.DataGrid_Header_Cell {
   font-family: var(--obuiapp-type-font-family);
   font-size: var(--obuiapp-type-s-font-size);
   text-align: center;
-  border-top: 1px solid #CDD7BB;
+  border-top: 1px solid var(--obuiapp-color-primary-variant);
   border-bottom: 1px solid #A7ABB4;
   border-right: 1px solid #BBBFB6;
   border-left : 1px solid #BBBFB6;
@@ -356,7 +360,7 @@ th.DataGrid_Header_Cell_Amount {
   font-family: var(--obuiapp-type-font-family);
   font-size: var(--obuiapp-type-s-font-size);
   text-align: center;
-  border-top: 1px solid #CDD7BB;
+  border-top: 1px solid var(--obuiapp-color-primary-variant);
   border-bottom: 1px solid #A7ABB4;
   border-right: 1px solid #BBBFB6;
   border-left : 1px solid #BBBFB6;
@@ -398,25 +402,25 @@ th.DataGrid_Header_LineNoCell {
   border-right: 1px solid #A7ABB4;
   border-left: 1px solid #000000;
   background: none !important;
-  background-color : #CDD7BB !important;
+  background-color : var(--obuiapp-color-primary-variant) !important;
 }
 
 td.DataGrid_Body_Cell {
   font-family: var(--obuiapp-type-font-family-variant) !important;
   font-size: var(--obuiapp-type-m-font-size) !important;
-  border-top: 1px solid #CDD7BB;
-  border-bottom: 1px solid #CDD7BB;
-  border-right: 1px solid #CDD7BB;
-  border-left: 1px solid #CDD7BB;
+  border-top: 1px solid var(--obuiapp-color-primary-variant);
+  border-bottom: 1px solid var(--obuiapp-color-primary-variant);
+  border-right: 1px solid var(--obuiapp-color-primary-variant);
+  border-left: 1px solid var(--obuiapp-color-primary-variant);
 }
 
 td.DataGrid_Body_Cell_Amount {
   font-family: var(--obuiapp-type-font-family-variant) !important;
   font-size: var(--obuiapp-type-m-font-size) !important;
-  border-top: 1px solid #CDD7BB;
-  border-bottom: 1px solid #CDD7BB;
-  border-right: 1px solid #CDD7BB;
-  border-left: 1px solid #CDD7BB;
+  border-top: 1px solid var(--obuiapp-color-primary-variant);
+  border-bottom: 1px solid var(--obuiapp-color-primary-variant);
+  border-right: 1px solid var(--obuiapp-color-primary-variant);
+  border-left: 1px solid var(--obuiapp-color-primary-variant);
 }
 
 td.DataGrid_Body_Cell_hover {
@@ -432,7 +436,7 @@ td.DataGrid_Body_LineNoCell {
   border-bottom: 1px solid #A7ABB4;
   border-right: 1px solid #A7ABB4;
   border-left:   1px solid #A7ABB4;
-  background-color: #CDD7BB;
+  background-color: var(--obuiapp-color-primary-variant);
   color: #000000;
 }
 
@@ -447,7 +451,7 @@ td.DataGrid_Body_LineNoCell {
   font-family: var(--obuiapp-type-font-family-variant);
   font-size: var(--obuiapp-type-m-font-size);
   padding-left: 3px;
-  border: 1px solid #CDD7BB;
+  border: 1px solid var(--obuiapp-color-primary-variant);
   background-color: #F5F7F1;
 }
 
@@ -456,7 +460,7 @@ td.DataGrid_Body_LineNoCell {
   font-family: var(--obuiapp-type-font-family-variant);
   font-size: var(--obuiapp-type-m-font-size);
   padding-left: 3px;
-  border: 1px solid #CDD7BB;
+  border: 1px solid var(--obuiapp-color-primary-variant);
   background-color: #F5F7F1;
 }
 
@@ -486,9 +490,9 @@ a.Dimension_UpDown_Button_BottomLink_focus table.Dimension_UpDown_Button_Bottom 
 a.FieldButtonLink .FieldButton_bg, .FieldButton_bg {
   width: 0px;
   height: 0px;
-  border-top: 1px solid #CDD7BB;
-  border-right: 1px solid #CDD7BB;
-  border-bottom: 1px solid #CDD7BB;
+  border-top: 1px solid var(--obuiapp-color-primary-variant);
+  border-right: 1px solid var(--obuiapp-color-primary-variant);
+  border-bottom: 1px solid var(--obuiapp-color-primary-variant);
   border-left: 0px solid;
   padding: 1px 0px 0px 4px;
   _padding: 0px 0px 0px 4px;
@@ -502,17 +506,17 @@ a.FieldButtonLink_hover table.FieldButton .FieldButton_bg, table.FieldButton_hov
 }
 
 a.FieldButtonLink_active table.FieldButton .FieldButton_bg, table.FieldButton_active .FieldButton_bg {
-  border-top: 1px solid #FA962F;
-  border-right: 1px solid #FA962F;
-  border-bottom: 1px solid #FA962F;
+  border-top: 1px solid var(--obuiapp-color-secondary);
+  border-right: 1px solid var(--obuiapp-color-secondary);
+  border-bottom: 1px solid var(--obuiapp-color-secondary);
   background-image: none;
   background-color: #CCD0C6;
 }
 
 a.FieldButtonLink_focus table.FieldButton .FieldButton_bg, table.FieldButton_focus .FieldButton_bg {
-  border-top: 1px solid #FA962F;
-  border-right: 1px solid #FA962F;
-  border-bottom: 1px solid #FA962F;
+  border-top: 1px solid var(--obuiapp-color-secondary);
+  border-right: 1px solid var(--obuiapp-color-secondary);
+  border-bottom: 1px solid var(--obuiapp-color-secondary);
   background-image: none;
 }
 
@@ -605,7 +609,7 @@ a.LabelLink:hover {
 
 a.LabelLink_focus {
   background-image: none;
-  color: #fa962f;
+  color: var(--obuiapp-color-secondary);
   border-color: none;
 }
 
@@ -633,7 +637,7 @@ a.LabelLink_noicon:hover {
 a.LabelLink_noicon_focus {
   padding: 0px 0px 0px 0px;
   background-color: #FFFFFF !important;
-  color: #fa962f !important;
+  color: var(--obuiapp-color-secondary) !important;
   border-style: solid;
   border-width: 0px;
   border-color: #58A618;
@@ -662,7 +666,7 @@ a.LabelLink_noicon_focus {
   font-family: var(--obuiapp-type-font-family-variant);
   font-size: var(--obuiapp-type-m-font-size);
   padding-left: 3px;
-  border-color: #CDD7BB;
+  border-color: var(--obuiapp-color-primary-variant);
   background-color: #F5F7F1;
 }
 
@@ -927,7 +931,7 @@ table.MessageBoxWARNING a.MessageBox_TextLink_focus {
 .dojoValidateValid_focus,
 .dojoValidateInvalid_focus,
 .dojoValidateRange_focus {
-  border: 1px solid #CDD7BB;
+  border: 1px solid var(--obuiapp-color-primary-variant);
   font-family: var(--obuiapp-type-font-family-variant);
   font-size: var(--obuiapp-type-m-font-size);
   color: #333333;
@@ -963,7 +967,7 @@ table.MessageBoxWARNING a.MessageBox_TextLink_focus {
 .TextBox_focus,
 .required_focus,
 .readonly_focus_required_focus {
-  border: 1px solid #FA962F;
+  border: 1px solid var(--obuiapp-color-secondary);
   background-color: #F5F7F1;
   background-image: none;
 }
@@ -1299,7 +1303,7 @@ table.MessageBoxWARNING a.MessageBox_TextLink_focus {
 
 A.dojoTabLink_focus {
   background-image: url(Main/Tabs/singleTab.focused.png);  
-  border-color: #FA962F;
+  border-color: var(--obuiapp-color-secondary);
 }
 
 
@@ -1381,7 +1385,7 @@ a.Main_ToolBar_Button:active {
 }
 
 a.Main_ToolBar_Button:focus {
-  border: 1px solid #FA962F;
+  border: 1px solid var(--obuiapp-color-secondary);
 }
 
 
@@ -1422,7 +1426,7 @@ a.Main_ToolBar_Button_Selected:active {
 }
 
 a.Main_ToolBar_Button_Selected:focus {
-  border: 1px solid #FA962F;
+  border: 1px solid var(--obuiapp-color-secondary);
 }
 
 /* Icons definition for ToolBar */
@@ -1569,7 +1573,7 @@ table.Popup_Client_TableUserOps_SubMenu {
 
 a.Popup_Client_Help_LabelLink_focus {
   background-color: #FFFFFF !important;
-  color: #FA962F;
+  color: var(--obuiapp-color-secondary);
   border-color: #FFFFFF;
 }
 
@@ -1718,10 +1722,10 @@ a.Popup_Client_Help_LabelLink_focus {
   font-weight: normal !important;
   color: #333333 !important;
 
-  border-top: 0px solid #CDD7BB !important;
-  border-bottom: 1px solid #CDD7BB !important;
-  border-right: 1px solid #CDD7BB !important;
-  border-left : 0px solid #CDD7BB !important;
+  border-top: 0px solid var(--obuiapp-color-primary-variant) !important;
+  border-bottom: 1px solid var(--obuiapp-color-primary-variant) !important;
+  border-right: 1px solid var(--obuiapp-color-primary-variant) !important;
+  border-left : 0px solid var(--obuiapp-color-primary-variant) !important;
 }
 
 .ob_cell {
@@ -1756,10 +1760,10 @@ a.Popup_Client_Help_LabelLink_focus {
 .ob_headerbuttonselecteddown {
   font-family: var(--obuiapp-type-font-family-variant) !important;
   font-size: var(--obuiapp-type-m-font-size) !important;
-  border-top: 1px solid #CDD7BB !important;
-  border-bottom: 1px solid #CDD7BB !important;
-  border-right: 1px solid #CDD7BB !important;
-  border-left : 0px solid #CDD7BB !important;
+  border-top: 1px solid var(--obuiapp-color-primary-variant) !important;
+  border-bottom: 1px solid var(--obuiapp-color-primary-variant) !important;
+  border-right: 1px solid var(--obuiapp-color-primary-variant) !important;
+  border-left : 0px solid var(--obuiapp-color-primary-variant) !important;
 }
 
 
@@ -1818,7 +1822,7 @@ a.Popup_Client_Help_LabelLink_focus {
 .selectItemTextFocused,
 .selectItemTextHint {
     height:21px !important;
-    border: 1px solid #CDD7BB !important;
+    border: 1px solid var(--obuiapp-color-primary-variant) !important;
     background: none !important;
     background-color: #F5F7F1 !important;
     color: #333333 !important;
@@ -1829,7 +1833,7 @@ a.Popup_Client_Help_LabelLink_focus {
 .selectItemTextRequiredFocused,
 .selectItemTextRequiredHint {
     height: 21px !important;
-    border: 1px solid #CDD7BB !important;
+    border: 1px solid var(--obuiapp-color-primary-variant) !important;
     background: none !important;
     background-color: #FFFFCC !important;
     color: #333333 !important;
@@ -1849,10 +1853,10 @@ a.Popup_Client_Help_LabelLink_focus {
 .selectItemTextFocused {
     background-image: none !important;
     padding-left: 4px !important;
-    border: 1px solid #FA962F !important;
+    border: 1px solid var(--obuiapp-color-secondary) !important;
 }
 .selectItemTextRequiredFocused {
     background-image: none !important;
     padding-left: 4px !important;
-    border: 1px solid #FA962F !important;
+    border: 1px solid var(--obuiapp-color-secondary) !important;
 }

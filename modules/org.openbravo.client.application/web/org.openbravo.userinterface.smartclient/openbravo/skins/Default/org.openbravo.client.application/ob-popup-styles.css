@@ -79,7 +79,7 @@
 .OBPopupIconCloseDown,
 .OBPopupIconCloseDisabled {
   margin: 0px 4px 0px 0px;
-  border: 1px solid #FA962F;
+  border: 1px solid var(--obuiapp-color-secondary);
   line-height: 100%; /* To avoid strange effect in some Firefox where the imgButtons are 1px moved down */
 }
 

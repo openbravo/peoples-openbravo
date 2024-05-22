@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,7 +31,7 @@
 
 .OBTabSetMainContainer {
   margin-top: 1px;
-  border-top: 1px solid #72ab10;
+  border-top: 1px solid var(--obuiapp-color-primary);
 }
 
 /* styles for simple css-styled tabs*/
@@ -194,7 +194,7 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 
 .OBTabSetChildContainer {
   margin-top: 0px;
-  border-top: 0px solid #72ab10;
+  border-top: 0px solid var(--obuiapp-color-primary);
 }
 
 /* styles for simple css-styled tabs*/

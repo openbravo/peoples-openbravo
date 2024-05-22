@@ -287,7 +287,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBFormFieldImageInputDisabled,
 .OBFormFieldImageInputRequired,
 .OBFormFieldImageInputRequiredDisabled {
-  border: 1px solid #cdd7bb;
+  border: 1px solid var(--obuiapp-color-primary-variant);
   background-color: #F5F7F1;
   color: #333333;
 }
@@ -385,7 +385,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
   -moz-outline-offset: -1px;
   outline-offset: -1px;
   outline: none;
-  border: 1px solid #fa962f;
+  border: 1px solid var(--obuiapp-color-secondary);
 }
 
 .OBFormFieldSelectInput,
@@ -421,7 +421,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 
 .OBPickListBody,
 .OBPickListBodyFocused {
-  border:1px solid #CDD7BB;
+  border:1px solid var(--obuiapp-color-primary-variant);
   outline: none; 
   background-color: #F5F7F1;
 }
@@ -430,7 +430,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
    https://issues.openbravo.com/view.php?id=18501 */
 .pickListMenuBody,
 .pickListMenuBodyFocused {
-  border:1px solid #CDD7BB;
+  border:1px solid var(--obuiapp-color-primary-variant);
   outline: none; 
   background-color: #F5F7F1;
 }
@@ -462,7 +462,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBFormFieldPickListCellSelectedFocused,
 .OBFormFieldPickListCellSelectedDark {
   color: #333333;
-  background-color: #CDD7BB;
+  background-color: var(--obuiapp-color-primary-variant);
 }
 
 .OBFormFieldPickListCellOver,
@@ -674,8 +674,8 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBDateChooserWeekendButtonSelected,
 .OBDateChooserWeekendButtonSelectedOver,
 .OBDateChooserWeekendButtonSelectedDown {
-  background-color: #CDD7BB;
-  border: 2px solid #CDD7BB;
+  background-color: var(--obuiapp-color-primary-variant);
+  border: 2px solid var(--obuiapp-color-primary-variant);
 }
 
 
@@ -694,7 +694,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 
 .OBDateChooserNavButtonOver,
 .OBDateChooserNavButtonDown {
-  color: #FA962F;
+  color: var(--obuiapp-color-secondary);
 }
 
 /* Today, Cancel buttons */
@@ -753,13 +753,13 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBDateChooserWeekendDisabled,
 .OBDateChooserWeekendDisabledOver,
 .OBDateChooserWeekendDisabledDown {
-  border: 2px solid #CDD7BB;
-  background-color: #CDD7BB;
+  border: 2px solid var(--obuiapp-color-primary-variant);
+  background-color: var(--obuiapp-color-primary-variant);
 }
 
 .OBDateChooserWeekdayOver,
 .OBDateChooserWeekendOver {
-  border: 2px solid #FA962F;
+  border: 2px solid var(--obuiapp-color-secondary);
 }
 
 .OBDateChooserWeekdaySelected,
@@ -772,7 +772,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBDateChooserWeekendSelectedDown {
   font-weight: bold;
   color: #4C4C4C;
-  border: 2px solid #FA962F;
+  border: 2px solid var(--obuiapp-color-secondary);
   background-color: #F8E0C5;
 }
 
@@ -830,7 +830,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBFormButtonSelectedFocused,
 .OBFormButtonSelectedFocusedOver,
 .OBFormButtonSelectedFocusedDown {
-  border:2px solid #fa962f;
+  border:2px solid var(--obuiapp-color-secondary);
 }
 
 .OBFormButtonOver,
@@ -909,7 +909,7 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBLinkButtonItemFocusedOver,
 .OBLinkButtonItemFocusedDown,
 .OBLinkButtonItem:focus {
-  color: #fa962f;
+  color: var(--obuiapp-color-secondary);
 }
 
 .OBLinkButtonItemOver,

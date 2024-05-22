@@ -25,6 +25,10 @@
   --obuiapp-type-m-font-size: 12px;
   --obuiapp-type-l-font-size: 14px;
   --obuiapp-type-xl-font-size: 16px;
+
+  --obuiapp-color-primary: #72ab10;
+  --obuiapp-color-primary-variant: #cdd7bb;
+  --obuiapp-color-secondary: #fa962f;
 }
 
 * {margin: 0px; padding: 0px;}
@@ -342,7 +346,7 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
 .dojoValidateValid_focus,
 .dojoValidateInvalid_focus,
 .dojoValidateRange_focus {
-  border: 1px solid #CDD7BB;
+  border: 1px solid var(--obuiapp-color-primary-variant);
   font-family: var(--obuiapp-type-font-family-variant);
   font-size: var(--obuiapp-type-m-font-size);
   color: #333333;
@@ -362,7 +366,7 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
 .TextBox_focus,
 .required_focus,
 .readonly_focus_required_focus {
-  border: 1px solid #FA962F;
+  border: 1px solid var(--obuiapp-color-secondary);
   background-color: #F5F7F1;
   background-image: none;
 }

@@ -58,7 +58,7 @@
 .OBToolbarIconButtonSelectedFocused,
 .OBToolbarIconButtonSelectedFocusedOver,
 .OBToolbarIconButtonSelectedFocusedDown {
-  border: 1px solid #FA962F !important;
+  border: 1px solid var(--obuiapp-color-secondary) !important;
 }
 
 .OBToolbarIconButtonOver,
@@ -373,7 +373,7 @@ html[data-useragent*=' Edge/'] .OBToolbarIconButtonSelectedDisabled {
 .OBToolbarTextButtonParentSelectedFocused,
 .OBToolbarTextButtonParentSelectedFocusedOver,
 .OBToolbarTextButtonParentSelectedFocusedDown {
-  border: 2px solid #FA962F;
+  border: 2px solid var(--obuiapp-color-secondary);
 }
 
 .OBToolbarTextButtonOver,

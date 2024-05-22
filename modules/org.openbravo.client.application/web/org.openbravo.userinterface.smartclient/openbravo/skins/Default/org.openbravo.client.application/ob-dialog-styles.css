@@ -45,5 +45,5 @@
 
 .OBDialogLabel a:focus,
 .OBDialogLabelRequired a:active {
-  color: #fa962f;
+  color: var(--obuiapp-color-secondary);
 }

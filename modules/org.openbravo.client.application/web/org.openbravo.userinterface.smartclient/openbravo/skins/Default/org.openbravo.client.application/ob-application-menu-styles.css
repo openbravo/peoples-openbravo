@@ -24,7 +24,7 @@
 
 .OBApplicationMenuTree {
   background-color: #fff;
-  border: 1px solid #72ab10;
+  border: 1px solid var(--obuiapp-color-primary);
   font-size: var(--obuiapp-type-s-font-size);
   font-family: var(--obuiapp-type-font-family);
 }
@@ -82,7 +82,7 @@
   padding: 0px 4px 0px 5px;
   border-width: 0px 1px 0px 0px;
   border-style: solid;
-  border-color: #CDD7BB;
+  border-color: var(--obuiapp-color-primary-variant);
 }
 
 .OBApplicationMenuTreeItemCellIconFieldOver,
