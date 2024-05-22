@@ -31,6 +31,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.SequenceUtil.CalculationMethod;
 import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
 import org.openbravo.erpCommon.utility.SequenceUtil.SequenceNumberLength;
+import org.openbravo.materialmgmt.refinventory.ContentRestriction;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
 import org.openbravo.model.ad.utility.Sequence;
@@ -49,7 +50,7 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
   public void testReferencedInventoryType_None_ComputeSequence() {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.NONE, null);
+            SequenceType.NONE, null, ContentRestriction.ONLY_ITEMS);
     OBDal.getInstance().save(refInvType);
     OBDal.getInstance().flush();
 
@@ -74,7 +75,7 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
   public void testReferencedInventoryType_Global() {
     final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.GLOBAL, null);
+            SequenceType.GLOBAL, null, ContentRestriction.ONLY_ITEMS);
     OBDal.getInstance().save(referencedInventoryType);
     Exception exception = assertThrows(Exception.class, () -> OBDal.getInstance().flush());
     assertThat(exception.getMessage(), containsString("ConstraintViolationException"));
@@ -88,7 +89,7 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
   public void testReferencedInventoryType_PerOrganization() {
     final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.PER_ORGANIZATION, null);
+            SequenceType.PER_ORGANIZATION, null, ContentRestriction.ONLY_ITEMS);
     OBDal.getInstance().save(referencedInventoryType);
     OBDal.getInstance().flush();
     assertTrue("Referenced Inventory Type with Sequence Type - None is not created",
@@ -103,7 +104,7 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
   public void testReferencedInventoryType_None_Sequence() {
     final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.NONE, createSequence());
+            SequenceType.NONE, createSequence(), ContentRestriction.ONLY_ITEMS);
     OBDal.getInstance().save(referencedInventoryType);
     OBDal.getInstance().flush();
     assertTrue("Referenced Inventory Type with Sequence Type - None is set with Sequence",
@@ -118,7 +119,7 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
   public void testReferencedInventoryType_PerOrganization_Sequence() {
     final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.PER_ORGANIZATION, createSequence());
+            SequenceType.PER_ORGANIZATION, createSequence(), ContentRestriction.ONLY_ITEMS);
     OBDal.getInstance().save(referencedInventoryType);
     OBDal.getInstance().flush();
     assertTrue(
@@ -134,7 +135,7 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
   public void testReferencedInventoryType_Global_WithSequence() {
     final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.GLOBAL, createSequence());
+            SequenceType.GLOBAL, createSequence(), ContentRestriction.ONLY_ITEMS);
     OBDal.getInstance().save(referencedInventoryType);
     OBDal.getInstance().flush();
     assertTrue("Referenced Inventory Type with Sequence Type - Global is not set with Sequence",
@@ -164,7 +165,7 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
 
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.GLOBAL, parentSequence);
+            SequenceType.GLOBAL, parentSequence, ContentRestriction.ONLY_ITEMS);
     OBDal.getInstance().save(refInvType);
     OBDal.getInstance().flush();
     final ReferencedInventory refInv = ReferencedInventoryTestUtils
@@ -181,7 +182,7 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
   public void testReferencedInventoryType_Global_WithoutSequence() {
     final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.GLOBAL, createSequence());
+            SequenceType.GLOBAL, createSequence(), ContentRestriction.ONLY_ITEMS);
     OBDal.getInstance().save(referencedInventoryType);
     OBDal.getInstance().flush();
 

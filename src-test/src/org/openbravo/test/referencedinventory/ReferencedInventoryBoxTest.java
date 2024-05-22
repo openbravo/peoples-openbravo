@@ -34,6 +34,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.materialmgmt.ReservationUtils;
 import org.openbravo.materialmgmt.refinventory.BoxProcessor;
+import org.openbravo.materialmgmt.refinventory.ContentRestriction;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
 import org.openbravo.model.common.enterprise.Organization;
@@ -83,7 +84,7 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
       final boolean isForceAttribute) throws Exception {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.NONE, null);
+            SequenceType.NONE, null, ContentRestriction.ONLY_ITEMS);
     final ReferencedInventory refInv = ReferencedInventoryTestUtils
         .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 
@@ -155,7 +156,7 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
     assertThat("New attribute set is related to the referenced inventory",
         attributeSetValue.getReferencedInventory().getId(), equalTo(refInv.getId()));
     assertThat("New attribute set is related to cloned one",
-        ReferencedInventoryUtil.getParentAttributeSetInstance(boxedStorageDetail).getId(),
+        ReferencedInventoryUtil.getAttributeSetInstanceTo(boxedStorageDetail, null).getId(),
         equalTo(originalAttributeId));
     assertThat("New attribute set description contains referenced inventory string",
         attributeSetValue.getDescription(),

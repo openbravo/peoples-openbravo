@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,11 +47,11 @@ public abstract class ReferencedInventoryUnboxTest extends ReferencedInventoryBo
     final StorageDetail storageDetail = refInv.getMaterialMgmtStorageDetailList().get(0);
     final Product originalProduct = storageDetail.getProduct();
     final String originalAttributeSet = ReferencedInventoryUtil
-        .getParentAttributeSetInstance(storageDetail)
+        .getAttributeSetInstanceTo(storageDetail, null)
         .getId();
 
     final InternalMovement unBoxMovement = new UnboxProcessor(refInv, ReferencedInventoryTestUtils
-        .getUnboxStorageDetailsJSArray(storageDetail, qtyToUnbox, toBinId))
+        .getUnboxStorageDetailsJSArray(storageDetail, qtyToUnbox, toBinId), null, true)
             .createAndProcessGoodsMovement();
 
     OBDal.getInstance().refresh(unBoxMovement);

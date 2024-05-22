@@ -33,6 +33,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.refinventory.BoxProcessor;
+import org.openbravo.materialmgmt.refinventory.ContentRestriction;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
@@ -54,7 +55,7 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
   public void testNoStorageDetailsProvidedToBox() throws Exception {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.NONE, null);
+            SequenceType.NONE, null, ContentRestriction.ONLY_ITEMS);
     final ReferencedInventory refInv = ReferencedInventoryTestUtils
         .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 
@@ -68,7 +69,7 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
   public void testNegativeStorageDetailProvidedToBox() throws Exception {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.NONE, null);
+            SequenceType.NONE, null, ContentRestriction.ONLY_ITEMS);
     final ReferencedInventory refInv = ReferencedInventoryTestUtils
         .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 
@@ -89,7 +90,7 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
   public void testZeroQtyStorageDetailProvidedToBox() throws Exception {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.NONE, null);
+            SequenceType.NONE, null, ContentRestriction.ONLY_ITEMS);
     final ReferencedInventory refInv = ReferencedInventoryTestUtils
         .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 
@@ -117,23 +118,6 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
   }
 
   @Test
-  public void testCascadeReferencedInventoryNotPossible() throws Exception {
-    final ReferencedInventory refInv1 = testBox(null,
-        ReferencedInventoryTestUtils.PRODUCT_TSHIRT_ID, null, null);
-    final StorageDetail storageDetail = refInv1.getMaterialMgmtStorageDetailList().get(0);
-
-    final ReferencedInventory refInv2 = ReferencedInventoryTestUtils.createReferencedInventory(
-        ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInv1.getReferencedInventoryType());
-    final JSONArray storageDetailsJS = ReferencedInventoryTestUtils
-        .getStorageDetailsToBoxJSArray(storageDetail, BigDecimal.ONE);
-
-    OBException thrown = assertThrows(OBException.class, () -> {
-      new BoxProcessor(refInv2, storageDetailsJS, null).createAndProcessGoodsMovement();
-    });
-    assertThat(thrown.getMessage(), containsString(" is already linked to the handling unit "));
-  }
-
-  @Test
   public void testSameReferencedInventoryInDifferentBinsNotPossible() throws Exception {
     final ReferencedInventory refInv = testBox(ReferencedInventoryTestUtils.BIN_SPAIN_L02,
         ReferencedInventoryTestUtils.PRODUCT_TSHIRT_ID, null, BigDecimal.ONE);
@@ -154,7 +138,7 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
   public void testBoxMandatoryNewStorageBinParameter() throws Exception {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.NONE, null);
+            SequenceType.NONE, null, ContentRestriction.ONLY_ITEMS);
     final ReferencedInventory refInv = ReferencedInventoryTestUtils
         .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 

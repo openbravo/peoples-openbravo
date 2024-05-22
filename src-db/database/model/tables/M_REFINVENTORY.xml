@@ -49,19 +49,31 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="PARENT_REFINVENTORY_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_REFINVENTORY_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="M_REFINVENTORY_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="M_REFINVENTORY" name="M_REFINVENTORY_PARENT_FK">
+        <reference local="PARENT_REFINVENTORY_ID" foreign="M_REFINVENTORY_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="M_REFINVENTORY_TYPE" name="M_REFINVENTORY_TYPE">
         <reference local="M_REFINVENTORY_TYPE_ID" foreign="M_REFINVENTORY_TYPE_ID"/>
       </foreign-key>
+      <index name="M_REFINVENTORY_PARENT_IX" unique="false">
+        <index-column name="PARENT_REFINVENTORY_ID"/>
+        <whereClause><![CDATA[PARENT_REFINVENTORY_ID IS NOT NULL]]></whereClause>
+      </index>
       <unique name="M_REFINVENTORY_VALUE_UN">
         <unique-column name="VALUE"/>
         <unique-column name="AD_CLIENT_ID"/>
       </unique>
       <check name="M_REFINV_ISACTIVE_CH"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_REFINV_PARENTLOOP_CH"><![CDATA[PARENT_REFINVENTORY_ID IS NULL OR PARENT_REFINVENTORY_ID <> M_REFINVENTORY_ID]]></check>
     </table>
   </database>

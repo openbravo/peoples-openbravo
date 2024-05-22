@@ -28,6 +28,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.materialmgmt.refinventory.BoxProcessor;
+import org.openbravo.materialmgmt.refinventory.ContentRestriction;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
@@ -76,7 +77,7 @@ public class ReferencedInventoryBoxSeveralStorageDetailsTest extends ReferencedI
       final String attributeSetInstanceId, final String toBinId) throws Exception {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.NONE, null);
+            SequenceType.NONE, null, ContentRestriction.ONLY_ITEMS);
     final ReferencedInventory refInv = ReferencedInventoryTestUtils
         .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 

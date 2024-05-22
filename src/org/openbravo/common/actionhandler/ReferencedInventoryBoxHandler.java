@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,94 +19,99 @@
 
 package org.openbravo.common.actionhandler;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.client.application.process.BaseProcessActionHandler;
-import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
-import org.openbravo.dal.core.OBContext;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.refinventory.BoxProcessor;
+import org.openbravo.materialmgmt.refinventory.ContentRestriction;
+import org.openbravo.materialmgmt.refinventory.ReferencedInventoryProcessor.GridJS;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
-import org.openbravo.service.db.DbUtility;
 
 /**
- * Action handler for boxing storage details into a Referenced Inventory
+ * Action handler for boxing storage details (already contained into a Referenced Inventory or not)
+ * into a Referenced Inventory
  *
  */
-public class ReferencedInventoryBoxHandler extends BaseProcessActionHandler {
-  private static final Logger logger = LogManager.getLogger();
-
-  private static final String PARAM_GRID = "stock";
-  private static final String PARAM_GRID_SELECTION = "_selection";
-  private static final String PARAM_NEWSTORAGEBIN = "M_LocatorTo_ID";
+public class ReferencedInventoryBoxHandler extends ReferencedInventoryHandler {
 
   @Override
-  protected JSONObject doExecute(Map<String, Object> parameters, String content) {
-    try {
-      final JSONObject request = new JSONObject(content);
-      OBContext.setAdminMode(true);
+  protected void validateSelectionOrThrowException(final ReferencedInventoryHandlerData data)
+      throws Exception {
+    throwExceptionIfInnerRIsOrEmptyRIsAreSelected(data.getSelectedReferencedInventories());
+    throwExceptionIfContentRestrictionsAreNotRespected(data);
+  }
 
-      final ReferencedInventory referencedInventory = getReferencedInventory(request);
-      final JSONArray selectedStorageDetails = getSelectedStorageDetails(request);
-      final String newStorageBinId = getNewStorageBin(request);
-
-      createAndProcessGoodsMovement(referencedInventory, selectedStorageDetails, newStorageBinId);
-    } catch (Exception e) {
-      try {
-        final Throwable ex = DbUtility.getUnderlyingSQLException(e);
-        final String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
-
-        return getResponseBuilder()
-            .showMsgInProcessView(MessageType.ERROR, OBMessageUtils.messageBD("Error"),
-                StringUtils.isBlank(message) ? ex.toString() : message, true)
-            .retryExecution()
-            .build();
-      } catch (Exception ignore) {
-        logger.warn("Exception trying to build error message", ignore);
+  public static void throwExceptionIfInnerRIsOrEmptyRIsAreSelected(
+      final JSONArray selectedReferencedInventories) throws JSONException {
+    final List<String> alreadyNestedRIsSelected = new ArrayList<>();
+    final List<String> emptyRIsSelected = new ArrayList<>();
+    for (int i = 0; selectedReferencedInventories != null
+        && i < selectedReferencedInventories.length(); i++) {
+      final String riId = selectedReferencedInventories.getJSONObject(i).getString(GridJS.ID);
+      final ReferencedInventory ri = OBDal.getInstance().getProxy(ReferencedInventory.class, riId);
+      if (ri.getParentRefInventory() != null) {
+        alreadyNestedRIsSelected.add(ri.getIdentifier());
       }
-    } finally {
-      OBContext.restorePreviousMode();
+      if (ri.getUniqueItemsCount() == 0) {
+        emptyRIsSelected.add(ri.getIdentifier());
+      }
     }
-
-    return getResponseBuilder()
-        .showMsgInView(MessageType.SUCCESS, OBMessageUtils.messageBD("Success"),
-            OBMessageUtils.messageBD("Success"))
-        .build();
-  }
-
-  private ReferencedInventory getReferencedInventory(final JSONObject request)
-      throws JSONException {
-    final String refInventoryId = request.getString("inpmRefinventoryId");
-    return OBDal.getInstance().getProxy(ReferencedInventory.class, refInventoryId);
-  }
-
-  private JSONArray getSelectedStorageDetails(final JSONObject request) throws JSONException {
-    final JSONObject params = request.getJSONObject("_params");
-    return params.getJSONObject(PARAM_GRID).getJSONArray(PARAM_GRID_SELECTION);
-  }
-
-  private String getNewStorageBin(final JSONObject request) {
-    try {
-      final JSONObject params = request.getJSONObject("_params");
-      final String newStorageBinId = params.getString(PARAM_NEWSTORAGEBIN);
-      return StringUtils.isBlank(newStorageBinId) || StringUtils.equals(newStorageBinId, "null")
-          ? null
-          : newStorageBinId;
-    } catch (JSONException noParameterFound) {
-      return null;
+    if (!alreadyNestedRIsSelected.isEmpty()) {
+      throw new OBException(String.format(OBMessageUtils.messageBD("BoxNestedRISelectionError"),
+          alreadyNestedRIsSelected.stream().collect(Collectors.joining(", "))));
+    }
+    if (!emptyRIsSelected.isEmpty()) {
+      throw new OBException(String.format(OBMessageUtils.messageBD("BoxEmptyRISelectionError"),
+          emptyRIsSelected.stream().collect(Collectors.joining(", "))));
     }
   }
 
-  protected void createAndProcessGoodsMovement(final ReferencedInventory referencedInventory,
-      final JSONArray selectedStorageDetails, final String newStorageBinId) throws Exception {
-    new BoxProcessor(referencedInventory, selectedStorageDetails, newStorageBinId)
-        .createAndProcessGoodsMovement();
+  private void throwExceptionIfContentRestrictionsAreNotRespected(
+      final ReferencedInventoryHandlerData data) throws JSONException {
+    throwExceptionIfContentRestrictionsAreNotRespected(data.getReferencedInventory(),
+        data.getSelectedStorageDetails().length(),
+        data.getSelectedReferencedInventories().length());
+  }
+
+  public static void throwExceptionIfContentRestrictionsAreNotRespected(
+      final ReferencedInventory referencedInventory, int selectedStorageDetailsCount,
+      int selectedReferencedInventoriesCount) {
+    final ContentRestriction contentRestriction = ContentRestriction
+        .getByValue(referencedInventory.getReferencedInventoryType().getContentRestriction());
+    if (ContentRestriction.ONLY_ITEMS.value.equals(contentRestriction.value)
+        && selectedReferencedInventoriesCount > 0) {
+      throw new OBException("@RIBoxRIsContentRestrictionError@");
+    }
+    if (ContentRestriction.ONLY_REFINVENTORIES.value.equals(contentRestriction.value)
+        && selectedStorageDetailsCount > 0) {
+      throw new OBException("@RIBoxItemsContentRestrictionError@");
+    }
+  }
+
+  @Override
+  protected void run(final ReferencedInventoryHandlerData data) throws Exception {
+    new BoxProcessor(data.getReferencedInventory(), data.getSelectedStorageDetails(),
+        getNewStorageBin(data, null)).createAndProcessGoodsMovement();
+  }
+
+  /**
+   * In Box, the new storage bin is a common parameter for all the storage details / referenced
+   * inventories, so the selectedRefInventoryJS param is totally ignored by this method
+   */
+  @Override
+  protected String getNewStorageBin(final ReferencedInventoryHandlerData data,
+      final JSONObject selectedRefInventoryJS) throws JSONException {
+    final String newStorageBinId = data.getNewStorageBinId();
+    return StringUtils.isBlank(newStorageBinId) || StringUtils.equals(newStorageBinId, "null")
+        ? null
+        : newStorageBinId;
   }
 }

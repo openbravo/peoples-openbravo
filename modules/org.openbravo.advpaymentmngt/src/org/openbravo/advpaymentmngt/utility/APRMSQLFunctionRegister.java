@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2018 Openbravo SLU
+ * All portions are Copyright (C) 2018-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -45,6 +45,8 @@ public class APRMSQLFunctionRegister implements SQLFunctionRegister {
         new StandardSQLFunction("ad_message_get2", StandardBasicTypes.STRING));
     sqlFunctions.put("hqlagg",
         new SQLFunctionTemplate(StandardBasicTypes.STRING, getAggregationSQL()));
+    sqlFunctions.put("unnest",
+        new SQLFunctionTemplate(StandardBasicTypes.STRING, "unnest(string_to_array(?1, ','))"));
     return sqlFunctions;
   }
 

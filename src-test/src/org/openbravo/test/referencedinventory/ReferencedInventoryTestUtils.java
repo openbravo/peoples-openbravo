@@ -46,6 +46,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.materialmgmt.ReservationUtils;
+import org.openbravo.materialmgmt.refinventory.ContentRestriction;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
 import org.openbravo.model.ad.domain.Preference;
@@ -166,7 +167,7 @@ public class ReferencedInventoryTestUtils {
   }
 
   public static ReferencedInventoryType createReferencedInventoryType(Organization org,
-      SequenceType sequenceType, Sequence sequence) {
+      SequenceType sequenceType, Sequence sequence, ContentRestriction contentRestriction) {
     final ReferencedInventoryType refInvType = OBProvider.getInstance()
         .get(ReferencedInventoryType.class);
     refInvType.setClient(OBContext.getOBContext().getCurrentClient());
@@ -175,6 +176,7 @@ public class ReferencedInventoryTestUtils {
     refInvType.setSequence(sequence);
     refInvType.setName(UUID.randomUUID().toString());
     refInvType.setShared(true);
+    refInvType.setContentRestriction(contentRestriction.value);
     OBDal.getInstance().save(refInvType);
     assertThat("Referenced Inventory Type is successfully created", refInvType, notNullValue());
     return refInvType;
@@ -276,6 +278,7 @@ public class ReferencedInventoryTestUtils {
     final JSONObject storageDetailJS = new JSONObject();
     storageDetailJS.put("id", storageDetail.getId());
     storageDetailJS.put("quantityOnHand", qty);
+    storageDetailJS.put("productId", storageDetail.getProduct().getId());
     final JSONArray storageDetailsJS = new JSONArray();
     storageDetailsJS.put(storageDetailJS);
     return storageDetailsJS;
