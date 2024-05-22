@@ -2990,7 +2990,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--83F747ECE73043389AA38918C2960299-->  <AD_COLUMN_ID><![CDATA[784E0C2754E94C0FBF2EFF6B22557DE0]]></AD_COLUMN_ID>
 <!--83F747ECE73043389AA38918C2960299-->  <NAME><![CDATA[Unique Items Count]]></NAME>
 <!--83F747ECE73043389AA38918C2960299-->  <DESCRIPTION><![CDATA[Number of different products included in the handling unit and nested ones.]]></DESCRIPTION>
-<!--83F747ECE73043389AA38918C2960299-->  <HELP><![CDATA[Number of different products within the handling unit, including the nested ones (if any). For example, if the handling unit contains 10 units of apples and 20 units of oranges, this field will should 2]]></HELP>
+<!--83F747ECE73043389AA38918C2960299-->  <HELP><![CDATA[Number of different products within the handling unit, including the nested ones (if any). For example, if the handling unit contains 10 units of apples and 20 units of oranges, this field will show 2]]></HELP>
 <!--83F747ECE73043389AA38918C2960299-->  <PROPERTY><![CDATA[_computedColumns.uniqueItemsCount]]></PROPERTY>
 <!--83F747ECE73043389AA38918C2960299-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--83F747ECE73043389AA38918C2960299-->  <SORT><![CDATA[N]]></SORT>
