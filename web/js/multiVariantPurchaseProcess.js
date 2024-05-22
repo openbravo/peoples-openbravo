@@ -131,7 +131,8 @@ const getViewProperties = (recordId, view) => ({
         OB.MultiVariantPurchaseGridItem.selectProduct(
           record.product,
           rowCharacteristics,
-          columnCharacteristics
+          columnCharacteristics,
+          record.initialValues
         );
       }
     }

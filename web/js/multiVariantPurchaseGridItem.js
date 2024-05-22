@@ -30,7 +30,7 @@ isc.MultiVariantPurchaseGridItem.addProperties({
     this.Super('init', arguments);
     OB.MultiVariantPurchaseGridItem = this;
   },
-  createGrid: function(columns = [], rows = [], initialValues = []) {
+  createGrid: function(rows = [], columns = [], initialValues = []) {
     // Create or recreate ListGrid based on new or existing configuration
     if (this.grid) {
       this.grid.destroy(); // If grid exists, destroy before recreating
@@ -62,7 +62,7 @@ isc.MultiVariantPurchaseGridItem.addProperties({
     });
 
     this.grid = isc.ListGrid.create({
-      width: 300,
+      width: '100%',
       height: 100,
       canEdit: true,
       editEvent: 'click',
@@ -98,7 +98,20 @@ isc.MultiVariantPurchaseGridItem.addProperties({
         ...cols
       ],
       data: rowsData,
-      autoDraw: false
+      autoDraw: false,
+      cellEditEnd: function(
+        editCompletionEvent,
+        newValue,
+        ficCallDone,
+        autoSaveDone
+      ) {
+        var rowNum = this.getEditRow(),
+          colNum = this.getEditCol(),
+          editField = this.getEditField(colNum),
+          undef;
+
+        // TODO: Update quantities with values coming from here
+      }
     });
 
     this.setCanvas(this.grid); // Assign the grid as the canvas of the CanvasItem
