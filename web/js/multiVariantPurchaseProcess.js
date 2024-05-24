@@ -193,7 +193,6 @@ const getViewProperties = (recordId, view) => ({
         }
       ],
       showSelectorGrid: true,
-      // TODO: Reduce the amount of selector grid fields to only those necessary
       selectorGridFields: [
         {
           title: 'Search Key',
@@ -350,7 +349,13 @@ isc.ProductSelectionGridItem.addProperties({
     this.canvas = isc.OBPickAndExecuteView.create({
       height: 300,
       view: modifiedView,
-      viewProperties: getViewProperties(this.recordId, modifiedView)
+      viewProperties: getViewProperties(this.recordId, modifiedView),
+      onTotalChange: function(newTotal) {
+        const selectedRecord = this.viewGrid.getSelectedRecord();
+        if (selectedRecord) {
+          this.viewGrid.setRawCellValue(selectedRecord, null, 2, newTotal);
+        }
+      }
     });
     this.Super('init', arguments);
     this.selectionLayout = this.canvas;
@@ -385,11 +390,15 @@ isc.MultiVariantPurchaseGridProcessPopup.addProperties({
   },
 
   getGrid: function() {
+    const me = this;
     return {
       type: 'MultiVariantPurchaseGridItem',
       title: 'Characteristics grid',
       name: 'ch-grid',
-      editorType: 'MultiVariantPurchaseGridItem'
+      editorType: 'MultiVariantPurchaseGridItem',
+      onTotalChange: newTotal => {
+        me.mainform.items[0].canvas.onTotalChange(newTotal);
+      }
     };
   },
 

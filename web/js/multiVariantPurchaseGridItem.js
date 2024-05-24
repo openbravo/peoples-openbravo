@@ -23,10 +23,13 @@ isc.MultiVariantPurchaseGridItem.addProperties({
   completeValue: null,
   showTitle: false,
   productData: {}, // Stores data for different products
+  onTotalChange: null, // Function to be overwritten that will be called when total quantities change
   init: function() {
     this.colSpan = 4;
     this.disabled = false;
     this.grid = this.createGrid();
+    // Clear product data on init
+    this.productData = {};
     this.Super('init', arguments);
     OB.MultiVariantPurchaseGridItem = this;
   },
@@ -35,6 +38,10 @@ isc.MultiVariantPurchaseGridItem.addProperties({
     if (this.grid) {
       this.grid.destroy(); // If grid exists, destroy before recreating
     }
+
+    const hasRowCharacteristic = rows.length > 0;
+    const hasColumnCharacteristic = columns.length > 0;
+
     const cols = columns.map(col => ({
       name: col.name,
       title: col.title,
@@ -43,7 +50,6 @@ isc.MultiVariantPurchaseGridItem.addProperties({
     }));
 
     let rowsData = rows.map(row => ({
-      // TODO: Remove mentions to color
       characteristicName: row.title,
       characteristicValue: row.name,
       ...columns.reduce((acc, col) => ({ ...acc, [col.name]: 0 }), {})
@@ -61,12 +67,46 @@ isc.MultiVariantPurchaseGridItem.addProperties({
       }
     });
 
+    const fields = [
+      {
+        name: 'characteristicValue',
+        title: ' ',
+        displayField: 'characteristicName',
+        canEdit: false,
+        width: 100,
+        canSort: false
+      },
+      ...cols
+    ];
+
+    const me = this;
+
+    if (hasColumnCharacteristic) {
+      fields.push({
+        name: 'total',
+        title: 'Total',
+        type: 'summary',
+        align: 'right',
+        canEdit: false,
+        canSort: false,
+        showGridSummary: true,
+        summaryFunction: function(records) {
+          // Calculate and return the summary value
+          return records.reduce((sum, record) => sum + record.total, 0);
+        },
+        getRecordSummary: function(record) {
+          return me.getRowTotal(record);
+        }
+      });
+    }
+
     this.grid = isc.ListGrid.create({
       width: '100%',
       height: 100,
       canEdit: true,
       editEvent: 'click',
       editByCell: true,
+      showGridSummary: hasRowCharacteristic, // Shows total summary
       showHeaderContextMenu: false, // Disables the default context menu for headers
       headerContextMenu: null, // Ensure no custom menus are applied
       autoFitData: 'vertical', // Fit grid vertically based on number of rows
@@ -86,19 +126,47 @@ isc.MultiVariantPurchaseGridItem.addProperties({
         const newHeight = rowHeight * Math.min(numRows, 10); // Calculate new height but limit to 10 rows
         this.setHeight(newHeight);
       },
-      fields: [
-        {
-          name: 'characteristicValue',
-          title: 'Characteristic',
-          displayField: 'characteristicName',
-          canEdit: false,
-          width: 100,
-          canSort: false
-        },
-        ...cols
-      ],
+      fields: fields,
       data: rowsData,
       autoDraw: false,
+      onRecordClick: function(
+        viewer,
+        record,
+        recordNum,
+        field,
+        fieldNum,
+        value,
+        rawValue
+      ) {
+        var editRowNum = this.getEditRow(),
+          editColNum = this.getEditCol();
+
+        if (editRowNum != null && editColNum != null) {
+          // If clicked cell is different from the editing cell
+          if (editRowNum !== recordNum || editColNum !== fieldNum) {
+            // Recalculate totals, this is due to this.endEditing not triggering cellEditEnd
+            const allRows = this.getData();
+            const editedRecord = this.getEditedRecord(editRowNum);
+            const newTotal = allRows.reduce((sum, row) => {
+              if (
+                row.characteristicValue === editedRecord.characteristicValue
+              ) {
+                // Use the edited record values
+                return sum + me.getRowTotal(editedRecord);
+              }
+
+              return sum + me.getRowTotal(row);
+            }, 0);
+
+            me.onTotalChange(newTotal);
+
+            // End editing on the current cell
+            viewer.endEditing();
+          }
+        }
+        // Proceed with the default recordClick behavior
+        this.Super('onRecordClick', arguments);
+      },
       cellEditEnd: function(
         editCompletionEvent,
         newValue,
@@ -110,7 +178,22 @@ isc.MultiVariantPurchaseGridItem.addProperties({
           editField = this.getEditField(colNum),
           undef;
 
-        // TODO: Update quantities with values coming from here
+        if (this.getRecord(rowNum)) {
+          const allRows = this.getData();
+          const editedRecord = this.getEditedRecord(rowNum);
+          const newTotal = allRows.reduce((sum, row) => {
+            if (row.characteristicValue === editedRecord.characteristicValue) {
+              // Use the edited record values
+              return sum + me.getRowTotal(editedRecord);
+            }
+
+            return sum + me.getRowTotal(row);
+          }, 0);
+
+          me.onTotalChange(newTotal);
+        }
+
+        this.Super('cellEditEnd', arguments);
       }
     });
 
@@ -145,17 +228,24 @@ isc.MultiVariantPurchaseGridItem.addProperties({
   transformObjectToArray: function(obj) {
     // Extract the color value first
     const rowCh = obj.characteristicValue;
-
-    // Use Object.keys() to get all keys, filter out 'characteristic' key, and map to new array format
+    const excludedKeys = ['characteristicValue', 'characteristicName', 'total'];
+    // Use Object.keys() to get all keys, filter out excluded keys, and map to new array format
     return Object.keys(obj)
-      .filter(
-        key => key !== 'characteristicValue' && key !== 'characteristicName'
-      ) // Ignore the 'characteristic' keys
+      .filter(key => !excludedKeys.includes(key) && !key.startsWith('_')) // Ignore the 'characteristic' keys
       .map(colCh => ({
         rowCharacteristicValue: rowCh,
         columnCharacteristicValue: colCh,
-        quantity: obj[colCh]
+        quantity: Number(obj[colCh])
       }));
+  },
+
+  // Sums row quantities into a total
+  getRowTotal: function(row) {
+    const transformedRows = this.transformObjectToArray(row);
+    return transformedRows.reduce(
+      (sum, item) => sum + Number(item.quantity),
+      0
+    );
   },
 
   destroy: function() {
