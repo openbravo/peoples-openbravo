@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2023 Openbravo SLU
+ * All portions are Copyright (C) 2023-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import java.util.Objects;
 
 import javax.enterprise.event.Observes;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -96,7 +97,7 @@ public class PriceAdjustmentHandler extends EntityPersistenceEventObserver {
     if (maxQty != null && maxQty.compareTo(BigDecimal.ZERO) > 0 && applyToProduct) {
       final String priorityRule = (String) event
           .getCurrentState(offerEntity.getProperty(PriceAdjustment.PROPERTY_PRIORITYRULE));
-      if (priorityRule == null) {
+      if (StringUtils.isBlank(priorityRule)) {
         throw new OBException("@SelectPriorityRule@");
       }
     }
