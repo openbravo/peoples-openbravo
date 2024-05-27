@@ -567,6 +567,9 @@ function onloadFunctions() {
               </tr>
               <tr class="DataGrid_Body_Row">
                 <th class="DataGrid_Header_Cell" colspan="2">Product</th>
+                <th class="DataGrid_Header_Cell" style="display: xx;" id="headerRelChar0"></th>
+					      <th class="DataGrid_Header_Cell" style="display: xx;" id="headerRelChar1"></th>
+					      <th class="DataGrid_Header_Cell" style="display: xx;" id="headerRelChar2"></th>
                 <th class="DataGrid_Header_Cell">Description</th>
                 <th class="DataGrid_Header_Cell">Quantity</th>
                 <th class="DataGrid_Header_Cell">Movement Quantity</th>
@@ -580,6 +583,9 @@ function onloadFunctions() {
                   <td width="20" class="DataGrid_Body_Cell"> <span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpOrder" onclick="updateData(this.value, this.checked);return true;" value="" id="fieldCOrderlineId"></input></span>
                   </td>
                   <td width="409" class="DataGrid_Body_Cell" id="fieldProductName">xx</td>
+                  <td width="198" class="DataGrid_Body_Cell" style="display: xx;" id="fieldRelChar0"></td>
+                  <td width="198" class="DataGrid_Body_Cell" style="display: xx;" id="fieldRelChar1"></td>
+                  <td width="198" class="DataGrid_Body_Cell" style="display: xx;" id="fieldRelChar2"></td>
                   <td width="198" class="DataGrid_Body_Cell" id="fieldDescription">xx</td>
                   <td width="146" class="DataGrid_Body_Cell" id="fieldTotalQty">xx</td>
                   <td width="131" class="DataGrid_Body_Cell"> <input name="inpQtyorderedxx" type="text" id="fieldQtyordered" size="5" style="width:80px" value="0" outputformat="qtyEdition" class="dojoValidateValid readonly required" required="true" disabled onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);" ></input></td>
