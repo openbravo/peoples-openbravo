@@ -138,8 +138,8 @@ isc.MultiVariantPurchaseGridItem.addProperties({
         value,
         rawValue
       ) {
-        var editRowNum = this.getEditRow(),
-          editColNum = this.getEditCol();
+        const editRowNum = this.getEditRow();
+        const editColNum = this.getEditCol();
 
         if (editRowNum != null && editColNum != null) {
           // If clicked cell is different from the editing cell
@@ -173,10 +173,7 @@ isc.MultiVariantPurchaseGridItem.addProperties({
         ficCallDone,
         autoSaveDone
       ) {
-        var rowNum = this.getEditRow(),
-          colNum = this.getEditCol(),
-          editField = this.getEditField(colNum),
-          undef;
+        var rowNum = this.getEditRow();
 
         if (this.getRecord(rowNum)) {
           const allRows = this.getData();
