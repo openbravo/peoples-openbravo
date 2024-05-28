@@ -21,8 +21,6 @@ package org.openbravo.materialmgmt.refinventory;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
-import static org.openbravo.materialmgmt.refinventory.ReferencedInventoryTestUtils.createHandlingUnit;
-import static org.openbravo.materialmgmt.refinventory.ReferencedInventoryTestUtils.createHandlingUnitType;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,8 +30,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
-import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
 import org.openbravo.test.base.OBBaseTest;
+import org.openbravo.test.referencedinventory.ReferencedInventoryTestUtils;
 
 /**
  * Tests the utilities provided by {@link ReferencedInventoryUtil}
@@ -42,21 +40,15 @@ public class ReferencedInventoryUtilTest extends OBBaseTest {
 
   private ReferencedInventory container;
   private ReferencedInventory pallet;
-  private ReferencedInventory box;
+  private ReferencedInventory box1;
+  private ReferencedInventory box2;
 
   @Before
   public void prepareHandlingUnits() {
-    ReferencedInventoryType containerType = createHandlingUnitType("Container");
-    ReferencedInventoryType palletType = createHandlingUnitType("Pallet");
-    ReferencedInventoryType boxType = createHandlingUnitType("Box");
-
-    container = createHandlingUnit("C1", containerType);
-    pallet = createHandlingUnit("P1", palletType);
-    pallet.setParentRefInventory(container);
-    box = createHandlingUnit("B1", boxType);
-    box.setParentRefInventory(pallet);
-    ReferencedInventory box2 = createHandlingUnit("B2", boxType);
-    box2.setParentRefInventory(pallet);
+    container = ReferencedInventoryTestUtils.createReferencedInventory(null);
+    pallet = ReferencedInventoryTestUtils.createReferencedInventory(container);
+    box1 = ReferencedInventoryTestUtils.createReferencedInventory(pallet);
+    box2 = ReferencedInventoryTestUtils.createReferencedInventory(pallet);
     OBDal.getInstance().flush();
   }
 
@@ -67,21 +59,16 @@ public class ReferencedInventoryUtilTest extends OBBaseTest {
 
   @Test
   public void getDirectChildReferencedInventories() {
-    List<String> containerChildren = ReferencedInventoryUtil
-        .getDirectChildReferencedInventories(container)
-        .map(ReferencedInventory::getSearchKey)
-        .collect(Collectors.toList());
-    assertThat(containerChildren, hasItems("P1"));
+    assertThat(getDirectChildReferencedInventories(container), hasItems(pallet.getSearchKey()));
+    assertThat(getDirectChildReferencedInventories(pallet),
+        hasItems(box1.getSearchKey(), box2.getSearchKey()));
+    assertThat(getDirectChildReferencedInventories(box1), empty());
+    assertThat(getDirectChildReferencedInventories(box2), empty());
+  }
 
-    List<String> palletChildren = ReferencedInventoryUtil
-        .getDirectChildReferencedInventories(pallet)
+  private List<String> getDirectChildReferencedInventories(ReferencedInventory handlingUnit) {
+    return ReferencedInventoryUtil.getDirectChildReferencedInventories(handlingUnit)
         .map(ReferencedInventory::getSearchKey)
         .collect(Collectors.toList());
-    assertThat(palletChildren, hasItems("B1", "B2"));
-
-    List<String> boxChildren = ReferencedInventoryUtil.getDirectChildReferencedInventories(box)
-        .map(ReferencedInventory::getSearchKey)
-        .collect(Collectors.toList());
-    assertThat(boxChildren, empty());
   }
 }

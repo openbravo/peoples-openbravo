@@ -25,8 +25,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.openbravo.materialmgmt.refinventory.ReferencedInventoryTestUtils.createHandlingUnit;
-import static org.openbravo.materialmgmt.refinventory.ReferencedInventoryTestUtils.createHandlingUnitType;
 
 import javax.inject.Inject;
 
@@ -40,6 +38,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryStatusProcessor.ReferencedInventoryStatus;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.synchronization.event.SynchronizationEvent;
+import org.openbravo.test.referencedinventory.ReferencedInventoryTestUtils;
 
 /**
  * Test cases to cover the handling unit status changing using the
@@ -56,11 +55,9 @@ public class ReferencedInventoryStatusProcessorTest extends WeldBaseTest {
 
   @Before
   public void prepareHandlingUnits() {
-    container = createHandlingUnit("C1", createHandlingUnitType("Container"));
-    pallet = createHandlingUnit("P1", createHandlingUnitType("Pallet"));
-    pallet.setParentRefInventory(container);
-    box = createHandlingUnit("B1", createHandlingUnitType("Box"));
-    box.setParentRefInventory(pallet);
+    container = ReferencedInventoryTestUtils.createReferencedInventory(null);
+    pallet = ReferencedInventoryTestUtils.createReferencedInventory(container);
+    box = ReferencedInventoryTestUtils.createReferencedInventory(pallet);
     OBDal.getInstance().flush();
   }
 
@@ -140,8 +137,9 @@ public class ReferencedInventoryStatusProcessorTest extends WeldBaseTest {
 
     OBException exception = assertThrows(OBException.class,
         () -> statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.OPEN));
-    assertThat(exception.getMessage(), equalTo(
-        "Cannot change the status of the handling unit B1 because its parent handling unit P1 is closed"));
+    assertThat(exception.getMessage(),
+        equalTo("Cannot change the status of the handling unit " + box.getSearchKey()
+            + " because its parent handling unit " + pallet.getSearchKey() + " is closed"));
   }
 
   @Test
@@ -150,8 +148,9 @@ public class ReferencedInventoryStatusProcessorTest extends WeldBaseTest {
 
     OBException exception = assertThrows(OBException.class,
         () -> statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.DESTROYED));
-    assertThat(exception.getMessage(), equalTo(
-        "Cannot change the status of the handling unit B1 because its parent handling unit P1 is closed"));
+    assertThat(exception.getMessage(),
+        equalTo("Cannot change the status of the handling unit " + box.getSearchKey()
+            + " because its parent handling unit " + pallet.getSearchKey() + " is closed"));
   }
 
   @Test
@@ -160,8 +159,9 @@ public class ReferencedInventoryStatusProcessorTest extends WeldBaseTest {
 
     OBException exception = assertThrows(OBException.class,
         () -> statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.OPEN));
-    assertThat(exception.getMessage(), equalTo(
-        "Cannot change the status of the handling unit B1 because its parent handling unit P1 is closed"));
+    assertThat(exception.getMessage(),
+        equalTo("Cannot change the status of the handling unit " + box.getSearchKey()
+            + " because its parent handling unit " + pallet.getSearchKey() + " is closed"));
   }
 
   @Test
@@ -170,8 +170,9 @@ public class ReferencedInventoryStatusProcessorTest extends WeldBaseTest {
 
     OBException exception = assertThrows(OBException.class,
         () -> statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.DESTROYED));
-    assertThat(exception.getMessage(), equalTo(
-        "Cannot change the status of the handling unit B1 because its parent handling unit P1 is closed"));
+    assertThat(exception.getMessage(),
+        equalTo("Cannot change the status of the handling unit " + box.getSearchKey()
+            + " because its parent handling unit " + pallet.getSearchKey() + " is closed"));
   }
 
   @Test

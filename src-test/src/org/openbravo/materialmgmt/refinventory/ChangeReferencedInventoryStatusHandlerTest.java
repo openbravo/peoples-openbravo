@@ -20,8 +20,6 @@ package org.openbravo.materialmgmt.refinventory;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.openbravo.materialmgmt.refinventory.ReferencedInventoryTestUtils.createHandlingUnit;
-import static org.openbravo.materialmgmt.refinventory.ReferencedInventoryTestUtils.createHandlingUnitType;
 
 import java.util.Collections;
 import java.util.Map;
@@ -34,6 +32,7 @@ import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryStatusProcessor.ReferencedInventoryStatus;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
+import org.openbravo.test.referencedinventory.ReferencedInventoryTestUtils;
 
 /**
  * Test cases to cover the execution of the {@link ChangeReferencedInventoryStatusHandler} process
@@ -45,7 +44,7 @@ public class ChangeReferencedInventoryStatusHandlerTest extends WeldBaseTest {
 
   @Before
   public void prepareHandlingUnits() {
-    handlingUnit = createHandlingUnit("C1", createHandlingUnitType("Container"));
+    handlingUnit = ReferencedInventoryTestUtils.createReferencedInventory(null);
   }
 
   @After

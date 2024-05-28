@@ -168,6 +168,12 @@ public class ReferencedInventoryTestUtils {
 
   public static ReferencedInventoryType createReferencedInventoryType(Organization org,
       SequenceType sequenceType, Sequence sequence, ContentRestriction contentRestriction) {
+    return createReferencedInventoryType(org, sequenceType, sequence, contentRestriction, true);
+  }
+
+  public static ReferencedInventoryType createReferencedInventoryType(Organization org,
+      SequenceType sequenceType, Sequence sequence, ContentRestriction contentRestriction,
+      boolean isShared) {
     final ReferencedInventoryType refInvType = OBProvider.getInstance()
         .get(ReferencedInventoryType.class);
     refInvType.setClient(OBContext.getOBContext().getCurrentClient());
@@ -175,11 +181,23 @@ public class ReferencedInventoryTestUtils {
     refInvType.setSequenceType(sequenceType.value);
     refInvType.setSequence(sequence);
     refInvType.setName(UUID.randomUUID().toString());
-    refInvType.setShared(true);
+    refInvType.setShared(isShared);
     refInvType.setContentRestriction(contentRestriction.value);
     OBDal.getInstance().save(refInvType);
     assertThat("Referenced Inventory Type is successfully created", refInvType, notNullValue());
     return refInvType;
+  }
+
+  public static ReferencedInventory createReferencedInventory(ReferencedInventory parent) {
+    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+    ReferencedInventoryType type = createReferencedInventoryType(
+        OBDal.getInstance().getProxy(Organization.class, orgId), SequenceType.NONE, null,
+        ContentRestriction.BOTH_ITEMS_OR_REFINVENTORIES, false);
+    ReferencedInventory handlingUnit = createReferencedInventory(orgId, type);
+    if (parent != null) {
+      handlingUnit.setParentRefInventory(parent);
+    }
+    return handlingUnit;
   }
 
   public static ReferencedInventory createReferencedInventory(final String orgId,
