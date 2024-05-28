@@ -41,12 +41,28 @@ isc.MultiVariantPurchaseGridItem.addProperties({
 
     const hasRowCharacteristic = rows.length > 0;
     const hasColumnCharacteristic = columns.length > 0;
-
+    const me = this;
     const cols = columns.map(col => ({
       name: col.name,
       title: col.title,
       type: 'integer',
-      defaultValue: 0
+      defaultValue: 0,
+      changed: function(currentRow) {
+        const currentDataFromGrid = currentRow.grid.getData();
+        const currentRowData = currentRow.getData();
+        const dataFromGridWithEditedValue = currentDataFromGrid.map(row => {
+          if (currentRowData.characteristicValue === row.characteristicValue) {
+            return currentRowData;
+          }
+          return row;
+        });
+        me.productData[
+          me.currentProductId
+        ] = dataFromGridWithEditedValue.flatMap(row =>
+          me.transformObjectToArray(row)
+        );
+        this.Super('changed', arguments);
+      }
     }));
 
     let rowsData = rows.map(row => ({
@@ -78,8 +94,6 @@ isc.MultiVariantPurchaseGridItem.addProperties({
       },
       ...cols
     ];
-
-    const me = this;
 
     if (hasColumnCharacteristic) {
       fields.push({
@@ -173,7 +187,7 @@ isc.MultiVariantPurchaseGridItem.addProperties({
         ficCallDone,
         autoSaveDone
       ) {
-        var rowNum = this.getEditRow();
+        const rowNum = this.getEditRow();
 
         if (this.getRecord(rowNum)) {
           const allRows = this.getData();
@@ -200,18 +214,9 @@ isc.MultiVariantPurchaseGridItem.addProperties({
   },
 
   selectProduct: function(productId, columns, rows, initialValues) {
-    // Save current data if productId exists
-    if (this.currentProductId && this.grid) {
-      // Get the current data from the grid and convert it to a JSON string
-      var currentData = this.grid.getData();
-      this.productData[this.currentProductId] = currentData.flatMap(row =>
-        this.transformObjectToArray(row)
-      );
-    }
-
     // Check if product data already exists
     if (this.productData[productId]) {
-      var savedData = this.productData[productId];
+      const savedData = this.productData[productId];
       // Create grid with saved data
       this.createGrid(columns, rows, savedData);
     } else {
