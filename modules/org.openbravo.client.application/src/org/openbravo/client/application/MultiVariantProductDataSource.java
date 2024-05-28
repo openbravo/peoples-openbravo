@@ -118,8 +118,6 @@ public class MultiVariantProductDataSource extends ReadOnlyDataSourceService {
                     "rowCharacteristics", rowCharacteristics, //
                     "columnCharacteristics", columnCharacteristics, //
                     "initialValues", variantInfoByGenericProductId.get(genericProductId)))); //
-
-            // TODO: Include initialValues for each row/column present as variant
           } catch (JSONException e) {
             // TODO: maybe add a message here
             throw new RuntimeException(e);
