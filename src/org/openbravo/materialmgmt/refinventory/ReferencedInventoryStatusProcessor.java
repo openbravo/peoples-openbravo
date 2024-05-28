@@ -36,7 +36,23 @@ public class ReferencedInventoryStatusProcessor {
   private static final Logger log = LogManager.getLogger();
 
   public enum ReferencedInventoryStatus {
-    OPEN, CLOSED, DESTROYED
+    OPEN, CLOSED, DESTROYED;
+
+    private boolean isStatusOf(ReferencedInventory handlingUnit) {
+      return name().equals(handlingUnit.getStatus());
+    }
+
+    private static boolean isClosed(ReferencedInventory handlingUnit) {
+      return CLOSED.isStatusOf(handlingUnit);
+    }
+
+    private static boolean isNotDestroyed(ReferencedInventory handlingUnit) {
+      return !isDestroyed(handlingUnit);
+    }
+
+    private static boolean isDestroyed(ReferencedInventory handlingUnit) {
+      return DESTROYED.isStatusOf(handlingUnit);
+    }
   }
 
   /**
@@ -51,7 +67,7 @@ public class ReferencedInventoryStatusProcessor {
    */
   public void changeHandlingUnitStatus(ReferencedInventory handlingUnit,
       ReferencedInventoryStatus newStatus) {
-    if (isInStatus(handlingUnit, newStatus)) {
+    if (newStatus.isStatusOf(handlingUnit)) {
       log.warn("Skipping status change. The current status of the handling unit {} is already {}",
           handlingUnit.getSearchKey(), newStatus);
       return;
@@ -63,7 +79,7 @@ public class ReferencedInventoryStatusProcessor {
   }
 
   private void checkIsDestroyed(ReferencedInventory handlingUnit) {
-    if (isDestroyed(handlingUnit)) {
+    if (ReferencedInventoryStatus.isDestroyed(handlingUnit)) {
       log.error("Cannot change the status of the handling unit {} because it is destroyed",
           handlingUnit.getSearchKey());
       throw new OBException(OBMessageUtils.getI18NMessage("HandlingUnitIsDestroyed"));
@@ -72,7 +88,7 @@ public class ReferencedInventoryStatusProcessor {
 
   private void checkIsParentClosed(ReferencedInventory handlingUnit) {
     ReferencedInventory parent = handlingUnit.getParentRefInventory();
-    if (parent != null && isClosed(parent)) {
+    if (parent != null && ReferencedInventoryStatus.isClosed(parent)) {
       throw new OBException(OBMessageUtils.getI18NMessage("ParentHandlingUnitIsClosed",
           new String[] { handlingUnit.getSearchKey(), parent.getSearchKey() }));
     }
@@ -82,29 +98,12 @@ public class ReferencedInventoryStatusProcessor {
       ReferencedInventoryStatus status) {
     handlingUnit.setStatus(status.name());
     ReferencedInventoryUtil.getDirectChildReferencedInventories(handlingUnit)
-        .filter(this::isNotDestroyed)
+        .filter(ReferencedInventoryStatus::isNotDestroyed)
         .forEach(child -> changeStatusInCascade(child, status));
   }
 
   private void triggerHandlingUnitStatusChangeEvent(ReferencedInventory handlingUnit) {
     SynchronizationEvent.getInstance()
         .triggerEvent("API_HandlingUnitStatusChange", handlingUnit.getId());
-  }
-
-  private boolean isClosed(ReferencedInventory handlingUnit) {
-    return isInStatus(handlingUnit, ReferencedInventoryStatus.CLOSED);
-  }
-
-  private boolean isNotDestroyed(ReferencedInventory handlingUnit) {
-    return !isDestroyed(handlingUnit);
-  }
-
-  private boolean isDestroyed(ReferencedInventory handlingUnit) {
-    return isInStatus(handlingUnit, ReferencedInventoryStatus.DESTROYED);
-  }
-
-  private boolean isInStatus(ReferencedInventory handlingUnit,
-      ReferencedInventoryStatus newStatus) {
-    return newStatus.name().equals(handlingUnit.getStatus());
   }
 }
