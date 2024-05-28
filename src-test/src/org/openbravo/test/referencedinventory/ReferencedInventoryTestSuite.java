@@ -21,8 +21,8 @@ package org.openbravo.test.referencedinventory;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.openbravo.materialmgmt.refinventory.ChangeHandlingUnitStatusTest;
-import org.openbravo.materialmgmt.refinventory.HandlingUnitStatusProcessorTest;
+import org.openbravo.materialmgmt.refinventory.ChangeReferencedInventoryStatusHandlerTest;
+import org.openbravo.materialmgmt.refinventory.ReferencedInventoryStatusProcessorTest;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtilTest;
 
 @RunWith(Suite.class)
@@ -55,8 +55,8 @@ import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtilTest;
     ReferencedInventoryTypeTest.class, //
 
     ReferencedInventoryUtilTest.class, //
-    HandlingUnitStatusProcessorTest.class, //
-    ChangeHandlingUnitStatusTest.class //
+    ReferencedInventoryStatusProcessorTest.class, //
+    ChangeReferencedInventoryStatusHandlerTest.class //
 })
 public class ReferencedInventoryTestSuite {
 }

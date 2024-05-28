@@ -28,13 +28,14 @@ import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.synchronization.event.SynchronizationEvent;
 
 /**
- * In charge of updating the status of a handling unit
+ * In charge of updating the status of a handling unit and triggering the
+ * API_HandlingUnitStatusChange push API event.
  */
 @ApplicationScoped
-public class HandlingUnitStatusProcessor {
+public class ReferencedInventoryStatusProcessor {
   private static final Logger log = LogManager.getLogger();
 
-  public enum HandlingUnitStatus {
+  public enum ReferencedInventoryStatus {
     OPEN, CLOSED, DESTROYED
   }
 
@@ -43,22 +44,22 @@ public class HandlingUnitStatusProcessor {
    * 
    * @param handlingUnit
    *          the handling unit
-   * @param status
+   * @param newStatus
    *          the new status to be set
    * @throws OBException
    *           if the handling unit is destroyed or if the parent of the handling unit is closed
    */
   public void changeHandlingUnitStatus(ReferencedInventory handlingUnit,
-      HandlingUnitStatus status) {
-    if (isInStatus(handlingUnit, status)) {
+      ReferencedInventoryStatus newStatus) {
+    if (isInStatus(handlingUnit, newStatus)) {
       log.warn("Skipping status change. The current status of the handling unit {} is already {}",
-          handlingUnit.getSearchKey(), status);
+          handlingUnit.getSearchKey(), newStatus);
       return;
     }
     checkIsDestroyed(handlingUnit);
     checkIsParentClosed(handlingUnit);
-    changeStatusInCascade(handlingUnit, status);
-    triggerEvent(handlingUnit);
+    changeStatusInCascade(handlingUnit, newStatus);
+    triggerHandlingUnitStatusChangeEvent(handlingUnit);
   }
 
   private void checkIsDestroyed(ReferencedInventory handlingUnit) {
@@ -77,20 +78,21 @@ public class HandlingUnitStatusProcessor {
     }
   }
 
-  private void changeStatusInCascade(ReferencedInventory handlingUnit, HandlingUnitStatus status) {
+  private void changeStatusInCascade(ReferencedInventory handlingUnit,
+      ReferencedInventoryStatus status) {
     handlingUnit.setStatus(status.name());
     ReferencedInventoryUtil.getDirectChildReferencedInventories(handlingUnit)
         .filter(this::isNotDestroyed)
         .forEach(child -> changeStatusInCascade(child, status));
   }
 
-  private void triggerEvent(ReferencedInventory handlingUnit) {
+  private void triggerHandlingUnitStatusChangeEvent(ReferencedInventory handlingUnit) {
     SynchronizationEvent.getInstance()
         .triggerEvent("API_HandlingUnitStatusChange", handlingUnit.getId());
   }
 
   private boolean isClosed(ReferencedInventory handlingUnit) {
-    return isInStatus(handlingUnit, HandlingUnitStatus.CLOSED);
+    return isInStatus(handlingUnit, ReferencedInventoryStatus.CLOSED);
   }
 
   private boolean isNotDestroyed(ReferencedInventory handlingUnit) {
@@ -98,10 +100,11 @@ public class HandlingUnitStatusProcessor {
   }
 
   private boolean isDestroyed(ReferencedInventory handlingUnit) {
-    return isInStatus(handlingUnit, HandlingUnitStatus.DESTROYED);
+    return isInStatus(handlingUnit, ReferencedInventoryStatus.DESTROYED);
   }
 
-  private boolean isInStatus(ReferencedInventory handlingUnit, HandlingUnitStatus newStatus) {
+  private boolean isInStatus(ReferencedInventory handlingUnit,
+      ReferencedInventoryStatus newStatus) {
     return newStatus.name().equals(handlingUnit.getStatus());
   }
 }

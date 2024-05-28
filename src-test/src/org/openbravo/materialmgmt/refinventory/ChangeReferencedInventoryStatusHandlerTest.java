@@ -20,8 +20,8 @@ package org.openbravo.materialmgmt.refinventory;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.openbravo.materialmgmt.refinventory.HandlingUnitTestUtils.createHandlingUnit;
-import static org.openbravo.materialmgmt.refinventory.HandlingUnitTestUtils.createHandlingUnitType;
+import static org.openbravo.materialmgmt.refinventory.ReferencedInventoryTestUtils.createHandlingUnit;
+import static org.openbravo.materialmgmt.refinventory.ReferencedInventoryTestUtils.createHandlingUnitType;
 
 import java.util.Collections;
 import java.util.Map;
@@ -32,13 +32,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.base.weld.test.WeldBaseTest;
-import org.openbravo.materialmgmt.refinventory.HandlingUnitStatusProcessor.HandlingUnitStatus;
+import org.openbravo.materialmgmt.refinventory.ReferencedInventoryStatusProcessor.ReferencedInventoryStatus;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 
 /**
- * Test cases to cover the execution of the {@link ChangeHandlingUnitStatus} process action handler.
+ * Test cases to cover the execution of the {@link ChangeReferencedInventoryStatusHandler} process
+ * action handler.
  */
-public class ChangeHandlingUnitStatusTest extends WeldBaseTest {
+public class ChangeReferencedInventoryStatusHandlerTest extends WeldBaseTest {
 
   private ReferencedInventory handlingUnit;
 
@@ -55,14 +56,14 @@ public class ChangeHandlingUnitStatusTest extends WeldBaseTest {
   @Test
   public void changeHandlingUnitStatus() {
     assertThat("Handling unit status is initally open", handlingUnit.getStatus(),
-        equalTo(HandlingUnitStatus.OPEN.name()));
+        equalTo(ReferencedInventoryStatus.OPEN.name()));
 
     JSONObject requestData = new JSONObject(Map.of("M_RefInventory_ID", handlingUnit.getId(),
         "_params", new JSONObject(Map.of("Status", "CLOSED"))));
-    WeldUtils.getInstanceFromStaticBeanManager(ChangeHandlingUnitStatus.class)
+    WeldUtils.getInstanceFromStaticBeanManager(ChangeReferencedInventoryStatusHandler.class)
         .doExecute(Collections.emptyMap(), requestData.toString());
 
     assertThat("Handling unit status is changed", handlingUnit.getStatus(),
-        equalTo(HandlingUnitStatus.CLOSED.name()));
+        equalTo(ReferencedInventoryStatus.CLOSED.name()));
   }
 }

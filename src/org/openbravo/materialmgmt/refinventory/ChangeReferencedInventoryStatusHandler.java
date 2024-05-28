@@ -30,17 +30,17 @@ import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.application.process.ResponseActionsBuilder;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.materialmgmt.refinventory.HandlingUnitStatusProcessor.HandlingUnitStatus;
+import org.openbravo.materialmgmt.refinventory.ReferencedInventoryStatusProcessor.ReferencedInventoryStatus;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 
 /**
  * A process that changes the status of a handling unit
  */
-public class ChangeHandlingUnitStatus extends BaseProcessActionHandler {
+public class ChangeReferencedInventoryStatusHandler extends BaseProcessActionHandler {
   private static final Logger log = LogManager.getLogger();
 
   @Inject
-  private HandlingUnitStatusProcessor statusProcessor;
+  private ReferencedInventoryStatusProcessor statusProcessor;
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -48,7 +48,7 @@ public class ChangeHandlingUnitStatus extends BaseProcessActionHandler {
       JSONObject request = new JSONObject(content);
       ReferencedInventory handlingUnit = OBDal.getInstance()
           .get(ReferencedInventory.class, request.getString("M_RefInventory_ID"));
-      HandlingUnitStatus status = HandlingUnitStatus
+      ReferencedInventoryStatus status = ReferencedInventoryStatus
           .valueOf(request.getJSONObject("_params").getString("Status"));
 
       statusProcessor.changeHandlingUnitStatus(handlingUnit, status);

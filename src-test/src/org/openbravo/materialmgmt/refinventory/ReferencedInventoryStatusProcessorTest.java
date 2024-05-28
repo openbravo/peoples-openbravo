@@ -25,8 +25,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.openbravo.materialmgmt.refinventory.HandlingUnitTestUtils.createHandlingUnit;
-import static org.openbravo.materialmgmt.refinventory.HandlingUnitTestUtils.createHandlingUnitType;
+import static org.openbravo.materialmgmt.refinventory.ReferencedInventoryTestUtils.createHandlingUnit;
+import static org.openbravo.materialmgmt.refinventory.ReferencedInventoryTestUtils.createHandlingUnitType;
 
 import javax.inject.Inject;
 
@@ -37,22 +37,22 @@ import org.mockito.verification.VerificationMode;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.materialmgmt.refinventory.HandlingUnitStatusProcessor.HandlingUnitStatus;
+import org.openbravo.materialmgmt.refinventory.ReferencedInventoryStatusProcessor.ReferencedInventoryStatus;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.synchronization.event.SynchronizationEvent;
 
 /**
  * Test cases to cover the handling unit status changing using the
- * {@link HandlingUnitStatusProcessor} class
+ * {@link ReferencedInventoryStatusProcessor} class
  */
-public class HandlingUnitStatusProcessorTest extends WeldBaseTest {
+public class ReferencedInventoryStatusProcessorTest extends WeldBaseTest {
 
   private ReferencedInventory container;
   private ReferencedInventory pallet;
   private ReferencedInventory box;
 
   @Inject
-  private HandlingUnitStatusProcessor statusProcessor;
+  private ReferencedInventoryStatusProcessor statusProcessor;
 
   @Before
   public void prepareHandlingUnits() {
@@ -71,26 +71,26 @@ public class HandlingUnitStatusProcessorTest extends WeldBaseTest {
 
   @Test
   public void handlingUnitsAreOpenedByDefault() {
-    assertThat(container.getStatus(), equalTo(HandlingUnitStatus.OPEN.name()));
-    assertThat(pallet.getStatus(), equalTo(HandlingUnitStatus.OPEN.name()));
-    assertThat(box.getStatus(), equalTo(HandlingUnitStatus.OPEN.name()));
+    assertThat(container.getStatus(), equalTo(ReferencedInventoryStatus.OPEN.name()));
+    assertThat(pallet.getStatus(), equalTo(ReferencedInventoryStatus.OPEN.name()));
+    assertThat(box.getStatus(), equalTo(ReferencedInventoryStatus.OPEN.name()));
   }
 
   @Test
   public void changeStatusInCascade() {
-    HandlingUnitStatus newStatus = HandlingUnitStatus.CLOSED;
+    ReferencedInventoryStatus newStatus = ReferencedInventoryStatus.CLOSED;
     statusProcessor.changeHandlingUnitStatus(container, newStatus);
     assertThat(container.getStatus(), equalTo(newStatus.name()));
     assertThat(pallet.getStatus(), equalTo(newStatus.name()));
     assertThat(box.getStatus(), equalTo(newStatus.name()));
 
-    newStatus = HandlingUnitStatus.OPEN;
+    newStatus = ReferencedInventoryStatus.OPEN;
     statusProcessor.changeHandlingUnitStatus(container, newStatus);
     assertThat(container.getStatus(), equalTo(newStatus.name()));
     assertThat(pallet.getStatus(), equalTo(newStatus.name()));
     assertThat(box.getStatus(), equalTo(newStatus.name()));
 
-    newStatus = HandlingUnitStatus.DESTROYED;
+    newStatus = ReferencedInventoryStatus.DESTROYED;
     statusProcessor.changeHandlingUnitStatus(container, newStatus);
     assertThat(container.getStatus(), equalTo(newStatus.name()));
     assertThat(pallet.getStatus(), equalTo(newStatus.name()));
@@ -99,96 +99,96 @@ public class HandlingUnitStatusProcessorTest extends WeldBaseTest {
 
   @Test
   public void changeIntermediateHandlingUnitStatus() {
-    statusProcessor.changeHandlingUnitStatus(pallet, HandlingUnitStatus.CLOSED);
-    assertThat(container.getStatus(), equalTo(HandlingUnitStatus.OPEN.name()));
-    assertThat(pallet.getStatus(), equalTo(HandlingUnitStatus.CLOSED.name()));
-    assertThat(box.getStatus(), equalTo(HandlingUnitStatus.CLOSED.name()));
+    statusProcessor.changeHandlingUnitStatus(pallet, ReferencedInventoryStatus.CLOSED);
+    assertThat(container.getStatus(), equalTo(ReferencedInventoryStatus.OPEN.name()));
+    assertThat(pallet.getStatus(), equalTo(ReferencedInventoryStatus.CLOSED.name()));
+    assertThat(box.getStatus(), equalTo(ReferencedInventoryStatus.CLOSED.name()));
   }
 
   @Test
   public void changeSingleHandlingUnitStatus() {
-    statusProcessor.changeHandlingUnitStatus(box, HandlingUnitStatus.CLOSED);
-    assertThat(container.getStatus(), equalTo(HandlingUnitStatus.OPEN.name()));
-    assertThat(pallet.getStatus(), equalTo(HandlingUnitStatus.OPEN.name()));
-    assertThat(box.getStatus(), equalTo(HandlingUnitStatus.CLOSED.name()));
+    statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.CLOSED);
+    assertThat(container.getStatus(), equalTo(ReferencedInventoryStatus.OPEN.name()));
+    assertThat(pallet.getStatus(), equalTo(ReferencedInventoryStatus.OPEN.name()));
+    assertThat(box.getStatus(), equalTo(ReferencedInventoryStatus.CLOSED.name()));
   }
 
   @Test
   public void changeStatusAtDifferentLevels() {
-    statusProcessor.changeHandlingUnitStatus(container, HandlingUnitStatus.CLOSED);
-    statusProcessor.changeHandlingUnitStatus(container, HandlingUnitStatus.OPEN);
-    statusProcessor.changeHandlingUnitStatus(box, HandlingUnitStatus.DESTROYED);
-    statusProcessor.changeHandlingUnitStatus(pallet, HandlingUnitStatus.CLOSED);
+    statusProcessor.changeHandlingUnitStatus(container, ReferencedInventoryStatus.CLOSED);
+    statusProcessor.changeHandlingUnitStatus(container, ReferencedInventoryStatus.OPEN);
+    statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.DESTROYED);
+    statusProcessor.changeHandlingUnitStatus(pallet, ReferencedInventoryStatus.CLOSED);
 
-    assertThat(container.getStatus(), equalTo(HandlingUnitStatus.OPEN.name()));
-    assertThat(pallet.getStatus(), equalTo(HandlingUnitStatus.CLOSED.name()));
-    assertThat(box.getStatus(), equalTo(HandlingUnitStatus.DESTROYED.name()));
+    assertThat(container.getStatus(), equalTo(ReferencedInventoryStatus.OPEN.name()));
+    assertThat(pallet.getStatus(), equalTo(ReferencedInventoryStatus.CLOSED.name()));
+    assertThat(box.getStatus(), equalTo(ReferencedInventoryStatus.DESTROYED.name()));
   }
 
   @Test
   public void cannotChangeStatusOfADestroyedHandlingUnit() {
-    statusProcessor.changeHandlingUnitStatus(box, HandlingUnitStatus.DESTROYED);
+    statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.DESTROYED);
     OBException exception = assertThrows(OBException.class,
-        () -> statusProcessor.changeHandlingUnitStatus(box, HandlingUnitStatus.OPEN));
+        () -> statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.OPEN));
     assertThat(exception.getMessage(),
         equalTo("Cannot change the status of a destroyed handling unit"));
   }
 
   @Test
   public void cannotOpenAHandlingUnitWithParentClosed() {
-    statusProcessor.changeHandlingUnitStatus(pallet, HandlingUnitStatus.CLOSED);
+    statusProcessor.changeHandlingUnitStatus(pallet, ReferencedInventoryStatus.CLOSED);
 
     OBException exception = assertThrows(OBException.class,
-        () -> statusProcessor.changeHandlingUnitStatus(box, HandlingUnitStatus.OPEN));
+        () -> statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.OPEN));
     assertThat(exception.getMessage(), equalTo(
         "Cannot change the status of the handling unit B1 because its parent handling unit P1 is closed"));
   }
 
   @Test
   public void cannotDestroyAHandlingUnitWithParentClosed() {
-    statusProcessor.changeHandlingUnitStatus(pallet, HandlingUnitStatus.CLOSED);
+    statusProcessor.changeHandlingUnitStatus(pallet, ReferencedInventoryStatus.CLOSED);
 
     OBException exception = assertThrows(OBException.class,
-        () -> statusProcessor.changeHandlingUnitStatus(box, HandlingUnitStatus.DESTROYED));
+        () -> statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.DESTROYED));
     assertThat(exception.getMessage(), equalTo(
         "Cannot change the status of the handling unit B1 because its parent handling unit P1 is closed"));
   }
 
   @Test
   public void cannotOpenAHandlingUnitWithAllParentsClosed() {
-    statusProcessor.changeHandlingUnitStatus(container, HandlingUnitStatus.CLOSED);
+    statusProcessor.changeHandlingUnitStatus(container, ReferencedInventoryStatus.CLOSED);
 
     OBException exception = assertThrows(OBException.class,
-        () -> statusProcessor.changeHandlingUnitStatus(box, HandlingUnitStatus.OPEN));
+        () -> statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.OPEN));
     assertThat(exception.getMessage(), equalTo(
         "Cannot change the status of the handling unit B1 because its parent handling unit P1 is closed"));
   }
 
   @Test
   public void cannotDestroyAHandlingUnitWithAllParentsClosed() {
-    statusProcessor.changeHandlingUnitStatus(container, HandlingUnitStatus.CLOSED);
+    statusProcessor.changeHandlingUnitStatus(container, ReferencedInventoryStatus.CLOSED);
 
     OBException exception = assertThrows(OBException.class,
-        () -> statusProcessor.changeHandlingUnitStatus(box, HandlingUnitStatus.DESTROYED));
+        () -> statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.DESTROYED));
     assertThat(exception.getMessage(), equalTo(
         "Cannot change the status of the handling unit B1 because its parent handling unit P1 is closed"));
   }
 
   @Test
   public void eventIsTriggeredWhenExpected() {
-    changeStatusAndVerifyTriggeredEvent(container, HandlingUnitStatus.CLOSED, times(1));
-    changeStatusAndVerifyTriggeredEvent(container, HandlingUnitStatus.CLOSED, never());
-    changeStatusAndVerifyTriggeredEvent(container, HandlingUnitStatus.OPEN, times(1));
-    changeStatusAndVerifyTriggeredEvent(container, HandlingUnitStatus.OPEN, never());
-    changeStatusAndVerifyTriggeredEvent(pallet, HandlingUnitStatus.OPEN, never());
-    changeStatusAndVerifyTriggeredEvent(box, HandlingUnitStatus.OPEN, never());
-    changeStatusAndVerifyTriggeredEvent(box, HandlingUnitStatus.DESTROYED, times(1));
-    changeStatusAndVerifyTriggeredEvent(pallet, HandlingUnitStatus.CLOSED, times(1));
-    changeStatusAndVerifyTriggeredEvent(container, HandlingUnitStatus.CLOSED, times(1));
+    changeStatusAndVerifyTriggeredEvent(container, ReferencedInventoryStatus.CLOSED, times(1));
+    changeStatusAndVerifyTriggeredEvent(container, ReferencedInventoryStatus.CLOSED, never());
+    changeStatusAndVerifyTriggeredEvent(container, ReferencedInventoryStatus.OPEN, times(1));
+    changeStatusAndVerifyTriggeredEvent(container, ReferencedInventoryStatus.OPEN, never());
+    changeStatusAndVerifyTriggeredEvent(pallet, ReferencedInventoryStatus.OPEN, never());
+    changeStatusAndVerifyTriggeredEvent(box, ReferencedInventoryStatus.OPEN, never());
+    changeStatusAndVerifyTriggeredEvent(box, ReferencedInventoryStatus.DESTROYED, times(1));
+    changeStatusAndVerifyTriggeredEvent(pallet, ReferencedInventoryStatus.CLOSED, times(1));
+    changeStatusAndVerifyTriggeredEvent(container, ReferencedInventoryStatus.CLOSED, times(1));
   }
 
   private void changeStatusAndVerifyTriggeredEvent(ReferencedInventory handlingUnit,
-      HandlingUnitStatus status, VerificationMode mode) {
+      ReferencedInventoryStatus status, VerificationMode mode) {
     mockStatic(SynchronizationEvent.class, synchronizationEventMock -> {
       SynchronizationEvent instanceMock = mock(SynchronizationEvent.class);
       synchronizationEventMock.when(SynchronizationEvent::getInstance).thenReturn(instanceMock);

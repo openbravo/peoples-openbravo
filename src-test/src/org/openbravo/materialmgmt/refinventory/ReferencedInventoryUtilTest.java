@@ -21,8 +21,8 @@ package org.openbravo.materialmgmt.refinventory;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
-import static org.openbravo.materialmgmt.refinventory.HandlingUnitTestUtils.createHandlingUnit;
-import static org.openbravo.materialmgmt.refinventory.HandlingUnitTestUtils.createHandlingUnitType;
+import static org.openbravo.materialmgmt.refinventory.ReferencedInventoryTestUtils.createHandlingUnit;
+import static org.openbravo.materialmgmt.refinventory.ReferencedInventoryTestUtils.createHandlingUnitType;
 
 import java.util.List;
 import java.util.stream.Collectors;

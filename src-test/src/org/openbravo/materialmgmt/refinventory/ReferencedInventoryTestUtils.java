@@ -28,9 +28,9 @@ import org.openbravo.test.base.TestConstants.Orgs;
 /**
  * Provides test utilities to deal with handling units
  */
-public class HandlingUnitTestUtils {
+public class ReferencedInventoryTestUtils {
 
-  private HandlingUnitTestUtils() {
+  private ReferencedInventoryTestUtils() {
   }
 
   /**
