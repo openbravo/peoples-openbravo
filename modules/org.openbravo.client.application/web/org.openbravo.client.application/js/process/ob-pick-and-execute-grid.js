@@ -192,7 +192,8 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     // FIXME:---
     this.editFormProperties = {
-      view: this.view.buttonOwnerView
+      view: this.view.buttonOwnerView,
+      handleItemChange: this.viewProperties.handleItemChange
     };
 
     this.autoFitExpandField = this.getLongestFieldName();

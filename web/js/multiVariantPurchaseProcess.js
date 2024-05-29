@@ -74,6 +74,12 @@ const getViewProperties = (recordId, view) => ({
   selectionType: 'S',
   arrowKeyAction: 'select',
   autoFetchData: true,
+  handleItemChange: function(item) {
+    if (item.isValid()) {
+      item.grid.endEditing();
+      item.grid.selectSingleRecord(item.rowNum);
+    }
+  },
   selectionFn: (ignored, record, state) => {
     if (state === true) {
       if (record.newRow) {
