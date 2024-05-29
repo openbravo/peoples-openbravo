@@ -39,6 +39,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.common.plm.Characteristic;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductByPriceAndWarehouse;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
@@ -106,6 +107,9 @@ public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
       JSONObject productRowsData, Order order) {
     for (String newGenericProductId : newGenericProductIds) {
       Product newGenericProduct = OBDal.getInstance().get(Product.class, newGenericProductId);
+      Characteristic newGenericProductRowCharacteristic = newGenericProduct.getRowCharacteristic();
+      Characteristic newGenericProductColumnCharacteristic = newGenericProduct
+          .getColumnCharacteristic();
       try {
         JSONArray productRowData = productRowsData.getJSONArray(newGenericProductId);
         Map<String, Map<String, Integer>> mappedProductRowData = getProductRowDataMapped(
@@ -122,14 +126,16 @@ public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
 
           for (ProductCharacteristicValue productCharacteristicValue : variantProduct
               .getProductCharacteristicValueList()) {
-            if (productCharacteristicValue.getCharacteristic()
-                .getId()
-                .equals(newGenericProduct.getRowCharacteristic().getId())) {
+            if (newGenericProductRowCharacteristic != null
+                && productCharacteristicValue.getCharacteristic()
+                    .getId()
+                    .equals(newGenericProductRowCharacteristic.getId())) {
               productRowCharacteristicValue = productCharacteristicValue.getCharacteristicValue()
                   .getId();
-            } else if (productCharacteristicValue.getCharacteristic()
-                .getId()
-                .equals(newGenericProduct.getColumnCharacteristic().getId())) {
+            } else if (newGenericProductColumnCharacteristic != null
+                && productCharacteristicValue.getCharacteristic()
+                    .getId()
+                    .equals(newGenericProductColumnCharacteristic.getId())) {
               productColumnCharacteristicValue = productCharacteristicValue.getCharacteristicValue()
                   .getId();
             }
@@ -226,6 +232,8 @@ public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
       Map<String, Map<String, Integer>> mappedProductRowData = getProductRowDataMapped(
           productRowsData.getJSONArray(genericProductId));
       Product genericProductToUpdate = OBDal.getInstance().get(Product.class, genericProductId);
+      Characteristic genericProductToUpdateRowCharacteristic = genericProductToUpdate.getRowCharacteristic();
+      Characteristic genericProductToUpdateColumnCharacteristic = genericProductToUpdate.getColumnCharacteristic();
       List<Product> variantProducts = getAllVariantsOfGenericProduct(genericProductId);
       for (Product variantProduct : variantProducts) {
         // Check product characteristic value against mappedProductRowData row/column
@@ -234,17 +242,19 @@ public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
         String productColumnCharacteristicValue = "";
 
         for (ProductCharacteristicValue productCharacteristicValue : variantProduct
-            .getProductCharacteristicValueList()) {
-          if (productCharacteristicValue.getCharacteristic()
-              .getId()
-              .equals(genericProductToUpdate.getRowCharacteristic().getId())) {
+                .getProductCharacteristicValueList()) {
+          if (genericProductToUpdateRowCharacteristic != null
+                  && productCharacteristicValue.getCharacteristic()
+                  .getId()
+                  .equals(genericProductToUpdateRowCharacteristic.getId())) {
             productRowCharacteristicValue = productCharacteristicValue.getCharacteristicValue()
-                .getId();
-          } else if (productCharacteristicValue.getCharacteristic()
-              .getId()
-              .equals(genericProductToUpdate.getColumnCharacteristic().getId())) {
+                    .getId();
+          } else if (genericProductToUpdateColumnCharacteristic != null
+                  && productCharacteristicValue.getCharacteristic()
+                  .getId()
+                  .equals(genericProductToUpdateColumnCharacteristic.getId())) {
             productColumnCharacteristicValue = productCharacteristicValue.getCharacteristicValue()
-                .getId();
+                    .getId();
           }
         }
 
@@ -289,18 +299,18 @@ public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
     Map<String, Map<String, Integer>> mappedProductRowData = new HashMap<>();
     for (int i = 0; i < productRowData.length(); i++) {
       JSONObject productRow = productRowData.getJSONObject(i);
-      if (productRow.has("rowCharacteristicValue")) {
-        String rowCharacteristic = productRow.getString("rowCharacteristicValue");
+      String rowCharacteristic = productRow.getString("rowCharacteristicValue");
+      String columnCharacteristic = productRow.getString("columnCharacteristicValue");
+      if (!NO_ROW_CHARACTERISTIC.equals(rowCharacteristic)) {
         Map<String, Integer> row = mappedProductRowData.getOrDefault(rowCharacteristic,
             new HashMap<>());
-        if (productRow.has("columnCharacteristicValue")) {
-          row.put(productRow.getString("columnCharacteristicValue"), productRow.getInt("quantity"));
-        } else {
+        if (NO_COLUMN_CHARACTERISTIC.equals(columnCharacteristic)) {
           row.put(NO_COLUMN_CHARACTERISTIC, productRow.getInt("quantity"));
+        } else {
+          row.put(columnCharacteristic, productRow.getInt("quantity"));
         }
         mappedProductRowData.put(rowCharacteristic, row);
-      } else if (productRow.has("columnCharacteristicValue")) {
-        String columnCharacteristic = productRow.getString("columnCharacteristicValue");
+      } else if (!NO_COLUMN_CHARACTERISTIC.equals(columnCharacteristic)) {
         Map<String, Integer> column = mappedProductRowData.getOrDefault(columnCharacteristic,
             new HashMap<>());
         column.put(NO_ROW_CHARACTERISTIC, productRow.getInt("quantity"));
@@ -352,7 +362,7 @@ public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
     criteria.add(Restrictions.in("p." + ProductPrice.PROPERTY_PRICELISTVERSION,
         order.getPriceList().getPricingPriceListVersionList()));
     criteria.add(Restrictions.eq(ProductByPriceAndWarehouse.PROPERTY_ACTIVE, true));
-//    criteria.setMaxResults(1);
+    // criteria.setMaxResults(1);
     List<ProductByPriceAndWarehouse> productByPriceAndWarehouse = criteria.list();
     if (productByPriceAndWarehouse.isEmpty()) {
       // TODO: Probably throw an exception, it failed to add price due to missing product price

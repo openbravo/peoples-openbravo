@@ -42,44 +42,80 @@ isc.MultiVariantPurchaseGridItem.addProperties({
     const hasRowCharacteristic = rows.length > 0;
     const hasColumnCharacteristic = columns.length > 0;
     const me = this;
+
+    // Function that handles saving the productData info on each cell modification
+    const changedFn = function(currentRow) {
+      const currentDataFromGrid = currentRow.grid.getData();
+      const currentRowData = currentRow.getData();
+      const dataFromGridWithEditedValue = currentDataFromGrid.map(row => {
+        if (currentRowData.characteristicValue === row.characteristicValue) {
+          return currentRowData;
+        }
+        return row;
+      });
+      me.productData[me.currentProductId] = dataFromGridWithEditedValue.flatMap(
+        row => me.transformObjectToArray(row)
+      );
+      this.Super('changed', arguments);
+    };
+
     const cols = columns.map(col => ({
       name: col.name,
       title: col.title,
       type: 'integer',
       defaultValue: 0,
-      changed: function(currentRow) {
-        const currentDataFromGrid = currentRow.grid.getData();
-        const currentRowData = currentRow.getData();
-        const dataFromGridWithEditedValue = currentDataFromGrid.map(row => {
-          if (currentRowData.characteristicValue === row.characteristicValue) {
-            return currentRowData;
-          }
-          return row;
-        });
-        me.productData[
-          me.currentProductId
-        ] = dataFromGridWithEditedValue.flatMap(row =>
-          me.transformObjectToArray(row)
-        );
-        this.Super('changed', arguments);
-      }
+      changed: changedFn
     }));
+
+    if (!hasColumnCharacteristic) {
+      // There's only row characteristic,
+      // an extra field is required to allow user
+      // to enter values for each row characteristic value
+      cols.push({
+        name: 'NO_COLUMN_CHARACTERISTIC',
+        title: 'Quantity',
+        align: 'center',
+        canEdit: true,
+        canSort: false,
+        type: 'integer',
+        defaultValue: 0,
+        changed: changedFn
+      });
+    }
 
     let rowsData = rows.map(row => ({
       characteristicName: row.title,
       characteristicValue: row.name,
-      ...columns.reduce((acc, col) => ({ ...acc, [col.name]: 0 }), {})
+      ...cols.reduce((acc, col) => ({ ...acc, [col.name]: 0 }), {})
     }));
+
+    if (!hasRowCharacteristic) {
+      rowsData = [
+        {
+          characteristicName: '',
+          characteristicValue: 'NO_ROW_CHARACTERISTIC',
+          ...columns.reduce((acc, col) => ({ ...acc, [col.name]: 0 }), {})
+        }
+      ];
+    }
 
     // initialValues: [{ rowCharacteristicValue: 'X', columnCharacteristicValue: 'Y', quantity: 2 }]
     initialValues.forEach(item => {
-      let row = rowsData.find(
-        r =>
-          r.characteristicValue.toLowerCase() ===
-          item.rowCharacteristicValue.toLowerCase()
-      );
+      let row;
+      if (rowsData.length === 1) {
+        // NO_ROW_CHARACTERISTIC or only one column characteristic
+        row = rowsData[0];
+      } else {
+        row = rowsData.find(
+          r =>
+            r.characteristicValue.toLowerCase() ===
+            item.rowCharacteristicValue.toLowerCase()
+        );
+      }
       if (row && row.hasOwnProperty(item.columnCharacteristicValue)) {
         row[item.columnCharacteristicValue] = item.quantity;
+      } else {
+        row['NO_COLUMN_CHARACTERISTIC'] = item.quantity;
       }
     });
 
