@@ -56,7 +56,6 @@ public class ChangeReferencedInventoryStatusHandler extends BaseProcessActionHan
       return getResponseBuilder()
           .showMsgInProcessView(ResponseActionsBuilder.MessageType.SUCCESS,
               OBMessageUtils.messageBD("HandlingUnitStatusChanged"))
-          .refreshGrid()
           .build();
     } catch (JSONException ex) {
       log.error("Error changing handling unit status", ex);
