@@ -18,6 +18,8 @@
  */
 package org.openbravo.materialmgmt.refinventory;
 
+import java.util.Optional;
+
 import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.logging.log4j.LogManager;
@@ -73,7 +75,7 @@ public class ReferencedInventoryStatusProcessor {
       return;
     }
     checkIsDestroyed(handlingUnit);
-    checkIsParentClosed(handlingUnit);
+    checkIsAnyAncestorClosed(handlingUnit);
     changeStatusInCascade(handlingUnit, newStatus);
     triggerHandlingUnitStatusChangeEvent(handlingUnit);
   }
@@ -86,11 +88,22 @@ public class ReferencedInventoryStatusProcessor {
     }
   }
 
-  private void checkIsParentClosed(ReferencedInventory handlingUnit) {
-    ReferencedInventory parent = handlingUnit.getParentRefInventory();
-    if (parent != null && ReferencedInventoryStatus.isClosed(parent)) {
+  private void checkIsAnyAncestorClosed(ReferencedInventory handlingUnit) {
+    findClosedAncestor(handlingUnit).ifPresent(ancestor -> {
       throw new OBException(OBMessageUtils.getI18NMessage("ParentHandlingUnitIsClosed",
-          new String[] { handlingUnit.getSearchKey(), parent.getSearchKey() }));
+          new String[] { handlingUnit.getSearchKey(), ancestor.getSearchKey() }));
+    });
+  }
+
+  private Optional<ReferencedInventory> findClosedAncestor(ReferencedInventory handlingUnit) {
+    ReferencedInventory parent = handlingUnit.getParentRefInventory();
+    if (parent == null) {
+      return Optional.empty();
+    }
+    if (ReferencedInventoryStatus.isClosed(parent)) {
+      return Optional.of(parent);
+    } else {
+      return findClosedAncestor(parent);
     }
   }
 

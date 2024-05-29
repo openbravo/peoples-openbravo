@@ -149,6 +149,28 @@ public class ReferencedInventoryStatusProcessorTest extends WeldBaseTest {
   }
 
   @Test
+  public void cannotCloseAHandlingUnitWithOutermostParentClosed() {
+    container.setStatus(ReferencedInventoryStatus.CLOSED.name());
+
+    OBException exception = assertThrows(OBException.class,
+        () -> statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.CLOSED));
+    assertThat(exception.getMessage(),
+        equalTo("Cannot change the status of the handling unit " + box.getSearchKey()
+            + " because its parent handling unit " + container.getSearchKey() + " is closed"));
+  }
+
+  @Test
+  public void cannotDestroyAHandlingUnitWithOutermostParentClosed() {
+    container.setStatus(ReferencedInventoryStatus.CLOSED.name());
+
+    OBException exception = assertThrows(OBException.class,
+        () -> statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.DESTROYED));
+    assertThat(exception.getMessage(),
+        equalTo("Cannot change the status of the handling unit " + box.getSearchKey()
+            + " because its parent handling unit " + container.getSearchKey() + " is closed"));
+  }
+
+  @Test
   public void cannotOpenAHandlingUnitWithAllParentsClosed() {
     statusProcessor.changeHandlingUnitStatus(container, ReferencedInventoryStatus.CLOSED);
 
