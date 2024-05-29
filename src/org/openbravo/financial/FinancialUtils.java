@@ -237,8 +237,10 @@ public class FinancialUtils {
       obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY, toCurrency));
       obcConvRate.add(Restrictions.le(ConversionRate.PROPERTY_VALIDFROMDATE, dateWithoutTimestamp));
       obcConvRate.add(Restrictions.ge(ConversionRate.PROPERTY_VALIDTODATE, dateWithoutTimestamp));
+      obcConvRate.addOrderBy(ConversionRate.PROPERTY_CREATIONDATE, false);
       obcConvRate.setFilterOnReadableClients(false);
       obcConvRate.setFilterOnReadableOrganization(false);
+      obcConvRate.setMaxResults(1);
       conversionRate = (ConversionRate) obcConvRate.uniqueResult();
       if (conversionRate != null) {
         return conversionRate;
