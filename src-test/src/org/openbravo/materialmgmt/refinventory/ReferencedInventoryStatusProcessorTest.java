@@ -21,23 +21,18 @@ package org.openbravo.materialmgmt.refinventory;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import javax.inject.Inject;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.verification.VerificationMode;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryStatusProcessor.ReferencedInventoryStatus;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
-import org.openbravo.synchronization.event.SynchronizationEvent;
+import org.openbravo.synchronization.event.SynchronizationEventTestUtils;
 import org.openbravo.test.referencedinventory.ReferencedInventoryTestUtils;
 
 /**
@@ -177,24 +172,26 @@ public class ReferencedInventoryStatusProcessorTest extends WeldBaseTest {
 
   @Test
   public void eventIsTriggeredWhenExpected() {
-    changeStatusAndVerifyTriggeredEvent(container, ReferencedInventoryStatus.CLOSED, times(1));
-    changeStatusAndVerifyTriggeredEvent(container, ReferencedInventoryStatus.CLOSED, never());
-    changeStatusAndVerifyTriggeredEvent(container, ReferencedInventoryStatus.OPEN, times(1));
-    changeStatusAndVerifyTriggeredEvent(container, ReferencedInventoryStatus.OPEN, never());
-    changeStatusAndVerifyTriggeredEvent(pallet, ReferencedInventoryStatus.OPEN, never());
-    changeStatusAndVerifyTriggeredEvent(box, ReferencedInventoryStatus.OPEN, never());
-    changeStatusAndVerifyTriggeredEvent(box, ReferencedInventoryStatus.DESTROYED, times(1));
-    changeStatusAndVerifyTriggeredEvent(pallet, ReferencedInventoryStatus.CLOSED, times(1));
-    changeStatusAndVerifyTriggeredEvent(container, ReferencedInventoryStatus.CLOSED, times(1));
+    changeStatusAndVerifyEventIsTriggered(container, ReferencedInventoryStatus.CLOSED);
+    changeStatusAndVerifyEventIsNotTriggered(container, ReferencedInventoryStatus.CLOSED);
+    changeStatusAndVerifyEventIsTriggered(container, ReferencedInventoryStatus.OPEN);
+    changeStatusAndVerifyEventIsNotTriggered(container, ReferencedInventoryStatus.OPEN);
+    changeStatusAndVerifyEventIsNotTriggered(pallet, ReferencedInventoryStatus.OPEN);
+    changeStatusAndVerifyEventIsNotTriggered(box, ReferencedInventoryStatus.OPEN);
+    changeStatusAndVerifyEventIsTriggered(box, ReferencedInventoryStatus.DESTROYED);
+    changeStatusAndVerifyEventIsTriggered(pallet, ReferencedInventoryStatus.CLOSED);
+    changeStatusAndVerifyEventIsTriggered(container, ReferencedInventoryStatus.CLOSED);
   }
 
-  private void changeStatusAndVerifyTriggeredEvent(ReferencedInventory handlingUnit,
-      ReferencedInventoryStatus status, VerificationMode mode) {
-    mockStatic(SynchronizationEvent.class, synchronizationEventMock -> {
-      SynchronizationEvent instanceMock = mock(SynchronizationEvent.class);
-      synchronizationEventMock.when(SynchronizationEvent::getInstance).thenReturn(instanceMock);
-      statusProcessor.changeHandlingUnitStatus(handlingUnit, status);
-      verify(instanceMock, mode).triggerEvent("API_HandlingUnitStatusChange", handlingUnit.getId());
-    });
+  private void changeStatusAndVerifyEventIsTriggered(ReferencedInventory handlingUnit,
+      ReferencedInventoryStatus status) {
+    SynchronizationEventTestUtils.verifyEventIsTriggered("API_HandlingUnitStatusChange",
+        handlingUnit, hu -> statusProcessor.changeHandlingUnitStatus(hu, status));
+  }
+
+  private void changeStatusAndVerifyEventIsNotTriggered(ReferencedInventory handlingUnit,
+      ReferencedInventoryStatus status) {
+    SynchronizationEventTestUtils.verifyEventIsNotTriggered("API_HandlingUnitStatusChange",
+        handlingUnit, hu -> statusProcessor.changeHandlingUnitStatus(hu, status));
   }
 }
