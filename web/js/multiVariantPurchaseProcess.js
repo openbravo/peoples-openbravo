@@ -21,28 +21,10 @@ OB = OB || {};
 
 OB.MultiVariantPurchaseGrid = {
   execute: function(params, view) {
-    var i,
-      selection = params.button.contextView.viewGrid.getSelectedRecords(),
-      recordIdList = [],
-      messageBar = view.getView(params.adTabId).messageBar,
-      callback,
-      validationMessage,
-      validationOK = true;
+    const selection = params.button.contextView.viewGrid.getSelectedRecords(),
+      recordIdList = [];
 
-    callback = function(rpcResponse, data, rpcRequest) {
-      var status = rpcResponse.status,
-        view = rpcRequest.clientContext.view.getView(params.adTabId);
-      view.messageBar.setMessage(
-        data.message.severity,
-        null,
-        data.message.text
-      );
-
-      // close process to refresh current view
-      params.button.closeProcessPopup();
-    };
-
-    for (i = 0; i < selection.length; i++) {
+    for (let i = 0; i < selection.length; i++) {
       recordIdList.push(selection[i].id);
     }
 
@@ -54,10 +36,7 @@ OB.MultiVariantPurchaseGrid = {
   },
 
   open: function(params, view) {
-    params.actionHandler =
-      'org.openbravo.client.application.event.OpenClosePeriodHandler';
     params.adTabId = view.activeView.tabId;
-    params.processId = 'A832A5DA28FB4BB391BDE883E928DFC5';
     OB.MultiVariantPurchaseGrid.execute(params, view);
   }
 };
@@ -67,7 +46,74 @@ const PRODUCT_VARIANT_DATA_SOURCE_ID = '22803EBEEC804A648723B2B7070DBB7D';
 const PRODUCT_CHARACTERISTIC_VALUE_DATA_SOURCE_ID =
   'B87CFEF81AC347C28EF5C5BCECE0637C';
 
-const getViewProperties = (recordId, view) => ({
+/**
+ * Handles selection of different generic products. When a product is selected, it will properly show the bottom grid with the expected data.
+ */
+function handleSelection(grid, record, state) {
+  if (!state) {
+    return;
+  }
+  if (record.newRow) {
+    const requestProperties = {};
+    requestProperties.params = {};
+    requestProperties.params._startRow = 0;
+    requestProperties.params._endRow = 10; // Actually only 1 row will be returned, because of filtering by the product
+    requestProperties.params.productId = record.product;
+    const o = {
+      setDataSource: dataS => {
+        this.dataSource = dataS;
+        this.dataSource.fetchData(
+          {},
+          (response, data) => {
+            const dataReceived = data[0];
+            const rowCharacteristics = dataReceived.rowCharacteristics.map(
+              r => ({
+                name: r.id,
+                title: r._identifier
+              })
+            );
+            const columnCharacteristics = dataReceived.columnCharacteristics.map(
+              r => ({
+                name: r.id,
+                title: r._identifier
+              })
+            );
+            OB.MultiVariantPurchaseGridItem.selectProduct(
+              record.product,
+              rowCharacteristics,
+              columnCharacteristics
+            );
+          },
+          requestProperties
+        );
+      }
+    };
+    OB.Datasource.get(
+      PRODUCT_CHARACTERISTIC_VALUE_DATA_SOURCE_ID,
+      o,
+      null,
+      false
+    );
+  } else {
+    const rowCharacteristics = record.rowCharacteristics.map(r => ({
+      name: r.id,
+      title: r._identifier
+    }));
+    const columnCharacteristics = record.columnCharacteristics.map(r => ({
+      name: r.id,
+      title: r._identifier
+    }));
+    // Record selected, comes from backend, so it should already contain rowCharacteristics and columnCharacteristics
+    OB.MultiVariantPurchaseGridItem.selectProduct(
+      record.product,
+      rowCharacteristics,
+      columnCharacteristics,
+      record.initialValues
+    );
+  }
+}
+
+const getViewProperties = recordId => ({
   allowAdd: true,
   allowDelete: true,
   showSelect: false,
@@ -80,69 +126,7 @@ const getViewProperties = (recordId, view) => ({
       item.grid.selectSingleRecord(item.rowNum);
     }
   },
-  selectionFn: (ignored, record, state) => {
-    if (state === true) {
-      if (record.newRow) {
-        const requestProperties = {};
-        requestProperties.params = {};
-        requestProperties.params._startRow = 0;
-        requestProperties.params._endRow = 10; // Actually only 1 row will be returned, because of filtering by the product
-        requestProperties.params.productId = record.product;
-        const o = {
-          setDataSource: dataS => {
-            this.dataSource = dataS;
-            this.dataSource.fetchData(
-              {},
-              (response, data) => {
-                const dataReceived = data[0];
-                const rowCharacteristics = dataReceived.rowCharacteristics.map(
-                  r => ({
-                    name: r.id,
-                    title: r._identifier
-                  })
-                );
-                const columnCharacteristics = dataReceived.columnCharacteristics.map(
-                  r => ({
-                    name: r.id,
-                    title: r._identifier
-                  })
-                );
-                OB.MultiVariantPurchaseGridItem.selectProduct(
-                  record.product,
-                  rowCharacteristics,
-                  columnCharacteristics
-                );
-              },
-              requestProperties
-            );
-          }
-        };
-        OB.Datasource.get(
-          PRODUCT_CHARACTERISTIC_VALUE_DATA_SOURCE_ID,
-          o,
-          null,
-          false
-        );
-      } else {
-        const rowCharacteristics = record.rowCharacteristics.map(r => ({
-          name: r.id,
-          title: r._identifier
-        }));
-        const columnCharacteristics = record.columnCharacteristics.map(r => ({
-          name: r.id,
-          title: r._identifier
-        }));
-        // Record selected, comes from backend, so it should already contain rowCharacteristics and columnCharacteristics
-        // TODO: this still requires implementation
-        OB.MultiVariantPurchaseGridItem.selectProduct(
-          record.product,
-          rowCharacteristics,
-          columnCharacteristics,
-          record.initialValues
-        );
-      }
-    }
-  },
+  selectionFn: handleSelection,
   newFn: grid => {
     var returnObject = isc.addProperties({}, grid.data[0]);
     returnObject.newRow = true;
@@ -309,8 +293,7 @@ const getViewProperties = (recordId, view) => ({
         width: 50
       },
       type: '_id_29'
-    },
-    { name: 'listOfOptions', visible: false }
+    }
   ],
   gridProperties: {
     orderByClause: '',
@@ -355,7 +338,7 @@ isc.ProductSelectionGridItem.addProperties({
     this.canvas = isc.OBPickAndExecuteView.create({
       height: 300,
       view: modifiedView,
-      viewProperties: getViewProperties(this.recordId, modifiedView),
+      viewProperties: getViewProperties(this.recordId),
       onTotalChange: function(newTotal) {
         const selectedRecord = this.viewGrid.getSelectedRecord();
         if (selectedRecord) {
