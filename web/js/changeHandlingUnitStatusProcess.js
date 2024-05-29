@@ -19,12 +19,17 @@
 
 OB.ChangeHandlingUnitStatus = {};
 
+/**
+ * On load function of the Change Handling Unit Status process. It is used to prefilter the status
+ * combo to show only the statuses that the selected handling unit can be changed to.
+ *
+ * @param {Object} view - The process view
+ */
 OB.ChangeHandlingUnitStatus.onLoad = view => {
   const statusList = view.theForm.getItem('Status');
   const currentStatus = view.parentWindow.view.viewGrid.getSelectedRecord()
     .status;
 
-  // show only the statuses that the selected handling unit can be changed to
   statusList.valueMap = Object.keys(statusList.valueMap)
     .filter(key => key !== currentStatus)
     .reduce(
