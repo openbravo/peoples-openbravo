@@ -128,10 +128,15 @@ const getViewProperties = recordId => ({
   },
   selectionFn: handleSelection,
   newFn: grid => {
-    var returnObject = isc.addProperties({}, grid.data[0]);
+    const returnObject = isc.addProperties({}, grid.data[0]);
     returnObject.newRow = true;
     returnObject.quantity = 0;
     return returnObject;
+  },
+  removeFn: () => {
+    // Unselect any previously selected product
+    OB.MultiVariantPurchaseGridItem.selectProduct(null);
+    return true;
   },
   dataSourceProperties: {
     createClassName: '',

@@ -250,6 +250,13 @@ isc.MultiVariantPurchaseGridItem.addProperties({
   },
 
   selectProduct: function(productId, columns, rows, initialValues) {
+    if (productId === null) {
+      // If no productId is provided, assume no grid should appear
+      this.grid = null;
+      this.currentProductId = null;
+      return;
+    }
+
     // Check if product data already exists
     if (this.productData[productId]) {
       const savedData = this.productData[productId];
