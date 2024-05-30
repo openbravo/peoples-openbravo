@@ -330,6 +330,8 @@ public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
     newOrderLine.setOrganization(order.getOrganization());
     newOrderLine.setSalesOrder(order);
     newOrderLine.setUOM(variantProduct.getUOM());
+    newOrderLine.setOperativeQuantity(BigDecimal.valueOf(quantity));
+    newOrderLine.setOperativeUOM(variantProduct.getUOM());
     newOrderLine.setOrderDate(new Date());
     newOrderLine.setWarehouse(order.getWarehouse());
     newOrderLine.setCurrency(order.getCurrency());
