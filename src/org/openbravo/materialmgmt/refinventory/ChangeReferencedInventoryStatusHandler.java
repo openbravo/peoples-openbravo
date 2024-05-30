@@ -51,7 +51,7 @@ public class ChangeReferencedInventoryStatusHandler extends BaseProcessActionHan
       ReferencedInventoryStatus status = ReferencedInventoryStatus
           .valueOf(request.getJSONObject("_params").getString("Status"));
 
-      statusProcessor.changeHandlingUnitStatus(handlingUnit, status);
+      statusProcessor.changeStatus(handlingUnit, status);
 
       return getResponseBuilder()
           .showMsgInProcessView(ResponseActionsBuilder.MessageType.SUCCESS,

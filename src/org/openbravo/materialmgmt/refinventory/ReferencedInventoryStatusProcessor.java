@@ -67,7 +67,7 @@ public class ReferencedInventoryStatusProcessor {
    * @throws OBException
    *           if the handling unit is destroyed or if the parent of the handling unit is closed
    */
-  public void changeHandlingUnitStatus(ReferencedInventory handlingUnit,
+  public void changeStatus(ReferencedInventory handlingUnit,
       ReferencedInventoryStatus newStatus) {
     if (newStatus.isStatusOf(handlingUnit)) {
       log.warn("Skipping status change. The current status of the handling unit {} is already {}",

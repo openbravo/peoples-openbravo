@@ -71,19 +71,19 @@ public class ReferencedInventoryStatusProcessorTest extends WeldBaseTest {
   @Test
   public void changeStatusInCascade() {
     ReferencedInventoryStatus newStatus = ReferencedInventoryStatus.CLOSED;
-    statusProcessor.changeHandlingUnitStatus(container, newStatus);
+    statusProcessor.changeStatus(container, newStatus);
     assertThat(container.getStatus(), equalTo(newStatus.name()));
     assertThat(pallet.getStatus(), equalTo(newStatus.name()));
     assertThat(box.getStatus(), equalTo(newStatus.name()));
 
     newStatus = ReferencedInventoryStatus.OPEN;
-    statusProcessor.changeHandlingUnitStatus(container, newStatus);
+    statusProcessor.changeStatus(container, newStatus);
     assertThat(container.getStatus(), equalTo(newStatus.name()));
     assertThat(pallet.getStatus(), equalTo(newStatus.name()));
     assertThat(box.getStatus(), equalTo(newStatus.name()));
 
     newStatus = ReferencedInventoryStatus.DESTROYED;
-    statusProcessor.changeHandlingUnitStatus(container, newStatus);
+    statusProcessor.changeStatus(container, newStatus);
     assertThat(container.getStatus(), equalTo(newStatus.name()));
     assertThat(pallet.getStatus(), equalTo(newStatus.name()));
     assertThat(box.getStatus(), equalTo(newStatus.name()));
@@ -91,7 +91,7 @@ public class ReferencedInventoryStatusProcessorTest extends WeldBaseTest {
 
   @Test
   public void changeIntermediateHandlingUnitStatus() {
-    statusProcessor.changeHandlingUnitStatus(pallet, ReferencedInventoryStatus.CLOSED);
+    statusProcessor.changeStatus(pallet, ReferencedInventoryStatus.CLOSED);
     assertThat(container.getStatus(), equalTo(ReferencedInventoryStatus.OPEN.name()));
     assertThat(pallet.getStatus(), equalTo(ReferencedInventoryStatus.CLOSED.name()));
     assertThat(box.getStatus(), equalTo(ReferencedInventoryStatus.CLOSED.name()));
@@ -99,7 +99,7 @@ public class ReferencedInventoryStatusProcessorTest extends WeldBaseTest {
 
   @Test
   public void changeSingleHandlingUnitStatus() {
-    statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.CLOSED);
+    statusProcessor.changeStatus(box, ReferencedInventoryStatus.CLOSED);
     assertThat(container.getStatus(), equalTo(ReferencedInventoryStatus.OPEN.name()));
     assertThat(pallet.getStatus(), equalTo(ReferencedInventoryStatus.OPEN.name()));
     assertThat(box.getStatus(), equalTo(ReferencedInventoryStatus.CLOSED.name()));
@@ -107,10 +107,10 @@ public class ReferencedInventoryStatusProcessorTest extends WeldBaseTest {
 
   @Test
   public void changeStatusAtDifferentLevels() {
-    statusProcessor.changeHandlingUnitStatus(container, ReferencedInventoryStatus.CLOSED);
-    statusProcessor.changeHandlingUnitStatus(container, ReferencedInventoryStatus.OPEN);
-    statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.DESTROYED);
-    statusProcessor.changeHandlingUnitStatus(pallet, ReferencedInventoryStatus.CLOSED);
+    statusProcessor.changeStatus(container, ReferencedInventoryStatus.CLOSED);
+    statusProcessor.changeStatus(container, ReferencedInventoryStatus.OPEN);
+    statusProcessor.changeStatus(box, ReferencedInventoryStatus.DESTROYED);
+    statusProcessor.changeStatus(pallet, ReferencedInventoryStatus.CLOSED);
 
     assertThat(container.getStatus(), equalTo(ReferencedInventoryStatus.OPEN.name()));
     assertThat(pallet.getStatus(), equalTo(ReferencedInventoryStatus.CLOSED.name()));
@@ -119,19 +119,19 @@ public class ReferencedInventoryStatusProcessorTest extends WeldBaseTest {
 
   @Test
   public void cannotChangeStatusOfADestroyedHandlingUnit() {
-    statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.DESTROYED);
+    statusProcessor.changeStatus(box, ReferencedInventoryStatus.DESTROYED);
     OBException exception = assertThrows(OBException.class,
-        () -> statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.OPEN));
+        () -> statusProcessor.changeStatus(box, ReferencedInventoryStatus.OPEN));
     assertThat(exception.getMessage(),
         equalTo("Cannot change the status of a destroyed handling unit"));
   }
 
   @Test
   public void cannotOpenAHandlingUnitWithParentClosed() {
-    statusProcessor.changeHandlingUnitStatus(pallet, ReferencedInventoryStatus.CLOSED);
+    statusProcessor.changeStatus(pallet, ReferencedInventoryStatus.CLOSED);
 
     OBException exception = assertThrows(OBException.class,
-        () -> statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.OPEN));
+        () -> statusProcessor.changeStatus(box, ReferencedInventoryStatus.OPEN));
     assertThat(exception.getMessage(),
         equalTo("Cannot change the status of the handling unit " + box.getSearchKey()
             + " because its parent handling unit " + pallet.getSearchKey() + " is closed"));
@@ -139,10 +139,10 @@ public class ReferencedInventoryStatusProcessorTest extends WeldBaseTest {
 
   @Test
   public void cannotDestroyAHandlingUnitWithParentClosed() {
-    statusProcessor.changeHandlingUnitStatus(pallet, ReferencedInventoryStatus.CLOSED);
+    statusProcessor.changeStatus(pallet, ReferencedInventoryStatus.CLOSED);
 
     OBException exception = assertThrows(OBException.class,
-        () -> statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.DESTROYED));
+        () -> statusProcessor.changeStatus(box, ReferencedInventoryStatus.DESTROYED));
     assertThat(exception.getMessage(),
         equalTo("Cannot change the status of the handling unit " + box.getSearchKey()
             + " because its parent handling unit " + pallet.getSearchKey() + " is closed"));
@@ -153,7 +153,7 @@ public class ReferencedInventoryStatusProcessorTest extends WeldBaseTest {
     container.setStatus(ReferencedInventoryStatus.CLOSED.name());
 
     OBException exception = assertThrows(OBException.class,
-        () -> statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.CLOSED));
+        () -> statusProcessor.changeStatus(box, ReferencedInventoryStatus.CLOSED));
     assertThat(exception.getMessage(),
         equalTo("Cannot change the status of the handling unit " + box.getSearchKey()
             + " because its parent handling unit " + container.getSearchKey() + " is closed"));
@@ -164,7 +164,7 @@ public class ReferencedInventoryStatusProcessorTest extends WeldBaseTest {
     container.setStatus(ReferencedInventoryStatus.CLOSED.name());
 
     OBException exception = assertThrows(OBException.class,
-        () -> statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.DESTROYED));
+        () -> statusProcessor.changeStatus(box, ReferencedInventoryStatus.DESTROYED));
     assertThat(exception.getMessage(),
         equalTo("Cannot change the status of the handling unit " + box.getSearchKey()
             + " because its parent handling unit " + container.getSearchKey() + " is closed"));
@@ -172,10 +172,10 @@ public class ReferencedInventoryStatusProcessorTest extends WeldBaseTest {
 
   @Test
   public void cannotOpenAHandlingUnitWithAllParentsClosed() {
-    statusProcessor.changeHandlingUnitStatus(container, ReferencedInventoryStatus.CLOSED);
+    statusProcessor.changeStatus(container, ReferencedInventoryStatus.CLOSED);
 
     OBException exception = assertThrows(OBException.class,
-        () -> statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.OPEN));
+        () -> statusProcessor.changeStatus(box, ReferencedInventoryStatus.OPEN));
     assertThat(exception.getMessage(),
         equalTo("Cannot change the status of the handling unit " + box.getSearchKey()
             + " because its parent handling unit " + pallet.getSearchKey() + " is closed"));
@@ -183,10 +183,10 @@ public class ReferencedInventoryStatusProcessorTest extends WeldBaseTest {
 
   @Test
   public void cannotDestroyAHandlingUnitWithAllParentsClosed() {
-    statusProcessor.changeHandlingUnitStatus(container, ReferencedInventoryStatus.CLOSED);
+    statusProcessor.changeStatus(container, ReferencedInventoryStatus.CLOSED);
 
     OBException exception = assertThrows(OBException.class,
-        () -> statusProcessor.changeHandlingUnitStatus(box, ReferencedInventoryStatus.DESTROYED));
+        () -> statusProcessor.changeStatus(box, ReferencedInventoryStatus.DESTROYED));
     assertThat(exception.getMessage(),
         equalTo("Cannot change the status of the handling unit " + box.getSearchKey()
             + " because its parent handling unit " + pallet.getSearchKey() + " is closed"));
@@ -208,12 +208,12 @@ public class ReferencedInventoryStatusProcessorTest extends WeldBaseTest {
   private void changeStatusAndVerifyEventIsTriggered(ReferencedInventory handlingUnit,
       ReferencedInventoryStatus status) {
     SynchronizationEventTestUtils.verifyEventIsTriggered("API_HandlingUnitStatusChange",
-        handlingUnit, hu -> statusProcessor.changeHandlingUnitStatus(hu, status));
+        handlingUnit, hu -> statusProcessor.changeStatus(hu, status));
   }
 
   private void changeStatusAndVerifyEventIsNotTriggered(ReferencedInventory handlingUnit,
       ReferencedInventoryStatus status) {
     SynchronizationEventTestUtils.verifyEventIsNotTriggered("API_HandlingUnitStatusChange",
-        handlingUnit, hu -> statusProcessor.changeHandlingUnitStatus(hu, status));
+        handlingUnit, hu -> statusProcessor.changeStatus(hu, status));
   }
 }
