@@ -98,9 +98,20 @@ public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
     } catch (JSONException e) {
       // TODO: Probably explain that it was not possible to handle the update
       throw new RuntimeException(e);
+    } catch (OBException obException) {
+      OBDal.getInstance().rollbackAndClose();
+      return getErrorMessage(obException);
     }
 
     return result;
+  }
+
+  private JSONObject getErrorMessage(Exception e) {
+    JSONObject errorMessage = new JSONObject( //
+        Map.of("severity", "error", //
+            "title", "Error", //
+            "text", e.getMessage())); //
+    return new JSONObject(Map.of("message", errorMessage));
   }
 
   private void generateOrderLinesForNewGenericProducts(List<String> newGenericProductIds,
@@ -232,8 +243,10 @@ public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
       Map<String, Map<String, Integer>> mappedProductRowData = getProductRowDataMapped(
           productRowsData.getJSONArray(genericProductId));
       Product genericProductToUpdate = OBDal.getInstance().get(Product.class, genericProductId);
-      Characteristic genericProductToUpdateRowCharacteristic = genericProductToUpdate.getRowCharacteristic();
-      Characteristic genericProductToUpdateColumnCharacteristic = genericProductToUpdate.getColumnCharacteristic();
+      Characteristic genericProductToUpdateRowCharacteristic = genericProductToUpdate
+          .getRowCharacteristic();
+      Characteristic genericProductToUpdateColumnCharacteristic = genericProductToUpdate
+          .getColumnCharacteristic();
       List<Product> variantProducts = getAllVariantsOfGenericProduct(genericProductId);
       for (Product variantProduct : variantProducts) {
         // Check product characteristic value against mappedProductRowData row/column
@@ -242,19 +255,19 @@ public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
         String productColumnCharacteristicValue = "";
 
         for (ProductCharacteristicValue productCharacteristicValue : variantProduct
-                .getProductCharacteristicValueList()) {
+            .getProductCharacteristicValueList()) {
           if (genericProductToUpdateRowCharacteristic != null
-                  && productCharacteristicValue.getCharacteristic()
+              && productCharacteristicValue.getCharacteristic()
                   .getId()
                   .equals(genericProductToUpdateRowCharacteristic.getId())) {
             productRowCharacteristicValue = productCharacteristicValue.getCharacteristicValue()
-                    .getId();
+                .getId();
           } else if (genericProductToUpdateColumnCharacteristic != null
-                  && productCharacteristicValue.getCharacteristic()
+              && productCharacteristicValue.getCharacteristic()
                   .getId()
                   .equals(genericProductToUpdateColumnCharacteristic.getId())) {
             productColumnCharacteristicValue = productCharacteristicValue.getCharacteristicValue()
-                    .getId();
+                .getId();
           }
         }
 
@@ -367,9 +380,11 @@ public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
     // criteria.setMaxResults(1);
     List<ProductByPriceAndWarehouse> productByPriceAndWarehouse = criteria.list();
     if (productByPriceAndWarehouse.isEmpty()) {
-      // TODO: Probably throw an exception, it failed to add price due to missing product price
-      return;
+      throw new OBException(String.format(
+          "Variant with searchKey (%s) has no product price configured for product price list %s.",
+          orderLine.getProduct().getSearchKey(), order.getPriceList().getName()));
     }
+
     unitPrice = productByPriceAndWarehouse.get(0).getStandardPrice();
     limitPrice = netListPrice = grossListPrice = stdPrice = unitPrice;
 

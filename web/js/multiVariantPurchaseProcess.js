@@ -415,20 +415,22 @@ isc.MultiVariantPurchaseGridProcessPopup.addProperties({
         var callback, productRows, productRowsData;
 
         callback = function(rpcResponse, data, rpcRequest) {
-          var status = rpcResponse.status,
-            view = rpcRequest.clientContext.originalView.getView(
-              params.adTabId
-            );
           if (data.message) {
-            view.messageBar.setMessage(
-              data.message.severity,
-              null,
-              data.message.text
+            // Error when applying the process
+            isc.warn(
+              data.message.text,
+              function() {
+                return true;
+              },
+              {
+                icon: '[SKINIMG]Dialog/error.png',
+                title: OB.I18N.getLabel('OBUIAPP_Error')
+              }
             );
+          } else {
+            rpcRequest.clientContext.popup.closeClick();
+            rpcRequest.clientContext.originalView.refresh(false, false);
           }
-
-          rpcRequest.clientContext.popup.closeClick();
-          rpcRequest.clientContext.originalView.refresh(false, false);
         };
 
         productRows = this.popup.mainform
