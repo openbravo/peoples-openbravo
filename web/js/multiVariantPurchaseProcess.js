@@ -149,7 +149,7 @@ const getViewProperties = recordId => ({
       } else {
         item.setValue(undefined);
         isc.warn(
-          'Value is already in the grid, it has been removed.', // TODO: Transform this to AD_MESSAGE
+          OB.I18N.getLabel('GenericProductAlrdyAddedError'),
           function() {
             return true;
           },
@@ -168,7 +168,7 @@ const getViewProperties = recordId => ({
     returnObject.quantity = 0;
     return returnObject;
   },
-  removeFn: () => {
+  removeFn: function() {
     // Unselect any previously selected product
     OB.MultiVariantPurchaseGridItem.selectProduct(null);
     return true;
@@ -312,6 +312,7 @@ const getViewProperties = recordId => ({
         selectOnClick: true,
         canSort: true,
         canFilter: false,
+        canGroupBy: false,
         showHover: true,
         filterEditorProperties: { keyProperty: 'id' }
       },
@@ -334,6 +335,7 @@ const getViewProperties = recordId => ({
         displaylength: 16,
         selectOnClick: false,
         canFilter: false,
+        canGroupBy: false,
         showHover: true,
         canSort: false,
         width: 50
@@ -463,8 +465,7 @@ isc.MultiVariantPurchaseGridProcessPopup.addProperties({
 
   initWidget: function() {
     var recordIdList = this.recordIdList,
-      originalView = this.view,
-      params = this.params;
+      originalView = this.view;
 
     this.mainform = isc.DynamicForm.create({
       view: originalView,

@@ -64,6 +64,8 @@ isc.MultiVariantPurchaseGridItem.addProperties({
       title: col.title,
       type: 'integer',
       defaultValue: 0,
+      canGroupBy: false,
+      canSort: false,
       changed: changedFn
     }));
 
@@ -77,6 +79,7 @@ isc.MultiVariantPurchaseGridItem.addProperties({
         align: 'center',
         canEdit: true,
         canSort: false,
+        canGroupBy: false,
         type: 'integer',
         defaultValue: 0,
         changed: changedFn
@@ -126,7 +129,8 @@ isc.MultiVariantPurchaseGridItem.addProperties({
         displayField: 'characteristicName',
         canEdit: false,
         width: 100,
-        canSort: false
+        canSort: false,
+        canGroupBy: false
       },
       ...cols
     ];
@@ -139,6 +143,7 @@ isc.MultiVariantPurchaseGridItem.addProperties({
         align: 'right',
         canEdit: false,
         canSort: false,
+        canGroupBy: false,
         showGridSummary: true,
         summaryFunction: function(records) {
           // Calculate and return the summary value
@@ -254,6 +259,8 @@ isc.MultiVariantPurchaseGridItem.addProperties({
       // If no productId is provided, assume no grid should appear
       this.grid = null;
       this.currentProductId = null;
+      this.setCanvas(null);
+      // this.canvas.markForRedraw();
       return;
     }
 
