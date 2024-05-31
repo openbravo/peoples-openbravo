@@ -497,8 +497,8 @@ isc.MultiVariantPurchaseGridProcessPopup.addProperties({
               }
             );
           } else {
-            rpcRequest.clientContext.popup.closeClick();
-            rpcRequest.clientContext.originalView.refresh(false, false);
+            rpcRequest.clientContext.popup.close();
+            rpcRequest.clientContext.originalView.view.refresh(false, false);
           }
         };
 
