@@ -48,8 +48,6 @@ isc.OBPickAndExecuteGrid.addProperties({
   autoFitFieldsFillViewport: true,
   confirmDiscardEdits: false,
   animateRemoveRecord: false,
-  // this attribute helps to set an attribute only if the edit form has not been initialized
-  editFormInitialized: false,
   removeFieldProperties: {
     width: 32
   },
@@ -1207,8 +1205,6 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   showInlineEditor: function(rowNum, colNum, newCell, newRow, suppressFocus) {
-    var editForm, items, i, updatedBlur;
-
     if (
       rowNum !== this.getEditRow() &&
       this.hasNewRecordWithEmptyMandatoryFields()
@@ -1238,43 +1234,41 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     // update the blur function of the formitems, so that the OnChangeRegistry functions are called
     // when the item loses the focus
-    if (!this.editFormInitialized) {
-      // the editForm is created the first time the inline editor is shown
-      this.editFormInitialized = true;
-      editForm = this.getEditForm();
-      if (editForm) {
-        items = editForm.getItems();
-        updatedBlur = function(form, item) {
-          this.original_blur(form, item);
-          // Execute onChangeFunctions if they exist
-          if (this && OB.OnChangeRegistry.hasOnChange(form.grid.ID, item)) {
-            OB.OnChangeRegistry.call(
-              form.grid.ID,
-              item,
-              form.grid.view,
-              form.grid.view.theForm,
-              form.grid
-            );
-            form.grid.view.theForm.redraw();
-          }
-          // if the grid edit form has been changed after the last validation, validate it again
-          if (
-            !isc.objectsAreEqual(
-              form.grid.lastValidatedValues[rowNum],
-              form.grid.getEditValues(rowNum)
-            )
-          ) {
-            form.grid.validateCell(
-              form.grid.getEditRow(),
-              form.grid.getEditCol()
-            );
-          }
-        };
-        for (i = 0; i < items.length; i++) {
-          items[i].original_blur = items[i].blur;
-          items[i].blur = updatedBlur;
+    const editForm = this.getEditForm();
+    if (editForm) {
+      const updatedBlur = function(form, item) {
+        this.original_blur(form, item);
+        // Execute onChangeFunctions if they exist
+        if (this && OB.OnChangeRegistry.hasOnChange(form.grid.ID, item)) {
+          OB.OnChangeRegistry.call(
+            form.grid.ID,
+            item,
+            form.grid.view,
+            form.grid.view.theForm,
+            form.grid
+          );
+          form.grid.view.theForm.redraw();
         }
-      }
+        // if the grid edit form has been changed after the last validation, validate it again
+        if (
+          !isc.objectsAreEqual(
+            form.grid.lastValidatedValues[rowNum],
+            form.grid.getEditValues(rowNum)
+          )
+        ) {
+          form.grid.validateCell(
+            form.grid.getEditRow(),
+            form.grid.getEditCol()
+          );
+        }
+      };
+      editForm
+        .getItems()
+        .filter(item => !item.original_blur)
+        .forEach(item => {
+          item.original_blur = item.blur;
+          item.blur = updatedBlur;
+        });
     }
   },
 
