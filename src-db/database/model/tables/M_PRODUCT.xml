@@ -432,7 +432,7 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MPRODUCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_CHARACTERISTIC" name="COLUMN_CHARACTERISTIC_FK">
+      <foreign-key foreignTable="M_CHARACTERISTIC" name="M_COLUMN_CHARACTERISTIC_FK">
         <reference local="COLUMN_CHARACTERISTIC" foreign="M_CHARACTERISTIC_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCT_AD_CLIENT">
@@ -495,11 +495,11 @@
       <foreign-key foreignTable="C_UOM" name="M_PRODUCT_WEIGHT_UOM">
         <reference local="C_UOM_WEIGHT_ID" foreign="C_UOM_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="M_CHARACTERISTIC" name="M_ROW_CHARACTERISTIC_FK">
+        <reference local="ROW_CHARACTERISTIC" foreign="M_CHARACTERISTIC_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="MA_PROCESSPLAN" name="MA_PROCESSPLAN_MPRODUCT">
         <reference local="MA_PROCESSPLAN_ID" foreign="MA_PROCESSPLAN_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_CHARACTERISTIC" name="ROW_CHARACTERISTIC_FK">
-        <reference local="ROW_CHARACTERISTIC" foreign="M_CHARACTERISTIC_ID"/>
       </foreign-key>
       <index name="M_PRODUC_ISGENERID_IDX" unique="false">
         <index-column name="ISGENERIC"/>

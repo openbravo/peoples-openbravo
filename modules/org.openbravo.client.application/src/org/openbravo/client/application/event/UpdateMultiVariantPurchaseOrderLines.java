@@ -47,6 +47,9 @@ import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.service.db.CallStoredProcedure;
 
+/**
+ * Class that handles generating, updating and removing order lines in Purchase Model Mode process
+ */
 public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
 
   public static final String NO_COLUMN_CHARACTERISTIC = "NO_COLUMN_CHARACTERISTIC";
@@ -72,11 +75,9 @@ public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
       }
 
       List<String> removedProductIds = new ArrayList<>();
-      List<String> genericProductIdsFromOrderLines = new ArrayList<>();
       for (OrderLine orderLine : orderLines) {
         Product genericProduct = orderLine.getProduct().getGenericProduct();
         if (genericProduct != null) {
-          genericProductIdsFromOrderLines.add(genericProduct.getId());
           if (!productIdsFromProcess.contains(genericProduct.getId())) {
             removedProductIds.add(genericProduct.getId());
           }
@@ -85,124 +86,21 @@ public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
 
       removeAllOrderLinesRelatedToGenericProduct(order, removedProductIds);
 
-      List<String> changedGenericProductIds = productIdsFromProcess.stream()
-          .filter(genericProductIdsFromOrderLines::contains)
-          .collect(Collectors.toList());
-      updateOrderLinesForExistingGenericProduct(order, productRowsData, changedGenericProductIds);
+      updateOrderLinesForGenericProduct(order, productRowsData, productIdsFromProcess);
 
-      List<String> newGenericProductIds = productIdsFromProcess.stream()
-          .filter(productId -> !genericProductIdsFromOrderLines.contains(productId))
-          .collect(Collectors.toList());
-
-      generateOrderLinesForNewGenericProducts(newGenericProductIds, productRowsData, order);
-    } catch (JSONException e) {
-      // TODO: Probably explain that it was not possible to handle the update
-      throw new RuntimeException(e);
-    } catch (OBException obException) {
+    } catch (JSONException | OBException e) {
       OBDal.getInstance().rollbackAndClose();
-      return getErrorMessage(obException);
+      return getErrorMessage(e);
     }
 
     return result;
-  }
-
-  private JSONObject getErrorMessage(Exception e) {
-    JSONObject errorMessage = new JSONObject( //
-        Map.of("severity", "error", //
-            "title", "Error", //
-            "text", e.getMessage())); //
-    return new JSONObject(Map.of("message", errorMessage));
-  }
-
-  private void generateOrderLinesForNewGenericProducts(List<String> newGenericProductIds,
-      JSONObject productRowsData, Order order) {
-    for (String newGenericProductId : newGenericProductIds) {
-      Product newGenericProduct = OBDal.getInstance().get(Product.class, newGenericProductId);
-      Characteristic newGenericProductRowCharacteristic = newGenericProduct.getRowCharacteristic();
-      Characteristic newGenericProductColumnCharacteristic = newGenericProduct
-          .getColumnCharacteristic();
-      try {
-        JSONArray productRowData = productRowsData.getJSONArray(newGenericProductId);
-        Map<String, Map<String, Integer>> mappedProductRowData = getProductRowDataMapped(
-            productRowData);
-
-        List<Product> allVariantsOfGenericProduct = getAllVariantsOfGenericProduct(
-            newGenericProductId);
-
-        for (Product variantProduct : allVariantsOfGenericProduct) {
-          // Check product characteristic value against mappedProductRowData row/column
-          // characteristic values
-          String productRowCharacteristicValue = "";
-          String productColumnCharacteristicValue = "";
-
-          for (ProductCharacteristicValue productCharacteristicValue : variantProduct
-              .getProductCharacteristicValueList()) {
-            if (newGenericProductRowCharacteristic != null
-                && productCharacteristicValue.getCharacteristic()
-                    .getId()
-                    .equals(newGenericProductRowCharacteristic.getId())) {
-              productRowCharacteristicValue = productCharacteristicValue.getCharacteristicValue()
-                  .getId();
-            } else if (newGenericProductColumnCharacteristic != null
-                && productCharacteristicValue.getCharacteristic()
-                    .getId()
-                    .equals(newGenericProductColumnCharacteristic.getId())) {
-              productColumnCharacteristicValue = productCharacteristicValue.getCharacteristicValue()
-                  .getId();
-            }
-          }
-
-          int quantity = getQuantityFromProductRowData(newGenericProduct, mappedProductRowData,
-              productRowCharacteristicValue, productColumnCharacteristicValue);
-
-          if (quantity != 0) {
-            // A new orderline should be created with this variant product
-            createOrderLine(order, variantProduct, quantity);
-          }
-        }
-      } catch (JSONException e) {
-        // TODO: No product row data for line, some log might be required
-      }
-    }
-  }
-
-  private static int getQuantityFromProductRowData(Product genericProduct,
-      Map<String, Map<String, Integer>> mappedProductRowData, String productRowCharacteristicValue,
-      String productColumnCharacteristicValue) {
-    boolean hasRowCharacteristic = genericProduct.getRowCharacteristic() != null;
-    boolean hasColumnCharacteristic = genericProduct.getColumnCharacteristic() != null;
-    int quantity = 0;
-    if (hasRowCharacteristic) {
-      if (hasColumnCharacteristic) {
-        quantity = mappedProductRowData.get(productRowCharacteristicValue)
-            .get(productColumnCharacteristicValue);
-      } else {
-        quantity = mappedProductRowData.get(productRowCharacteristicValue)
-            .get(NO_COLUMN_CHARACTERISTIC);
-      }
-    } else if (hasColumnCharacteristic) {
-      quantity = mappedProductRowData.get(productColumnCharacteristicValue)
-          .get(NO_ROW_CHARACTERISTIC);
-    }
-    return quantity;
-  }
-
-  private static List<Product> getAllVariantsOfGenericProduct(String newGenericProductId) {
-    OBCriteria<Product> obc = OBDal.getInstance().createCriteria(Product.class);
-    obc.setFilterOnActive(true);
-    obc.setFilterOnReadableClients(true);
-    obc.setFilterOnReadableOrganization(true);
-
-    obc.add(Restrictions.eq(Product.PROPERTY_GENERICPRODUCT + ".id", newGenericProductId));
-    obc.add(Restrictions.eq(Product.PROPERTY_ISGENERIC, false));
-    return obc.list();
   }
 
   /**
    * Finds each order line that contains a given generic product id, and removes it
    * 
    * @param genericProductIds
-   *          - List of generic product ids, related orderlines will be removed
+   *          List of generic product ids, related orderlines will be removed
    */
   private void removeAllOrderLinesRelatedToGenericProduct(Order order,
       List<String> genericProductIds) {
@@ -232,7 +130,17 @@ public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
     OBDal.getInstance().refresh(order);
   }
 
-  private void updateOrderLinesForExistingGenericProduct(Order order, JSONObject productRowsData,
+  /**
+   * Generates, removes or updates order lines based on productRowsData
+   * 
+   * @param order
+   *          Order to be updated
+   * @param productRowsData
+   *          Product row data with values for each combination of relevant characteristics
+   * @param genericProductsToUpdate
+   *          Generic products to be updated
+   */
+  private void updateOrderLinesForGenericProduct(Order order, JSONObject productRowsData,
       List<String> genericProductsToUpdate) throws JSONException {
     for (String genericProductId : genericProductsToUpdate) {
       if (!productRowsData.has(genericProductId)) {
@@ -357,7 +265,7 @@ public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
     OBDal.getInstance().save(newOrderLine);
     OBDal.getInstance().save(order);
     OBDal.getInstance().flush();
-    OBDal.getInstance().refresh(order); // TODO: Maybe this refresh is not actually required
+    OBDal.getInstance().refresh(order);
   }
 
   private void addPriceToOrderLine(Order order, BigDecimal qtyOrdered, OrderLine orderLine) {
@@ -380,9 +288,8 @@ public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
     // criteria.setMaxResults(1);
     List<ProductByPriceAndWarehouse> productByPriceAndWarehouse = criteria.list();
     if (productByPriceAndWarehouse.isEmpty()) {
-      throw new OBException(String.format(
-          "Variant with searchKey (%s) has no product price configured for product price list %s.",
-          orderLine.getProduct().getSearchKey(), order.getPriceList().getName()));
+      throw new OBException(OBMessageUtils.getI18NMessage("VariantNoProductPrice",
+          new String[] { orderLine.getProduct().getSearchKey(), order.getPriceList().getName() }));
     }
 
     unitPrice = productByPriceAndWarehouse.get(0).getStandardPrice();
@@ -437,6 +344,46 @@ public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
     }
     TaxRate tax = OBDal.getInstance().get(TaxRate.class, taxId);
     orderLine.setTax(tax);
+  }
+
+  private JSONObject getErrorMessage(Exception e) {
+    JSONObject errorMessage = new JSONObject( //
+        Map.of("severity", "error", //
+            "title", "Error", //
+            "text", e.getMessage())); //
+    return new JSONObject(Map.of("message", errorMessage));
+  }
+
+  private static int getQuantityFromProductRowData(Product genericProduct,
+      Map<String, Map<String, Integer>> mappedProductRowData, String productRowCharacteristicValue,
+      String productColumnCharacteristicValue) {
+    boolean hasRowCharacteristic = genericProduct.getRowCharacteristic() != null;
+    boolean hasColumnCharacteristic = genericProduct.getColumnCharacteristic() != null;
+    int quantity = 0;
+    if (hasRowCharacteristic) {
+      if (hasColumnCharacteristic) {
+        quantity = mappedProductRowData.get(productRowCharacteristicValue)
+            .get(productColumnCharacteristicValue);
+      } else {
+        quantity = mappedProductRowData.get(productRowCharacteristicValue)
+            .get(NO_COLUMN_CHARACTERISTIC);
+      }
+    } else if (hasColumnCharacteristic) {
+      quantity = mappedProductRowData.get(productColumnCharacteristicValue)
+          .get(NO_ROW_CHARACTERISTIC);
+    }
+    return quantity;
+  }
+
+  private static List<Product> getAllVariantsOfGenericProduct(String newGenericProductId) {
+    OBCriteria<Product> obc = OBDal.getInstance().createCriteria(Product.class);
+    obc.setFilterOnActive(true);
+    obc.setFilterOnReadableClients(true);
+    obc.setFilterOnReadableOrganization(true);
+
+    obc.add(Restrictions.eq(Product.PROPERTY_GENERICPRODUCT + ".id", newGenericProductId));
+    obc.add(Restrictions.eq(Product.PROPERTY_ISGENERIC, false));
+    return obc.list();
   }
 
   private int getNextLineNo(Order order) {
