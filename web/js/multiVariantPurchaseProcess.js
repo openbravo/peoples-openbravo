@@ -20,6 +20,7 @@
 OB = OB || {};
 
 OB.MultiVariantPurchaseGrid = {
+  processPopup: null,
   execute: function(params, view) {
     const selection = params.button.contextView.viewGrid.getSelectedRecords(),
       recordIdList = [];
@@ -28,16 +29,21 @@ OB.MultiVariantPurchaseGrid = {
       recordIdList.push(selection[i].id);
     }
 
-    isc.MultiVariantPurchaseGridProcessPopup.create({
+    this.processPopup = isc.MultiVariantPurchaseGridProcessPopup.create({
       recordIdList: recordIdList,
       view: view,
       params: params
-    }).show();
+    });
+    this.processPopup.show();
   },
 
   open: function(params, view) {
     params.adTabId = view.activeView.tabId;
     OB.MultiVariantPurchaseGrid.execute(params, view);
+  },
+
+  close: function() {
+    this.processPopup.destroy();
   }
 };
 
@@ -372,7 +378,25 @@ isc.ProductSelectionGridItem.addProperties({
   dataPageSize: 100,
   init: function() {
     const modifiedView = isc.addProperties(this.view, {
-      getUnderLyingRecordContext: () => ({})
+      getUnderLyingRecordContext: () => ({}),
+      messageBar: {
+        setMessage: function(type, message) {
+          // There was an error, handle it
+          if (message != null && message !== '') {
+            isc.warn(
+              message,
+              function() {
+                OB.MultiVariantPurchaseGrid.close();
+                return true;
+              },
+              {
+                icon: '[SKINIMG]Dialog/error.png',
+                title: OB.I18N.getLabel('OBUIAPP_Error')
+              }
+            );
+          }
+        }
+      }
     });
 
     this.canvas = isc.OBPickAndExecuteView.create({
@@ -384,6 +408,12 @@ isc.ProductSelectionGridItem.addProperties({
         if (selectedRecord) {
           this.viewGrid.setRawCellValue(selectedRecord, null, 2, newTotal);
         }
+      },
+      init: function() {
+        this.Super('init', arguments);
+
+        // Initially do a fetchData to show order line related products
+        this.viewGrid.fetchData();
       }
     });
     this.Super('init', arguments);
@@ -445,8 +475,6 @@ isc.MultiVariantPurchaseGridProcessPopup.addProperties({
         this.getGrid()
       ]
     });
-    // Initially do a fetchData to show order line related products
-    this.mainform.items[0].canvas.viewGrid.fetchData();
 
     this.okButton = isc.OBFormButton.create({
       title: OB.I18N.getLabel('OK'),

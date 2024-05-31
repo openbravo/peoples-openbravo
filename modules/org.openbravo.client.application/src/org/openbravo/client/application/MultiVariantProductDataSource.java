@@ -20,15 +20,18 @@ package org.openbravo.client.application;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
@@ -60,6 +63,12 @@ public class MultiVariantProductDataSource extends ReadOnlyDataSourceService {
     String orderRecordId = parameters.get("recordId");
     Order order = OBDal.getInstance().get(Order.class, orderRecordId);
     List<OrderLine> orderLineList = order.getOrderLineList();
+
+    // Fail if there are two orderLine with the same variant product
+    Set<Product> duplicatedVariantProducts = getDuplicateVariantProducts(orderLineList);
+    if (!duplicatedVariantProducts.isEmpty()) {
+      throw new OBException("MultiVariantDuplicatedError");
+    }
 
     Set<String> genericProductIds = new HashSet<>();
     Map<String, Map<String, Object>> genericProducts = new HashMap<>();
@@ -180,6 +189,16 @@ public class MultiVariantProductDataSource extends ReadOnlyDataSourceService {
     });
 
     return new ArrayList<>(genericProducts.values());
+  }
+
+  private Set<Product> getDuplicateVariantProducts(List<OrderLine> orderLineList) {
+    List<Product> variantProducts = orderLineList.stream()
+        .map(OrderLine::getProduct)
+        .filter(product -> product.getGenericProduct() != null)
+        .collect(Collectors.toList());
+    return variantProducts.stream()
+        .filter(product -> Collections.frequency(variantProducts, product) > 1)
+        .collect(Collectors.toSet());
   }
 
   /**
