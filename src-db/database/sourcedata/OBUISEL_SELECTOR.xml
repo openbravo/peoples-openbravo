@@ -1078,6 +1078,7 @@ where @additional_filters@]]></HQL>
 <!--D55B3817C9CF4AC4AFEE7B0222C1453A-->  <AD_REFERENCE_ID><![CDATA[AA08D5AFC89D4F6CB838064FC06EF5E4]]></AD_REFERENCE_ID>
 <!--D55B3817C9CF4AC4AFEE7B0222C1453A-->  <AD_TABLE_ID><![CDATA[208]]></AD_TABLE_ID>
 <!--D55B3817C9CF4AC4AFEE7B0222C1453A-->  <WHERECLAUSE><![CDATA[e.active='Y' AND e.isGeneric = 'Y' AND (e.rowCharacteristic != null OR e.columnCharacteristic != null) AND exists(     from ProductByPriceAndWarehouse p2     where p2.product.genericProduct.id = e.id       AND p2.productPrice.priceListVersion.active='Y'       AND (AD_ORG_ISINNATURALTREE(p2.productPrice.organization.id, @AD_Org_Id@, @AD_Client_Id@)='Y')       AND (AD_ORG_ISINNATURALTREE(p2.orgwarehouse, @AD_Org_Id@, @AD_Client_Id@)='Y'))]]></WHERECLAUSE>
+<!--D55B3817C9CF4AC4AFEE7B0222C1453A-->  <FILTER_EXPRESSION><![CDATA[if(OB.getParameters().get("existingGenericProductIds") != null && OB.getParameters().get("existingGenericProductIds").split(',').length > 0) { "e.id not in (" + OB.getParameters().get("existingGenericProductIds").split(',').map(p => "'" + p + "'").join()  + ")"; }]]></FILTER_EXPRESSION>
 <!--D55B3817C9CF4AC4AFEE7B0222C1453A-->  <OBCLKER_TEMPLATE_ID><![CDATA[9314DE8599AD44E7BFC4CC50699042AB]]></OBCLKER_TEMPLATE_ID>
 <!--D55B3817C9CF4AC4AFEE7B0222C1453A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--D55B3817C9CF4AC4AFEE7B0222C1453A-->  <VALUEFIELD_ID><![CDATA[77D58D9A9B834A45A6F8E0CBDC8673A7]]></VALUEFIELD_ID>

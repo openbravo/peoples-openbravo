@@ -53,6 +53,11 @@ function handleSelection(grid, record, state) {
   if (!state) {
     return;
   }
+  if (!record.product) {
+    // No product set, reset the bottom grid using null
+    OB.MultiVariantPurchaseGridItem.selectProduct(null);
+    return;
+  }
   if (record.newRow) {
     const requestProperties = {};
     requestProperties.params = {};
@@ -121,9 +126,33 @@ const getViewProperties = recordId => ({
   arrowKeyAction: 'select',
   autoFetchData: true,
   handleItemChange: function(item) {
-    if (item.isValid()) {
-      item.grid.endEditing();
-      item.grid.selectSingleRecord(item.rowNum);
+    if (item.getValue() == null) {
+      return;
+    }
+
+    const rowsData = item.grid.getData().allRows;
+    const rowNum = item.rowNum;
+    if (rowsData) {
+      if (
+        !rowsData.some(
+          (row, idx) => row.product === item.getValue() && idx !== rowNum
+        )
+      ) {
+        item.grid.endEditing();
+        item.grid.selectSingleRecord(item.rowNum);
+      } else {
+        item.setValue(undefined);
+        isc.warn(
+          'Value is already in the grid, it has been removed.', // TODO: Transform this to AD_MESSAGE
+          function() {
+            return true;
+          },
+          {
+            icon: '[SKINIMG]Dialog/error.png',
+            title: OB.I18N.getLabel('OBUIAPP_Error')
+          }
+        );
+      }
     }
   },
   selectionFn: handleSelection,
@@ -228,6 +257,11 @@ const getViewProperties = recordId => ({
         'product$_identifier'
       ],
       init: function() {
+        let existingGenericProductIds = null;
+        const rowData = this.grid.getData().allRows;
+        if (rowData && rowData.length > 0) {
+          existingGenericProductIds = rowData.map(row => row.product).join();
+        }
         this.optionDataSource = OB.Datasource.create({
           createClassName: '',
           dataURL: '/openbravo/org.openbravo.service.datasource/Product',
@@ -239,7 +273,8 @@ const getViewProperties = recordId => ({
               targetProperty: 'product',
               _extraProperties: '',
               columnName: 'M_Product_ID',
-              IsSelectorItem: 'true'
+              IsSelectorItem: 'true',
+              existingGenericProductIds: existingGenericProductIds
             }
           },
           fields: [
