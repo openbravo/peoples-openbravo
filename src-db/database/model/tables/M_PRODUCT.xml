@@ -429,6 +429,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="CHARACTERISTICDIMENSIONENABLED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MPRODUCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -551,6 +555,7 @@
       <check name="M_PROD_LINKEDTOPROD_SEL_CHECK"><![CDATA[ISLINKEDTOPRODUCT = 'Y' AND (PROD_CAT_SELECTION IS NOT NULL OR PRODUCT_SELECTION IS NOT NULL) OR ISLINKEDTOPRODUCT = 'N']]></check>
       <check name="M_PROD_LINKEDTOPRODUCT_CHECK"><![CDATA[ISLINKEDTOPRODUCT IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ATSETVALTYPE_CHK"><![CDATA[M_ATTRIBUTESETINSTANCE_ID IS NULL OR ATTRSETVALUETYPE IS NOT NULL]]></check>
+      <check name="M_PRODUCT_CHDIMENS_ENBLD_CHECK"><![CDATA[CHARACTERISTICDIMENSIONENABLED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_CONTRIBUTION_CHECK"><![CDATA[PRODUCTTYPE <> 'C' OR M_PRODUCT_SUBTYPE_ID IS NOT NULL]]></check>
       <check name="M_PRODUCT_DISCONTINUED_CHECK"><![CDATA[DISCONTINUED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ENFORCE_ATTRIBUT_CHK"><![CDATA[ENFORCE_ATTRIBUTE IN ('Y', 'N')]]></check>
