@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2019 Openbravo SLU
+ * All portions are Copyright (C) 2013-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -25,6 +25,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBDal;
@@ -34,12 +35,25 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.model.common.plm.ProductCharacteristicConf;
 
+/**
+ * Handles generic products and also propagates characteristic dimensions configuration from the
+ * generic product to the variant products
+ */
 class ProductEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Product.ENTITY_NAME) };
 
   @Override
   protected Entity[] getObservedEntities() {
     return entities;
+  }
+
+  public void onSave(@Observes EntityUpdateEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+
+    validateCharacteristicDimensionsConfiguration(event);
+    propagateCharacteristicDimensionsConfigurationFromGenericProductToVariantProducts(event);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -84,5 +98,70 @@ class ProductEventHandler extends EntityPersistenceEventObserver {
         }
       }
     }
+
+    validateCharacteristicDimensionsConfiguration(event);
+    propagateCharacteristicDimensionsConfigurationFromGenericProductToVariantProducts(event);
+  }
+
+  private Product getProduct(EntityPersistenceEvent event) {
+    return (Product) event.getTargetInstance();
+  }
+
+  private void validateCharacteristicDimensionsConfiguration(EntityPersistenceEvent event) {
+    final Product product = getProduct(event);
+    if (product.isEnableCharacteristicDimensions()) {
+      if (!product.isGeneric() && product.getGenericProduct() == null) {
+        throw new OBException("@CharacteristicDimensionValidation_GenericProduct@");
+      }
+      if (product.getRowCharacteristic() == null
+          || product.getRowCharacteristic().equals(product.getColumnCharacteristic())) {
+        throw new OBException("@CharacteristicDimensionValidation_Enabled@");
+      }
+    } else if (product.getRowCharacteristic() != null
+        || product.getColumnCharacteristic() != null) {
+      throw new OBException("@CharacteristicDimensionValidation_Disabled@");
+    }
+  }
+
+  private void propagateCharacteristicDimensionsConfigurationFromGenericProductToVariantProducts(
+      EntityPersistenceEvent event) {
+    final Product product = getProduct(event);
+
+    // If generic product, copy detailed stock configuration to variant products
+    if (product.isGeneric()) {
+      // @formatter:off
+      final String hql =
+      " update Product" +
+      "  set enableCharacteristicDimensions = :enableCharacteristicDimensions" +
+      "   , rowCharacteristic = :rowCharacteristic" +
+      "   , columnCharacteristic = :columnCharacteristic" +
+      "   , updated = now()" +
+      "  where genericProduct.id = :genericProductId";
+      // @formatter:on
+
+      OBDal.getInstance()
+          .getSession()
+          .createQuery(hql)
+          .setParameter("enableCharacteristicDimensions",
+              product.isEnableCharacteristicDimensions())
+          .setParameter("rowCharacteristic", product.getRowCharacteristic())
+          .setParameter("columnCharacteristic", product.getColumnCharacteristic())
+          .setParameter("genericProductId", product.getId())
+          .executeUpdate();
+    }
+
+    // If variant product, copy detailed stock configuration from generic product
+    else if (product.getGenericProduct() != null) {
+      final Product genericProduct = product.getGenericProduct();
+      final Entity productEntity = ModelProvider.getInstance().getEntity(Product.ENTITY_NAME);
+      event.setCurrentState(
+          productEntity.getProperty(Product.PROPERTY_ENABLECHARACTERISTICDIMENSIONS),
+          genericProduct.isEnableCharacteristicDimensions());
+      event.setCurrentState(productEntity.getProperty(Product.PROPERTY_ROWCHARACTERISTIC),
+          genericProduct.getRowCharacteristic());
+      event.setCurrentState(productEntity.getProperty(Product.PROPERTY_COLUMNCHARACTERISTIC),
+          genericProduct.getColumnCharacteristic());
+    }
+
   }
 }
