@@ -21,6 +21,9 @@ package org.openbravo.test.referencedinventory;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.openbravo.materialmgmt.refinventory.ChangeReferencedInventoryStatusHandlerTest;
+import org.openbravo.materialmgmt.refinventory.ReferencedInventoryStatusProcessorTest;
+import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtilTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
@@ -49,7 +52,11 @@ import org.junit.runners.Suite;
     ReferencedInventoryBoxForcedReservation.class, //
 
     ReferencedInventoryTypeOrgSequenceTest.class, //
-    ReferencedInventoryTypeTest.class //
+    ReferencedInventoryTypeTest.class, //
+
+    ReferencedInventoryUtilTest.class, //
+    ReferencedInventoryStatusProcessorTest.class, //
+    ChangeReferencedInventoryStatusHandlerTest.class //
 })
 public class ReferencedInventoryTestSuite {
 }

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -297,6 +298,24 @@ public class ReferencedInventoryUtil {
       parentRI = parentRI.getParentRefInventory();
     }
     return parentList;
+  }
+
+  /**
+   * Retrieves the IDs of the referenced inventories that are direct children of the given
+   * referenced inventory
+   * 
+   * @param refInventory
+   *          the referenced inventory
+   * 
+   * @return a Stream containing the referenced inventories that are direct children of the given
+   *         referenced inventory
+   */
+  public static final Stream<ReferencedInventory> getDirectChildReferencedInventories(
+      ReferencedInventory refInventory) {
+    return OBDal.getInstance()
+        .createQuery(ReferencedInventory.class, "where parentRefInventory.id = :parent")
+        .setNamedParameter("parent", refInventory.getId())
+        .stream();
   }
 
   /**
