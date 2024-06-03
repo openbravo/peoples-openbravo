@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.service.OBDal;
@@ -30,6 +32,8 @@ import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 
 public class ProductCharacteristicValuesRowColumnDataSource extends ReadOnlyDataSourceService {
+  private static final Logger log = LogManager.getLogger();
+
   @Override
   protected int getCount(Map<String, String> parameters) {
     return getData(parameters, 0, Integer.MAX_VALUE).size();
@@ -42,7 +46,7 @@ public class ProductCharacteristicValuesRowColumnDataSource extends ReadOnlyData
 
     String productId = parameters.get("productId");
     if (productId == null) {
-      // TODO: Maybe add some log that the productId must be provided
+      log.error("Missing productId for the datasource to fetch data");
       return resultList;
     }
 
@@ -55,7 +59,7 @@ public class ProductCharacteristicValuesRowColumnDataSource extends ReadOnlyData
         : null;
 
     if (prodRowCharacteristicId == null && prodColumnCharacteristicId == null) {
-      // TODO: No product characteristics configured
+      log.error("No product row or column dimension characteristics have been configured.");
       return resultList;
     }
 
