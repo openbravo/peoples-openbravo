@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2019 Openbravo SLU
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  Cheli Pineda__________________________.
  ************************************************************************
@@ -23,31 +23,52 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.extensions.RelevantCharacteristicsExtension;
+import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.UOMUtil;
+import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.plm.Characteristic;
+import org.openbravo.model.common.plm.CharacteristicTrl;
+import org.openbravo.model.common.plm.CharacteristicValue;
+import org.openbravo.model.common.plm.ProductCharacteristicValue;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class CreateFrom extends HttpSecureAppServlet {
+  public static final String QUALIFIER = "CreateFrom";
   private static final long serialVersionUID = 1L;
   private static final BigDecimal ZERO = BigDecimal.ZERO;
+
+  @Inject
+  @Any
+  @Qualifier(QUALIFIER)
+  private Instance<RelevantCharacteristicsExtension> relevantCharacteristicsExtensions;
 
   @Override
   public void init(ServletConfig config) {
@@ -467,6 +488,40 @@ public class CreateFrom extends HttpSecureAppServlet {
         }
       }
 
+      List<String> relevantCharacteristics = new ArrayList<>();
+      for (RelevantCharacteristicsExtension extension : relevantCharacteristicsExtensions) {
+        relevantCharacteristics.addAll(extension.getRelevantCharacteristics());
+      }
+      List<Characteristic> characteristics = new ArrayList<>();
+      for (int i = 0; i < relevantCharacteristics.size(); i++) {
+        OBCriteria<Characteristic> characteristicCriteria = OBDal.getInstance()
+            .createCriteria(Characteristic.class);
+        characteristicCriteria.add(Restrictions.eq(Characteristic.PROPERTY_RELEVANTCHARACTERISTIC,
+            relevantCharacteristics.get(i)));
+        Characteristic characteristic = (Characteristic) characteristicCriteria.uniqueResult();
+        if (characteristic != null) {
+          characteristics.add(i, characteristic);
+        }
+      }
+      if (!characteristics.isEmpty()) {
+        for (int i = 0; i < Math.min(characteristics.size(), 3); i++) {
+          xmlDocument.setParameter("relChar" + i, getCharacteristicName(characteristics.get(i)));
+        }
+      }
+      for (int j = characteristics.size(); j < 3; j++) {
+        switch (j) {
+          case 0:
+            xmlDocument.setParameter("haveRelChar0", "none");
+            break;
+          case 1:
+            xmlDocument.setParameter("haveRelChar1", "none");
+            break;
+          case 2:
+            xmlDocument.setParameter("haveRelChar2", "none");
+            break;
+        }
+      }
+
       for (int i = 0; i < data.length; i++) {
         // Obtain the specific units for each product
 
@@ -515,6 +570,52 @@ public class CreateFrom extends HttpSecureAppServlet {
           data[i].haveuompreference = "text";
           xmlDocument.setParameter("uompreference", "");
           xmlDocument.setParameter("havesecuom", "display:none;");
+
+          if (!characteristics.isEmpty()) {
+            for (int j = 0; j < Math.min(characteristics.size(), 3); j++) {
+              OBCriteria<ProductCharacteristicValue> productCharacteristicValueCriteria = OBDal
+                  .getInstance()
+                  .createCriteria(ProductCharacteristicValue.class);
+              productCharacteristicValueCriteria
+                  .add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_PRODUCT + ".id",
+                      data[i].mProductId))
+                  .add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_CHARACTERISTIC + ".id",
+                      characteristics.get(j).getId()));
+              ProductCharacteristicValue productCharacteristicValue = (ProductCharacteristicValue) productCharacteristicValueCriteria
+                  .uniqueResult();
+              if (productCharacteristicValue != null) {
+                CharacteristicValue characteristicValue = (CharacteristicValue) OBDal.getInstance()
+                    .get(CharacteristicValue.class,
+                        productCharacteristicValue.getCharacteristicValue().getId());
+                String value = characteristicValue.getName();
+                switch (j) {
+                  case 0:
+                    data[i].relChar0 = value;
+                    break;
+                  case 1:
+                    data[i].relChar1 = value;
+                    break;
+                  case 2:
+                    data[i].relChar2 = value;
+                    break;
+                }
+              }
+            }
+            for (int j = characteristics.size(); j < 3; j++) {
+              switch (j) {
+                case 0:
+                  data[i].haveRelChar0 = "none";
+                  break;
+                case 1:
+                  data[i].haveRelChar1 = "none";
+                  break;
+                case 2:
+                  data[i].haveRelChar2 = "none";
+                  break;
+              }
+            }
+          }
+
           if (data[i].cAum.isEmpty() && data[i].aumqty.isEmpty()) {
             FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data[i].mProductId,
                 data[i].cDoctypeId);
@@ -550,6 +651,30 @@ public class CreateFrom extends HttpSecureAppServlet {
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private String getCharacteristicName(Characteristic characteristic) {
+    String charName = characteristic.getName();
+
+    Language language = OBContext.getOBContext().getLanguage();
+    //@formatter:off
+    String chTrlHql = " as chtrl "
+                    + " where chtrl.characteristic.id = :characteristicId "
+                    + " and chtrl.language.id = :languageId ";
+    //@formatter:on
+    OBQuery<CharacteristicTrl> chTrlQuery = OBDal.getInstance()
+        .createQuery(CharacteristicTrl.class, chTrlHql)
+        .setFilterOnActive(false)
+        .setFilterOnReadableOrganization(false)
+        .setNamedParameter("characteristicId", characteristic.getId())
+        .setNamedParameter("languageId", language.getId())
+        .setMaxResult(1);
+    CharacteristicTrl characteristicTrl = chTrlQuery.uniqueResult();
+    if (characteristicTrl != null) {
+      charName = characteristicTrl.getName();
+    }
+
+    return charName;
   }
 
   void printPageInvoiceCombo(HttpServletResponse response, VariablesSecureApp vars,

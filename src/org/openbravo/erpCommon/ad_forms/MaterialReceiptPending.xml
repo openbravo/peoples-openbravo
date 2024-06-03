@@ -46,6 +46,12 @@
   <SUBREPORT id="reportAD_Org_ID" name="reportAD_Org_ID" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="ParamAD_Org_ID"/>
   </SUBREPORT>
+  <PARAMETER id="headerRelChar0" name="haveRelChar0" attribute="style" replace="xx"/>
+  <PARAMETER id="headerRelChar0" name="relChar0" default=""/>
+  <PARAMETER id="headerRelChar1" name="haveRelChar1" attribute="style" replace="xx"/>
+  <PARAMETER id="headerRelChar1" name="relChar1" default=""/>
+  <PARAMETER id="headerRelChar2" name="haveRelChar2" attribute="style" replace="xx"/>
+  <PARAMETER id="headerRelChar2" name="relChar2" default=""/>
   <PARAMETER id="param2" name="param2" default="2"/>
   <PARAMETER id="paramScript" name="script"/>
   
@@ -73,6 +79,12 @@
     <FIELD id="fieldDateordered">dateordered</FIELD>
     <FIELD id="fieldPartnerName" replaceCharacters="html">partnerName</FIELD>
     <FIELD id="fieldProductName" replaceCharacters="html">productName</FIELD>
+    <FIELD id="fieldRelChar0" attribute="style" replace="xx">haveRelChar0</FIELD>
+    <FIELD id="fieldRelChar0" replaceCharacters="html">relChar0</FIELD>
+    <FIELD id="fieldRelChar1" attribute="style" replace="xx">haveRelChar1</FIELD>
+    <FIELD id="fieldRelChar1" replaceCharacters="html">relChar1</FIELD>
+    <FIELD id="fieldRelChar2" attribute="style" replace="xx">haveRelChar2</FIELD>
+    <FIELD id="fieldRelChar2" replaceCharacters="html">relChar2</FIELD>
     <FIELD id="fieldDescription" replaceCharacters="html">description</FIELD>
     <FIELD id="fieldTotalQty" format="qtyEdition">totalQty</FIELD>
     <FIELD id="fieldQtyordered" attribute="value" format="qtyEdition">qtyordered</FIELD>

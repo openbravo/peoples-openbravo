@@ -58,6 +58,12 @@
   <PARAMETER id="headerAum" name="uompreference" attribute="style" replace="xx"/>
   <PARAMETER id="headerSecQty" name="havesecuom" attribute="style" replace="xx"/>
   <PARAMETER id="headerSecUom" name="havesecuom" attribute="style" replace="xx"/>
+  <PARAMETER id="headerRelChar0" name="haveRelChar0" attribute="style" replace="xx"/>
+  <PARAMETER id="headerRelChar0" name="relChar0" default=""/>
+  <PARAMETER id="headerRelChar1" name="haveRelChar1" attribute="style" replace="xx"/>
+  <PARAMETER id="headerRelChar1" name="relChar1" default=""/>
+  <PARAMETER id="headerRelChar2" name="haveRelChar2" attribute="style" replace="xx"/>
+  <PARAMETER id="headerRelChar2" name="relChar2" default=""/>
   
     <PARAMETER id="param2" name="param2" default="2"/>
     <PARAMETER id="paramCheck" name="check" default="N"/>
@@ -88,7 +94,7 @@
         <FIELD id="fieldCuomName" replaceCharacters="html">uomsymbol</FIELD>
         <FIELD id="fieldCuomId" attribute="name" replace="xx">id</FIELD>
         <FIELD id="fieldCuomId" attribute="value">cUomId</FIELD>
-        <!-- Show/hidde Aum and Sec columns -->
+        <!-- Show/hide Aum and Sec columns -->
         <FIELD id="showFieldAUMQuantity" attribute="style" replace="xx">uompreference</FIELD>
         <FIELD id="fieldAumUnit" attribute="style" replace="xx">uompreference</FIELD>
         <FIELD id="showFieldSecQuantity" attribute="style" replace="xx">havesecuom</FIELD>
@@ -97,7 +103,13 @@
         <FIELD id="fieldPreference" attribute="value" >uompreference</FIELD>
         <FIELD id="fieldHaveSecUOM" attribute="name" replace="xx">id</FIELD>
         <FIELD id="fieldHaveSecUOM" attribute="value" >havesecuom</FIELD>
-        <!-- Show/hidde Aum and Sec column -->
+        <!-- Show/hide Aum and Sec column -->
+        <FIELD id="fieldRelChar0" attribute="style" replace="xx">haveRelChar0</FIELD>
+        <FIELD id="fieldRelChar0" replaceCharacters="html">relChar0</FIELD>
+        <FIELD id="fieldRelChar1" attribute="style" replace="xx">haveRelChar1</FIELD>
+        <FIELD id="fieldRelChar1" replaceCharacters="html">relChar1</FIELD>
+        <FIELD id="fieldRelChar2" attribute="style" replace="xx">haveRelChar2</FIELD>
+        <FIELD id="fieldRelChar2" replaceCharacters="html">relChar2</FIELD>
         <FIELD id="fieldMproductid" replaceCharacters="html">relationName</FIELD>
         <FIELD id="fieldPurchaseorder">line</FIELD>
         <FIELD id="fieldSecUom" attribute="name" replace="xx">id</FIELD>
