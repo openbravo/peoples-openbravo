@@ -28,14 +28,14 @@ import org.openbravo.model.common.plm.Product;
 
 public class ProductEventHandlerTest extends WeldBaseTest {
 
-  private static final String WHITEVALLEY_CLIENT = "39363B0921BB4293B48383844325E84C";
-  private static final String WHITEVALLEYADMIN_ROLE = "E717F902C44C455793463450495FF36B";
-  private static final String WHITEVALLEYADMIN_USER = "CFCF5FA26B344930A36C6DD7E5C76BE1";
-  private static final String VALLBLANCA_ORG = "D270A5AC50874F8BA67A88EE977F8E3B";
-  private static final String AVALANCHE_PRODUCT = "934E7D7587EC4C7A9E9FF58F0382D450";
-  private static final String DRYFITRUN_PRODUCT = "78D42266B5594BDB90C61FA18395CEF4";
-  private static final String COLOR_CHARACTERISTIC = "015D6C6072AC4A13B7573A261B2011BC";
-  private static final String SIZE_CHARACTERISTIC = "33E950C3E6274C20A56CE301358203AE";
+  private static final String FB_CLIENT = "23C59575B9CF467C9620760EB255B389";
+  private static final String FB_ADMIN_ROLE = "42D0EEB1C66F497A90DD526DC597E6F0";
+  private static final String FB_ADMIN_USER = "A530AAE22C864702B7E1C22D58E7B17B";
+  private static final String FB_ES_ORG = "B843C30461EA4501935CB1D125C9C25A";
+  private static final String ORANGE_JUICE_PRODUCT = "61047A6B06B3452B85260C7BCF08E78D";
+  private static final String CUSTOM_WATER_BOTTLE_PRODUCT = "78CACC94B1FE4AE6A9A7CF6D9F0AD25F";
+  private static final String COLOR_CHARACTERISTIC = "4F993B818D3548FFA70DE633E4E69AC2";
+  private static final String SIZE_CHARACTERISTIC = "7B619A9E101F4F9B9E664B6CD877FC0D";
 
   @Rule
   public ParameterCdiTestRule<TestData> parameterValuesRule = new ParameterCdiTestRule<>(
@@ -80,7 +80,8 @@ public class ProductEventHandlerTest extends WeldBaseTest {
           new TestData(
               "Generic product with characteristic dimensions enabled and row and column characteristics undefined", //
               true, false, true, null, null, "@CharacteristicDimensionValidation_Enabled@"), //
-          new TestData("Generic product with characteristic dimensions enabled and row characteristic defined", //
+          new TestData(
+              "Generic product with characteristic dimensions enabled and row characteristic defined", //
               true, false, true, COLOR_CHARACTERISTIC, null, null), //
           new TestData(
               "Generic product with characteristic dimensions enabled and column characteristic defined", //
@@ -93,7 +94,8 @@ public class ProductEventHandlerTest extends WeldBaseTest {
           new TestData(
               "Variant product with characteristic dimensions enabled and row and column characteristics undefined", //
               false, true, true, null, null, "@CharacteristicDimensionValidation_Enabled@"), //
-          new TestData("Variant product with characteristic dimensions enabled and row characteristic defined", //
+          new TestData(
+              "Variant product with characteristic dimensions enabled and row characteristic defined", //
               false, true, true, COLOR_CHARACTERISTIC, null, null), //
           new TestData(
               "Variant product with characteristic dimensions enabled and column characteristic defined", //
@@ -108,8 +110,7 @@ public class ProductEventHandlerTest extends WeldBaseTest {
 
   @Before
   public void beforeTest() {
-    OBContext.setOBContext(WHITEVALLEYADMIN_USER, WHITEVALLEYADMIN_ROLE, WHITEVALLEY_CLIENT,
-        VALLBLANCA_ORG);
+    OBContext.setOBContext(FB_ADMIN_USER, FB_ADMIN_ROLE, FB_CLIENT, FB_ES_ORG);
   }
 
   @After
@@ -120,7 +121,8 @@ public class ProductEventHandlerTest extends WeldBaseTest {
   @Test
   public void productEventHandlerTest() {
     final Product product = OBDal.getInstance()
-        .get(Product.class, testData.isGenericProduct() ? DRYFITRUN_PRODUCT : AVALANCHE_PRODUCT);
+        .get(Product.class,
+            testData.isGenericProduct() ? CUSTOM_WATER_BOTTLE_PRODUCT : ORANGE_JUICE_PRODUCT);
     assertThat(
         "Product event handler should throw the correct exception: " + testData.getDescription(),
         updateProduct(product), equalTo(testData.getError()));
@@ -128,7 +130,6 @@ public class ProductEventHandlerTest extends WeldBaseTest {
     if (testData.getError() == null) {
       if (testData.isGenericProduct()) {
         product.getProductGenericProductList()
-            .stream()
             .forEach(variantProduct -> assertProduct(product, variantProduct));
       } else if (testData.isVariantProduct()) {
         assertProduct(product.getGenericProduct(), product);
@@ -157,9 +158,9 @@ public class ProductEventHandlerTest extends WeldBaseTest {
   private String updateProduct(Product product) {
     try {
       product.setGeneric(testData.isGenericProduct());
-      product.setGenericProduct(
-          testData.isVariantProduct() ? OBDal.getInstance().get(Product.class, DRYFITRUN_PRODUCT)
-              : null);
+      product.setGenericProduct(testData.isVariantProduct()
+          ? OBDal.getInstance().get(Product.class, CUSTOM_WATER_BOTTLE_PRODUCT)
+          : null);
       product.setEnableCharacteristicDimensions(testData.hasCharacteristicDimensions());
       product.setRowCharacteristic(Optional.ofNullable(testData.getRowCharacteristic())
           .map(id -> OBDal.getInstance().get(Characteristic.class, id))
@@ -175,14 +176,14 @@ public class ProductEventHandlerTest extends WeldBaseTest {
     }
   }
 
-  class TestData {
-    private String description;
-    private boolean isGenericProduct;
-    private boolean isVariantProduct;
-    private boolean hasCharacteristicDimensions;
-    private String rowCharacteristic;
-    private String columnCharacteristic;
-    private String error;
+  static class TestData {
+    private final String description;
+    private final boolean isGenericProduct;
+    private final boolean isVariantProduct;
+    private final boolean hasCharacteristicDimensions;
+    private final String rowCharacteristic;
+    private final String columnCharacteristic;
+    private final String error;
 
     public TestData(String description, boolean isGenericProduct, boolean isVariantProduct,
         boolean hasCharacteristicDimensions, String rowCharacteristic, String columnCharacteristic,
