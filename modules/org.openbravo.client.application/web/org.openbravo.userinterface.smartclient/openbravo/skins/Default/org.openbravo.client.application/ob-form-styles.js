@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2022 Openbravo SLU
+ * All portions are Copyright (C) 2010-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -597,6 +597,7 @@ isc.OBSectionItemButton.changeDefaults('backgroundDefaults', {
   icon: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/sectionItem-ico.png',
   iconSize: 12,
   capSize: 12,
+  baseStyle: 'OBSectionItemButton_',
   titleStyle: 'OBSectionItemButton_Title_',
   backgroundColor: 'transparent'
 });
