@@ -4877,7 +4877,10 @@ Usually, company's internal identifiers for various records (products, customers
 <!--D6461A8102F4451C9E11CDC9C0A0D5C8-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--D6461A8102F4451C9E11CDC9C0A0D5C8-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--D6461A8102F4451C9E11CDC9C0A0D5C8-->  <AD_COLUMN_ID><![CDATA[B3E2C52ADF4F4CB591B56D78CBB8B392]]></AD_COLUMN_ID>
-<!--D6461A8102F4451C9E11CDC9C0A0D5C8-->  <NAME><![CDATA[RowCharacteristic]]></NAME>
+<!--D6461A8102F4451C9E11CDC9C0A0D5C8-->  <NAME><![CDATA[Characteristic Type]]></NAME>
+<!--D6461A8102F4451C9E11CDC9C0A0D5C8-->  <DESCRIPTION><![CDATA[Product Characteristic type]]></DESCRIPTION>
+<!--D6461A8102F4451C9E11CDC9C0A0D5C8-->  <HELP><![CDATA[It allows the possibility to define types of product characteristics that might be interesting for a concrete business. For example, in restaurants a product characteristic type might be defined as "Allergens". This definition might allow to develop advanced features.
+By default the type is empty (null), which means the product characteristic doesn't belong to a concrete type.]]></HELP>
 <!--D6461A8102F4451C9E11CDC9C0A0D5C8-->  <PROPERTY><![CDATA[rowCharacteristic]]></PROPERTY>
 <!--D6461A8102F4451C9E11CDC9C0A0D5C8-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--D6461A8102F4451C9E11CDC9C0A0D5C8-->  <SORT><![CDATA[N]]></SORT>
