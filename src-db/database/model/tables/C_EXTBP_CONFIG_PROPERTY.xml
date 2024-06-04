@@ -249,6 +249,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="PROPMAXLENGTH" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_EXTBP_CONFIG_FILTER" name="C_EXTBPCONFPROP_CFGFILTER_FK">
         <reference local="C_EXTBP_CONFIG_FILTER_ID" foreign="C_EXTBP_CONFIG_FILTER_ID"/>
       </foreign-key>
