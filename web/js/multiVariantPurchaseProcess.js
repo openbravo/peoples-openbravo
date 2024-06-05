@@ -192,7 +192,7 @@ const getViewProperties = recordId => ({
     {
       name: 'product',
       id: '1127',
-      title: 'Product',
+      title: OB.I18N.getLabel('Product'),
       required: true,
       sessionProperty: true,
       columnName: 'M_Product_ID',
@@ -208,14 +208,18 @@ const getViewProperties = recordId => ({
       valueField: 'id',
       sortByField: '_identifier',
       pickListFields: [
-        { title: 'Product', name: '_identifier', type: 'text' },
         {
-          title: 'Row characteristic',
+          title: OB.I18N.getLabel('Product'),
+          name: '_identifier',
+          type: 'text'
+        },
+        {
+          title: OB.I18N.getLabel('RowCharacteristicLbl'),
           name: 'rowCharacteristic$_identifier',
           type: 'text'
         },
         {
-          title: 'Column characteristic',
+          title: OB.I18N.getLabel('ColumnCharacteristicLbl'),
           name: 'columnCharacteristic$_identifier',
           type: 'text'
         }
@@ -223,32 +227,32 @@ const getViewProperties = recordId => ({
       showSelectorGrid: true,
       selectorGridFields: [
         {
-          title: 'Search Key',
+          title: OB.I18N.getLabel('ProductSearchKey'),
           name: 'searchKey',
           type: '_id_10',
           showHover: true
         },
         {
-          title: 'Name',
+          title: OB.I18N.getLabel('NameLbl'),
           name: 'name',
           type: '_id_10',
           showHover: true
         },
         {
-          title: 'Characteristic Description',
+          title: OB.I18N.getLabel('CharacteristicDescriptionLbl'),
           name: 'characteristicDescription',
           type: '_id_C632F1CFF5A1453EB28BDF44A70478F8',
           showHover: true
         },
         {
-          title: 'Row Characteristic',
+          title: OB.I18N.getLabel('RowCharacteristicLbl'),
           name: 'rowCharacteristic',
           displayField: 'rowCharacteristic$_identifier',
           type: '_id_10',
           showHover: true
         },
         {
-          title: 'Column Characteristic',
+          title: OB.I18N.getLabel('ColumnCharacteristicLbl'),
           name: 'columnCharacteristic',
           displayField: 'columnCharacteristic$_identifier',
           type: '_id_10',
@@ -319,7 +323,7 @@ const getViewProperties = recordId => ({
     {
       name: 'quantity',
       id: 'quantity',
-      title: 'Quantity',
+      title: OB.I18N.getLabel('QuantityLabel'),
       disabled: false,
       canEdit: false,
       updatable: false,
@@ -426,7 +430,7 @@ isc.defineClass('MultiVariantPurchaseGridProcessPopup', isc.OBPopup);
 isc.MultiVariantPurchaseGridProcessPopup.addProperties({
   width: 600,
   height: 600,
-  title: 'Add Lines for Variants',
+  title: OB.I18N.getLabel('ModelModeTitle'),
   showMinimizeButton: false,
   showMaximizeButton: false,
 

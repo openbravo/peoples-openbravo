@@ -75,7 +75,7 @@ isc.MultiVariantPurchaseGridItem.addProperties({
       // to enter values for each row characteristic value
       cols.push({
         name: 'NO_COLUMN_CHARACTERISTIC',
-        title: 'Quantity',
+        title: OB.I18N.getLabel('QuantityLabel'),
         align: 'center',
         canEdit: true,
         canSort: false,
@@ -138,7 +138,7 @@ isc.MultiVariantPurchaseGridItem.addProperties({
     if (hasColumnCharacteristic) {
       fields.push({
         name: 'total',
-        title: 'Total',
+        title: OB.I18N.getLabel('TotalLabel'),
         type: 'summary',
         align: 'right',
         canEdit: false,
