@@ -26,11 +26,22 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.utility.TreeNode;
+import org.openbravo.model.common.plm.Characteristic;
+import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 
+/**
+ * 
+ * Datasource used by the Purchase Order view "Model Mode" process to retrieve the information about
+ * the row/column characteristics of a given product
+ */
 public class ProductCharacteristicValuesRowColumnDataSource extends ReadOnlyDataSourceService {
   private static final Logger log = LogManager.getLogger();
 
@@ -51,14 +62,10 @@ public class ProductCharacteristicValuesRowColumnDataSource extends ReadOnlyData
     }
 
     Product product = OBDal.getInstance().get(Product.class, productId);
-    String prodRowCharacteristicId = product.getRowCharacteristic() != null
-        ? product.getRowCharacteristic().getId()
-        : null;
-    String prodColumnCharacteristicId = product.getColumnCharacteristic() != null
-        ? product.getColumnCharacteristic().getId()
-        : null;
+    Characteristic prodRowCharacteristic = product.getRowCharacteristic();
+    Characteristic prodColumnCharacteristic = product.getColumnCharacteristic();
 
-    if (prodRowCharacteristicId == null && prodColumnCharacteristicId == null) {
+    if (prodRowCharacteristic == null && prodColumnCharacteristic == null) {
       log.error("No product row or column dimension characteristics have been configured.");
       return resultList;
     }
@@ -67,22 +74,28 @@ public class ProductCharacteristicValuesRowColumnDataSource extends ReadOnlyData
     JSONArray rowCharacteristics = new JSONArray();
     JSONArray columnCharacteristics = new JSONArray();
 
-    for (ProductCharacteristic productCharacteristic : productCharacteristics) {
-      if (productCharacteristic.getCharacteristic().getId().equals(prodRowCharacteristicId)) {
-        productCharacteristic.getProductCharacteristicConfList().forEach(chConf -> {
-          rowCharacteristics
-              .put(new JSONObject(Map.of("id", chConf.getCharacteristicValue().getId(),
-                  "_identifier", chConf.getCharacteristicValue().getIdentifier())));
-        });
-      } else if (productCharacteristic.getCharacteristic()
-          .getId()
-          .equals(prodColumnCharacteristicId)) {
-        productCharacteristic.getProductCharacteristicConfList().forEach(chConf -> {
-          columnCharacteristics
-              .put(new JSONObject(Map.of("id", chConf.getCharacteristicValue().getId(),
-                  "_identifier", chConf.getCharacteristicValue().getIdentifier())));
-        });
-      }
+    ProductCharacteristic rowProductCharacteristic = productCharacteristics.stream()
+        .filter(pc -> pc.getCharacteristic().getId() == prodRowCharacteristic.getId())
+        .findAny()
+        .get();
+
+    rowProductCharacteristic.getProductCharacteristicConfList().forEach(chConf -> {
+      rowCharacteristics.put(new JSONObject(Map.of("id", chConf.getCharacteristicValue().getId(),
+          "_identifier", chConf.getCharacteristicValue().getIdentifier(), "seqNo",
+          getProductCharacteristicSeqno(chConf.getCharacteristicValue()))));
+    });
+
+    if (prodColumnCharacteristic != null) {
+      ProductCharacteristic colProductCharacteristic = productCharacteristics.stream()
+          .filter(pc -> pc.getCharacteristic().getId() == prodColumnCharacteristic.getId())
+          .findAny()
+          .get();
+      colProductCharacteristic.getProductCharacteristicConfList().forEach(chConf -> {
+        columnCharacteristics
+            .put(new JSONObject(Map.of("id", chConf.getCharacteristicValue().getId(), "_identifier",
+                chConf.getCharacteristicValue().getIdentifier(), "seqNo",
+                getProductCharacteristicSeqno(chConf.getCharacteristicValue()))));
+      });
     }
 
     resultList.add(Map.of( //
@@ -91,5 +104,16 @@ public class ProductCharacteristicValuesRowColumnDataSource extends ReadOnlyData
     ));
 
     return resultList;
+
+  }
+
+  private long getProductCharacteristicSeqno(CharacteristicValue characteristicValue) {
+    OBCriteria<TreeNode> criteria = OBDal.getInstance().createCriteria(TreeNode.class);
+    criteria.add(
+        Restrictions.eq(TreeNode.PROPERTY_CLIENT, OBContext.getOBContext().getCurrentClient()));
+    criteria.add(Restrictions.eq(TreeNode.PROPERTY_NODE, characteristicValue.getId()));
+    criteria.setMaxResults(1);
+    TreeNode treeNode = (TreeNode) criteria.uniqueResult();
+    return treeNode == null ? 0 : treeNode.getSequenceNumber();
   }
 }

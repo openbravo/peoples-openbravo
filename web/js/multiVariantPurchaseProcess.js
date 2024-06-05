@@ -75,12 +75,14 @@ function handleSelection(grid, record, state) {
           {},
           (response, data) => {
             const dataReceived = data[0];
+            dataReceived.rowCharacteristics.sort((a, b) => a.seqNo - b.seqNo);
             const rowCharacteristics = dataReceived.rowCharacteristics.map(
               r => ({
                 name: r.id,
                 title: r._identifier
               })
             );
+            dataReceived.columnCharacteristics.sort((a, b) => a.seqNo - b.seqNo);
             const columnCharacteristics = dataReceived.columnCharacteristics.map(
               r => ({
                 name: r.id,
