@@ -485,7 +485,7 @@ isc.MultiVariantPurchaseGridProcessPopup.addProperties({
       title: OB.I18N.getLabel('OK'),
       popup: this,
       action: function() {
-        var callback, productRows, productRowsData;
+        var callback, productRowIds, productRowsData;
 
         callback = function(rpcResponse, data, rpcRequest) {
           if (data.message) {
@@ -506,16 +506,19 @@ isc.MultiVariantPurchaseGridProcessPopup.addProperties({
           }
         };
 
-        productRows = this.popup.mainform
+        productRowIds = this.popup.mainform
           .getItem('product-grid')
-          .canvas.viewGrid.getData().allRows;
+          .canvas.viewGrid.getData()
+          .allRows.map(
+            row => row.product // Ignore other data that is not being used, only product id is being used in the request
+          );
         productRowsData = this.popup.mainform.getItem('ch-grid').productData;
 
         OB.RemoteCallManager.call(
           'org.openbravo.client.application.event.UpdateMultiVariantPurchaseOrderLines',
           {
             recordIdList: recordIdList,
-            productRows: productRows,
+            productRowIds: productRowIds,
             productRowsData: productRowsData
           },
           {},

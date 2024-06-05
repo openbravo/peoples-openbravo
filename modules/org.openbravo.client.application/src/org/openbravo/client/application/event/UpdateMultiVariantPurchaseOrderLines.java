@@ -63,15 +63,15 @@ public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
     try {
       JSONObject jsonContent = new JSONObject(content);
       String orderId = jsonContent.getJSONArray("recordIdList").getString(0);
-      JSONArray productRows = jsonContent.getJSONArray("productRows");
+      JSONArray productRowIds = jsonContent.getJSONArray("productRowIds");
       JSONObject productRowsData = jsonContent.getJSONObject("productRowsData");
 
       Order order = OBDal.getInstance().get(Order.class, orderId);
       List<OrderLine> orderLines = order.getOrderLineList();
 
       List<String> productIdsFromProcess = new ArrayList<>();
-      for (int i = 0; i < productRows.length(); i++) {
-        productIdsFromProcess.add(productRows.getJSONObject(i).getString("product"));
+      for (int i = 0; i < productRowIds.length(); i++) {
+        productIdsFromProcess.add(productRowIds.getString(i));
       }
 
       List<String> removedProductIds = new ArrayList<>();
