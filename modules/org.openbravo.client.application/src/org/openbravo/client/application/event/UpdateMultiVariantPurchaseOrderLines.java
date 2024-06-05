@@ -356,17 +356,28 @@ public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
     int quantity = 0;
     if (hasRowCharacteristic) {
       if (hasColumnCharacteristic) {
-        quantity = mappedProductRowData.get(productRowCharacteristicValue)
-            .get(productColumnCharacteristicValue);
+        quantity = getQuantity(mappedProductRowData, productRowCharacteristicValue,
+            productColumnCharacteristicValue);
       } else {
-        quantity = mappedProductRowData.get(productRowCharacteristicValue)
-            .get(NO_COLUMN_CHARACTERISTIC);
+        quantity = getQuantity(mappedProductRowData, productRowCharacteristicValue,
+            NO_COLUMN_CHARACTERISTIC);
       }
     } else if (hasColumnCharacteristic) {
-      quantity = mappedProductRowData.get(productColumnCharacteristicValue)
-          .get(NO_ROW_CHARACTERISTIC);
+      quantity = getQuantity(mappedProductRowData, productColumnCharacteristicValue,
+          NO_ROW_CHARACTERISTIC);
     }
     return quantity;
+  }
+
+  private static Integer getQuantity(Map<String, Map<String, Integer>> mappedProductRowData,
+      String productRowCharacteristicValue, String productColumnCharacteristicValue) {
+    if (mappedProductRowData.get(productRowCharacteristicValue) == null
+        || mappedProductRowData.get(productRowCharacteristicValue)
+            .get(productColumnCharacteristicValue) == null) {
+      return 0;
+    }
+    return mappedProductRowData.get(productRowCharacteristicValue)
+        .get(productColumnCharacteristicValue);
   }
 
   private static List<Product> getAllVariantsOfGenericProduct(String newGenericProductId) {
