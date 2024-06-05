@@ -127,7 +127,7 @@ class ProductEventHandler extends EntityPersistenceEventObserver {
       EntityPersistenceEvent event) {
     final Product product = getProduct(event);
 
-    // If generic product, copy detailed stock configuration to variant products
+    // If generic product, copy characteristic dimensions configuration to variant products
     if (product.isGeneric()) {
       // @formatter:off
       final String hql =
@@ -150,7 +150,7 @@ class ProductEventHandler extends EntityPersistenceEventObserver {
           .executeUpdate();
     }
 
-    // If variant product, copy detailed stock configuration from generic product
+    // If variant product, copy characteristic dimensions configuration from generic product
     else if (product.getGenericProduct() != null) {
       final Product genericProduct = product.getGenericProduct();
       final Entity productEntity = ModelProvider.getInstance().getEntity(Product.ENTITY_NAME);

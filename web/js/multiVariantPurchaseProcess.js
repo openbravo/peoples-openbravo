@@ -67,8 +67,6 @@ function handleSelection(grid, record, state) {
   if (record.newRow) {
     const requestProperties = {};
     requestProperties.params = {};
-    requestProperties.params._startRow = 0;
-    requestProperties.params._endRow = 10; // Actually only 1 row will be returned, because of filtering by the product
     requestProperties.params.productId = record.product;
     const o = {
       setDataSource: dataS => {

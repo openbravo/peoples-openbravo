@@ -260,7 +260,6 @@ isc.MultiVariantPurchaseGridItem.addProperties({
       this.grid = null;
       this.currentProductId = null;
       this.setCanvas(null);
-      // this.canvas.markForRedraw();
       return;
     }
 

@@ -125,9 +125,6 @@ public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
     List<OrderLine> orderLines = order.getOrderLineList();
     orderLines.remove(orderLine);
     OBDal.getInstance().remove(orderLine);
-    OBDal.getInstance().save(order);
-    OBDal.getInstance().flush();
-    OBDal.getInstance().refresh(order);
   }
 
   /**
@@ -263,9 +260,6 @@ public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
     newOrderLine.setNewOBObject(true);
     orderLines.add(newOrderLine);
     OBDal.getInstance().save(newOrderLine);
-    OBDal.getInstance().save(order);
-    OBDal.getInstance().flush();
-    OBDal.getInstance().refresh(order);
   }
 
   private void addPriceToOrderLine(Order order, BigDecimal qtyOrdered, OrderLine orderLine) {

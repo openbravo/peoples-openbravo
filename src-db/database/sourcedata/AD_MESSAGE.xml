@@ -21595,7 +21595,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--6E93A4BC18E04CDEAFA91E2B1DB2C634-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--6E93A4BC18E04CDEAFA91E2B1DB2C634-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--6E93A4BC18E04CDEAFA91E2B1DB2C634-->  <VALUE><![CDATA[GenericProductAlrdyAddedError]]></VALUE>
-<!--6E93A4BC18E04CDEAFA91E2B1DB2C634-->  <MSGTEXT><![CDATA[Generic product has already been added to the grid, it can not be added again.]]></MSGTEXT>
+<!--6E93A4BC18E04CDEAFA91E2B1DB2C634-->  <MSGTEXT><![CDATA[Generic product has already been added to the grid, it cannot be added again.]]></MSGTEXT>
 <!--6E93A4BC18E04CDEAFA91E2B1DB2C634-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--6E93A4BC18E04CDEAFA91E2B1DB2C634-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--6E93A4BC18E04CDEAFA91E2B1DB2C634-->  <ISINCLUDEINI18N><![CDATA[Y]]></ISINCLUDEINI18N>
