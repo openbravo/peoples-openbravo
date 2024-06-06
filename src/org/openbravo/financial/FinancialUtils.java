@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2020 Openbravo SLU
+ * All portions are Copyright (C) 2012-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -237,8 +237,10 @@ public class FinancialUtils {
       obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY, toCurrency));
       obcConvRate.add(Restrictions.le(ConversionRate.PROPERTY_VALIDFROMDATE, dateWithoutTimestamp));
       obcConvRate.add(Restrictions.ge(ConversionRate.PROPERTY_VALIDTODATE, dateWithoutTimestamp));
+      obcConvRate.addOrderBy(ConversionRate.PROPERTY_CREATIONDATE, false);
       obcConvRate.setFilterOnReadableClients(false);
       obcConvRate.setFilterOnReadableOrganization(false);
+      obcConvRate.setMaxResults(1);
       conversionRate = (ConversionRate) obcConvRate.uniqueResult();
       if (conversionRate != null) {
         return conversionRate;
