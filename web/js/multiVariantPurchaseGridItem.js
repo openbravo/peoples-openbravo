@@ -155,7 +155,7 @@ isc.MultiVariantPurchaseGridItem.addProperties({
       });
     }
 
-    this.grid = isc.ListGrid.create({
+    this.grid = isc.OBGrid.create({
       width: '100%',
       height: 100,
       canEdit: true,
