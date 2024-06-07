@@ -56,13 +56,26 @@ isc.MultiVariantPurchaseGridItem.addProperties({
       me.productData[me.currentProductId] = dataFromGridWithEditedValue.flatMap(
         row => me.transformObjectToArray(row)
       );
+
+      // Recalculating totals
+      this.record.total = me
+        .transformObjectToArray(currentRowData)
+        .reduce((sum, record) => sum + record.quantity, 0);
+      currentRow.grid.refreshCell(
+        this.rowNum,
+        currentRow.grid.getColNum('total')
+      );
+      currentRow.grid.summaryRow.recalculateSummaries(
+        dataFromGridWithEditedValue
+      );
+
       this.Super('changed', arguments);
     };
 
     const cols = columns.map(col => ({
       name: col.name,
       title: col.title,
-      type: 'integer',
+      type: '_id_29',
       defaultValue: 0,
       canGroupBy: false,
       canSort: false,
@@ -80,7 +93,7 @@ isc.MultiVariantPurchaseGridItem.addProperties({
         canEdit: true,
         canSort: false,
         canGroupBy: false,
-        type: 'integer',
+        type: '_id_29',
         defaultValue: 0,
         changed: changedFn
       });
@@ -89,6 +102,7 @@ isc.MultiVariantPurchaseGridItem.addProperties({
     let rowsData = rows.map(row => ({
       characteristicName: row.title,
       characteristicValue: row.name,
+      total: 0,
       ...cols.reduce((acc, col) => ({ ...acc, [col.name]: 0 }), {})
     }));
 
@@ -97,6 +111,7 @@ isc.MultiVariantPurchaseGridItem.addProperties({
         {
           characteristicName: '',
           characteristicValue: 'NO_ROW_CHARACTERISTIC',
+          total: 0,
           ...columns.reduce((acc, col) => ({ ...acc, [col.name]: 0 }), {})
         }
       ];
@@ -117,8 +132,10 @@ isc.MultiVariantPurchaseGridItem.addProperties({
       }
       if (row && row.hasOwnProperty(item.columnCharacteristicValue)) {
         row[item.columnCharacteristicValue] = item.quantity;
+        row.total += item.quantity;
       } else {
         row['NO_COLUMN_CHARACTERISTIC'] = item.quantity;
+        row.total += item.quantity;
       }
     });
 
@@ -139,25 +156,18 @@ isc.MultiVariantPurchaseGridItem.addProperties({
       fields.push({
         name: 'total',
         title: OB.I18N.getLabel('TotalLabel'),
-        type: 'summary',
+        type: '_id_29',
         align: 'right',
         canEdit: false,
         canSort: false,
         canGroupBy: false,
-        showGridSummary: true,
-        summaryFunction: function(records) {
-          // Calculate and return the summary value
-          return records.reduce((sum, record) => sum + record.total, 0);
-        },
-        getRecordSummary: function(record) {
-          return me.getRowTotal(record);
-        }
+        showGridSummary: true
       });
     }
 
     this.grid = isc.OBGrid.create({
       width: '100%',
-      height: 100,
+      height: 50,
       canEdit: true,
       editEvent: 'click',
       editByCell: true,
@@ -171,16 +181,7 @@ isc.MultiVariantPurchaseGridItem.addProperties({
       leaveScrollbarGap: false, // If you expect to never exceed 10, setting to false can remove unnecessary scrollbar space
       bodyOverflow: 'visible',
       overflow: 'auto', // Use hidden to cut off any excess but consider "auto" if exceeding
-      redraw: function() {
-        this.Super('redraw', arguments);
-        this.adjustHeight();
-      },
-      adjustHeight: function() {
-        const rowHeight = this.getRowHeight();
-        const numRows = this.getTotalRows();
-        const newHeight = rowHeight * Math.min(numRows, 10); // Calculate new height but limit to 10 rows
-        this.setHeight(newHeight);
-      },
+      cellHeight: OB.Styles.Process.PickAndExecute.gridCellHeight,
       fields: fields,
       data: rowsData,
       autoDraw: false,
