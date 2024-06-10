@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2023 Openbravo SLU
+ * All portions are Copyright (C) 2011-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1335,6 +1335,15 @@ isc.OBSelectorItem.addProperties({
         // for the suggestion box it is one big or
         requestProperties.params[OB.Constants.OR_EXPRESSION] = 'true';
       }
+    }
+    if (
+      this.pickList &&
+      this.pickList.body &&
+      this.pickList.body.getScrollHandle()
+    ) {
+      // when doing a new search, force the scroll to the top so that the first page requested is the initial one,
+      // even if the current page of the grid before the filter was updated was not the first one
+      this.pickList.body.getScrollHandle().scrollTop = 0;
     }
 
     return this.Super('filterDataBoundPickList', [
