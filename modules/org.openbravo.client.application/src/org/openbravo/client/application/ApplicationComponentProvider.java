@@ -500,6 +500,10 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
               + KernelConstants.SKIN_PARAMETER
               + "/org.openbravo.client.application/ob-rtl-styles.js", false));
     }
+
+    globalResources.add(createStaticResource("web/js/multiVariantPurchaseGridItem.js", true));
+    globalResources.add(createStaticResource("web/js/multiVariantPurchaseProcess.js", true));
+
     globalResources.add(createStaticResource("web/js/periodControlStatus.js", true));
     globalResources.add(createStaticResource("web/js/productCharacteristicsProcess.js", true));
     globalResources.add(createStaticResource("web/js/recalculatePermissionsProcess.js", true));

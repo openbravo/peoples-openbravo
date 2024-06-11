@@ -55,6 +55,7 @@ import org.openbravo.dal.service.DataPoolCheckerTest;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.erpCommon.utility.OBDateUtilsTest;
 import org.openbravo.event.CharacteristicEventHandlerTest;
+import org.openbravo.event.ProductEventHandlerTest;
 import org.openbravo.materialmgmt.RelevantCharacteristicFieldTerminologyChecker;
 import org.openbravo.materialmgmt.RelevantCharacteristicPropertyTest;
 import org.openbravo.scheduling.ProcessBundleSerializationTest;
@@ -415,7 +416,8 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     GridExport.class, //
     ViewGeneration.class, //
     OAuth2SignInProviderTest.class, //
-    TimeInvalidatedCacheTest.class,
+    TimeInvalidatedCacheTest.class, //
+    ProductEventHandlerTest.class, //
 
     // Cancel and Replace Tests
     CancelAndReplaceTest.class, //
