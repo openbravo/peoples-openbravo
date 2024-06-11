@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
  ************************************************************************************
- * Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Copyright (C) 2001-2024 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -37,9 +37,10 @@
             INNER JOIN AD_ROLE role ON users.DEFAULT_AD_ROLE_ID = role.AD_ROLE_ID
          WHERE users.AD_USER_ID = ?
            AND NOT users.DEFAULT_AD_ROLE_ID IS NULL
-           AND role.ISACTIVE = 'Y' and role.isrestrictbackend='N'
+           AND role.ISACTIVE = 'Y' and (? = 'N' or role.isrestrictbackend='N')
            ]]></Sql>
       <Parameter name="aduserid"/>
+      <Parameter name="isBackOfficeAccessRequired"/>
    </SqlMethod>
    
    <SqlMethod name="getDefaultSystemRole" type="preparedStatement" return="string">
@@ -127,9 +128,10 @@
             INNER JOIN AD_ROLE role
               ON userRoles.AD_ROLE_ID = role.AD_ROLE_ID
          WHERE userRoles.AD_USER_ID = ?
-           AND role.ISACTIVE = 'Y' and role.isrestrictbackend='N' and userRoles.isactive='Y'
+           AND role.ISACTIVE = 'Y' and (? = 'N' or role.isrestrictbackend='N') and userRoles.isactive='Y'
            ]]></Sql>
       <Parameter name="aduserid"/>
+      <Parameter name="isBackOfficeAccessRequired"/>
    </SqlMethod>
    
    <SqlMethod name="getDefaultClient" type="preparedStatement" return="string">

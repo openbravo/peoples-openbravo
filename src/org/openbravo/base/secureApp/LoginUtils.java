@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2023 Openbravo S.L.U.
+ * Copyright (C) 2001-2024 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -47,6 +47,7 @@ import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.domain.Preference;
@@ -424,17 +425,42 @@ public class LoginUtils {
 
   /**
    * Obtains defaults defined for a user and throws DefaultValidationException in case they are not
-   * correct.
+   * correct. The default role to be found should not have restricted access to the back office.
+   *
+   * @see #getLoginDefaults(String, String, boolean, ConnectionProvider)
    */
   public static RoleDefaults getLoginDefaults(String strUserAuth, String role,
       ConnectionProvider cp) throws ServletException, DefaultValidationException {
+    return getLoginDefaults(strUserAuth, role, true, cp);
+  }
+
+  /**
+   * Obtains defaults defined for a user and throws DefaultValidationException in case they are not
+   * correct.
+   *
+   * @see Role#isRestrictbackend()
+   *
+   * @param strUserAuth
+   *          the {@link User} ID
+   * @param role
+   *          the role ID, if null a default role ID is found by this method
+   * @param isBackOfficeAccessRequired
+   *          true if the default role search must be restricted to roles with access to the back
+   *          office or false otherwise.
+   * @param cp
+   *          the connection provider used to query information to the database
+   */
+  public static RoleDefaults getLoginDefaults(String strUserAuth, String role,
+      boolean isBackOfficeAccessRequired, ConnectionProvider cp)
+      throws ServletException, DefaultValidationException {
     String strRole = role;
     if (strRole.equals("")) {
+      String requiresBackOfficeAccess = isBackOfficeAccessRequired ? "Y" : "N";
       // use default role
-      strRole = DefaultOptionsData.defaultRole(cp, strUserAuth);
+      strRole = DefaultOptionsData.defaultRole(cp, strUserAuth, requiresBackOfficeAccess);
       if (strRole == null || !LoginUtils.validUserRole(cp, strUserAuth, strRole)) {
         // if default not set or not valid take any one
-        strRole = DefaultOptionsData.getDefaultRole(cp, strUserAuth);
+        strRole = DefaultOptionsData.getDefaultRole(cp, strUserAuth, requiresBackOfficeAccess);
       }
     }
     validateDefault(strRole, strUserAuth, "Role");
