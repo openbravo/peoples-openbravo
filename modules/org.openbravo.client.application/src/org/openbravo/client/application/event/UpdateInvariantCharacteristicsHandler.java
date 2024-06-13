@@ -197,8 +197,9 @@ public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
   }
 
   private void deleteNotSelectedProdCharValues(String productId, final JSONObject prodChValues) {
+    @SuppressWarnings("unchecked")
     final Set<String> prodChValueIds = StreamSupport
-        .stream(((Iterable<String>) prodChValues::keys).spliterator(), false)
+        .stream(((Iterable<String>) prodChValues.keys()).spliterator(), false)
         .map(key -> {
           try {
             return prodChValues.getString(key);
