@@ -60,12 +60,15 @@
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_CH_ORG_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <index name="M_PRODUCT_CH_ORG_CHAR_UNIQ" unique="true">
-        <index-column name="AD_ORG_ID"/>
+      <index name="M_PRODUCT_CH_ORG_CHAR" unique="false">
         <index-column name="M_PRODUCT_CH_ID"/>
       </index>
       <index name="M_PRODUCT_CH_ORG_PROD" unique="false">
         <index-column name="M_PRODUCT_ID"/>
+      </index>
+      <index name="M_PRODUCT_CH_ORG_UNIQ" unique="true">
+        <index-column name="AD_ORG_ID"/>
+        <index-column name="M_PRODUCT_CH_ID"/>
       </index>
       <check name="M_PRODUCT_CH_CONF_ISACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
