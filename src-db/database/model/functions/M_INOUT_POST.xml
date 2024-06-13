@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2023 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2024 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -239,10 +239,8 @@
                              JOIN M_InventoryStatus INVS ON (INVS.M_InventoryStatus_ID = L.M_InventoryStatus_ID)
                              WHERE I.M_INOUT_ID=v_Record_ID
                              AND INVS.Available = 'N'
-                             -- Check only Outgoing documents (Goods Shipment and Return to Vendor Shipment)
-                             AND ((I.issotrx = 'Y' AND v_isreturndoctype = 'N')
-                                   OR
-                                  (I.issotrx = 'N' AND v_isreturndoctype = 'Y'))
+                             -- Check only Outgoing documents (Goods Shipment)
+                             AND (I.issotrx = 'Y' AND v_isreturndoctype = 'N')
                              ORDER BY M.line
                             ) LOOP
           v_Message_NotAvail := COALESCE(v_Message_NotAvail, '') || Cur_Lines.line || ', ';
