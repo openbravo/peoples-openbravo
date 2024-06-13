@@ -11,35 +11,43 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2020 Openbravo SLU
+ * All portions are Copyright (C) 2013-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
  */
 package org.openbravo.materialmgmt;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.persistence.Tuple;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.GenericJDBCException;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.system.Language;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Characteristic;
 import org.openbravo.model.common.plm.CharacteristicTrl;
 import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.CharacteristicValueTrl;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCharacteristic;
+import org.openbravo.model.common.plm.ProductCharacteristicDescriptionOrg;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
 import org.openbravo.model.common.plm.ProductTrl;
 import org.openbravo.scheduling.ProcessBundle;
@@ -117,6 +125,7 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
         // In some cases product might have been deleted.
         if (product != null) {
           updateProduct(product);
+          updateProductWithCharValuesByOrg(product);
           if (translationRequired) {
             updateProductTrl(product, languages);
           }
@@ -146,6 +155,7 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
         while (products.next()) {
           Product product = (Product) products.get(0);
           updateProduct(product);
+          updateProductWithCharValuesByOrg(product);
           if (translationRequired) {
             updateProductTrl(product, languages);
           }
@@ -166,25 +176,99 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
   }
 
   private void updateProduct(Product product) {
-    StringBuilder strChDesc = new StringBuilder();
+    updateProduct(product, false);
+  }
+
+  private void updateProductWithCharValuesByOrg(Product product) {
+    updateProduct(product, true);
+  }
+
+  private void updateProduct(Product product, boolean assignCharValuesByOrg) {
     //@formatter:off
-    String hql = " as pch "
+    final String hql = " as pch "
                + " where pch.product.id = :productId "
+               + "   and pch.characteristic.isAssignValuesByOrg = :assignCharValuesByOrg "
                + " order by pch.sequenceNumber ";
     //@formatter:on
     OBQuery<ProductCharacteristic> pchQuery = OBDal.getInstance()
         .createQuery(ProductCharacteristic.class, hql)
         .setFilterOnActive(false)
         .setFilterOnReadableOrganization(false)
-        .setNamedParameter("productId", product.getId());
+        .setNamedParameter("productId", product.getId())
+        .setNamedParameter("assignCharValuesByOrg", assignCharValuesByOrg);
 
-    for (ProductCharacteristic pch : pchQuery.list()) {
+    if (assignCharValuesByOrg) {
+      setCharDescriptionByOrg(product, pchQuery.list());
+    } else {
+      setCharDescription(product, pchQuery.list());
+    }
+  }
+
+  private void setCharDescriptionByOrg(Product product, List<ProductCharacteristic> pchList) {
+    // Mapa para agrupar resultados por orgId
+    Map<String, StringBuilder> orgToCharValuesMap = new HashMap<>();
+
+    // Construcción del strChDesc inicial
+    pchList.forEach(pch -> {
+      final String characteristicName = pch.getCharacteristic().getName();
+
+      //@formatter:off
+      final String hql = "select org.id as orgId, chValue.name as chValueName "
+          + "from ProductCharacteristicOrg pco " 
+          + "  join pco.organization org "
+          + "  join pco.characteristicValue chValue "
+          + "where pco.characteristicOfProduct.id = :pchId ";
+      //@formatter:on
+
+      OBDal.getInstance()
+          .getSession()
+          .createQuery(hql, Tuple.class)
+          .setParameter("pchId", pch.getId())
+          .stream()
+          .forEach(tuple -> {
+            String orgId = (String) tuple.get("orgId");
+            String chValueName = (String) tuple.get("chValueName");
+            orgToCharValuesMap.computeIfAbsent(orgId, k -> new StringBuilder())
+                .append(orgToCharValuesMap.get(orgId).length() > 0 ? ", " : "")
+                .append(characteristicName)
+                .append(": ")
+                .append(chValueName);
+          });
+    });
+
+    orgToCharValuesMap.forEach((orgId, strChDescBuilder) -> {
+      String strChDesc = strChDescBuilder.toString();
+
+      Organization organization = OBDal.getInstance().get(Organization.class, orgId);
+      OBCriteria<ProductCharacteristicDescriptionOrg> pcvOrgCriteria = OBDal.getInstance()
+          .createCriteria(ProductCharacteristicDescriptionOrg.class)
+          .add(Restrictions.eq(ProductCharacteristicDescriptionOrg.PROPERTY_PRODUCT, product))
+          .add(Restrictions.eq(ProductCharacteristicDescriptionOrg.PROPERTY_ORGANIZATION,
+              organization))
+          .setMaxResults(1);
+
+      ProductCharacteristicDescriptionOrg pcvOrg = (ProductCharacteristicDescriptionOrg) pcvOrgCriteria
+          .uniqueResult();
+
+      if (pcvOrg == null) {
+        pcvOrg = OBProvider.getInstance().get(ProductCharacteristicDescriptionOrg.class);
+        pcvOrg.setProduct(product);
+        pcvOrg.setOrganization(organization);
+      }
+      pcvOrg.setCharacteristicDescription(strChDesc);
+      OBDal.getInstance().save(pcvOrg);
+    });
+  }
+
+  private void setCharDescription(Product product, List<ProductCharacteristic> pchList) {
+    StringBuilder strChDesc = new StringBuilder();
+    for (ProductCharacteristic pch : pchList) {
       if (StringUtils.isNotBlank(strChDesc.toString())) {
         strChDesc.append(", ");
       }
       strChDesc.append(pch.getCharacteristic().getName() + ":");
       //@formatter:off
-      hql = " as pchv "
+      String hql = " as pchv "
           + " where pchv.characteristic.id = :chId "
           + " and pchv.product.id = :productId ";
       //@formatter:on
