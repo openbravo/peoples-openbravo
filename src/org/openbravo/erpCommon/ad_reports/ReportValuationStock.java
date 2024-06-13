@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -169,17 +169,10 @@ public class ReportValuationStock extends HttpSecureAppServlet {
             "dd-MM-yyyy HH:mm:ss");
         warehouseDimension = costRule.isWarehouseDimension() ? "Y" : "N";
       }
-      String compare = DateTimeData.compare(readOnlyCP, strDate, ReportValuationStockData
-          .getCostingMigrationDate(readOnlyCP, legalEntity.getClient().getId()));
-      String strCostOrg = "";
+
       String strCostClientId = "";
-      if (StringUtils.equals(compare, "-1")) {
-        // Date is before migration, available types are ST and AV. These costs are created at
-        // client level and organization can be any that belong to the client.
-        strCostType = "'AV', 'ST'";
-        strCostClientId = OBContext.getOBContext().getCurrentClient().getId();
-        orgs = osp.getChildTree("0", true);
-      } else if (ca != null) {
+      String strCostOrg = "";
+      if (ca != null) {
         strCostType = getCostType(ca);
         strCostOrg = strLegalEntity;
       }
