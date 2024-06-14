@@ -2114,16 +2114,6 @@ public class Utility {
     return numberFormatDecimal;
   }
 
-  /**
-   * Checks whether the current context is using new UI
-   * 
-   * @return true in case new UI is being used false if not
-   */
-  public static boolean isNewUI() {
-    OBContext context = OBContext.getOBContext();
-    return context != null && context.isNewUI();
-  }
-
   private static byte[] getBlankImage() {
 
     try {

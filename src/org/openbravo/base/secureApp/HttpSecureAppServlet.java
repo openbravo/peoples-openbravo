@@ -794,9 +794,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   private void bdErrorGeneral(HttpServletRequest request, HttpServletResponse response,
       String strTitle, String strText) throws IOException {
     String discard[] = { "" };
-    if (OBContext.getOBContext().isNewUI()) {
-      discard[0] = "backButton";
-    }
+    discard[0] = "backButton";
 
     final XmlDocument xmlDocument = xmlEngine
         .readXmlTemplate("org/openbravo/base/secureApp/Error", discard)

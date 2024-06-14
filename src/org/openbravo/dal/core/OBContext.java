@@ -115,7 +115,6 @@ public class OBContext implements OBNotSingleton, Serializable {
   private transient boolean isPortalRole = false;
   private transient boolean isWebServiceEnabled = false;
   private transient Set<String> additionalWritableOrganizations;
-  private transient boolean newUI = false;
   private transient boolean checkAccessLevel = true;
 
   // set this to a higher value to enable admin mode tracing
@@ -448,12 +447,6 @@ public class OBContext implements OBNotSingleton, Serializable {
           + "this means that the context has not been reset correctly in a finally block."
           + " When using the admin context it should always be removed in a finally block by the application");
       return;
-    }
-
-    // Determine whether using new ui by #Hide_BackButton session attribute set in Menu class
-    if (context != null) {
-      String newUIValue = (String) session.getAttribute("#Hide_BackButton".toUpperCase());
-      context.setNewUI("true".equals(newUIValue));
     }
 
     if (session.getAttribute(CONTEXT_PARAM) != context) {
@@ -1307,14 +1300,6 @@ public class OBContext implements OBNotSingleton, Serializable {
 
   public void setWarehouse(Warehouse warehouse) {
     this.warehouse = warehouse;
-  }
-
-  public boolean isNewUI() {
-    return newUI;
-  }
-
-  public void setNewUI(boolean newUI) {
-    this.newUI = newUI;
   }
 
   private static class OBAdminMode {

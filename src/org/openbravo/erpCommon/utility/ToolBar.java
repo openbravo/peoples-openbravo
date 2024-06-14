@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -175,10 +175,8 @@ public class ToolBar {
     buttons.put("SEPARATOR3", new ToolBar_Space(base_direction));
     buttons.put("SEPARATOR4", new ToolBar_Space(base_direction));
 
-    if (Utility.isNewUI()) {
-      buttons.put("REFRESH", new ToolBar_Button(base_direction, "Refresh",
-          Utility.messageBD(conn, "Refresh", language), getButtonScript("REFRESH")));
-    }
+    buttons.put("REFRESH", new ToolBar_Button(base_direction, "Refresh",
+        Utility.messageBD(conn, "Refresh", language), getButtonScript("REFRESH")));
 
     buttons.put("EXCEL", new ToolBar_Button(base_direction, "Excel",
         Utility.messageBD(conn, "ExportExcel", language), getButtonScript("EXCEL")));
@@ -326,7 +324,7 @@ public class ToolBar {
     final Vector<String> lastType = new Vector<String>(0);
 
     // In case of using new UI, add in toolbar grid and edition buttons
-    if (Utility.isNewUI() && !isSrcWindow) {
+    if (!isSrcWindow) {
       buttons.put("FORM_VIEW",
           new ToolBar_Button(base_direction, "Edition",
               Utility.messageBD(conn, "Form View", language), getButtonScript("FORM_VIEW"),

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2020 Openbravo SLU
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,6 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
@@ -35,7 +34,6 @@ import org.apache.logging.log4j.Logger;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource.ComponentResourceType;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.service.web.WebServiceUtil;
 
@@ -76,16 +74,6 @@ public class StaticResourceComponent extends BaseComponent {
     final long t1 = System.currentTimeMillis();
 
     try {
-      if (isClassicMode()) {
-        // set in the session that we are looking at the new ui
-        // note injecting the HttpSession through Weld does not work
-        // as it will instantiate one of the subclasses of HttpSession
-        // defined in the RequestContext
-        final HttpSession session = (HttpSession) getParameters().get(KernelConstants.HTTP_SESSION);
-        session.setAttribute("#Hide_BackButton".toUpperCase(), "true");
-        OBContext.getOBContext().setNewUI(true);
-      }
-
       return generateResult(getStaticResourceFileName());
     } catch (Exception e) {
       log.error("Error generating component; " + e.getMessage(), e);

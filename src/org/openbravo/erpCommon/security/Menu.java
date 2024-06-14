@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2020 Openbravo SLU
+ * All portions are Copyright (C) 2001-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -52,12 +52,8 @@ import org.openbravo.xmlEngine.XmlDocument;
  */
 public class Menu extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  private static String[] hideMenuValues = { "", "true", "false" };
   private static String[] scrollingValues = { "", "yes", "no", "auto" };
-  private static ValueListFilter menuFilter = new ValueListFilter(Menu.hideMenuValues);
   private static ValueListFilter scrollingFilter = new ValueListFilter(Menu.scrollingValues);
-
-  private static String DEFAULT_MENU_WIDTH = "25"; // Percentage of the page width used by the menu
 
   /** Creates a new instance of Menu */
   public Menu() {
@@ -102,7 +98,6 @@ public class Menu extends HttpSecureAppServlet {
       return;
     }
 
-    String hideMenu = vars.getStringParameter("hideMenu", menuFilter);
     String vScroll = vars.getStringParameter("vScroll", scrollingFilter);
 
     String textDirection = vars.getSessionValue("#TextDirection", "LTR");
@@ -110,19 +105,14 @@ public class Menu extends HttpSecureAppServlet {
     String menuLoadingURL = "../utility/VerticalMenu.html?Command=LOADING";
     String menuURL = "../utility/VerticalMenu.html";
 
-    if ("true".equals(hideMenu)) {
-      vars.setSessionValue("#Hide_BackButton", "true");
-      menuLoadingURL = "about:blank";
-      menuURL += "?Command=HIDE";
-    } else {
-      vars.removeSessionValue("#Hide_BackButton");
-    }
+    menuLoadingURL = "about:blank";
+    menuURL += "?Command=HIDE";
 
-    printPage(response, menuURL, targetmenu, menuLoadingURL, textDirection, hideMenu, vScroll);
+    printPage(response, menuURL, targetmenu, menuLoadingURL, textDirection, vScroll);
   }
 
   private void printPage(HttpServletResponse response, String strMenu, String strDetalle,
-      String strMenuLoading, String textDirection, String hideMenu, String vScroll)
+      String strMenuLoading, String textDirection, String vScroll)
       throws IOException, ServletException {
     XmlDocument xmlDocument;
     if (textDirection.equals("RTL")) {
@@ -133,14 +123,11 @@ public class Menu extends HttpSecureAppServlet {
           .createXmlDocument();
     }
 
-    String menuWidth = "true".equals(hideMenu) ? "0" : DEFAULT_MENU_WIDTH;
-
-    String jsConstants = "\nvar isMenuHide = " + "true".equals(hideMenu) + "; \n var isRTL = "
-        + "RTL".equals(textDirection) + "; \n var menuWidth = '" + menuWidth
-        + "%';\n var isMenuBlock = " + "true".equals(hideMenu) + ";\n";
+    String jsConstants = "\nvar isMenuHide = true; \n var isRTL = "
+        + "RTL".equals(textDirection) + "; \n var menuWidth = '0%';\n var isMenuBlock = true;\n";
 
     xmlDocument.setParameter("jsConstants", jsConstants);
-    xmlDocument.setParameter("framesetMenu", menuWidth);
+    xmlDocument.setParameter("framesetMenu", "0");
     xmlDocument.setParameter("frameMenuLoading", strMenuLoading);
     xmlDocument.setParameter("frameMenu", strMenu);
     xmlDocument.setParameter("frame1", strDetalle);
