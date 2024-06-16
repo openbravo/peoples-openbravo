@@ -25,6 +25,9 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assume.assumeThat;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.PersistenceException;
 
@@ -35,6 +38,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.kernel.RequestContext;
@@ -50,7 +54,12 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
+import org.openbravo.model.materialmgmt.transaction.InternalMovement;
+import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
+import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DbUtility;
+import org.openbravo.test.costing.utils.TestCostingConstants;
+import org.openbravo.test.costing.utils.TestCostingUtils;
 import org.openbravo.test.referencedinventory.ReferencedInventoryTestUtils;
 
 /**
@@ -67,6 +76,7 @@ public class StorageBinTest extends WeldBaseTest {
   private static final String ERROR_MESSAGE_NON_EMPTY_HU = "NonEmptyHUForTransactionAttributeSetInst";
   private static final String ERROR_MESSAGE_NOT_VALID_HU_TYPE = "Handling Unit Type is not valid for this storage bin";
   private static final String ERROR_MESSAGE_NO_DUPLICATE_LOCATOR_HU_TYPE = "duplicate key value violates unique constraint";
+  private static final String PROCESS_GOODS_MOVEMENT_PROCEDURE_NAME = "m_movement_post";
 
   @Before
   public void initialize() {
@@ -351,6 +361,92 @@ public class StorageBinTest extends WeldBaseTest {
   public void testStorageBin_AllowStoringItems_Yes_IncludedHandlingUnitTypes_AllExcludingDefined() {
     runHandlingUnitInStorageBinTest(true, StorageBinTestUtils.ALL_EXCLUDING_DEFINED, false, false,
         "StorageBin with AllowStoringItems Yes, IncludedHandlingUnitTypes AllExcludingDefined, HandlingUnitTypeTab is not empty");
+  }
+
+  /**
+   * Test storage bin with included handling unit types - Only those defined
+   *
+   * Create Storage bin to be used as Locator From in Goods Movement Transaction. </br>
+   * Create Product for Goods Movement transaction. </br>
+   * Create Stock for product in storage bin that is to be used as Locator From. </br>
+   * Create Storage bin to be used as Locator To in Goods Movement Transaction. </br>
+   * Set Included Handling Unit Types as Only those defined for Storage bin - Locator To. </br>
+   * Create Goods Movement for product using Locator From and Locator To created as above. </br>
+   * Realize that Goods Movement is processed successfully. </br>
+   *
+   */
+
+  @Test
+  public void testStorageBinWithIncludedHandlingUnitTypesOnlyThoseDefined() {
+
+    Locator storageBinFrom = StorageBinTestUtils.getNewStorageBinForTest("SB0001");
+    Product product = StorageBinTestUtils.getNewProductForTest("SB0001");
+
+    // Create stock for product
+    StorageBinTestUtils.createStockForProductInBinForTest(StorageBinTestUtils.GOODS_RECEIPT_ID,
+        "SB0002", product, storageBinFrom, BigDecimal.TEN);
+
+    // Create Storage bin with Included Handling Unit Types as Only those defined.
+    Locator storageBinTo = StorageBinTestUtils.getNewStorageBinForTest("SB0002");
+    storageBinTo.setAllowStoringItems(true);
+    storageBinTo.setIncludedHandlingUnitTypes(StorageBinTestUtils.ONLY_THOSE_DEFINED);
+    OBDal.getInstance().save(storageBinTo);
+    OBDal.getInstance().flush();
+
+    // Create Goods Movement
+    InternalMovement goodsMovement = createGoodsMovement(product, BigDecimal.ONE,
+        storageBinFrom.getId(), storageBinTo.getId());
+    assertThat("Goods Movement is processed successfully.", goodsMovement.isProcessed());
+  }
+
+  /**
+   * Create a new Goods Movement for product, From Locator, To Locator, Movement Quantity
+   */
+
+  private InternalMovement createGoodsMovement(Product product, BigDecimal quantity,
+      String locatorFromId, String locatorToId) {
+    try {
+      InternalMovement movement = OBProvider.getInstance().get(InternalMovement.class);
+      TestCostingUtils.setGeneralData(movement);
+      movement.setName(product.getName() + " - " + new Date());
+      movement.setMovementDate(new Date());
+      movement.setPosted("N");
+      movement
+          .setDocumentNo(TestCostingUtils.getDocumentNo(TestCostingConstants.MOVEMENT_SEQUENCE_ID));
+
+      InternalMovementLine movementLine = OBProvider.getInstance().get(InternalMovementLine.class);
+      TestCostingUtils.setGeneralData(movementLine);
+      movementLine.setStorageBin(OBDal.getInstance().get(Locator.class, locatorFromId));
+      movementLine.setNewStorageBin(OBDal.getInstance().get(Locator.class, locatorToId));
+      movementLine.setProduct(product);
+      movementLine.setLineNo(10L);
+      movementLine.setMovementQuantity(quantity);
+      movementLine.setUOM(product.getUOM());
+
+      movementLine.setMovement(movement);
+      movement.getMaterialMgmtInternalMovementLineList().add(movementLine);
+
+      OBDal.getInstance().save(movement);
+      OBDal.getInstance().flush();
+      // Process Goods Movement
+      processMovement(movement.getId());
+      OBDal.getInstance().refresh(movement);
+      return movement;
+    } catch (Exception e) {
+      throw new OBException(e);
+    }
+  }
+
+  /**
+   * Process goods movement
+   */
+
+  private void processMovement(String movementId) {
+    final List<Object> parameters = new ArrayList<Object>();
+    parameters.add(null);
+    parameters.add(movementId);
+    CallStoredProcedure.getInstance()
+        .call(PROCESS_GOODS_MOVEMENT_PROCEDURE_NAME, parameters, null, true, false);
   }
 
   /**
