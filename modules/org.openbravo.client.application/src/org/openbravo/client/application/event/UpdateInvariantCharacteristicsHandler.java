@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -198,11 +199,11 @@ public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
 
   private void deleteNotSelectedProdCharValues(String productId, final JSONObject prodChValues) {
     @SuppressWarnings("unchecked")
-    final Set<String> prodChValueIds = StreamSupport
-        .stream(((Iterable<String>) prodChValues.keys()).spliterator(), false)
+    final Set<String> prodChValueIds = (Set<String>) StreamSupport
+        .stream(Spliterators.spliteratorUnknownSize(prodChValues.keys(), 0), false)
         .map(key -> {
           try {
-            return prodChValues.getString(key);
+            return prodChValues.getString((String) key);
           } catch (JSONException e) {
             throw new OBException(e);
           }
