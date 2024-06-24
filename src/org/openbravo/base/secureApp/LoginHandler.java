@@ -95,10 +95,13 @@ public class LoginHandler extends HttpBaseServlet {
     final VariablesSecureApp vars = new VariablesSecureApp(req);
     boolean isExternalLoginFlow = isExternalLoginRequest(vars);
 
-    // Empty session
-    req.getSession().removeAttribute("#Authenticated_user");
-    vars.removeSessionValue("#AD_Role_ID");
-    vars.setSessionObject("#loggingIn", "Y");
+    boolean avoidSessionReset = Boolean.parseBoolean(req.getParameter("avoidSessionReset"));
+    if (!isPasswordResetFlow && !avoidSessionReset) {
+      // Empty session
+      req.getSession().removeAttribute("#Authenticated_user");
+      vars.removeSessionValue("#AD_Role_ID");
+      vars.setSessionObject("#loggingIn", "Y");
+    }
 
     final String user;
     final String password;
