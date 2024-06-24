@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2017 Openbravo SLU
+ * All portions are Copyright (C) 2013-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,10 @@ package org.openbravo.client.application.event;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,10 +32,12 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.VariantChDescUpdateProcess;
 import org.openbravo.model.common.plm.Characteristic;
@@ -74,14 +80,21 @@ public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
         Product product = OBDal.getInstance().get(Product.class, productId);
 
         // Retrieves all the product invariant characteristics
-        OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance()
-            .createCriteria(ProductCharacteristic.class);
-        criteria.add(Restrictions.eq(ProductCharacteristic.PROPERTY_PRODUCT, product));
-        criteria.add(Restrictions.eq(ProductCharacteristic.PROPERTY_VARIANT, false));
+        //@formatter:off
+        final String hql = " as pch "
+            + " where pch.product.id = :productId "
+            + "   and pch.variant = :variant "
+            + "   and pch.characteristic.isAssignValuesByOrg = :chValuesByOrg ";
+        //@formatter:on
+        OBQuery<ProductCharacteristic> query = OBDal.getInstance()
+            .createQuery(ProductCharacteristic.class, hql)
+            .setNamedParameter("productId", product.getId())
+            .setNamedParameter("variant", false)
+            .setNamedParameter("chValuesByOrg", false);
 
         JSONArray productCharArray = new JSONArray();
 
-        final List<ProductCharacteristic> invariantCharacteristics = criteria.list();
+        final List<ProductCharacteristic> invariantCharacteristics = query.list();
         for (ProductCharacteristic characteristic : invariantCharacteristics) {
           JSONObject productChar = new JSONObject();
           // Retrieves the current selected value
@@ -132,6 +145,8 @@ public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
         final JSONObject updatedValues = request.getJSONObject("updatedValues");
         final JSONObject existingProdChValues = request.getJSONObject("existingProdChValues");
 
+        deleteNotSelectedProdCharValues(productId, existingProdChValues);
+
         @SuppressWarnings("unchecked")
         Iterator<String> keysIterator = updatedValues.keys();
         while (keysIterator.hasNext()) {
@@ -180,5 +195,31 @@ public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
       }
     }
     return response;
+  }
+
+  private void deleteNotSelectedProdCharValues(String productId, final JSONObject prodChValues) {
+    @SuppressWarnings("unchecked")
+    final Set<String> prodChValueIds = (Set<String>) StreamSupport
+        .stream(Spliterators.spliteratorUnknownSize(prodChValues.keys(), 0), false)
+        .map(key -> {
+          try {
+            return prodChValues.getString((String) key);
+          } catch (JSONException e) {
+            throw new OBException(e);
+          }
+        })
+        .collect(Collectors.toSet());
+    //@formatter:off
+    final String hql = "delete from ProductCharacteristicValue pchv " +
+                       "where pchv.product.id = :productId " + 
+                       "  and pchv.id not in :prodChValueIds ";
+    //@formatter:on
+
+    OBDal.getInstance()
+        .getSession()
+        .createQuery(hql)
+        .setParameter("productId", productId)
+        .setParameterList("prodChValueIds", prodChValueIds)
+        .executeUpdate();
   }
 }
