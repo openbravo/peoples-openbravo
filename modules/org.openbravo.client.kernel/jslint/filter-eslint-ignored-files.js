@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2019-2020 Openbravo SLU
+ * All portions are Copyright (C) 2019-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,14 +26,14 @@
  **/
 
 /*global process*/
-var CLIEngine = require('eslint').CLIEngine,
+var ESLint = require('eslint').ESLint,
   fs = require('fs'),
   ignoreFile = process.cwd() + '/.eslintignore',
   pathFilterFunction,
   result = [];
 
 if (fs.existsSync(ignoreFile)) {
-  var cli = new CLIEngine({ ignorePath: ignoreFile });
+  var cli = new ESLint({ ignorePath: ignoreFile });
   pathFilterFunction = function(file) {
     if (!cli.isPathIgnored(file)) {
       result.push(file);
