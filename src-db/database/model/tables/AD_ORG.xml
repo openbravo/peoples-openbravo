@@ -113,6 +113,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="AD_GROUPBUSINESSUNIT_ORG_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_ORG_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -139,6 +143,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_EXTBP_CONFIG" name="AD_ORG_EXTBPCONF_FK">
         <reference local="C_EXTBP_CONFIG_ID" foreign="C_EXTBP_CONFIG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_ORG_GROUPBUSINESSUNIT_ORG">
+        <reference local="AD_GROUPBUSINESSUNIT_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_CALENDAR" name="AD_ORG_INHERITEDCALENDAR">
         <reference local="AD_INHERITEDCALENDAR_ID" foreign="C_CALENDAR_ID"/>
