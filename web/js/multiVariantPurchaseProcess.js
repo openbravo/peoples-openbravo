@@ -175,7 +175,9 @@ const getViewProperties = recordId => ({
   },
   dataSourceProperties: {
     createClassName: '',
-    dataURL: `/openbravo/org.openbravo.service.datasource/${PRODUCT_VARIANT_DATA_SOURCE_ID}`,
+    dataURL: OB.Utilities.applicationUrl(
+      `org.openbravo.service.datasource/${PRODUCT_VARIANT_DATA_SOURCE_ID}`
+    ),
     requestProperties: {
       params: {
         Constants_IDENTIFIER: OB.Constants.IDENTIFIER,
@@ -274,7 +276,9 @@ const getViewProperties = recordId => ({
         }
         this.optionDataSource = OB.Datasource.create({
           createClassName: '',
-          dataURL: '/openbravo/org.openbravo.service.datasource/Product',
+          dataURL: OB.Utilities.applicationUrl(
+            'org.openbravo.service.datasource/Product'
+          ),
           requestProperties: {
             params: {
               adTabId: '187',
