@@ -253,6 +253,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="OBFUS_APP_MODES" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_EXTBP_CONFIG_FILTER" name="C_EXTBPCONFPROP_CFGFILTER_FK">
         <reference local="C_EXTBP_CONFIG_FILTER_ID" foreign="C_EXTBP_CONFIG_FILTER_ID"/>
       </foreign-key>
@@ -317,6 +321,7 @@
       <check name="C_EXTBPCONFPROP_MAND_CH"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_MAND_CRE_CHK"><![CDATA[ISMANDATORY_CREATE IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_MAND_EDI_CHK"><![CDATA[ISMANDATORY_EDIT IN ('Y', 'N')]]></check>
+      <check name="C_EXTBPCONFPROP_OBFUS_CHK"><![CDATA[OBFUS_APP_MODES IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_TRMSG_CH"><![CDATA[ISTRANSLATABLE = 'N' OR AD_MESSAGE_ID IS NOT NULL AND ISTRANSLATABLE = 'Y']]></check>
       <check name="C_EXTBPCONFPROP_TXTMSG_CH"><![CDATA[TEXT IS NOT NULL OR ISTRANSLATABLE = 'Y']]></check>
       <check name="C_EXTBPCP_IDTFRSCNACTION_CHK"><![CDATA[IDENTIFIERSCANNINGACTION IN ('Y', 'N')]]></check>
