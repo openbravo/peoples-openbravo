@@ -19,7 +19,6 @@
   * Contributor(s):  ______________________________________.
   ************************************************************************/
   V_Char char;
-  v_isregistered char(1);
   v_old_name varchar(60);
   v_type varchar2(60);
     
@@ -29,8 +28,8 @@ BEGIN
     END IF;
 
 
-   SELECT IsRegistered, Type
-   INTO v_IsRegistered, v_type
+   SELECT Type
+   INTO v_type
     FROM AD_MODULE
    WHERE AD_MODULE_ID = :new.AD_Module_ID;
 
@@ -41,11 +40,7 @@ BEGIN
    IF (UPDATING) THEN
      v_old_name := :OLD.NAME;
    END IF;
-   
-   IF  UPDATING AND v_IsRegistered='Y' AND :NEW.NAME != v_old_name THEN
-    -- Cannot modify registered module
-    RAISE_APPLICATION_ERROR(-20000, '@20534@');
-   END IF;
+
    --Check DB_Prefix
    IF INSERTING OR UPDATING THEN
      FOR I IN 1..LENGTH(:new.name) LOOP
