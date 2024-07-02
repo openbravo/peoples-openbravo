@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2019 Openbravo SLU
+ * All portions are Copyright (C) 2013-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -47,6 +47,7 @@ class DocTypeEventHandler extends EntityPersistenceEventObserver {
     }
     final DocumentType docType = (DocumentType) event.getTargetInstance();
     checkDocumentSoSubType(docType);
+    checkDocumentArSubType(docType);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -55,6 +56,7 @@ class DocTypeEventHandler extends EntityPersistenceEventObserver {
     }
     final DocumentType docType = (DocumentType) event.getTargetInstance();
     checkDocumentSoSubType(docType);
+    checkDocumentArSubType(docType);
   }
 
   private void checkDocumentSoSubType(DocumentType docType) {
@@ -63,6 +65,15 @@ class DocTypeEventHandler extends EntityPersistenceEventObserver {
       String language = OBContext.getOBContext().getLanguage().getLanguage();
       ConnectionProvider conn = new DalConnectionProvider(false);
       throw new OBException(Utility.messageBD(conn, "SoSubTypeNotDefined", language));
+    }
+  }
+
+  private void checkDocumentArSubType(DocumentType docType) {
+    if (docType.getDocumentCategory().equals("ARI")
+        && (docType.getDocSubTypeInvoice() == null || docType.getDocSubTypeInvoice().equals(""))) {
+      String language = OBContext.getOBContext().getLanguage().getLanguage();
+      ConnectionProvider conn = new DalConnectionProvider(false);
+      throw new OBException(Utility.messageBD(conn, "ArSubTypeNotDefined", language));
     }
   }
 }
