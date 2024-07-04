@@ -18,18 +18,25 @@
  */
 package org.openbravo.event;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.enterprise.event.Observes;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCharacteristic;
@@ -47,13 +54,19 @@ class ProductEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onSave(@Observes EntityUpdateEvent event) {
+  public void onSave(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
 
     validateCharacteristicDimensionsConfiguration(event);
     propagateCharacteristicDimensionsConfigurationFromGenericProductToVariantProducts(event);
+    final String upc = (String) event.getCurrentState(
+        event.getTargetInstance().getEntity().getProperty(Product.PROPERTY_UPCEAN));
+    if (StringUtils.isNotBlank(upc)) {
+      Organization org = (Organization) event.getTargetInstance().get("organization");
+      checkDuplicatesUPC(upc, org.getId(), (String) event.getTargetInstance().get("id"));
+    }
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -101,6 +114,22 @@ class ProductEventHandler extends EntityPersistenceEventObserver {
 
     validateCharacteristicDimensionsConfiguration(event);
     propagateCharacteristicDimensionsConfigurationFromGenericProductToVariantProducts(event);
+
+    final Property upcProperty = event.getTargetInstance()
+        .getEntity()
+        .getProperty(Product.PROPERTY_UPCEAN);
+    final Property activeProperty = event.getTargetInstance()
+        .getEntity()
+        .getProperty(Product.PROPERTY_ACTIVE);
+    final String previousUPC = (String) event.getPreviousState(upcProperty);
+    final String currentUPC = (String) event.getCurrentState(upcProperty);
+    final boolean previousActive = (boolean) event.getPreviousState(activeProperty);
+    final boolean currentActive = (boolean) event.getCurrentState(activeProperty);
+    if (StringUtils.isNotBlank(currentUPC)
+        && (!StringUtils.equals(previousUPC, currentUPC) || (currentActive && !previousActive))) {
+      Organization org = (Organization) event.getTargetInstance().get("organization");
+      checkDuplicatesUPC(currentUPC, org.getId(), (String) event.getTargetInstance().get("id"));
+    }
   }
 
   private Product getProduct(EntityPersistenceEvent event) {
@@ -164,4 +193,29 @@ class ProductEventHandler extends EntityPersistenceEventObserver {
     }
 
   }
+
+  private void checkDuplicatesUPC(String newUpc, String orgId, String productId) {
+    List<String> listProductName = new ArrayList<String>();
+    // Check UPC in Product
+    final OBQuery<Product> productQuery = OBDal.getInstance()
+        .createQuery(Product.class,
+            "as e where e.uPCEAN = :upcValue and e.organization.id = :orgId and e.id != :productId");
+    productQuery.setNamedParameter("upcValue", newUpc);
+    productQuery.setNamedParameter("orgId", orgId);
+    productQuery.setNamedParameter("productId", productId);
+    productQuery.setFilterOnReadableOrganization(false);
+    productQuery.setMaxResult(10);
+    List<Product> listProduct = productQuery.list();
+    if (listProduct.size() > 0) {
+      for (Product product : listProduct) {
+        listProductName.add(product.getName());
+      }
+    }
+
+    if (listProductName.size() > 0) {
+      throw new OBException(String.format(OBMessageUtils.messageBD("M_Product_DUPLICATED_UPC"),
+          String.join(", ", listProductName)));
+    }
+  }
+
 }
