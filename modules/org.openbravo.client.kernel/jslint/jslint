@@ -76,7 +76,7 @@ function lintFiles {
 
 function getWebJspackIgnorePatterns {
     PATTERNS=""
-    CORE_2_PATH=modules/org.openbravo.core2
+    CORE_2_PATH=${OPENBRAVO_ROOT_PATH}/modules/org.openbravo.core2
     if  [ ! -d "$CORE_2_PATH" ]; then
         PATTERNS="${PATTERNS} --ignore-pattern **/web-jspack/*"
     fi
@@ -100,13 +100,13 @@ function lintAllFiles {
         MODS_COMPLETELY_IGNORED=$(getModulesPathWithIgnoreFile ".jsignore")
         IGNORE_PATTERNS=$(getEslintIgnorePatterns "${MODS_WITH_IGNORE}" "${MODS_COMPLETELY_IGNORED}")
         runLinterInCore  ${SCAN_BASE_PATH} "${IGNORE_PATTERNS}" "${FLAGS}"
-        for mod in ${MODS_WITH_IGNORE} ; do
+         for mod in ${MODS_WITH_IGNORE} ; do
             if [[ ! "$mod" =~ .*"node_modules".* ]]; then
                 runLinterInModule  ${mod} "${FLAGS}"
             fi
-        done
+         done
     elif [[ -d ${SCAN_BASE_PATH}/../../modules ]]; then
-        runLinterInModule ${SCAN_BASE_PATH}
+        runLinterInModule ${SCAN_BASE_PATH} "${FLAGS}"
     fi
 }
 
