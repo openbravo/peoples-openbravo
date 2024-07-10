@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,6 +39,7 @@ import org.jboss.shrinkwrap.api.importer.ExplodedImporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.session.SessionFactoryController;
@@ -109,6 +110,17 @@ public class WeldBaseTest extends OBBaseTest {
   @Inject
   @Any
   private Instance<SQLFunctionRegister> sqlFunctionRegisters;
+
+  /**
+   * Hides OBBaseTest classSetUp and calls the main class setup function of parent skipping dal
+   * initialization, the initialization is done here as part of Before setUp containing
+   * SqlFunctions.
+   */
+  @BeforeClass
+  public static void classSetUp() throws Exception {
+    // Mark DAL as initialized, reinitialization is handled in before setup
+    OBBaseTest.mainClassSetUp(true);
+  }
 
   /**
    * Sets static instance bean manager in WeldUtils so it is globally accessible and initializes
