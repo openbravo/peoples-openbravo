@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2023 Openbravo SLU
+ * All portions are Copyright (C) 2023-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -75,11 +75,25 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
   @Override
   public AuthenticatedUser doExternalAuthentication(HttpServletRequest request,
       HttpServletResponse response) {
-    if (!isValidAuthorizationResponse(request)) {
-      log.error("The authorization response validation was not passed");
+    JSONObject requestParams = getRequestParameters(request);
+
+    try {
+      String code = requestParams.getString("code");
+      String state = requestParams.getString("state");
+      Boolean validateState = requestParams.getBoolean("validateState");
+      String redirectUri = requestParams.getString("redirectUri");
+
+      if (validateState && !isValidAuthorizationResponse(code, requestParams.getString("state"))) {
+        log.error("The authorization response validation was not passed");
+        throw new AuthenticationException(buildError());
+      } else if (!validateState) {
+        log.trace("Authorization response parameters: code = {}", code);
+      }
+
+      return handleAuthorizationResponse(code, state, redirectUri);
+    } catch (JSONException e) {
       throw new AuthenticationException(buildError());
     }
-    return handleAuthorizationResponse(request);
   }
 
   @Override
@@ -88,20 +102,19 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
     throw new UnsupportedOperationException("doLogout is not implemented");
   }
 
-  private boolean isValidAuthorizationResponse(HttpServletRequest request) {
-    String code = request.getParameter("code");
-    String state = request.getParameter("state");
+  private boolean isValidAuthorizationResponse(String code, String state) {
     log.trace("Authorization response parameters: code = {}, state = {}", code, state);
     return code != null && authStateHandler.isValidKey(state);
   }
 
-  private AuthenticatedUser handleAuthorizationResponse(HttpServletRequest request) {
+  private AuthenticatedUser handleAuthorizationResponse(String code, String state,
+      String redirectUri) {
     try {
       OBContext.setAdminMode(true);
       OAuth2AuthenticationProvider config = authStateHandler
-          .getConfiguration(OAuth2AuthenticationProvider.class, request.getParameter("state"));
+          .getConfiguration(OAuth2AuthenticationProvider.class, state);
 
-      HttpRequest accessTokenRequest = buildAccessTokenRequest(request, config);
+      HttpRequest accessTokenRequest = buildAccessTokenRequest(code, redirectUri, config);
       HttpResponse<String> tokenResponse = httpClientManager.send(accessTokenRequest);
       int responseCode = tokenResponse.statusCode();
       if (responseCode >= 200 && responseCode < 300) {
@@ -122,12 +135,42 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
     }
   }
 
-  private HttpRequest buildAccessTokenRequest(HttpServletRequest request,
+  private JSONObject getRequestParameters(HttpServletRequest request) {
+    try {
+      OBContext.setAdminMode(true);
+      JSONObject params = new JSONObject();
+
+      String code = request.getParameter("code");
+      if (code == null) {
+        JSONObject body = new JSONObject(
+            request.getReader().lines().collect(Collectors.joining(System.lineSeparator())));
+        JSONObject credential = body.getJSONObject("credential");
+
+        params.put("code", credential.getString("code"));
+        params.put("state", credential.getString("state"));
+        params.put("validateState", credential.getBoolean("validateState"));
+        params.put("redirectUri", credential.getString("redirectUri"));
+      } else {
+        params.put("code", code);
+        params.put("state", request.getParameter("state"));
+        params.put("validateState", true);
+        params.put("redirectUri", getRedirectURL(request));
+      }
+
+      return params;
+    } catch (Exception ex) {
+      throw new AuthenticationException(buildError());
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  private HttpRequest buildAccessTokenRequest(String code, String redirectUri,
       OAuth2AuthenticationProvider config) throws ServletException {
     //@formatter:off
     Map<String, String> params = Map.of("grant_type", "authorization_code",
-                                        "code", request.getParameter("code"),
-                                        "redirect_uri", getRedirectURL(request),
+                                        "code", code,
+                                        "redirect_uri", redirectUri,
                                         "client_id", config.getClientID(),
                                         "client_secret", FormatUtilities.encryptDecrypt(config.getClientSecret(), false));
     //@formatter:on

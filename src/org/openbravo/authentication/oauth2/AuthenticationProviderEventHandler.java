@@ -85,8 +85,8 @@ class AuthenticationProviderEventHandler extends EntityPersistenceEventObserver 
 
   private void checkSupportedAppAndFlow(AuthenticationProvider authProvider) {
     if ("OPENID".equals(authProvider.getType())
-        && (!OAuth2SignInProvider.BACKOFFICE_APP.equals(authProvider.getApplication().getId())
-            || !"LOGIN".equals(authProvider.getFlow()))) {
+        && (OAuth2SignInProvider.BACKOFFICE_APP.equals(authProvider.getApplication().getId())
+            && !"LOGIN".equals(authProvider.getFlow()))) {
       throw new OBException(OBMessageUtils.messageBD("AuthProviderUnsupportedAppFlow"));
     }
   }
