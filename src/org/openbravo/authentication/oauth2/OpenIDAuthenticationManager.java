@@ -147,7 +147,8 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
         JSONObject credential = body.getJSONObject("credential");
 
         params.put("code", credential.getString("code"));
-        params.put("state", credential.getString("state"));
+        params.put("state", authStateHandler.addNewConfiguration(credential.getString("state")));
+
         params.put("validateState", credential.getBoolean("validateState"));
         params.put("redirectUri", credential.getString("redirectUri"));
       } else {
