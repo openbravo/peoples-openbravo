@@ -13109,7 +13109,7 @@ WARNING: This window is not supported anymore and it is only kept for backward c
 <!--1011100000-->  <HELP><![CDATA[Lists information about discounts automatically applied based on the customer configuration and / or manually entered for the sales order. ]]></HELP>
 <!--1011100000-->  <AD_TABLE_ID><![CDATA[1011100000]]></AD_TABLE_ID>
 <!--1011100000-->  <AD_WINDOW_ID><![CDATA[143]]></AD_WINDOW_ID>
-<!--1011100000-->  <SEQNO><![CDATA[30]]></SEQNO>
+<!--1011100000-->  <SEQNO><![CDATA[35]]></SEQNO>
 <!--1011100000-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
 <!--1011100000-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
 <!--1011100000-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
