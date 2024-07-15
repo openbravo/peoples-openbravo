@@ -21,6 +21,7 @@ package org.openbravo.service.web;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -30,6 +31,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.exception.OBSecurityException;
@@ -38,7 +41,9 @@ import org.openbravo.base.secureApp.AllowedCrossDomainsHandler;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.SessionInfo;
+import org.openbravo.model.authentication.OAuth2AuthenticationProvider;
 
 /**
  * This servlet has two main responsibilities: 1) authenticate, 2) set the correct {@link OBContext}
@@ -76,6 +81,20 @@ public class BaseWebServiceServlet extends HttpServlet {
     }
 
     // do the login action
+
+    // mirar en auth provider configuration y ver si existe un form con el tipo oauth2. en caso de
+    // que lo haya lo devuelvo, sino cogemos el basico.
+    // boolean isOauth2Token = existsOAuth2Token(request);
+    //
+    // AuthenticationManager authManager = (AuthenticationManager)
+    // ApiOAuth2TokenAuthenticationManager
+    // .newInstance("OAUTH2TOKEN")
+    // .map(m -> {
+    // m.init(this);
+    // return m;
+    // })
+    // .orElseThrow(() -> new AuthenticationException("Could not find an AuthenticationManager"));
+
     AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
 
     // if a stateless webservice then set the stateless flag
@@ -235,4 +254,24 @@ public class BaseWebServiceServlet extends HttpServlet {
       w.close();
     }
   }
+
+  private boolean existsOAuth2Token(HttpServletRequest request) throws IOException, JSONException {
+    try {
+      OBContext.setAdminMode(true);
+      JSONObject body = new JSONObject(
+          request.getReader().lines().collect(Collectors.joining(System.lineSeparator())));
+      JSONObject credential = body.getJSONObject("credential");
+      String authProvider = body.getString("authProvider");
+      OAuth2AuthenticationProvider config = OBDal.getInstance()
+          .createQuery(OAuth2AuthenticationProvider.class, "where authProvider.name = :name")
+          .setNamedParameter("name", authProvider)
+          .uniqueResult();
+      return true;
+    } catch (IOException ex) {
+      throw ex;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
 }

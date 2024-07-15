@@ -193,6 +193,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_OAUTH2_TOKEN_VALUE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_USER_AD_ORGTRX">
         <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -249,6 +253,9 @@
       </index>
       <unique name="AD_USER_UN_USERNAME">
         <unique-column name="USERNAME"/>
+      </unique>
+      <unique name="C_OAUTH2_TKVALUE_CHK">
+        <unique-column name="C_OAUTH2_TOKEN_VALUE"/>
       </unique>
       <check name="AD_USER_COMMERCIALAUTH_CHK"><![CDATA[COMMERCIALAUTH IN ('Y', 'N')]]></check>
       <check name="AD_USER_EXPIREDPASSWORD_CHECK"><![CDATA[ISEXPIREDPASSWORD IN ('Y', 'N')]]></check>

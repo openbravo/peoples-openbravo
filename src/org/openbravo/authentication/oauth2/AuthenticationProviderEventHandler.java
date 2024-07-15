@@ -77,6 +77,7 @@ class AuthenticationProviderEventHandler extends EntityPersistenceEventObserver 
     AuthenticationProvider authProvider = (AuthenticationProvider) event.getTargetInstance();
     checkSupportedAppAndFlow(authProvider);
     invalidateOAuth2ConfigurationCache(authProvider);
+    validateOAuth2Requisites(authProvider);
   }
 
   private void invalidateOAuth2ConfigurationCache(AuthenticationProvider authProvider) {
@@ -89,5 +90,14 @@ class AuthenticationProviderEventHandler extends EntityPersistenceEventObserver 
             && !"LOGIN".equals(authProvider.getFlow()))) {
       throw new OBException(OBMessageUtils.messageBD("AuthProviderUnsupportedAppFlow"));
     }
+  }
+
+  private void validateOAuth2Requisites(AuthenticationProvider authProvider) {
+    if ("OAUTH2TOKEN".equals(authProvider.getType())
+        && (!"API".equals(authProvider.getApplication().get("name"))
+            || !"LOGIN".equals(authProvider.getFlow()))) {
+      throw new OBException(OBMessageUtils.messageBD("ApiOAuth2ProviderWrongConfig"));
+    }
+
   }
 }
