@@ -33,7 +33,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="JWKS_URL" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="JWKS_URL" primaryKey="false" required="true" type="VARCHAR" size="200" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
