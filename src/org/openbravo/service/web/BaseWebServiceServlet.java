@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2024 Openbravo SLU
+ * All portions are Copyright (C) 2008-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -80,16 +80,16 @@ public class BaseWebServiceServlet extends HttpServlet {
 
     // do the login action
 
-    // we check if there's an OAuth 2.0 token configuration set, if there is, we use it, if not, we
-    // use the default auth manager
+    // we check if there's an OAuth 2.0 token authentication configuration set, if there is, we use
+    // it, if not, we use the default auth manager
     AuthenticationManager authManager = existsOAuth2TokenConfig()
         ? (AuthenticationManager) ApiOAuth2TokenAuthenticationManager.newInstance("OAUTH2TOKEN")
             .map(m -> {
               m.init(this);
               return m;
             })
-            .orElseThrow(
-                () -> new AuthenticationException("Could not find an AuthenticationManager"))
+            .orElseThrow(() -> new AuthenticationException(
+                "Could not find an ApiOAuth2TokenAuthenticationManager"))
         : AuthenticationManager.getAuthenticationManager(this);
 
     // if a stateless webservice then set the stateless flag

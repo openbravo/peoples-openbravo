@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2023 Openbravo SLU
+ * All portions are Copyright (C) 2023-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,6 +48,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.HttpClientManager;
 import org.openbravo.cache.TimeInvalidatedCache;
+import org.openbravo.model.authentication.ApiOAuth2TokenAuthenticationManager;
 import org.openbravo.model.authentication.OAuth2AuthenticationProvider;
 
 import com.auth0.jwt.JWT;
@@ -61,7 +62,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
  * token in the JSON Web Token (JWT) format.
  */
 @ApplicationScoped
-class OpenIDTokenDataProvider {
+class JWTDataProvider {
   private static final Logger log = LogManager.getLogger();
 
   @Inject
@@ -135,9 +136,9 @@ class OpenIDTokenDataProvider {
    * @param token
    *          An OpenID token
    * @param configuration
-   *          the OAuth 2.0 configuration with information that can be used to verify the token like
-   *          the URL to get the public keys required by the algorithm used for encrypting the token
-   *          data.
+   *          the OAuth 2.0 configuration with information that can be used to verify the token,
+   *          like the URL to get the public keys required by the algorithm used for encrypting the
+   *          token data.
    *
    * @return the authentication information extracted from the given OpenID token
    *
@@ -146,18 +147,50 @@ class OpenIDTokenDataProvider {
    */
   Map<String, Object> getData(String token, OAuth2AuthenticationProvider configuration)
       throws OAuth2TokenVerificationException {
+    String certificatedUrl = configuration.getCertificateURL();
+    Map<String, Claim> claims = decodeJWT(token, certificatedUrl);
+    if (claims.containsKey("email")) {
+      return Map.of("email", claims.get("email").asString());
+    }
+    return Collections.emptyMap();
+  }
+
+  /**
+   * Extracts the authentication information from the given OpenID token. For the moment the
+   * returned map just contains the user email.
+   *
+   * @param token
+   *          A Client Secret token
+   * @param configuration
+   *          the API OAuth 2.0 configuration with information that can be used to verify the token,
+   *          like the JWKS URL and the name of the token property to map the user
+   *
+   * @return the authentication information extracted from the given Client Secret token
+   *
+   * @throws OAuth2TokenVerificationException
+   *           if it is not possible to verify the token or extract the authentication data
+   */
+  Map<String, Object> getData(String token, ApiOAuth2TokenAuthenticationManager configuration)
+      throws OAuth2TokenVerificationException {
+    String jwksUrl = configuration.getJwksUrl();
+    String key = configuration.getTokenProperty();
+    Map<String, Claim> claims = decodeJWT(token, jwksUrl);
+    if (claims.containsKey(key)) {
+      return Map.of(key, claims.get(key).asString());
+    }
+    return Collections.emptyMap();
+  }
+
+  private Map<String, Claim> decodeJWT(String token, String url)
+      throws OAuth2TokenVerificationException {
     try {
       DecodedJWT decodedJWT = JWT.decode(token);
-      Algorithm algorithm = getAlgorithm(decodedJWT, configuration.getCertificateURL());
+      Algorithm algorithm = getAlgorithm(decodedJWT, url);
       JWTVerifier verifier = JWT.require(algorithm).build();
       DecodedJWT verifiedJWT = verifier.verify(token);
-      Map<String, Claim> claims = verifiedJWT.getClaims();
-      if (claims.containsKey("email")) {
-        return Map.of("email", claims.get("email").asString());
-      }
-      return Collections.emptyMap();
+      return verifiedJWT.getClaims();
     } catch (NoSuchAlgorithmException ex) {
-      throw new OAuth2TokenVerificationException("Could not retrieve data from OpenID token", ex);
+      throw new OAuth2TokenVerificationException("Could not retrieve data from OAuth2 token", ex);
     }
   }
 
