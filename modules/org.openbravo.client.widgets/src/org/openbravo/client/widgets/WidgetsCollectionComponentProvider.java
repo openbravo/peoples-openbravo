@@ -48,8 +48,6 @@ public class WidgetsCollectionComponentProvider extends BaseComponentProvider {
     final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
     globalResources
         .add(createStaticResource("web/org.openbravo.client.widgets/js/ob-gcal.js", false));
-    globalResources
-        .add(createStaticResource("web/org.openbravo.client.widgets/js/ob-twitter.js", false));
     return globalResources;
   }
 }
