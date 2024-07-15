@@ -254,7 +254,7 @@ public class BaseWebServiceServlet extends HttpServlet {
     try {
       OBContext.setAdminMode(true);
       AuthenticationProvider oauth2Config = OBDal.getInstance()
-          .createQuery(AuthenticationProvider.class, "where authProvider.type = :type")
+          .createQuery(AuthenticationProvider.class, "where type = :type")
           .setNamedParameter("type", "OAUTH2TOKEN")
           .uniqueResult();
       return oauth2Config != null;
