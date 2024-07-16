@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2023 Openbravo S.L.U.
+ * Copyright (C) 2001-2024 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -292,7 +292,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             vars.setSessionValue("onlySystemAdminRoleShouldBeAvailableInErp", "Y");
           } else {
             RoleDefaults defaults = LoginUtils.getLoginDefaults(strUserAuth, variables.getRole(),
-                cp);
+                isBackOfficeAccessRequired(), cp);
             strRole = defaults.role;
             strClient = defaults.client;
             strOrg = defaults.org;
@@ -511,6 +511,14 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         bdErrorGeneral(request, response, "Error", e.toString());
       }
     }
+  }
+
+  /**
+   * @return true if the default role to be selected for the service execution needs to have access
+   *         to the back office or false if a role without access to the back office can be used.
+   */
+  protected boolean isBackOfficeAccessRequired() {
+    return true;
   }
 
   /**
