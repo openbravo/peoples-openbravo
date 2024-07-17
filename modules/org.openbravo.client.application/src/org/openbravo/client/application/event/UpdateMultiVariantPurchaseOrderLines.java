@@ -206,8 +206,7 @@ public class UpdateMultiVariantPurchaseOrderLines extends BaseActionHandler {
   private static void updateOrderLineQuantity(Order order, OrderLine orderLineOfVariantProduct,
       int quantity) {
     orderLineOfVariantProduct.setOrderedQuantity(BigDecimal.valueOf(quantity));
-    OBDal.getInstance().save(orderLineOfVariantProduct);
-    OBDal.getInstance().save(order);
+    orderLineOfVariantProduct.setOperativeQuantity(BigDecimal.valueOf(quantity));
     OBDal.getInstance().flush();
     OBDal.getInstance().refresh(order);
   }
