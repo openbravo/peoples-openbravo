@@ -58,6 +58,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.utility.AttachmentConfig;
 import org.openbravo.model.ad.utility.ReprintableDocument;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.synchronization.event.SynchronizationEvent;
 
 /**
  * Centralizes the {@link ReprintableDocument} Management. Any action to manage reprintable
@@ -192,6 +193,9 @@ public class ReprintableDocumentManager {
       ReprintableSourceDocument<?> sourceDocument) {
     long init = System.currentTimeMillis();
     ReprintableDocument document = createReprintableDocument(format, sourceDocument);
+
+    SynchronizationEvent.getInstance()
+        .triggerEvent("API_ReprintableInvoiceCreated", sourceDocument.getId());
 
     ReprintableDocumentAttachHandler handler = getHandler(document);
     try (documentData) {
