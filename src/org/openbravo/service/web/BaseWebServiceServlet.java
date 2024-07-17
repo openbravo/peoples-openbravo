@@ -253,11 +253,11 @@ public class BaseWebServiceServlet extends HttpServlet {
   private boolean existsOAuth2TokenConfig() {
     try {
       OBContext.setAdminMode(true);
-      AuthenticationProvider oauth2Config = OBDal.getInstance()
+      AuthenticationProvider oauth2TokenConfig = OBDal.getInstance()
           .createQuery(AuthenticationProvider.class, "where type = :type")
           .setNamedParameter("type", "OAUTH2TOKEN")
           .uniqueResult();
-      return oauth2Config != null;
+      return oauth2TokenConfig != null;
     } finally {
       OBContext.restorePreviousMode();
     }

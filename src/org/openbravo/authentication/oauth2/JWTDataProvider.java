@@ -48,7 +48,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.HttpClientManager;
 import org.openbravo.cache.TimeInvalidatedCache;
-import org.openbravo.model.authentication.ApiOAuth2TokenAuthenticationManager;
+import org.openbravo.model.authentication.ApiOAuth2TokenAuthMgr;
 import org.openbravo.model.authentication.OAuth2AuthenticationProvider;
 
 import com.auth0.jwt.JWT;
@@ -170,7 +170,7 @@ class JWTDataProvider {
    * @throws OAuth2TokenVerificationException
    *           if it is not possible to verify the token or extract the authentication data
    */
-  Map<String, Object> getData(String token, ApiOAuth2TokenAuthenticationManager configuration)
+  Map<String, Object> getData(String token, ApiOAuth2TokenAuthMgr configuration)
       throws OAuth2TokenVerificationException {
     String jwksUrl = configuration.getJwksUrl();
     String key = configuration.getTokenProperty();
