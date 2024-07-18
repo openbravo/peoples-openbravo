@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -231,7 +231,6 @@
    ) A
       ]]></Sql>
     <Field name="rownum" value="count"/>
-    <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
     <Parameter name="adLanguage" />
     <Parameter name="adLanguage" />
     <Parameter name="adLanguage" />
@@ -296,8 +295,6 @@
     <Parameter name="moreThan" optional="true" after="AND 9=9"><![CDATA[ and A.amount > TO_NUMBER(?)]]></Parameter>
     <Parameter name="lessThan" optional="true" after="AND 9=9"><![CDATA[ and A.amount < TO_NUMBER(?)]]></Parameter>
     <Parameter name="docTypes" optional="true" type="replace" after="AND A.DocType in (" text="'1'"/>
-    <Parameter name="oraLimit1" type="argument" optional="true" after=") C1"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
-    <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 10=10"><![CDATA[ AND RN1 BETWEEN ]]></Parameter>
     <Parameter name="pgLimit" type="argument" optional="true" after="11=11"><![CDATA[ LIMIT ]]></Parameter>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">

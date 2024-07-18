@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016-2020 Openbravo SLU
+ * All portions are Copyright (C) 2016-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -88,7 +88,6 @@
     <Parameter name="asOfDate"/>
     <Parameter name="asOfDate"/>
     <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
-    <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
     </SqlMethod>
     
     <SqlMethod name="selectCredit" type="preparedStatement" return="scrollable">
@@ -207,7 +206,6 @@
     <Parameter name="asOfDate"/>
     <Parameter name="paidStatus" type="replace" optional="true" after="AND (fp1.status IN (" text="'1'"/>
     <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
-    <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
     </SqlMethod>
     
     <SqlMethod name="selectDetail" type="preparedStatement" return="scrollable">
@@ -286,7 +284,6 @@
     <Parameter name="asOfDate"/>
     <Parameter name="asOfDate"/>
     <Parameter name="pgLimit" type="argument" optional="true" after=") C"><![CDATA[LIMIT ]]></Parameter>
-    <Parameter name="oraLimit1" type="argument" optional="true" after=") C"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
     </SqlMethod>
 </SqlClass>
 

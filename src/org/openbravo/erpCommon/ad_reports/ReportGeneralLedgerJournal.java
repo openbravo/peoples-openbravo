@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2019 Openbravo SLU
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -519,9 +519,6 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     toolbar.setEmail(false);
     int totalAcctEntries = 0;
     int lastRecordNumber = 0;
-    String rowNum = "0";
-    String oraLimit1 = null;
-    String oraLimit2 = null;
     String pgLimit = null;
     Map<String, String> tablesToTabsMap = new HashMap<String, String>();
     try {
@@ -537,12 +534,12 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           // Stores the number of lines per accounting entry
           try {
             scrollCountLines = ReportGeneralLedgerJournalData.selectCountGroupedLines(readOnlyCP,
-                rowNum, Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
+                Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
                 Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
                 strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strDocument,
                 getDocumentIds(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
                 strOrgFamily, strCheck, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
-                null, null, null);
+                null);
             Vector<ReportGeneralLedgerJournalData> res = new Vector<ReportGeneralLedgerJournalData>();
             while (scrollCountLines.next()) {
               res.add(scrollCountLines.get());
@@ -603,25 +600,15 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           vars.setSessionValue(PREVIOUS_RANGE_OLD, vars.getSessionValue(PREVIOUS_RANGE));
           vars.setSessionValue(PREVIOUS_RANGE,
               String.valueOf(intRecordRangeUsed) + "," + vars.getSessionValue(PREVIOUS_RANGE));
-          if (StringUtils.equalsIgnoreCase(readOnlyCP.getRDBMS(), "ORACLE")) {
-            rowNum = "ROWNUM";
-            oraLimit1 = String
-                .valueOf((initRecordNumber == 0 ? initRecordNumber : initRecordNumber - 1)
-                    + intRecordRangeUsed);
-            oraLimit2 = ((initRecordNumber == 0 ? initRecordNumber : initRecordNumber - 1) + 1)
-                + " AND " + oraLimit1;
-          } else {
-            rowNum = "0";
-            pgLimit = intRecordRangeUsed + " OFFSET "
-                + (initRecordNumber == 0 ? initRecordNumber : initRecordNumber - 1);
-          }
-          scrollData = ReportGeneralLedgerJournalData.select(readOnlyCP, rowNum, "'N'",
+          pgLimit = intRecordRangeUsed + " OFFSET "
+              + (initRecordNumber == 0 ? initRecordNumber : initRecordNumber - 1);
+          scrollData = ReportGeneralLedgerJournalData.select(readOnlyCP, "'N'",
               Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
               Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
               strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strDocument,
               getDocumentIds(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
               strOrgFamily, strCheck, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
-              vars.getLanguage(), pgLimit, oraLimit1, oraLimit2);
+              vars.getLanguage(), pgLimit);
           Vector<ReportGeneralLedgerJournalData> res = new Vector<ReportGeneralLedgerJournalData>();
           while (scrollData.next()) {
             addDataToResponse(scrollData.get(), res, tablesToTabsMap);
@@ -638,24 +625,13 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
                 data[0].dateacct, data[0].identifier);
           }
         } else {
-          if (StringUtils.equalsIgnoreCase(readOnlyCP.getRDBMS(), "ORACLE")) {
-            rowNum = "ROWNUM";
-            oraLimit1 = String
-                .valueOf((initRecordNumber == 0 ? initRecordNumber : initRecordNumber - 1)
-                    + intRecordRangePredefined);
-            oraLimit2 = ((initRecordNumber == 0 ? initRecordNumber : initRecordNumber - 1) + 1)
-                + " AND " + oraLimit1;
-          } else {
-            rowNum = "0";
-            pgLimit = intRecordRangePredefined + " OFFSET "
-                + (initRecordNumber == 0 ? initRecordNumber : initRecordNumber - 1);
-          }
-          scrollData = ReportGeneralLedgerJournalData.selectDirect(readOnlyCP, rowNum,
+          pgLimit = intRecordRangePredefined + " OFFSET "
+              + (initRecordNumber == 0 ? initRecordNumber : initRecordNumber - 1);
+          scrollData = ReportGeneralLedgerJournalData.selectDirect(readOnlyCP,
               StringUtils.equals(strShowDescription, "Y") ? "'Y'" : "'N'",
               Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
               Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-              strTable, strRecord, strcAcctSchemaId, vars.getLanguage(), pgLimit, oraLimit1,
-              oraLimit2);
+              strTable, strRecord, strcAcctSchemaId, vars.getLanguage(), pgLimit);
           Vector<ReportGeneralLedgerJournalData> res = new Vector<ReportGeneralLedgerJournalData>();
           while (scrollData.next()) {
             addDataToResponse(scrollData.get(), res, tablesToTabsMap);
@@ -670,11 +646,11 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           }
         }
       } else if (vars.commandIn("DIRECT")) {
-        scrollData = ReportGeneralLedgerJournalData.selectDirect(this, rowNum,
+        scrollData = ReportGeneralLedgerJournalData.selectDirect(this,
             StringUtils.equals(strShowDescription, "Y") ? "'Y'" : "'N'",
             Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-            strTable, strRecord, strcAcctSchemaId, vars.getLanguage(), null, null, null);
+            strTable, strRecord, strcAcctSchemaId, vars.getLanguage(), null);
         Vector<ReportGeneralLedgerJournalData> res = new Vector<ReportGeneralLedgerJournalData>();
         while (scrollData.next()) {
           addDataToResponse(scrollData.get(), res, tablesToTabsMap);
@@ -936,21 +912,21 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
               Utility.messageBD(readOnlyCP, "ReportsLimit", vars.getLanguage())
                   .replace("@limit@", String.valueOf(limit)));
         } else {
-          scrollData = ReportGeneralLedgerJournalData.select(readOnlyCP, "0",
+          scrollData = ReportGeneralLedgerJournalData.select(readOnlyCP,
               StringUtils.equals(strShowDescription, "Y") ? "'Y'" : "'N'",
               Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
               Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
               strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strDocument,
               getDocumentIds(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
               strOrgFamily, strCheck, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
-              vars.getLanguage(), null, null, null);
+              vars.getLanguage(), null);
         }
       } else {
-        scrollData = ReportGeneralLedgerJournalData.selectDirect(readOnlyCP, "0",
+        scrollData = ReportGeneralLedgerJournalData.selectDirect(readOnlyCP,
             StringUtils.equals(strShowDescription, "Y") ? "'Y'" : "'N'",
             Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-            strTable, strRecord, strcAcctSchemaId, vars.getLanguage(), null, null, null);
+            strTable, strRecord, strcAcctSchemaId, vars.getLanguage(), null);
       }
       Vector<ReportGeneralLedgerJournalData> res = new Vector<ReportGeneralLedgerJournalData>();
       while (scrollData.next()) {

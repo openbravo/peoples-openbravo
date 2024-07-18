@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2017 Openbravo SLU
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -81,7 +81,6 @@
         ) B WHERE 1=1
       ]]></Sql>
     <Field name="rownum" value="count"/>
-    <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
     <Parameter name="groupbytext"/>
     <Parameter name="groupby"/>
     <Parameter name="groupby"/>
@@ -103,8 +102,6 @@
     <Parameter name="accountId" optional="true" after="WHERE 6=6"><![CDATA[AND ID = ? ]]></Parameter>
     <Parameter name="cBPartner" optional="true" after="WHERE 6=6"><![CDATA[AND groupbyid = ? ]]></Parameter>
     <Parameter name="pgLimit" type="argument" optional="true" after=",  FACT_ACCT_ID, DESCRIPTION, ISDEBIT"><![CDATA[ LIMIT ]]></Parameter>
-    <Parameter name="oraLimit1" type="argument" optional="true" after=") C"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
-    <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[ AND RN1 BETWEEN ]]></Parameter>
     <Parameter name="factAcctId" optional="true" after="WHERE 1=1"><![CDATA[ and to_char(DATEACCT,'J')||FACTACCTTYPE||FACT_ACCT_GROUP_ID||FACT_ACCT_ID < ? ]]></Parameter>
   </SqlMethod>
   
@@ -172,7 +169,6 @@
         WHERE S.id = ?
       ]]></Sql>
     <Field name="rownum" value="count"/>
-    <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
     <Parameter name="groupbytext"/>
     <Parameter name="groupby"/>
     <Parameter name="groupby"/>
@@ -193,8 +189,6 @@
     <Parameter name="accountId" optional="true" after="WHERE 6=6"><![CDATA[AND ID = ? ]]></Parameter>
     <Parameter name="cBPartner" optional="true" after="WHERE 6=6"><![CDATA[AND groupbyid = ? ]]></Parameter>
     <Parameter name="pgLimit" type="argument" optional="true" after=",  FACT_ACCT_ID, DESCRIPTION, ISDEBIT"><![CDATA[ LIMIT ]]></Parameter>
-    <Parameter name="oraLimit1" type="argument" optional="true" after=") C"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
-    <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[ AND RN1 BETWEEN ]]></Parameter>
     <Parameter name="factAcctId" optional="true" after="WHERE 1=1"><![CDATA[ and to_char(DATEACCT,'J')||FACTACCTTYPE||FACT_ACCT_GROUP_ID||FACT_ACCT_ID < ? ]]></Parameter>
     <Parameter name="accountId2"/>
   </SqlMethod>
@@ -259,7 +253,6 @@
         ) B WHERE 1=1
       ]]></Sql>
     <Field name="rownum" value="count"/>
-    <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
     <Parameter name="groupbytext"/>
     <Parameter name="groupby"/>
     <Parameter name="groupby"/>
@@ -280,8 +273,6 @@
     <Parameter name="accountId" optional="true" after="WHERE 6=6"><![CDATA[AND ID = ? ]]></Parameter>
     <Parameter name="cBPartner" optional="true" after="WHERE 6=6"><![CDATA[AND groupbyid = ? ]]></Parameter>
     <Parameter name="pgLimit" type="argument" optional="true" after=",  FACT_ACCT_ID, DESCRIPTION, ISDEBIT"><![CDATA[ LIMIT ]]></Parameter>
-    <Parameter name="oraLimit1" type="argument" optional="true" after=") C"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
-    <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[ AND RN1 BETWEEN ]]></Parameter>
     <Parameter name="factAcctId" optional="true" after="WHERE 1=1"><![CDATA[ and to_char(DATEACCT,'J')||FACTACCTTYPE||FACT_ACCT_GROUP_ID||FACT_ACCT_ID < ? ]]></Parameter>
   </SqlMethod>
 

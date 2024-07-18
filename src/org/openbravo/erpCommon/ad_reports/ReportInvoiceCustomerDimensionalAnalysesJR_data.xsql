@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2023 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -199,7 +199,6 @@
     <Parameter name="strvoid" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
     <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10" text=", 1"/>
     <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
-    <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
   </SqlMethod>
   
   <SqlMethod name="select2" type="preparedStatement" return="multiple">
@@ -465,7 +464,6 @@
     <Parameter name="strvoid" optional="true" after="AND 4=4"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
     <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10" text=", 1"/>
     <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
-    <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
   </SqlMethod>
   
   <SqlMethod name="select3" type="preparedStatement" return="multiple">
@@ -823,7 +821,6 @@
     <Parameter name="strvoid" optional="true" after="AND 6=6"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
     <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10" text=", 1"/>
     <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
-    <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="selectNoComparative" type="preparedStatement" return="multiple">
@@ -935,7 +932,6 @@
     <Parameter name="strvoid" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
     <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10" text=", 1"/>
     <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
-    <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="selectProject" type="preparedStatement" return="String" default="">
@@ -1138,6 +1134,5 @@
     <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
     <Parameter name="strvoid" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DOCSTATUS <> ?]]></Parameter>
     <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
-    <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
   </SqlMethod>
 </SqlClass>

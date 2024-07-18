@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -800,12 +800,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
     strOrderby = strHaving + strOrderby;
 
     int limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
-    String pgLimit = null, oraLimit = null;
-    if (StringUtils.equalsIgnoreCase(readOnlyCP.getRDBMS(), "ORACLE")) {
-      oraLimit = String.valueOf(limit + 1);
-    } else {
-      pgLimit = String.valueOf(limit + 1);
-    }
+    String pgLimit = String.valueOf(limit + 1);
 
     // Checks if there is a conversion rate for each of the transactions of the report
     String strConvRateErrorMsg = "";
@@ -822,7 +817,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
             strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strPartnerGroup,
             strcBpartnerId, productCategoryGroup, strmProductId, strsalesrepId,
             strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId,
-            StringUtils.equals(strVoid, "Y") ? "" : "VO", pgLimit, oraLimit);
+            StringUtils.equals(strVoid, "Y") ? "" : "VO", pgLimit);
 
       } catch (ServletException ex) {
         myMessage = Utility.translateError(readOnlyCP, vars, vars.getLanguage(), ex.getMessage());
@@ -848,8 +843,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
                   DateTimeData.nDaysAfter(readOnlyCP, strDateToRef, "1"), localStrDateFromRef2,
                   DateTimeData.nDaysAfter(readOnlyCP, localStrDateToRef2, "1"),
                   localStrDateFromRef3,
-                  DateTimeData.nDaysAfter(readOnlyCP, localStrDateToRef3, "1"), strOrderby, pgLimit,
-                  oraLimit);
+                  DateTimeData.nDaysAfter(readOnlyCP, localStrDateToRef3, "1"), strOrderby,
+                  pgLimit);
             } else {
               // Multi-comparative A: 1 base date, 2 reference dates
               data = ReportInvoiceCustomerDimensionalAnalysesJRData.select2(readOnlyCP,
@@ -865,8 +860,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
                   strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId,
                   StringUtils.equals(strVoid, "Y") ? "" : "VO", strDateFromRef,
                   DateTimeData.nDaysAfter(readOnlyCP, strDateToRef, "1"), localStrDateFromRef2,
-                  DateTimeData.nDaysAfter(readOnlyCP, localStrDateToRef2, "1"), strOrderby, pgLimit,
-                  oraLimit);
+                  DateTimeData.nDaysAfter(readOnlyCP, localStrDateToRef2, "1"), strOrderby,
+                  pgLimit);
             }
           } else {
             // Regular comparative: 1 base date, 1 reference date
@@ -881,8 +876,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
                 strcBpartnerId, productCategoryGroup, strmProductId, strsalesrepId,
                 strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId,
                 StringUtils.equals(strVoid, "Y") ? "" : "VO", strDateFromRef,
-                DateTimeData.nDaysAfter(readOnlyCP, strDateToRef, "1"), strOrderby, pgLimit,
-                oraLimit);
+                DateTimeData.nDaysAfter(readOnlyCP, strDateToRef, "1"), strOrderby, pgLimit);
           }
         } catch (ServletException ex) {
           myMessage = Utility.translateError(readOnlyCP, vars, vars.getLanguage(), ex.getMessage());
@@ -900,7 +894,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
               strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strPartnerGroup,
               strcBpartnerId, productCategoryGroup, strmProductId, strsalesrepId,
               strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId,
-              StringUtils.equals(strVoid, "Y") ? "" : "VO", strOrderby, pgLimit, oraLimit);
+              StringUtils.equals(strVoid, "Y") ? "" : "VO", strOrderby, pgLimit);
         } catch (ServletException ex) {
           myMessage = Utility.translateError(readOnlyCP, vars, vars.getLanguage(), ex.getMessage());
         }

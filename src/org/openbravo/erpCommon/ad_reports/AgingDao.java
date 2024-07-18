@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2017 Openbravo SLU
+ * All portions are Copyright (C) 2012-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -113,13 +113,9 @@ public class AgingDao {
     long init = System.currentTimeMillis();
     final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
     int limit = (int) vars.getSessionObject("reportsLimit");
-    String pgLimit = null, oraLimit = null;
+    String pgLimit = null;
     if (limit > 0) {
-      if (StringUtils.equalsIgnoreCase(connectionProvider.getRDBMS(), "ORACLE")) {
-        oraLimit = String.valueOf(limit + 1);
-      } else {
-        pgLimit = String.valueOf(limit + 1);
-      }
+      pgLimit = String.valueOf(limit + 1);
     }
 
     try {
@@ -132,7 +128,7 @@ public class AgingDao {
           OBDateUtils.formatDate(convertToDate(currentDate, strcolumn4)),
           Utility.getInStrSet(organizations), strcBpartnerId,
           StringUtils.equals(recOrPay, "RECEIVABLES") ? "Y" : "N",
-          excludeVoids ? "excludeVoids" : "", pgLimit, oraLimit);
+          excludeVoids ? "excludeVoids" : "", pgLimit);
       log4j.debug("Query: " + (System.currentTimeMillis() - init));
       init = System.currentTimeMillis();
       int i = 0;
@@ -169,7 +165,7 @@ public class AgingDao {
           Utility.getInStrSet(organizations), Utility.getInStrSet(new HashSet<String>(paidStatus)),
           OBDateUtils.formatDate(currentDate),
           StringUtils.equals(recOrPay, "RECEIVABLES") ? "Y" : "N", strcBpartnerId,
-          excludeReverseds ? "excludeReverseds" : "", pgLimit, oraLimit);
+          excludeReverseds ? "excludeReverseds" : "", pgLimit);
       log4j.debug("Credit Query: " + (System.currentTimeMillis() - init));
       init = System.currentTimeMillis();
       i = 0;
@@ -250,13 +246,9 @@ public class AgingDao {
     OBContext.setAdminMode(true);
     long init = System.currentTimeMillis();
     int limit = (int) RequestContext.get().getVariablesSecureApp().getSessionObject("reportsLimit");
-    String pgLimit = null, oraLimit = null;
+    String pgLimit = null;
     if (limit > 0) {
-      if (StringUtils.equalsIgnoreCase(connectionProvider.getRDBMS(), "ORACLE")) {
-        oraLimit = String.valueOf(limit + 1);
-      } else {
-        pgLimit = String.valueOf(limit + 1);
-      }
+      pgLimit = String.valueOf(limit + 1);
     }
 
     try {
@@ -269,7 +261,7 @@ public class AgingDao {
           OBDateUtils.formatDate(convertToDate(currentDate, strcolumn4)),
           Utility.getInStrSet(organizations), strcBpartnerId,
           StringUtils.equals(recOrPay, "RECEIVABLES") ? "Y" : "N",
-          excludeVoid ? "excludeVoids" : "", pgLimit, oraLimit);
+          excludeVoid ? "excludeVoids" : "", pgLimit);
 
       log4j.debug("Query Detail: " + (System.currentTimeMillis() - init));
       init = System.currentTimeMillis();
@@ -308,7 +300,7 @@ public class AgingDao {
           Utility.getInStrSet(organizations), Utility.getInStrSet(new HashSet<String>(paidStatus)),
           OBDateUtils.formatDate(currentDate),
           StringUtils.equals(recOrPay, "RECEIVABLES") ? "Y" : "N", strcBpartnerId,
-          excludeReversed ? "excludeReverseds" : "", pgLimit, oraLimit);
+          excludeReversed ? "excludeReverseds" : "", pgLimit);
       log4j.debug("Credit Query: " + (System.currentTimeMillis() - init));
       init = System.currentTimeMillis();
       i = 0;

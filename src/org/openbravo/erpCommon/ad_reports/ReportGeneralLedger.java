@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2019 Openbravo SLU
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -248,20 +248,9 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     int intRecordRange = StringUtils.isEmpty(strRecordRange) ? 0 : Integer.parseInt(strRecordRange);
     String strInitRecord = vars.getSessionValue("ReportGeneralLedger.initRecordNumber");
     int initRecordNumber = StringUtils.isEmpty(strInitRecord) ? 0 : Integer.parseInt(strInitRecord);
-    // built limit/offset parameters for oracle/postgres
-    String rowNum = "0";
-    String oraLimit1 = null;
-    String oraLimit2 = null;
     String pgLimit = null;
     if (intRecordRange != 0) {
-      if (StringUtils.equalsIgnoreCase(readOnlyCP.getRDBMS(), "ORACLE")) {
-        rowNum = "ROWNUM";
-        oraLimit1 = String.valueOf(initRecordNumber + intRecordRange);
-        oraLimit2 = (initRecordNumber + 1) + " AND " + oraLimit1;
-      } else {
-        rowNum = "0";
-        pgLimit = intRecordRange + " OFFSET " + initRecordNumber;
-      }
+      pgLimit = intRecordRange + " OFFSET " + initRecordNumber;
     }
     log4j.debug("offset= " + initRecordNumber + " pageSize= " + intRecordRange);
     log4j.debug("Output: dataSheet");
@@ -324,13 +313,13 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       Long initMainSelect = System.currentTimeMillis();
       ReportGeneralLedgerData scroll = null;
       try {
-        scroll = ReportGeneralLedgerData.select2(readOnlyCP, rowNum, strGroupByText, strGroupBy,
+        scroll = ReportGeneralLedgerData.select2(readOnlyCP, strGroupByText, strGroupBy,
             strAllaccounts, strcelementvaluefrom, localStrcelementvalueto,
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
             Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
             StringUtils.equals(strShowOpenBalances, "Y") ? strDateTo : null, strcAcctSchemaId,
             strDateFrom, toDatePlusOne, strOrgFamily, strcBpartnerId, strmProductId, strcProjectId,
-            strAmtFrom, strAmtTo, null, null, pgLimit, oraLimit1, oraLimit2, null);
+            strAmtFrom, strAmtTo, null, null, pgLimit, null);
         Vector<ReportGeneralLedgerData> res = new Vector<ReportGeneralLedgerData>();
         while (scroll.next()) {
           res.add(scroll.get());
@@ -358,15 +347,15 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           if (i == 0 && initRecordNumber > 0) {
             // firstPagBlock = true;
             Long init = System.currentTimeMillis();
-            dataTotal = ReportGeneralLedgerData.select2Total(readOnlyCP, rowNum, strGroupByText,
-                strGroupBy, strAllaccounts, strcelementvaluefrom, localStrcelementvalueto,
+            dataTotal = ReportGeneralLedgerData.select2Total(readOnlyCP, strGroupByText, strGroupBy,
+                strAllaccounts, strcelementvaluefrom, localStrcelementvalueto,
                 Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
                 Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
                 strcAcctSchemaId, "", DateTimeData.nDaysAfter(readOnlyCP, data[0].dateacct, "1"),
                 strOrgFamily, strcBpartnerId, strmProductId, strcProjectId, strAmtFrom, strAmtTo,
-                data[0].id, data[0].groupbyid, null, null, null, data[0].dateacctnumber
-                    + data[0].factaccttype + data[0].factAcctGroupId + data[0].factAcctId);
-            dataSubtotal = ReportGeneralLedgerData.select2sum(readOnlyCP, rowNum, strGroupByText,
+                data[0].id, data[0].groupbyid, null, data[0].dateacctnumber + data[0].factaccttype
+                    + data[0].factAcctGroupId + data[0].factAcctId);
+            dataSubtotal = ReportGeneralLedgerData.select2sum(readOnlyCP, strGroupByText,
                 strGroupBy, strAllaccounts, strcelementvaluefrom, localStrcelementvalueto,
                 Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
                 Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
@@ -377,7 +366,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
                     : strmProductId),
                 (StringUtils.equals(strGroupBy, "Project") ? "('" + data[i].groupbyid + "')"
                     : strcProjectId),
-                strAmtFrom, strAmtTo, null, null, null, null, null, data[0].dateacctnumber
+                strAmtFrom, strAmtTo, null, null, null, data[0].dateacctnumber
                     + data[0].factaccttype + data[0].factAcctGroupId + data[0].factAcctId,
                 data[0].id);
 
@@ -510,7 +499,6 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
 
-    
     xmlDocument.setData("reportAD_ORGID", "liststructure",
         SelectorUtilityData.selectAllOrganizations(readOnlyCP,
             Utility.getContext(readOnlyCP, vars, "#User_Org", "ReportGeneralLedger"),
@@ -615,13 +603,13 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
 
     ReportGeneralLedgerData data = null;
     try {
-      data = ReportGeneralLedgerData.select2(readOnlyCP, "0", strGroupByText, strGroupBy,
-          strAllaccounts, strcelementvaluefrom, localStrcelementvalueto,
+      data = ReportGeneralLedgerData.select2(readOnlyCP, strGroupByText, strGroupBy, strAllaccounts,
+          strcelementvaluefrom, localStrcelementvalueto,
           Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
           Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
           StringUtils.equals(strShowOpenBalances, "Y") ? strDateTo : null, strcAcctSchemaId,
           strDateFrom, toDatePlusOne, strOrgFamily, strcBpartnerId, strmProductId, strcProjectId,
-          strAmtFrom, strAmtTo, null, null, null, null, null, null);
+          strAmtFrom, strAmtTo, null, null, null, null);
 
       if (!data.hasData()) {
         advisePopUp(request, response, "WARNING",

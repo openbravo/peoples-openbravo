@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,7 +25,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
@@ -83,18 +82,13 @@ public class ReportWarehouseControl extends HttpSecureAppServlet {
     if (!vars.commandIn("DEFAULT")) {
       limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
 
-      String pgLimit = null, oraLimit = null;
-      if (StringUtils.equalsIgnoreCase(readOnlyCP.getRDBMS(), "ORACLE")) {
-        oraLimit = String.valueOf(limit + 1);
-      } else {
-        pgLimit = String.valueOf(limit + 1);
-      }
+      String pgLimit = String.valueOf(limit + 1);
 
       data = ReportWarehouseControlData.select(readOnlyCP,
           Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportWarehouseControl"),
           Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportWarehouseControl"),
-          strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strReferential, pgLimit,
-          oraLimit);
+          strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strReferential,
+          pgLimit);
     }
 
     if (data == null || data.length == 0 || vars.commandIn("DEFAULT")) {

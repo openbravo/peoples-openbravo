@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -152,19 +152,14 @@ public class ReportProductMovement extends HttpSecureAppServlet {
     int limit = 0;
     if (vars.commandIn("FIND", "DIRECT")) {
       limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
-      String pgLimit = null, oraLimit = null;
-      if (StringUtils.equals(readOnlyCP.getRDBMS(), "ORACLE")) {
-        oraLimit = String.valueOf(limit + 1);
-      } else {
-        pgLimit = String.valueOf(limit + 1);
-      }
+      String pgLimit = String.valueOf(limit + 1);
 
       if (StringUtils.equals(strInout, "-1")) {
         data = ReportProductMovementData.select(readOnlyCP, vars.getLanguage(),
             Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProductMovement"),
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProductMovement"),
             localStrDateFrom, DateTimeData.nDaysAfter(readOnlyCP, localStrDateTo, "1"),
-            strcBpartnerId, strmProductId, strmAttributesetinstanceId, "N", pgLimit, oraLimit);
+            strcBpartnerId, strmProductId, strmAttributesetinstanceId, "N", pgLimit);
         if (data == null || data.length == 0) {
           discard[0] = "selEliminar1";
           data = ReportProductMovementData.set();
@@ -179,7 +174,7 @@ public class ReportProductMovement extends HttpSecureAppServlet {
             Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProductMovement"),
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProductMovement"),
             localStrDateFrom, DateTimeData.nDaysAfter(readOnlyCP, localStrDateTo, "1"),
-            strcBpartnerId, strmProductId, strmAttributesetinstanceId, "Y", pgLimit, oraLimit);
+            strcBpartnerId, strmProductId, strmAttributesetinstanceId, "Y", pgLimit);
         if (data5 == null || data5.length == 0) {
           discard[5] = "selEliminar6";
           data5 = ReportProductMovementData.set();
