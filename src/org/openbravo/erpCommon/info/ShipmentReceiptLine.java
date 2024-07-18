@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -357,26 +357,19 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
         // New filter or first load
         if (localStrNewFilter.equals("1") || localStrNewFilter.equals("")) {
-          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-            rownum = "ROWNUM";
-          } else {
-            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-          }
+          String pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
           if (strSOTrx.equals("Y")) {
-            strNumRows = ShipmentReceiptLineData.countRows(this, rownum,
+            strNumRows = ShipmentReceiptLineData.countRows(this,
                 Utility.getContext(this, vars, "#User_Client", "ShipmentReceiptLine"),
                 Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
                 strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-                strProduct, strInvoiced, pgLimit, oraLimit1, oraLimit2);
+                strProduct, strInvoiced, pgLimit);
           } else {
-            strNumRows = ShipmentReceiptLineData.countRowsSO(this, rownum,
+            strNumRows = ShipmentReceiptLineData.countRowsSO(this,
                 Utility.getContext(this, vars, "#User_Client", "ShipmentReceiptLine"),
                 Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
                 strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-                strProduct, (strInvoiced.equals("Y") ? "=" : "<>"), pgLimit, oraLimit1, oraLimit2);
+                strProduct, (strInvoiced.equals("Y") ? "=" : "<>"), pgLimit);
           }
           vars.setSessionValue("ShipmentReceiptLine.numrows", strNumRows);
         } else {
@@ -384,36 +377,19 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
         }
 
         // Filtering result
-        if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
-          if (strSOTrx.equals("Y")) {
-            data = ShipmentReceiptLineData.select(this, "ROWNUM",
-                Utility.getContext(this, vars, "#User_Client", "ShipmentReceiptLine"),
-                Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
-                strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-                strProduct, strInvoiced, strOrderBy, oraLimit, "");
-          } else {
-            data = ShipmentReceiptLineData.selectSOTrx(this, "ROWNUM",
-                Utility.getContext(this, vars, "#User_Client", "ShipmentReceiptLine"),
-                Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
-                strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-                strProduct, (strInvoiced.equals("Y") ? "=" : "<>"), strOrderBy, oraLimit, "");
-          }
+        String pgLimit = pageSize + " OFFSET " + offset;
+        if (strSOTrx.equals("Y")) {
+          data = ShipmentReceiptLineData.select(this,
+              Utility.getContext(this, vars, "#User_Client", "ShipmentReceiptLine"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription, strOrder,
+              strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strProduct,
+              strInvoiced, strOrderBy, pgLimit);
         } else {
-          String pgLimit = pageSize + " OFFSET " + offset;
-          if (strSOTrx.equals("Y")) {
-            data = ShipmentReceiptLineData.select(this, "1",
-                Utility.getContext(this, vars, "#User_Client", "ShipmentReceiptLine"),
-                Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
-                strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-                strProduct, strInvoiced, strOrderBy, "", pgLimit);
-          } else {
-            data = ShipmentReceiptLineData.selectSOTrx(this, "1",
-                Utility.getContext(this, vars, "#User_Client", "ShipmentReceiptLine"),
-                Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
-                strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-                strProduct, (strInvoiced.equals("Y") ? "=" : "<>"), strOrderBy, "", pgLimit);
-          }
+          data = ShipmentReceiptLineData.selectSOTrx(this,
+              Utility.getContext(this, vars, "#User_Client", "ShipmentReceiptLine"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription, strOrder,
+              strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strProduct,
+              (strInvoiced.equals("Y") ? "=" : "<>"), strOrderBy, pgLimit);
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
