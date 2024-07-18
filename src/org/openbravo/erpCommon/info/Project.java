@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -278,37 +278,21 @@ public class Project extends HttpSecureAppServlet {
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
         if (localStrNewFilter.equals("1") || localStrNewFilter.equals("")) {
           // New filter or first load
-          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-            rownum = "ROWNUM";
-          } else {
-            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-          }
-          strNumRows = ProjectData.countRows(this, rownum, vars.getLanguage(),
+          String pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          strNumRows = ProjectData.countRows(this, vars.getLanguage(),
               Utility.getContext(this, vars, "#User_Client", "Project"),
-              Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strBpartners, pgLimit,
-              oraLimit1, oraLimit2);
+              Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strBpartners, pgLimit);
           vars.setSessionValue("ProjectData.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("ProjectData.numrows");
         }
 
         // Filtering result
-        if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
-          data = ProjectData.select(this, "ROWNUM", vars.getLanguage(),
-              Utility.getContext(this, vars, "#User_Client", "Project"),
-              Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strBpartners,
-              strOrderBy, oraLimit, "");
-        } else {
-          String pgLimit = pageSize + " OFFSET " + offset;
-          data = ProjectData.select(this, "1", vars.getLanguage(),
-              Utility.getContext(this, vars, "#User_Client", "Project"),
-              Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strBpartners,
-              strOrderBy, "", pgLimit);
-        }
+        String pgLimit = pageSize + " OFFSET " + offset;
+        data = ProjectData.select(this, vars.getLanguage(),
+            Utility.getContext(this, vars, "#User_Client", "Project"),
+            Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strBpartners, strOrderBy,
+            pgLimit);
       } catch (ServletException e) {
         log4j.error("Error in print page data: ", e);
         OBError myError = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
