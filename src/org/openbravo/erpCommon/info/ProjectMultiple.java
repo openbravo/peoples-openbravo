@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -216,35 +216,20 @@ public class ProjectMultiple extends HttpSecureAppServlet {
           // or
           // first
           // load
-          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-            rownum = "ROWNUM";
-          } else {
-            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-          }
-          strNumRows = ProjectMultipleData.countRows(this, rownum, strKey, strName,
+          String pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          strNumRows = ProjectMultipleData.countRows(this, strKey, strName,
               Utility.getContext(this, vars, "#User_Client", "ProjectMultiple"),
-              Utility.getSelectorOrgs(this, vars, strOrg), pgLimit, oraLimit1, oraLimit2);
+              Utility.getSelectorOrgs(this, vars, strOrg), pgLimit);
           vars.setSessionValue("ProjectInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("ProjectInfo.numrows");
         }
 
         // Filtering result
-        if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit1 = String.valueOf(offset + pageSize);
-          String oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-          data = ProjectMultipleData.select(this, "ROWNUM", strKey, strName,
-              Utility.getContext(this, vars, "#User_Client", "ProjectMultiple"),
-              Utility.getSelectorOrgs(this, vars, strOrg), strOrderBy, "", oraLimit1, oraLimit2);
-        } else {
-          String pgLimit = pageSize + " OFFSET " + offset;
-          data = ProjectMultipleData.select(this, "1", strKey, strName,
-              Utility.getContext(this, vars, "#User_Client", "ProjectMultiple"),
-              Utility.getSelectorOrgs(this, vars, strOrg), strOrderBy, pgLimit, "", "");
-        }
+        String pgLimit = pageSize + " OFFSET " + offset;
+        data = ProjectMultipleData.select(this, strKey, strName,
+            Utility.getContext(this, vars, "#User_Client", "ProjectMultiple"),
+            Utility.getSelectorOrgs(this, vars, strOrg), strOrderBy, pgLimit);
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
         e.printStackTrace();
@@ -361,21 +346,12 @@ public class ProjectMultiple extends HttpSecureAppServlet {
       log4j.debug("relativeMinOffset: " + oldMinOffset + " absoluteMinOffset: " + minOffset);
       log4j.debug("relativeMaxOffset: " + oldMaxOffset + " absoluteMaxOffset: " + maxOffset);
       // Filtering result
-      if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-        String oraLimit1 = String.valueOf(maxOffset);
-        String oraLimit2 = (minOffset + 1) + " AND " + oraLimit1;
-        data = ProjectMultipleData.select(this, "ROWNUM", strKey, strName,
-            Utility.getContext(this, vars, "#User_Client", "ProjectMultiple"),
-            Utility.getSelectorOrgs(this, vars, strOrg), strOrderBy, "", oraLimit1, oraLimit2);
-      } else {
-        // minOffset and maxOffset are zero based so pageSize is difference +1
-        int pageSize = maxOffset - minOffset + 1;
-        String pgLimit = pageSize + " OFFSET " + minOffset;
-        data = ProjectMultipleData.select(this, "1", strKey, strName,
-            Utility.getContext(this, vars, "#User_Client", "ProjectMultiple"),
-            Utility.getSelectorOrgs(this, vars, strOrg), strOrderBy, pgLimit, "", "");
-
-      }
+      // minOffset and maxOffset are zero based so pageSize is difference +1
+      int pageSize = maxOffset - minOffset + 1;
+      String pgLimit = pageSize + " OFFSET " + minOffset;
+      data = ProjectMultipleData.select(this, strKey, strName,
+          Utility.getContext(this, vars, "#User_Client", "ProjectMultiple"),
+          Utility.getSelectorOrgs(this, vars, strOrg), strOrderBy, pgLimit);
 
       // result field has to be named id -> rename by copy the list
       res = new FieldProvider[data.length];
