@@ -158,7 +158,6 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
    */
   private JSONObject getRequestParameters(HttpServletRequest request) {
     try {
-      OBContext.setAdminMode(true);
       JSONObject params = new JSONObject();
 
       String body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
@@ -190,8 +189,6 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
       return params;
     } catch (Exception ex) {
       throw new AuthenticationException(buildError());
-    } finally {
-      OBContext.restorePreviousMode();
     }
   }
 
