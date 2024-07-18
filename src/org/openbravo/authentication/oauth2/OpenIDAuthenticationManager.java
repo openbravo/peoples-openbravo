@@ -135,29 +135,58 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
     }
   }
 
+  /**
+   * Depending on the request received the request parameters will be obtained in diferent ways. Up
+   * to the moment they can be found in the request body in a property called credentials or in the
+   * request as parameters
+   * 
+   * Ther parameters that will be stored in one of the mentioned ways will be the following.
+   * 
+   * <ul>
+   * <li>code (mandatory): will containe the authorization code returned on redirection by the
+   * authorization server
+   * <li>state (mandatory): state parameter used during the communication, it will contain the
+   * provider configuration id
+   * <li>validateState (no mandatory): will inform if it is required to validate the state or it has
+   * alredy been done, by default it will be validated
+   * <li>redirectUri (mandatory): contain the redirection url
+   * </ul>
+   * 
+   * @param request
+   *          - authentication request
+   * @return json object containing all the properties found in the request
+   */
   private JSONObject getRequestParameters(HttpServletRequest request) {
     try {
       OBContext.setAdminMode(true);
       JSONObject params = new JSONObject();
 
-      String code = request.getParameter("code");
-      if (code == null) {
-        JSONObject body = new JSONObject(
-            request.getReader().lines().collect(Collectors.joining(System.lineSeparator())));
-        JSONObject credential = body.getJSONObject("credential");
+      String body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
 
-        params.put("code", credential.getString("code"));
-        params.put("state", authStateHandler.addNewConfiguration(credential.getString("state")));
+      Boolean validateState = true;
+      JSONObject credentials = !body.isEmpty() ? new JSONObject(body).getJSONObject("credential")
+          : null;
+      if (credentials != null) {
 
-        params.put("validateState", credential.getBoolean("validateState"));
-        params.put("redirectUri", credential.getString("redirectUri"));
+        if (credentials.has("validateState")) {
+          validateState = credentials.getBoolean("validateState");
+        }
+
+        params.put("code", credentials.getString("code"));
+        params.put("state", authStateHandler.addNewConfiguration(credentials.getString("state")));
+        params.put("validateState", credentials.getBoolean("validateState"));
+        params.put("redirectUri", credentials.getString("redirectUri"));
       } else {
-        params.put("code", code);
+
+        if (request.getParameter("validateState") != null) {
+          validateState = Boolean.valueOf(request.getParameter("validateState"));
+        }
+
+        params.put("code", request.getParameter("code"));
         params.put("state", request.getParameter("state"));
-        params.put("validateState", true);
+        params.put("validateState", validateState);
         params.put("redirectUri", getRedirectURL(request));
       }
-
       return params;
     } catch (Exception ex) {
       throw new AuthenticationException(buildError());
