@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -71,7 +71,6 @@
         <Parameter name="warehouse"/>
         <Parameter name="warehouse"/>
         <Parameter name="warehouse"/>
-        <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="key" ignoreValue="%" optional="true" after="ip.IsSummary='N' AND "><![CDATA[ UPPER(ip.Value) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="name" ignoreValue="%" optional="true" after="ip.IsSummary='N' AND "><![CDATA[ UPPER(ip.Name) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="adUserClient" type="replace" optional="true" after="ip.AD_Client_ID IN (" text="'1'"/>
@@ -79,8 +78,6 @@
         <Parameter name="priceListVersion"/>
         <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="ip.Value" />
         <Parameter name="pgLimit" type="argument" optional="true" after="ORDER BY ip.Value"><![CDATA[LIMIT ]]></Parameter>
-        <Parameter name="oraLimit1" type="argument" optional="true" after=") C"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
-        <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
         <Parameter name="priceListVersion"/>
         <Parameter name="orderBy" type="replace" optional="true" after="A ORDER BY " text="Value" />
    </SqlMethod>
@@ -102,15 +99,12 @@
       ) B
       ) A 
       ]]></Sql>
-      <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="key" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(p.Value) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="name" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(p.Name) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="priceListVersion"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="p.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="p.AD_Org_ID IN (" text="'1'"/>
       <Parameter name="pgLimit" type="argument" optional="true" after="AND 1=1"><![CDATA[LIMIT ]]></Parameter>
-      <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
-      <Parameter name="oraLimit2" type="argument" optional="true" after=") A "><![CDATA[WHERE RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
   
    <SqlMethod name="priceListDefault" type="preparedStatement" return="String">
