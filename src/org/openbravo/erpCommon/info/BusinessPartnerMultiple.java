@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -258,47 +258,26 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
         // New filter or first load
         if (localStrNewFilter.equals("1") || localStrNewFilter.equals("")) {
-          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-            rownum = "ROWNUM";
-          } else {
-            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-          }
-          strNumRows = BusinessPartnerMultipleData.countRows(this, rownum,
+          String pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          strNumRows = BusinessPartnerMultipleData.countRows(this,
               Utility.getContext(this, vars, "#User_Client", "BusinessPartner"),
               Utility.getContext(this, vars, "#AccessibleOrgTree", "BusinessPartner"), strKey,
               strName, strContact, strZIP, strProvincia,
               (strBpartners.equals("costumer") ? "clients" : ""),
-              (strBpartners.equals("vendor") ? "vendors" : ""), strCity, pgLimit, oraLimit1,
-              oraLimit2);
+              (strBpartners.equals("vendor") ? "vendors" : ""), strCity, pgLimit);
           vars.setSessionValue("BusinessPartnerMultipleInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("BusinessPartnerMultipleInfo.numrows");
         }
 
         // Filtering result
-        if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit1 = String.valueOf(offset + pageSize);
-          String oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-          data = BusinessPartnerMultipleData.select(this, "ROWNUM",
-              Utility.getContext(this, vars, "#User_Client", "BusinessPartner"),
-              Utility.getContext(this, vars, "#AccessibleOrgTree", "BusinessPartner"), strKey,
-              strName, strContact, strZIP, strProvincia,
-              (strBpartners.equals("costumer") ? "clients" : ""),
-              (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, "", oraLimit1,
-              oraLimit2);
-        } else {
-          String pgLimit = pageSize + " OFFSET " + offset;
-          data = BusinessPartnerMultipleData.select(this, "1",
-              Utility.getContext(this, vars, "#User_Client", "BusinessPartner"),
-              Utility.getContext(this, vars, "#AccessibleOrgTree", "BusinessPartner"), strKey,
-              strName, strContact, strZIP, strProvincia,
-              (strBpartners.equals("costumer") ? "clients" : ""),
-              (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, pgLimit, "",
-              "");
-        }
+        String pgLimit = pageSize + " OFFSET " + offset;
+        data = BusinessPartnerMultipleData.select(this,
+            Utility.getContext(this, vars, "#User_Client", "BusinessPartner"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "BusinessPartner"), strKey,
+            strName, strContact, strZIP, strProvincia,
+            (strBpartners.equals("costumer") ? "clients" : ""),
+            (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, pgLimit);
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
         e.printStackTrace();
@@ -424,27 +403,14 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
       log4j.debug("relativeMinOffset: " + oldMinOffset + " absoluteMinOffset: " + minOffset);
       log4j.debug("relativeMaxOffset: " + oldMaxOffset + " absoluteMaxOffset: " + maxOffset);
       // Filtering result
-      if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-        String oraLimit1 = String.valueOf(maxOffset);
-        String oraLimit2 = (minOffset + 1) + " AND " + oraLimit1;
-        data = BusinessPartnerMultipleData.select(this, "ROWNUM",
-            Utility.getContext(this, vars, "#User_Client", "BusinessPartner"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "BusinessPartner"), strKey,
-            strName, strContact, strZIP, strProvincia,
-            (strBpartners.equals("costumer") ? "clients" : ""),
-            (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, "", oraLimit1,
-            oraLimit2);
-      } else {
-        // minOffset and maxOffset are zero based so pageSize is difference +1
-        int pageSize = maxOffset - minOffset + 1;
-        String pgLimit = pageSize + " OFFSET " + minOffset;
-        data = BusinessPartnerMultipleData.select(this, "1",
-            Utility.getContext(this, vars, "#User_Client", "BusinessPartner"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "BusinessPartner"), strKey,
-            strName, strContact, strZIP, strProvincia,
-            (strBpartners.equals("costumer") ? "clients" : ""),
-            (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, pgLimit, "", "");
-      }
+      // minOffset and maxOffset are zero based so pageSize is difference +1
+      int pageSize = maxOffset - minOffset + 1;
+      String pgLimit = pageSize + " OFFSET " + minOffset;
+      data = BusinessPartnerMultipleData.select(this,
+          Utility.getContext(this, vars, "#User_Client", "BusinessPartner"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "BusinessPartner"), strKey, strName,
+          strContact, strZIP, strProvincia, (strBpartners.equals("costumer") ? "clients" : ""),
+          (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, pgLimit);
 
       // result field has to be named id -> rename by copy the list
       res = new FieldProvider[data.length];
