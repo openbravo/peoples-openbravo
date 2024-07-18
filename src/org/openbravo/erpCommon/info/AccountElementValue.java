@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2019 Openbravo SLU
+ * All portions are Copyright (C) 2009-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -182,9 +182,9 @@ public class AccountElementValue extends HttpSecureAppServlet {
       data = AccountElementValueData.set(strValue.equals("") && strName.equals("") ? "%" : strValue,
           strName);
     } else {
-      data = AccountElementValueData.select(this, "1", "", "", "", "", strElementValue,
+      data = AccountElementValueData.select(this, "", "", "", "", strElementValue,
           Utility.getContext(this, vars, "#User_Client", "AccountElementValue"),
-          Utility.getContext(this, vars, "#User_Org", "AccountElementValue"), "1 ASC", "", "");
+          Utility.getContext(this, vars, "#User_Org", "AccountElementValue"), "1 ASC", "");
     }
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -314,40 +314,23 @@ public class AccountElementValue extends HttpSecureAppServlet {
           // or
           // first
           // load
-          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-            rownum = "ROWNUM";
-          } else {
-            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-          }
-          strNumRows = AccountElementValueData.countRows(this, rownum, strAcctSchema, strValue,
-              strName, strOrganization, strAccountElementValue,
+          String pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          strNumRows = AccountElementValueData.countRows(this, strAcctSchema, strValue, strName,
+              strOrganization, strAccountElementValue,
               Utility.getContext(this, vars, "#User_Client", "AccountElementValue"),
-              Utility.getContext(this, vars, "#AccessibleOrgTree", "AccountElementValue"), pgLimit,
-              oraLimit1, oraLimit2);
+              Utility.getContext(this, vars, "#AccessibleOrgTree", "AccountElementValue"), pgLimit);
           vars.setSessionValue("AccountElementValueInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("AccountElementValueInfo.numrows");
         }
 
         // Filtering result
-        if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
-          data = AccountElementValueData.select(this, "ROWNUM", strAcctSchema, strValue, strName,
-              strOrganization, strAccountElementValue,
-              Utility.getContext(this, vars, "#User_Client", "AccountElementValue"),
-              Utility.getContext(this, vars, "#AccessibleOrgTree", "AccountElementValue"),
-              strOrderBy, oraLimit, "");
-        } else {
-          String pgLimit = pageSize + " OFFSET " + offset;
-          data = AccountElementValueData.select(this, "1", strAcctSchema, strValue, strName,
-              strOrganization, strAccountElementValue,
-              Utility.getContext(this, vars, "#User_Client", "AccountElementValue"),
-              Utility.getContext(this, vars, "#AccessibleOrgTree", "AccountElementValue"),
-              strOrderBy, "", pgLimit);
-        }
+        String pgLimit = pageSize + " OFFSET " + offset;
+        data = AccountElementValueData.select(this, strAcctSchema, strValue, strName,
+            strOrganization, strAccountElementValue,
+            Utility.getContext(this, vars, "#User_Client", "AccountElementValue"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "AccountElementValue"), strOrderBy,
+            pgLimit);
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
         e.printStackTrace();

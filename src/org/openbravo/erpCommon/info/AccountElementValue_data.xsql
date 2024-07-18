@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2010 Openbravo SLU
+ * All portions are Copyright (C) 2009-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,7 +46,6 @@
 	        	) A ) B
 			WHERE 1=1
       ]]></Sql>
-        <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND C_ACCTSCHEMA_ID = ?]]></Parameter>
         <Parameter name="value" optional="true" after="AND 2=2"><![CDATA[ AND (C.VALUE IS NULL  OR UPPER(C.VALUE) LIKE UPPER(?)) ]]></Parameter>
         <Parameter name="name" ignoreValue="%" optional="true" after="AND 2=2"><![CDATA[ AND UPPER(C.NAME) LIKE UPPER(?) ]]></Parameter>
@@ -55,7 +54,6 @@
         <Parameter name="adUserClient" type="replace" optional="true" after="C.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="C.AD_Org_ID IN (" text="'1'"/>
         <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="C.ALIAS" />
-        <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
         <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
    </SqlMethod>
 
@@ -86,7 +84,6 @@
 	            ) A 
       ]]></Sql>
         <Field name="position" value="count"/>
-        <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND C_ACCTSCHEMA_ID = ?]]></Parameter>
         <Parameter name="value" optional="true" after="AND 2=2"><![CDATA[ AND (C.VALUE IS NULL  OR UPPER(C.VALUE) LIKE UPPER(?)) ]]></Parameter>
         <Parameter name="name" ignoreValue="%" optional="true" after="AND 2=2"><![CDATA[ AND UPPER(C.NAME) LIKE UPPER(?) ]]></Parameter>
@@ -95,8 +92,6 @@
         <Parameter name="adUserClient" type="replace" optional="true" after="C.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="C.AD_Org_ID IN (" text="'1'"/>
          <Parameter name="pgLimit" type="argument" optional="true" after="AND 3=3"><![CDATA[LIMIT ]]></Parameter>
-        <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
-        <Parameter name="oraLimit2" type="argument" optional="true" after=") A "><![CDATA[WHERE RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
 
    <SqlMethod name="selectKey" type="preparedStatement" return="multiple">
