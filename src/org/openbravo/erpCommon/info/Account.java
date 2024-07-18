@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2019 Openbravo SLU
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -215,9 +215,9 @@ public class Account extends HttpSecureAppServlet {
       data = AccountData.set(strAlias.equals("") && strCombination.equals("") ? "%" : strAlias,
           strCombination);
     } else {
-      data = AccountData.select(this, "1", "", "", "", "", "", "", "", "", "", strValidCombination,
+      data = AccountData.select(this, "", "", "", "", "", "", "", "", "", strValidCombination,
           Utility.getContext(this, vars, "#User_Client", "Account"),
-          Utility.getContext(this, vars, "#User_Org", "Account"), "1 ASC", "", "");
+          Utility.getContext(this, vars, "#User_Org", "Account"), "1 ASC", "");
     }
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -379,38 +379,22 @@ public class Account extends HttpSecureAppServlet {
           // or
           // first
           // load
-          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-            rownum = "ROWNUM";
-          } else {
-            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-          }
-          strNumRows = AccountData.countRows(this, rownum, strAcctSchema, strAlias, strCombination,
+          String pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          strNumRows = AccountData.countRows(this, strAcctSchema, strAlias, strCombination,
               strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "",
               Utility.getContext(this, vars, "#User_Client", "Account"),
-              Utility.getContext(this, vars, "#User_Org", "Account"), pgLimit, oraLimit1,
-              oraLimit2);
+              Utility.getContext(this, vars, "#User_Org", "Account"), pgLimit);
           vars.setSessionValue("AccountInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("AccountInfo.numrows");
         }
 
         // Filtering result
-        if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
-          data = AccountData.select(this, "ROWNUM", strAcctSchema, strAlias, strCombination,
-              strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "",
-              Utility.getContext(this, vars, "#User_Client", "Account"),
-              Utility.getContext(this, vars, "#User_Org", "Account"), strOrderBy, oraLimit, "");
-        } else {
-          String pgLimit = pageSize + " OFFSET " + offset;
-          data = AccountData.select(this, "1", strAcctSchema, strAlias, strCombination,
-              strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "",
-              Utility.getContext(this, vars, "#User_Client", "Account"),
-              Utility.getContext(this, vars, "#User_Org", "Account"), strOrderBy, "", pgLimit);
-        }
+        String pgLimit = pageSize + " OFFSET " + offset;
+        data = AccountData.select(this, strAcctSchema, strAlias, strCombination, strOrganization,
+            strAccount, strProduct, strBPartner, strProject, strCampaign, "",
+            Utility.getContext(this, vars, "#User_Client", "Account"),
+            Utility.getContext(this, vars, "#User_Org", "Account"), strOrderBy, pgLimit);
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
         e.printStackTrace();
