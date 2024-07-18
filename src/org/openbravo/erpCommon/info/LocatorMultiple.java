@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -237,37 +237,22 @@ public class LocatorMultiple extends HttpSecureAppServlet {
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
         if (localStrNewFilter.equals("1") || localStrNewFilter.equals("")) {
           // New filter or first load
-          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-            rownum = "ROWNUM";
-          } else {
-            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-          }
-          strNumRows = LocatorMultipleData.countRows(this, rownum,
+          String pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          strNumRows = LocatorMultipleData.countRows(this,
               Utility.getContext(this, vars, "#User_Client", "Locator"),
               Utility.getSelectorOrgs(this, vars, strOrg), strName, strWarehouseId, strAisle,
-              strBin, strLevel, pgLimit, oraLimit1, oraLimit2);
+              strBin, strLevel, pgLimit);
           vars.setSessionValue("LocatorMultiple.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("LocatorMultiple.numrows");
         }
 
         // Filtering result
-        if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
-          data = LocatorMultipleData.select(this, "ROWNUM",
-              Utility.getContext(this, vars, "#User_Client", "Locator"),
-              Utility.getSelectorOrgs(this, vars, strOrg), strName, strWarehouseId, strAisle,
-              strBin, strLevel, strOrderBy, oraLimit, "");
-        } else {
-          String pgLimit = pageSize + " OFFSET " + offset;
-          data = LocatorMultipleData.select(this, "1",
-              Utility.getContext(this, vars, "#User_Client", "Locator"),
-              Utility.getSelectorOrgs(this, vars, strOrg), strName, strWarehouseId, strAisle,
-              strBin, strLevel, strOrderBy, "", pgLimit);
-        }
+        String pgLimit = pageSize + " OFFSET " + offset;
+        data = LocatorMultipleData.select(this,
+            Utility.getContext(this, vars, "#User_Client", "Locator"),
+            Utility.getSelectorOrgs(this, vars, strOrg), strName, strWarehouseId, strAisle, strBin,
+            strLevel, strOrderBy, pgLimit);
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
         e.printStackTrace();
