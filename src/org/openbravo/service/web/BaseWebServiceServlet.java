@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2022 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -170,8 +170,7 @@ public class BaseWebServiceServlet extends HttpServlet {
   }
 
   protected WebService getWebService(HttpServletRequest request) {
-    final String segment = WebServiceUtil.getInstance().getFirstSegment(request.getPathInfo());
-    final Object o = OBProvider.getInstance().get(segment);
+    final Object o = OBProvider.getInstance().getSpecific(request.getPathInfo());
     if (o instanceof WebService) {
       return (WebService) o;
     }
