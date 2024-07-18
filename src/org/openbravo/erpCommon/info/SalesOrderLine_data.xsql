@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,7 +49,6 @@
         ]]>
         </Sql>
         <Field name="position" value="count"/>
-		<Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="o.AD_ORG_ID IN (" text="'1'"/>
         <Parameter name="documentno" ignoreValue="%" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.DocumentNo) LIKE UPPER(?) ]]></Parameter>
@@ -64,7 +63,6 @@
         <Parameter name="isdelivered" optional="true" type="none" after="AND o.IsActive='Y'"><![CDATA[ AND (ol.QTYORDERED - COALESCE(ol.QTYDELIVERED, 0)) <> 0 ]]></Parameter>
         <Parameter name="isinvoiced" optional="true" type="none" after="AND o.IsActive='Y'"><![CDATA[ AND (ol.QTYORDERED - COALESCE(ol.QTYINVOICED, 0)) <> 0 ]]></Parameter>
 			<Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="ol.C_ORDERLINE_ID" />
-        <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
         <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
    </SqlMethod>
    
@@ -87,7 +85,6 @@
 	       ) A 
         ]]>
         </Sql>
-        <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Field name="position" value="count"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="o.AD_ORG_ID IN (" text="'1'"/>
@@ -104,8 +101,6 @@
         <Parameter name="isinvoiced" optional="true" type="none" after="AND o.IsActive='Y'"><![CDATA[ AND (ol.QTYORDERED - COALESCE(ol.QTYINVOICED, 0)) <> 0 ]]></Parameter>
         <Parameter name="isSoTr" type="replace" optional="true" after="o.ISSOTRX = '" text="1"/>
         <Parameter name="pgLimit" type="argument" optional="true" after="AND 1=1"><![CDATA[LIMIT ]]></Parameter>
-        <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
-        <Parameter name="oraLimit2" type="argument" optional="true" after=") A "><![CDATA[WHERE RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
 
    <SqlMethod name="selectSOTrx" type="preparedStatement" return="multiple">
@@ -138,7 +133,6 @@
         ]]>
         </Sql>
         <Field name="position" value="count"/>
-			<Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="o.AD_ORG_ID IN (" text="'1'"/>
         <Parameter name="documentno" ignoreValue="%" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.DocumentNo) LIKE UPPER(?) ]]></Parameter>
@@ -153,7 +147,6 @@
         <Parameter name="isdelivered" optional="true" type="none" after="HAVING 1=1 "><![CDATA[ AND (ol.QTYORDERED - COALESCE(SUM(mp2.QTY), 0)) <> 0 ]]></Parameter>
         <Parameter name="isinvoiced" optional="true" type="none" after="HAVING 1=1 "><![CDATA[ AND (ol.QTYORDERED - COALESCE(SUM(mp.QTY),0)) <> 0 ]]></Parameter>
 			<Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="ol.C_ORDERLINE_ID" />
-        <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
         <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
    </SqlMethod>
    <SqlMethod name="selectKey" type="preparedStatement" return="multiple">
