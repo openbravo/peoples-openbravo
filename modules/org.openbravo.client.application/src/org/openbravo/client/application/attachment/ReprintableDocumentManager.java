@@ -194,8 +194,13 @@ public class ReprintableDocumentManager {
     long init = System.currentTimeMillis();
     ReprintableDocument document = createReprintableDocument(format, sourceDocument);
 
-    SynchronizationEvent.getInstance()
-        .triggerEvent("API_ReprintableInvoiceCreated", sourceDocument.getId());
+    // Although this code creates a dependency with the Business API module due to the string with
+    // the name of the event triggered and this is not totally clean, with it we do not have to
+    // overcomplicate by adding an abstraction layer with hooks to be implemented by modules.
+    if (document.getInvoice() != null) {
+      SynchronizationEvent.getInstance()
+          .triggerEvent("API_ReprintableInvoiceCreated", sourceDocument.getId());
+    }
 
     ReprintableDocumentAttachHandler handler = getHandler(document);
     try (documentData) {
