@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2020 Openbravo SLU
+ * All portions are Copyright (C) 2014-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -598,8 +598,13 @@ public class CostAdjustmentUtils {
       final Currency currency) {
     final Date date = areBackdatedTrxFixed ? trx.getMovementDate()
         : trx.getTransactionProcessDate();
-    final Costing costing = AverageAlgorithm.getLastCumulatedCosting(date, trx.getProduct(),
-        costDimensions, costorg);
+
+    // Subtracting a second for the date because if you are adjusting the first transaction on a big
+    // batch, it will only take into account the amount adjusted in the first transaction, so it
+    // calculates a bad average cost. This way, it will not take into account this transaction.
+    // More information: https://issues.openbravo.com/view.php?id=55837
+    final Costing costing = AverageAlgorithm.getLastCumulatedCosting(DateUtils.addSeconds(date, -1),
+        trx.getProduct(), costDimensions, costorg);
     return getStockOnTransactionDate(costorg, trx, costDimensions, isManufacturingProduct,
         areBackdatedTrxFixed, currency, costing);
   }
@@ -1026,8 +1031,12 @@ public class CostAdjustmentUtils {
       final Currency currency) {
     final Date date = areBackdatedTrxFixed ? trx.getMovementDate()
         : trx.getTransactionProcessDate();
-    final Costing costing = AverageAlgorithm.getLastCumulatedCosting(date, trx.getProduct(),
-        costDimensions, costorg);
+    // Subtracting a second for the date because if you are adjusting the first transaction on a big
+    // batch, it will only take into account the amount adjusted in the first transaction, so it
+    // calculates a bad average cost. This way, it will not take into account this transaction.
+    // More information: https://issues.openbravo.com/view.php?id=55837
+    final Costing costing = AverageAlgorithm.getLastCumulatedCosting(DateUtils.addSeconds(date, -1),
+        trx.getProduct(), costDimensions, costorg);
     return getValuedStockOnTransactionDate(costorg, trx, costDimensions, isManufacturingProduct,
         areBackdatedTrxFixed, currency, costing);
   }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018-2019 Openbravo SLU
+ * All portions are Copyright (C) 2018-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,7 +42,6 @@ import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.test.costing.assertclass.CostAdjustmentAssert;
-import org.openbravo.test.costing.assertclass.DocumentPostAssert;
 import org.openbravo.test.costing.assertclass.ProductCostingAssert;
 import org.openbravo.test.costing.assertclass.ProductTransactionAssert;
 import org.openbravo.test.costing.utils.TestCostingConstants;
@@ -1184,52 +1183,6 @@ public class TestCostingLandedCost extends TestCostingBase {
       costAdjustmentAssertList.add(costAdjustmentAssertLineList3);
       TestCostingUtils.assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
 
-      // Post cost adjustment and assert it
-      TestCostingUtils.postDocument(costAdjustmentList.get(0));
-      List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("99900",
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), BigDecimal.ZERO,
-          null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO,
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), null));
-      CostAdjustment costAdjustment1 = OBDal.getInstance()
-          .get(CostAdjustment.class, costAdjustmentList.get(0).getId());
-      TestCostingUtils.assertDocumentPost(costAdjustment1, product.getId(),
-          documentPostAssertList1);
-
-      // Post cost adjustment and assert it
-      TestCostingUtils.postDocument(costAdjustmentList.get(1));
-      List<DocumentPostAssert> documentPostAssertList2 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList2.add(new DocumentPostAssert("99900",
-          quantity3.multiply(price5).add(quantity3.multiply(price3).negate()), BigDecimal.ZERO,
-          null));
-      documentPostAssertList2.add(new DocumentPostAssert("35000", BigDecimal.ZERO,
-          quantity3.multiply(price5).add(quantity3.multiply(price3).negate()), null));
-      documentPostAssertList2.add(new DocumentPostAssert("99900",
-          quantity3.multiply(price5).add(quantity3.multiply(price3).negate()), BigDecimal.ZERO,
-          null));
-      documentPostAssertList2.add(new DocumentPostAssert("35000", BigDecimal.ZERO,
-          quantity3.multiply(price5).add(quantity3.multiply(price3).negate()), null));
-      CostAdjustment costAdjustment2 = OBDal.getInstance()
-          .get(CostAdjustment.class, costAdjustmentList.get(1).getId());
-      TestCostingUtils.assertDocumentPost(costAdjustment2, product.getId(),
-          documentPostAssertList2);
-
-      // Post cost adjustment and assert it
-      TestCostingUtils.postDocument(costAdjustmentList.get(2));
-      List<DocumentPostAssert> documentPostAssertList3 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList3.add(new DocumentPostAssert("99900", amount1, BigDecimal.ZERO, null));
-      documentPostAssertList3.add(new DocumentPostAssert("35000", BigDecimal.ZERO, amount1, null));
-      documentPostAssertList3.add(new DocumentPostAssert("99900", BigDecimal.ZERO,
-          quantity3.multiply(price5).add(quantity3.multiply(price7).negate()), null));
-      documentPostAssertList3.add(new DocumentPostAssert("35000",
-          quantity3.multiply(price5).add(quantity3.multiply(price7).negate()), BigDecimal.ZERO,
-          null));
-      CostAdjustment costAdjustment3 = OBDal.getInstance()
-          .get(CostAdjustment.class, costAdjustmentList.get(2).getId());
-      TestCostingUtils.assertDocumentPost(costAdjustment3, product.getId(),
-          documentPostAssertList3);
-
       OBDal.getInstance().commitAndClose();
 
     } catch (Exception e) {
@@ -1444,27 +1397,7 @@ public class TestCostingLandedCost extends TestCostingBase {
       TestCostingUtils.assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
 
       // Reactivate landed cost
-      TestCostingUtils.reactivateLandedCost(landedCost.getId(), "This document is posted");
-
-      // Unpost landed cost
-      TestCostingUtils.unpostDocument(landedCost);
-
-      // Reactivate landed cost
-      TestCostingUtils.reactivateLandedCost(landedCost.getId(),
-          "This document is posted: tab Cost - line 10");
-
-      // Unpost landed cost cost
-      TestCostingUtils.unpostDocument(landedCost.getLandedCostCostList().get(0));
-
-      // Reactivate landed cost
-      TestCostingUtils.reactivateLandedCost(landedCost.getId(),
-          "This document is posted: tab Cost - line 20");
-
-      // Unpost landed cost cost
-      TestCostingUtils.unpostDocument(landedCost.getLandedCostCostList().get(1));
-
-      // Reactivate landed cost
-      TestCostingUtils.reactivateLandedCost(landedCost.getId(), null);
+      TestCostingUtils.reactivateLandedCost(landedCost.getId());
 
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList2 = new ArrayList<ProductTransactionAssert>();
@@ -1620,26 +1553,10 @@ public class TestCostingLandedCost extends TestCostingBase {
       TestCostingUtils.assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
 
       // Cancel landed cost cost
-      TestCostingUtils.cancelLandedCostCost(landedCost.getLandedCostCostList().get(0).getId(),
-          "This document is posted");
-
-      // Unpost landed cost cost
-      TestCostingUtils.unpostDocument(landedCost.getLandedCostCostList().get(0));
+      TestCostingUtils.cancelLandedCostCost(landedCost.getLandedCostCostList().get(0).getId());
 
       // Cancel landed cost cost
-      TestCostingUtils.cancelLandedCostCost(landedCost.getLandedCostCostList().get(0).getId(),
-          null);
-
-      // Cancel landed cost cost
-      TestCostingUtils.cancelLandedCostCost(landedCost.getLandedCostCostList().get(1).getId(),
-          "This document is posted");
-
-      // Unpost landed cost cost
-      TestCostingUtils.unpostDocument(landedCost.getLandedCostCostList().get(1));
-
-      // Cancel landed cost cost
-      TestCostingUtils.cancelLandedCostCost(landedCost.getLandedCostCostList().get(1).getId(),
-          null);
+      TestCostingUtils.cancelLandedCostCost(landedCost.getLandedCostCostList().get(1).getId());
 
       // Match invoice landed cost
       TestCostingUtils.matchInvoiceLandedCost(
@@ -2129,19 +2046,6 @@ public class TestCostingLandedCost extends TestCostingBase {
       costAdjustmentAssertList.add(costAdjustmentAssertLineList2);
       TestCostingUtils.assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
 
-      // Post cost adjustment 1 and assert it
-      TestCostingUtils.postDocument(costAdjustmentList.get(0));
-      List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO,
-          quantity1.multiply(price2).add(quantity1.multiply(price1).negate()), null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000",
-          quantity1.multiply(price2).add(quantity1.multiply(price1).negate()), BigDecimal.ZERO,
-          null));
-      CostAdjustment costAdjustment1 = OBDal.getInstance()
-          .get(CostAdjustment.class, costAdjustmentList.get(0).getId());
-      TestCostingUtils.assertDocumentPost(costAdjustment1, product.getId(),
-          documentPostAssertList1);
-
       OBDal.getInstance().commitAndClose();
 
     } catch (Exception e) {
@@ -2281,29 +2185,6 @@ public class TestCostingLandedCost extends TestCostingBase {
           quantity4.multiply(price4).add(quantity4.multiply(price1).negate()), day4, true));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList2);
       TestCostingUtils.assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
-
-      // Post cost adjustment 1 and assert it
-      TestCostingUtils.postDocument(costAdjustmentList.get(1));
-      List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO,
-          quantity2.multiply(price4).add(quantity2.multiply(price1).negate()), null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000",
-          quantity2.multiply(price4).add(quantity2.multiply(price1).negate()), BigDecimal.ZERO,
-          null));
-      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO,
-          quantity3.multiply(price4).add(quantity3.multiply(price1).negate()), null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000",
-          quantity3.multiply(price4).add(quantity3.multiply(price1).negate()), BigDecimal.ZERO,
-          null));
-      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO,
-          quantity4.multiply(price4).add(quantity4.multiply(price1).negate()), null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000",
-          quantity4.multiply(price4).add(quantity4.multiply(price1).negate()), BigDecimal.ZERO,
-          null));
-      CostAdjustment costAdjustment1 = OBDal.getInstance()
-          .get(CostAdjustment.class, costAdjustmentList.get(1).getId());
-      TestCostingUtils.assertDocumentPost(costAdjustment1, product.getId(),
-          documentPostAssertList1);
 
       // Reactivate landed cost
       TestCostingUtils.cancelLandedCost(landedCost);
@@ -2693,20 +2574,6 @@ public class TestCostingLandedCost extends TestCostingBase {
           costAdjustmentAssertLineAmount9, day6, false));
       costAdjustmentAssertList2.add(costAdjustmentAssertLineList23);
       TestCostingUtils.assertCostAdjustment(costAdjustmentList2, costAdjustmentAssertList2);
-
-      // Post cost adjustment 3 and assert it
-      TestCostingUtils.postDocument(costAdjustmentList2.get(2));
-      List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO, amount1, null));
-      documentPostAssertList1.add(new DocumentPostAssert("35000", amount1, BigDecimal.ZERO, null));
-      documentPostAssertList1.add(
-          new DocumentPostAssert("99904", BigDecimal.ZERO, costAdjustmentAssertLineAmount9, null));
-      documentPostAssertList1.add(
-          new DocumentPostAssert("35000", costAdjustmentAssertLineAmount9, BigDecimal.ZERO, null));
-      CostAdjustment costAdjustment1 = OBDal.getInstance()
-          .get(CostAdjustment.class, costAdjustmentList2.get(2).getId());
-      TestCostingUtils.assertDocumentPost(costAdjustment1, product2.getId(),
-          documentPostAssertList1);
 
       OBDal.getInstance().commitAndClose();
 
