@@ -75,9 +75,14 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
   @Override
   public AuthenticatedUser doExternalAuthentication(HttpServletRequest request,
       HttpServletResponse response) {
-    JSONObject requestParams = getRequestParameters(request);
-
     try {
+
+      JSONObject requestParams = getRequestParameters(request);
+      if (requestParams.has("id_token")) {
+        return handleAuthenticatedRequest(requestParams.toString(),
+            requestParams.getString("state"));
+      }
+
       String code = requestParams.getString("code");
       String state = requestParams.getString("state");
       Boolean validateState = requestParams.getBoolean("validateState");
@@ -137,10 +142,21 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
 
   /**
    * Depending on the request received the request parameters will be obtained in diferent ways. Up
-   * to the moment they can be found in the request body in a property called credentials or in the
+   * to the moment they can be found in the request body in a property called credential or in the
    * request as parameters
    * 
-   * Ther parameters that will be stored in one of the mentioned ways will be the following.
+   * In the first place will be checked if the token id has been received. In that case only the
+   * token id and the state will be found on request.
+   * 
+   * <ul>
+   * <li>tokenId (mandatory): token id obtained while exchanging communication with the
+   * authorization provider
+   * <li>state (mandatory): state parameter used during the communication, it will contain the
+   * provider configuration id
+   * </ul>
+   * 
+   * Otherwise the parameters that will be stored in one of the mentioned ways will be the following
+   * ones.
    * 
    * <ul>
    * <li>code (mandatory): will containe the authorization code returned on redirection by the
@@ -163,18 +179,24 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
       String body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
 
       Boolean validateState = true;
-      JSONObject credentials = !body.isEmpty() ? new JSONObject(body).getJSONObject("credential")
+      JSONObject credential = !body.isEmpty() ? new JSONObject(body).getJSONObject("credential")
           : null;
-      if (credentials != null) {
 
-        if (credentials.has("validateState")) {
-          validateState = credentials.getBoolean("validateState");
+      if (credential != null && credential.has("tokenId")) {
+
+        params.put("id_token", credential.get("tokenId"));
+        params.put("state", authStateHandler.addNewConfiguration(credential.getString("state")));
+
+      } else if (credential != null) {
+
+        if (credential.has("validateState")) {
+          validateState = credential.getBoolean("validateState");
         }
 
-        params.put("code", credentials.getString("code"));
-        params.put("state", authStateHandler.addNewConfiguration(credentials.getString("state")));
-        params.put("validateState", credentials.getBoolean("validateState"));
-        params.put("redirectUri", credentials.getString("redirectUri"));
+        params.put("code", credential.getString("code"));
+        params.put("state", authStateHandler.addNewConfiguration(credential.getString("state")));
+        params.put("validateState", credential.getBoolean("validateState"));
+        params.put("redirectUri", credential.getString("redirectUri"));
       } else {
 
         if (request.getParameter("validateState") != null) {
@@ -189,6 +211,31 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
       return params;
     } catch (Exception ex) {
       throw new AuthenticationException(buildError());
+    }
+  }
+
+  /**
+   * Based on the received token id value and the configuration id obtained from the state the
+   * authenticated user will be obtained
+   * 
+   * @param tokenID
+   *          - json object containing the token id data
+   * @param state
+   *          - contains the authorization provider configuration id
+   * @return the authenticated user data
+   */
+  private AuthenticatedUser handleAuthenticatedRequest(String tokenID, String state) {
+    try {
+      OBContext.setAdminMode(true);
+      OAuth2AuthenticationProvider config = authStateHandler
+          .getConfiguration(OAuth2AuthenticationProvider.class, state);
+
+      return getUser(tokenID, config);
+    } catch (JSONException | OAuth2TokenVerificationException ex) {
+      log.error("Error handling the token id obtained in the request", ex);
+      throw new AuthenticationException(buildError());
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 
