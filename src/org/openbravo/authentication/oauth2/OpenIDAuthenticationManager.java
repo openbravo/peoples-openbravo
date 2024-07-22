@@ -27,6 +27,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -40,6 +41,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.authentication.AuthenticatedUser;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationType;
@@ -72,12 +74,68 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
   @Inject
   private HttpClientManager httpClientManager;
 
+  /**
+   * Login authentication will be performed by calling this method
+   */
   @Override
   public AuthenticatedUser doExternalAuthentication(HttpServletRequest request,
       HttpServletResponse response) {
-    try {
 
-      JSONObject requestParams = getRequestParameters(request);
+    try {
+      // Extract body content from the request
+      String body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+
+      // Try to extract credential object from the request. In case it is present the parameters
+      // will be taken from it, otherwise, it will be taken from the servelet request
+      JSONObject credential = !body.isEmpty() ? new JSONObject(body).getJSONObject("credential")
+          : null;
+
+      JSONObject requestParams;
+
+      if (credential != null) {
+        requestParams = getParametersFromJsonObject(credential);
+      } else {
+        requestParams = getParametersFromServeletRequest(request);
+      }
+
+      Tuple user = doOpenIdAuthentication(requestParams);
+      return new AuthenticatedUser((String) user.get("id"), (String) user.get("userName"));
+
+    } catch (IOException | JSONException e) {
+      throw new AuthenticationException(buildError());
+    }
+  }
+
+  @Override
+  protected void doLogout(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+    throw new UnsupportedOperationException("doLogout is not implemented");
+  }
+
+  /**
+   * Approvals authentication will be executed by calling this method
+   */
+  @Override
+  public Optional<User> authenticate(String authProvider, JSONObject credential)
+      throws JSONException {
+
+    JSONObject requestParams = getParametersFromJsonObject(credential);
+
+    Tuple userData = doOpenIdAuthentication(requestParams);
+
+    User user = (User) OBDal.getInstance()
+        .createCriteria(User.class)
+        .add(Restrictions.eq(User.PROPERTY_USERNAME, (String) userData.get("userName")))
+        .setFilterOnActive(true)
+        .setFilterOnReadableClients(false)
+        .setFilterOnReadableOrganization(false)
+        .uniqueResult();
+
+    return Optional.of(user);
+  }
+
+  private Tuple doOpenIdAuthentication(JSONObject requestParams) {
+    try {
       if (requestParams.has("id_token")) {
         return handleAuthenticatedRequest(requestParams.toString(),
             requestParams.getString("state"));
@@ -101,19 +159,12 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
     }
   }
 
-  @Override
-  protected void doLogout(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-    throw new UnsupportedOperationException("doLogout is not implemented");
-  }
-
   private boolean isValidAuthorizationResponse(String code, String state) {
     log.trace("Authorization response parameters: code = {}, state = {}", code, state);
     return code != null && authStateHandler.isValidKey(state);
   }
 
-  private AuthenticatedUser handleAuthorizationResponse(String code, String state,
-      String redirectUri) {
+  private Tuple handleAuthorizationResponse(String code, String state, String redirectUri) {
     try {
       OBContext.setAdminMode(true);
       OAuth2AuthenticationProvider config = authStateHandler
@@ -141,77 +192,48 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
   }
 
   /**
-   * Depending on the request received the request parameters will be obtained in diferent ways. Up
-   * to the moment they can be found in the request body in a property called credential or in the
-   * request as parameters
+   * Process the received request params to be transformed into a legible object
    * 
-   * In the first place will be checked if the token id has been received. In that case only the
-   * token id and the state will be found on request.
-   * 
-   * <ul>
-   * <li>tokenId (mandatory): token id obtained while exchanging communication with the
-   * authorization provider
-   * <li>state (mandatory): state parameter used during the communication, it will contain the
-   * provider configuration id
-   * </ul>
-   * 
-   * Otherwise the parameters that will be stored in one of the mentioned ways will be the following
-   * ones.
-   * 
-   * <ul>
-   * <li>code (mandatory): will containe the authorization code returned on redirection by the
-   * authorization server
-   * <li>state (mandatory): state parameter used during the communication, it will contain the
-   * provider configuration id
-   * <li>validateState (no mandatory): will inform if it is required to validate the state or it has
-   * alredy been done, by default it will be validated
-   * <li>redirectUri (mandatory): contain the redirection url
-   * </ul>
-   * 
-   * @param request
-   *          - authentication request
-   * @return json object containing all the properties found in the request
+   * @param params
+   *          object with the parameters received in the request
+   * @return processed parameters
    */
-  private JSONObject getRequestParameters(HttpServletRequest request) {
-    try {
-      JSONObject params = new JSONObject();
+  private JSONObject getParametersFromJsonObject(JSONObject params) throws JSONException {
+    JSONObject result = new JSONObject();
 
-      String body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+    if (params.has("tokenId")) {
 
-      Boolean validateState = true;
-      JSONObject credential = !body.isEmpty() ? new JSONObject(body).getJSONObject("credential")
-          : null;
+      result.put("id_token", params.get("tokenId"));
+      result.put("state", authStateHandler.addNewConfiguration(params.getString("state")));
 
-      if (credential != null && credential.has("tokenId")) {
+    } else {
 
-        params.put("id_token", credential.get("tokenId"));
-        params.put("state", authStateHandler.addNewConfiguration(credential.getString("state")));
-
-      } else if (credential != null) {
-
-        if (credential.has("validateState")) {
-          validateState = credential.getBoolean("validateState");
-        }
-
-        params.put("code", credential.getString("code"));
-        params.put("state", authStateHandler.addNewConfiguration(credential.getString("state")));
-        params.put("validateState", credential.getBoolean("validateState"));
-        params.put("redirectUri", credential.getString("redirectUri"));
-      } else {
-
-        if (request.getParameter("validateState") != null) {
-          validateState = Boolean.valueOf(request.getParameter("validateState"));
-        }
-
-        params.put("code", request.getParameter("code"));
-        params.put("state", request.getParameter("state"));
-        params.put("validateState", validateState);
-        params.put("redirectUri", getRedirectURL(request));
-      }
-      return params;
-    } catch (Exception ex) {
-      throw new AuthenticationException(buildError());
+      result.put("code", params.getString("code"));
+      result.put("state", authStateHandler.addNewConfiguration(params.getString("state")));
+      result.put("validateState", params.getBoolean("validateState"));
+      result.put("redirectUri", params.getString("redirectUri"));
     }
+
+    return result;
+  }
+
+  /**
+   * Process the received paramters in the servelet request to be transformed into a legible object
+   * 
+   * @param params
+   *          object with the parameters received in the request
+   * @return processed parameters
+   */
+  private JSONObject getParametersFromServeletRequest(HttpServletRequest request)
+      throws JSONException {
+    JSONObject result = new JSONObject();
+
+    result.put("code", request.getParameter("code"));
+    result.put("state", request.getParameter("state"));
+    result.put("validateState", Boolean.valueOf(request.getParameter("validateState")));
+    result.put("redirectUri", getRedirectURL(request));
+
+    return result;
   }
 
   /**
@@ -224,7 +246,7 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
    *          - contains the authorization provider configuration id
    * @return the authenticated user data
    */
-  private AuthenticatedUser handleAuthenticatedRequest(String tokenID, String state) {
+  private Tuple handleAuthenticatedRequest(String tokenID, String state) {
     try {
       OBContext.setAdminMode(true);
       OAuth2AuthenticationProvider config = authStateHandler
@@ -287,8 +309,7 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
    * @throws AuthenticationException
    *           If there is no user linked to the retrieved email
    */
-  protected AuthenticatedUser getUser(String responseData,
-      OAuth2AuthenticationProvider configuration)
+  protected Tuple getUser(String responseData, OAuth2AuthenticationProvider configuration)
       throws JSONException, OAuth2TokenVerificationException {
     JSONObject tokenData = new JSONObject(responseData);
     String idToken = tokenData.getString("id_token");
@@ -315,7 +336,8 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
       throw new AuthenticationException(buildError("UNKNOWN_EMAIL_AUTHENTICATION_FAILURE"));
     }
 
-    return new AuthenticatedUser((String) user.get("id"), (String) user.get("userName"));
+    return user;
+    // return new AuthenticatedUser((String) user.get("id"), (String) user.get("userName"));
   }
 
   private OBError buildError() {
