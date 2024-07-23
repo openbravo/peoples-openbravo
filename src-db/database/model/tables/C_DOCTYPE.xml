@@ -129,6 +129,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_DOCTYPESUBSINVOICE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_SEQUENCE" name="AD_SEQUENCE_DOCTYPEDOC">
         <reference local="DOCNOSEQUENCE_ID" foreign="AD_SEQUENCE_ID"/>
       </foreign-key>
@@ -152,6 +156,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_C_DOCTYPESHIPMENT">
         <reference local="C_DOCTYPESHIPMENT_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_C_DTSUBSINV_ID_FKEY">
+        <reference local="C_DOCTYPESUBSINVOICE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="GL_CATEGORY" name="C_DOCTYPE_GL_CATEGORY">
         <reference local="GL_CATEGORY_ID" foreign="GL_CATEGORY_ID"/>
