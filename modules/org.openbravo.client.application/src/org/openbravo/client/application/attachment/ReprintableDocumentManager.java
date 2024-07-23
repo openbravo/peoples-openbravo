@@ -314,7 +314,26 @@ public class ReprintableDocumentManager {
     return document.toPath();
   }
 
-  private void download(ReprintableDocument reprintableDocument, OutputStream outputStream)
+  /**
+   * Retrieves the data of a ReprintableDocument linked to the provided document. This method is
+   * used when there is a need to obtain the document before opening the output stream
+   *
+   * @param reprintableDocument
+   *          The reprintable document used as source document
+   *
+   * @param outputStream
+   *          outputStream where document data is provided. Code invoking this method is also
+   *          responsible of closing it.
+   *
+   * @throws OBSecurityException
+   *           if the read access to the source document is not granted in the current context
+   *           because in such case is not allowed to access to the ReprintableDocument linked to
+   *           the source document.
+   * @throws OBException
+   *           if it is not possible to find a handler for the attachment method defined in the
+   *           ReprintableDocument attachment configuration
+   */
+  public void download(ReprintableDocument reprintableDocument, OutputStream outputStream)
       throws IOException {
     long init = System.currentTimeMillis();
     ReprintableDocumentAttachHandler handler = getHandler(reprintableDocument);
