@@ -337,7 +337,6 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
     }
 
     return user;
-    // return new AuthenticatedUser((String) user.get("id"), (String) user.get("userName"));
   }
 
   private OBError buildError() {
