@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TABLE C_SUBSINVOICE_SIMPINVOICES">
-    <table name="C_SUBSINVOICE_SIMPINVOICES" primaryKey="C_SUBSINV_SIMPINVS_PK_C_SUBSINV_SIMPINVS_ID">
+    <table name="C_SUBSINVOICE_SIMPINVOICES" primaryKey="C_SUBSINVOICE_SIMPINVOICES_KEY">
       <column name="C_SUBSINVOICE_SIMPINVOICES_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -57,5 +57,8 @@
       <foreign-key foreignTable="C_INVOICE" name="C_SI_SIMPIS_S_FK_C_INVOICE_ID">
         <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
       </foreign-key>
+      <index name="C_SUBSI_SIMPINVS_C_SUBSINV_IDX" unique="false">
+        <index-column name="C_SUBSTITUTIVEINVOICE_ID"/>
+      </index>
     </table>
   </database>
