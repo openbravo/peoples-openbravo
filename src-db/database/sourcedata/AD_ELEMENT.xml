@@ -38641,10 +38641,12 @@ For details - http://wiki.openbravo.com/wiki/Role#Permissions_Inheritance]]></HE
 <!--DF569A2CF0BA47A58E8B04DB70B806C3-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--DF569A2CF0BA47A58E8B04DB70B806C3-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--DF569A2CF0BA47A58E8B04DB70B806C3-->  <COLUMNNAME><![CDATA[Auth_Flow]]></COLUMNNAME>
-<!--DF569A2CF0BA47A58E8B04DB70B806C3-->  <NAME><![CDATA[Authentication Flow]]></NAME>
-<!--DF569A2CF0BA47A58E8B04DB70B806C3-->  <PRINTNAME><![CDATA[Authentication Flow]]></PRINTNAME>
-<!--DF569A2CF0BA47A58E8B04DB70B806C3-->  <DESCRIPTION><![CDATA[Selector used to define the protocol to be applied in oauth2 with openid]]></DESCRIPTION>
-<!--DF569A2CF0BA47A58E8B04DB70B806C3-->  <HELP><![CDATA[Selector used to define the protocol to be applied in oauth2 with openid]]></HELP>
+<!--DF569A2CF0BA47A58E8B04DB70B806C3-->  <NAME><![CDATA[Authorization Flow Protocol]]></NAME>
+<!--DF569A2CF0BA47A58E8B04DB70B806C3-->  <PRINTNAME><![CDATA[Authorization Flow Protocol]]></PRINTNAME>
+<!--DF569A2CF0BA47A58E8B04DB70B806C3-->  <DESCRIPTION><![CDATA[Selector used to define the protocol used to make the communication exchage with the openid authorization provider]]></DESCRIPTION>
+<!--DF569A2CF0BA47A58E8B04DB70B806C3-->  <HELP><![CDATA[Selector used to define the protocol used to make the communication exchage with the openid authorization provider. The available values will be the following ones.
+- Authorization Code
+- PKCE]]></HELP>
 <!--DF569A2CF0BA47A58E8B04DB70B806C3-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--DF569A2CF0BA47A58E8B04DB70B806C3-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--DF569A2CF0BA47A58E8B04DB70B806C3--></AD_ELEMENT>
