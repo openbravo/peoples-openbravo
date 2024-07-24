@@ -141,9 +141,6 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_CALENDAROWNER_ORG">
         <reference local="AD_CALENDAROWNER_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="AD_ORG_EM_OBPOS_SITEMP_ID_FKEY">
-        <reference local="EM_OBPOS_SUBSINVTEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_EXTBP_CONFIG" name="AD_ORG_EXTBPCONF_FK">
         <reference local="C_EXTBP_CONFIG_ID" foreign="C_EXTBP_CONFIG_ID"/>
       </foreign-key>
