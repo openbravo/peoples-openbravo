@@ -217,7 +217,7 @@ public class OBProvider {
    * @return an instance of the service
    * @throws OBProviderException
    */
-  public Object getSpecific(String path) {
+  public Object getMostSpecificService(String path) {
 
     String localPath = path;
     if (localPath.startsWith("/")) {

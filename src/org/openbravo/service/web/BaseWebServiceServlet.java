@@ -170,7 +170,7 @@ public class BaseWebServiceServlet extends HttpServlet {
   }
 
   protected WebService getWebService(HttpServletRequest request) {
-    final Object o = OBProvider.getInstance().getSpecific(request.getPathInfo());
+    final Object o = OBProvider.getInstance().getMostSpecificService(request.getPathInfo());
     if (o instanceof WebService) {
       return (WebService) o;
     }

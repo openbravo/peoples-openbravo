@@ -37,7 +37,8 @@ public class OBProviderTest {
             OBClassLoader.getInstance().loadClass("org.openbravo.api.service.ApiExportWebService"),
             true);
 
-    Object o = OBProvider.getInstance().getSpecific("org.openbravo.api.ExportService/User");
+    Object o = OBProvider.getInstance()
+        .getMostSpecificService("org.openbravo.api.ExportService/User");
     assertThat(o, notNullValue());
 
   }
@@ -50,7 +51,7 @@ public class OBProviderTest {
             .loadClass("org.openbravo.api.service.ReprintableDocumentWebService"), true);
 
     Object o = OBProvider.getInstance()
-        .getSpecific("/org.openbravo.api.ExportService/ReprintableReport/invoice/1234/");
+        .getMostSpecificService("/org.openbravo.api.ExportService/ReprintableReport/invoice/1234/");
     assertThat(o, notNullValue());
 
   }
@@ -70,7 +71,7 @@ public class OBProviderTest {
     thrown.expectMessage(
         containsString("No registration for name org.openbravo.api.ExportService1/User"));
 
-    OBProvider.getInstance().getSpecific("org.openbravo.api.ExportService1/User");
+    OBProvider.getInstance().getMostSpecificService("org.openbravo.api.ExportService1/User");
   }
 
 }
