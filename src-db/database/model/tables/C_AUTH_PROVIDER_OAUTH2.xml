@@ -83,5 +83,6 @@
         <whereClause><![CDATA[ISACTIVE='Y']]></whereClause>
       </index>
       <check name="C_AUTH_PROVIDER_OAUTH2_ACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_AUTH_PROVIDER_OAUTH2_PKCE"><![CDATA[CLIENT_SECRET IS NOT NULL OR AUTH_FLOW = 'PKCE']]></check>
     </table>
   </database>
