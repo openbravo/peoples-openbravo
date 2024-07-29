@@ -305,6 +305,51 @@ public class ReprintableDocumentManager {
     return reprintableDocument;
   }
 
+  /**
+   * Retrieves the data of a ReprintableDocument linked to the provided document. This method is
+   * used when it is already known if the document exists and it is desired to transform its format
+   *
+   * @param sourceDocument
+   *          The document used as source data for the ReprintableDocument
+   * @param reprintableDocument
+   *          The reprintable document used as source document
+   * @param outputStream
+   *          outputStream where document data is provided. Code invoking this method is also
+   *          responsible of closing it.
+   * @param format
+   *          The format to which the document is transformed
+   *
+   * @throws OBSecurityException
+   *           if the read access to the source document is not granted in the current context
+   *           because in such case is not allowed to access to the ReprintableDocument linked to
+   *           the source document.
+   * @throws OBException
+   *           if it is not possible to find a handler for the attachment method defined in the
+   *           ReprintableDocument attachment configuration
+   */
+  public ReprintableDocument download(ReprintableSourceDocument<?> sourceDocument,
+      ReprintableDocument reprintableDocument, OutputStream outputStream, Format format)
+      throws IOException, DocumentNotFoundException, TransformerNotFoundException {
+    Optional<ReprintableDocumentTransformer> transformer = getReprintableDocumentTransformer(
+        format);
+    if (transformer.isEmpty()) {
+      throw new TransformerNotFoundException(
+          "No ReprintableDocumentTransformer instance found to transform into " + format.name()
+              + " format");
+    }
+    Path transformedDocument = null;
+    Path originalDocument = null;
+    try {
+      originalDocument = download(reprintableDocument);
+      transformedDocument = transformer.get().transform(sourceDocument, originalDocument);
+      Files.copy(transformedDocument, outputStream);
+    } finally {
+      delete(originalDocument);
+      delete(transformedDocument);
+    }
+    return reprintableDocument;
+  }
+
   private Path download(ReprintableDocument reprintableDocument) throws IOException {
     File document = File.createTempFile("obrd-",
         "." + reprintableDocument.getFormat().toLowerCase());
