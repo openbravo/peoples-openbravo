@@ -209,8 +209,14 @@ public class OBProvider {
   }
 
   /**
-   * Returns an instance of the more specific requested service. If no registration is found an
-   * OBProviderException is thrown
+   * Returns an instance of the most specific requested service based on the provided path. The
+   * method checks for a registration for each part of the path. It starts from the end and removes
+   * the last element of the path in each iteration. For example, given the path:
+   * /org.openbravo.api.ExportService/ReprintableReport/invoice/1234, it will check for
+   * registrations in the following order:
+   * /org.openbravo.api.ExportService/ReprintableReport/invoice/1234,
+   * /org.openbravo.api.ExportService/ReprintableReport/invoice/,
+   * /org.openbravo.api.ExportService/ReprintableReport/
    *
    * @param path
    *          the complete path of the request
