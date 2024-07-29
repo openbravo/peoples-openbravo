@@ -93,22 +93,6 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <column name="ADDITIONALRESPONSE" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="ERRORCONDITION" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="FISCALIZATION_RESULT" primaryKey="false" required="false" type="CLOB" size="4000" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="SIGNATURE" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="EINVOICE_STATUS" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
