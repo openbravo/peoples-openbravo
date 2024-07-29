@@ -76,8 +76,7 @@ public abstract class ReprintableSourceDocument<D extends BaseOBObject & ClientE
    * @return the source document with the information of the document referenced by the given
    *         parameters
    */
-  public static ReprintableSourceDocument<?> newSourceDocument(
-      ReprintableDocument reprintableDocument) {
+  static ReprintableSourceDocument<?> newSourceDocument(ReprintableDocument reprintableDocument) {
     if (reprintableDocument.getInvoice() != null) {
       return newSourceDocument(reprintableDocument.getId(), DocumentType.INVOICE);
     }
