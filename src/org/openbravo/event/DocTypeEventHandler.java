@@ -70,7 +70,7 @@ class DocTypeEventHandler extends EntityPersistenceEventObserver {
 
   private void checkDocumentArSubType(DocumentType docType) {
     if (docType.getDocumentCategory().equals("ARI")
-        && (docType.getDocSubTypeInvoice() == null || docType.getDocSubTypeInvoice().equals(""))) {
+        && (docType.getInvoiceType() == null || docType.getInvoiceType().equals(""))) {
       String language = OBContext.getOBContext().getLanguage().getLanguage();
       ConnectionProvider conn = new DalConnectionProvider(false);
       throw new OBException(Utility.messageBD(conn, "ArSubTypeNotDefined", language));
