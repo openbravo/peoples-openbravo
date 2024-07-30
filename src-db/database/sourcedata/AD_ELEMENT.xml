@@ -22884,7 +22884,7 @@ If FALSE, no call will be made to the CRM Connector to get the customer informat
 <!--2588AEB5720043A28DD44A0154F1BA6B-->  <NAME><![CDATA[Logout URL]]></NAME>
 <!--2588AEB5720043A28DD44A0154F1BA6B-->  <PRINTNAME><![CDATA[Logout URL]]></PRINTNAME>
 <!--2588AEB5720043A28DD44A0154F1BA6B-->  <DESCRIPTION><![CDATA[The URL to do logout on OAuth 2.0 authorization provider]]></DESCRIPTION>
-<!--2588AEB5720043A28DD44A0154F1BA6B-->  <HELP><![CDATA[The URL to do logout on OAuth 2.0 authorization provider. This field will be used when the authorization provider does not force the user to do login each time the user tries to access the application with the prompt=login property in request.]]></HELP>
+<!--2588AEB5720043A28DD44A0154F1BA6B-->  <HELP><![CDATA[The URL to do logout on the OpenID authentication provider. This field is optional and should only be populated when the authorization provider does not force the user to enter the credentials, as it would be expected, when the prompt=login property is used after a previous successful authentication. In such case the URL provided in this field will be used to force a logout by the authentication provider before the next authentication attempt.]]></HELP>
 <!--2588AEB5720043A28DD44A0154F1BA6B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2588AEB5720043A28DD44A0154F1BA6B-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--2588AEB5720043A28DD44A0154F1BA6B--></AD_ELEMENT>
