@@ -58,8 +58,8 @@
         <onCreateDefault/>
       </column>
       <column name="AUTH_FLOW" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
-        <default><![CDATA[AUTH CODE]]></default>
-        <onCreateDefault><![CDATA['AUTH CODE']]></onCreateDefault>
+        <default><![CDATA[AUTH_CODE]]></default>
+        <onCreateDefault><![CDATA['AUTH_CODE']]></onCreateDefault>
       </column>
       <column name="LOGOUT_URL" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
         <default/>
