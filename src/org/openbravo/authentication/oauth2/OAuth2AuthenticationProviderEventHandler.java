@@ -105,7 +105,7 @@ class OAuth2AuthenticationProviderEventHandler extends EntityPersistenceEventObs
   private void checkSupportedAuthenticationFlow(OAuth2AuthenticationProvider oAuth2Provider) {
     AuthenticationProvider authProvider = oAuth2Provider.getAuthProvider();
     if (OAuth2SignInProvider.BACKOFFICE_APP.equals(authProvider.getApplication().getId())
-        && oAuth2Provider.getAuthFlow() != null) {
+        && oAuth2Provider.getAuthFlow().equals("PKCE")) {
       throw new OBException(OBMessageUtils.messageBD("BackOfficeAppUnsupportedAuthFlow"));
     }
   }
