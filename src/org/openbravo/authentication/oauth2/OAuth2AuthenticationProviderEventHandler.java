@@ -48,8 +48,6 @@ class OAuth2AuthenticationProviderEventHandler extends EntityPersistenceEventObs
   private static final Entity[] ENTITIES = {
       ModelProvider.getInstance().getEntity(OAuth2AuthenticationProvider.ENTITY_NAME) };
 
-  private static final String POS_APP = "74B4F731707542C6A646DF49607AFBE4";
-
   @Inject
   private OpenIDTokenDataProvider openIDTokenDataProvider;
 
