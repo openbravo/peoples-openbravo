@@ -281,63 +281,47 @@ public class ReprintableDocumentManager {
       OutputStream outputStream, Format format)
       throws IOException, DocumentNotFoundException, TransformerNotFoundException {
     ReprintableDocument reprintableDocument = findReprintableDocument(sourceDocument);
-    if (reprintableDocument.getFormat().equalsIgnoreCase(format.name())) {
-      download(reprintableDocument, outputStream);
-    } else {
-      Optional<ReprintableDocumentTransformer> transformer = getReprintableDocumentTransformer(
-          format);
-      if (transformer.isEmpty()) {
-        throw new TransformerNotFoundException(
-            "No ReprintableDocumentTransformer instance found to transform into " + format.name()
-                + " format");
-      }
-      Path transformedDocument = null;
-      Path originalDocument = null;
-      try {
-        originalDocument = download(reprintableDocument);
-        transformedDocument = transformer.get().transform(sourceDocument, originalDocument);
-        Files.copy(transformedDocument, outputStream);
-      } finally {
-        delete(originalDocument);
-        delete(transformedDocument);
-      }
-    }
-    return reprintableDocument;
+    return download(reprintableDocument, outputStream, format);
   }
 
   /**
-   * Retrieves the data of a ReprintableDocument linked to the provided document in the specified
-   * format. If the format of the document linked to the given source document is different from the
-   * given format, then the document is tried to be transformed using a
-   * {@link ReprintableDocumentTransformer}. Otherwise the document is directly retrieved with its
-   * actual format.
+   * Retrieves the data of a given ReprintableDocument in the specified format. If the format of the
+   * provided ReprintableDocument is different from the given format, the method attempts to
+   * transform the document using a {@link ReprintableDocumentTransformer}. If the formats are the
+   * same, the document is directly retrieved in its actual format.
    *
    * @param reprintableDocument
-   *          The document to download or to transform in case it is needed
+   *          The ReprintableDocument to download or to transform if needed
    * @param outputStream
-   *          outputStream where document data is provided. Code invoking this method is also
-   *          responsible of closing it.
+   *          The outputStream where the document data is written. The code invoking this method is
+   *          also responsible for closing it.
    * @param format
-   *          the format of the document to be downloaded
+   *          The format in which the document is to be downloaded
    *
-   * @return the ReprintableDocument linked to the source document
+   * @return The provided ReprintableDocument
    *
    * @throws DocumentNotFoundException
-   *           if it is not possible to find the ReprintableDocument linked to the provided source
+   *           If it is not possible to find the ReprintableDocument linked to the provided source
    *           document
    * @throws OBSecurityException
-   *           if the read access to the source document is not granted in the current context
-   *           because in such case is not allowed to access to the ReprintableDocument linked to
+   *           If the read access to the source document is not granted in the current context
+   *           because in such case it is not allowed to access the ReprintableDocument linked to
    *           the source document.
    * @throws OBException
-   *           if it is not possible to find a handler for the attachment method defined in the
+   *           If it is not possible to find a handler for the attachment method defined in the
    *           ReprintableDocument attachment configuration or if the document transformation fails
    * @throws TransformerNotFoundException
-   *           if the document needs to be transformed and there is no
-   *           {@link ReprintableDocumentTransformer} instance that can be used to do the
+   *           If the document needs to be transformed and there is no
+   *           {@link ReprintableDocumentTransformer} instance that can be used to perform the
    *           transformation into the given format
    */
   public ReprintableDocument download(ReprintableDocument reprintableDocument,
+      OutputStream outputStream, Format format)
+      throws IOException, DocumentNotFoundException, TransformerNotFoundException {
+    return processDownload(reprintableDocument, outputStream, format);
+  }
+
+  private ReprintableDocument processDownload(ReprintableDocument reprintableDocument,
       OutputStream outputStream, Format format)
       throws IOException, DocumentNotFoundException, TransformerNotFoundException {
     if (reprintableDocument.getFormat().equalsIgnoreCase(format.name())) {
@@ -354,7 +338,6 @@ public class ReprintableDocumentManager {
       Path originalDocument = null;
       try {
         originalDocument = download(reprintableDocument);
-
         transformedDocument = transformer.get()
             .transform(ReprintableSourceDocument.newSourceDocument(reprintableDocument),
                 originalDocument);
