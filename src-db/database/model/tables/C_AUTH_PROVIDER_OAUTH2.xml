@@ -41,7 +41,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CLIENT_SECRET" primaryKey="false" required="true" type="VARCHAR" size="255" autoIncrement="false">
+      <column name="CLIENT_SECRET" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -57,9 +57,9 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AUTH_FLOW" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
+      <column name="AUTH_FLOW" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[AUTH CODE]]></default>
+        <onCreateDefault><![CDATA[AUTH CODE]]></onCreateDefault>
       </column>
       <column name="LOGOUT_URL" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
         <default/>

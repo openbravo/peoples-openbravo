@@ -110,10 +110,5 @@ class OAuth2AuthenticationProviderEventHandler extends EntityPersistenceEventObs
         && oAuth2Provider.getAuthFlow() != null) {
       throw new OBException(OBMessageUtils.messageBD("BackOfficeAppUnsupportedAuthFlow"));
     }
-
-    if (POS_APP.equals(authProvider.getApplication().getId())
-        && oAuth2Provider.getAuthFlow() == null) {
-      throw new OBException(OBMessageUtils.messageBD("PosAppUnsupportedAuthFlow"));
-    }
   }
 }
