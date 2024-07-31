@@ -21,6 +21,7 @@ package org.openbravo.authentication.oauth2;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -28,6 +29,8 @@ import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.authentication.AuthenticationProvider;
 
@@ -68,6 +71,7 @@ class AuthenticationProviderEventHandler extends EntityPersistenceEventObserver 
     AuthenticationProvider authProvider = (AuthenticationProvider) event.getTargetInstance();
     checkSupportedAppAndFlow(authProvider);
     invalidateOAuth2ConfigurationCache(authProvider);
+    validateUniquenessApiConfiguration(authProvider);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -77,7 +81,7 @@ class AuthenticationProviderEventHandler extends EntityPersistenceEventObserver 
     AuthenticationProvider authProvider = (AuthenticationProvider) event.getTargetInstance();
     checkSupportedAppAndFlow(authProvider);
     invalidateOAuth2ConfigurationCache(authProvider);
-    validateOAuth2Requisites(authProvider);
+    validateUniquenessApiConfiguration(authProvider);
   }
 
   private void invalidateOAuth2ConfigurationCache(AuthenticationProvider authProvider) {
@@ -90,14 +94,27 @@ class AuthenticationProviderEventHandler extends EntityPersistenceEventObserver 
             && !"LOGIN".equals(authProvider.getFlow()))) {
       throw new OBException(OBMessageUtils.messageBD("AuthProviderUnsupportedAppFlow"));
     }
+
+    String appSearchKey = (String) authProvider.getApplication().get("value");
+
+    if (("OAUTH2TOKEN".equals(authProvider.getType())
+        && (!"API".equals(appSearchKey) || !"LOGIN".equals(authProvider.getFlow())))
+        || (!"OAUTH2TOKEN".equals(authProvider.getType()) && "API".equals(appSearchKey))) {
+      throw new OBException(OBMessageUtils.messageBD("AuthProviderUnsupportedAppFlow"));
+    }
   }
 
-  private void validateOAuth2Requisites(AuthenticationProvider authProvider) {
-    if ("OAUTH2TOKEN".equals(authProvider.getType())
-        && (!"API".equals(authProvider.getApplication().get("name"))
-            || !"LOGIN".equals(authProvider.getFlow()))) {
-      throw new OBException(OBMessageUtils.messageBD("ApiOAuth2ProviderWrongConfig"));
-    }
+  private void validateUniquenessApiConfiguration(AuthenticationProvider authProvider) {
+    OBCriteria<AuthenticationProvider> criteria = OBDal.getInstance()
+        .createCriteria(AuthenticationProvider.class);
+    criteria.add(Restrictions.eq(AuthenticationProvider.PROPERTY_APPLICATION,
+        authProvider.getApplication()));
+    criteria.add(Restrictions
+        .not(Restrictions.eq(AuthenticationProvider.PROPERTY_ID, authProvider.getId())));
 
+    criteria.setMaxResults(1);
+    if (criteria.uniqueResult() != null) {
+      throw new OBException(OBMessageUtils.messageBD("AuthProviderApiAppNotUniqueConf"));
+    }
   }
 }
