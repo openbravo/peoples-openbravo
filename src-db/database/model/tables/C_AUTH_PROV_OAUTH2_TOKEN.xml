@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-  <database name="TABLE C_API_OAUTH2_TOKENAUTHMGR">
-    <table name="C_API_OAUTH2_TOKENAUTHMGR" primaryKey="C_API_OAUTH2_TOKEN_AM_KEY">
-      <column name="C_API_OAUTH2_TOKENAUTHMGR_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+  <database name="TABLE C_AUTH_PROV_OAUTH2_TOKEN">
+    <table name="C_AUTH_PROV_OAUTH2_TOKEN" primaryKey="C_AUTH_PROV_OAUTH2_TOKEN_KEY">
+      <column name="C_AUTH_PROV_OAUTH2_TOKEN_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -33,20 +33,20 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="JWKS_URL" primaryKey="false" required="true" type="VARCHAR" size="200" autoIncrement="false">
+      <column name="JWKS_URL" primaryKey="false" required="true" type="VARCHAR" size="255" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TOKEN_PROPERTY" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="TOKEN_PROPERTY" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="C_API_OAUTH2_TOKEN_AM_CLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_AUTH_PROV_OAUTH2_TOKEN_CLI">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="C_API_OAUTH2_TOKEN_AM_ORG">
+      <foreign-key foreignTable="AD_ORG" name="C_AUTH_PROV_OAUTH2_TOKEN_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="C_API_OAUTH2_TOKEN_AM_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_AUTH_PROV_OAUTH2_TOKEN_CHCK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
