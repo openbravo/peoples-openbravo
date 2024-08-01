@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2024 Openbravo SLU
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,7 +20,6 @@
 package org.openbravo.base.provider;
 
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -206,45 +205,6 @@ public class OBProvider {
       throw new OBProviderException("No registration for name " + name);
     }
     return reg.getInstance();
-  }
-
-  /**
-   * Returns an instance of the most specific requested service based on the provided path. The
-   * method checks for a registration for each part of the path. It starts from the end and removes
-   * the last element of the path in each iteration. For example, given the path:
-   * /org.openbravo.api.ExportService/ReprintableReport/invoice/1234, it will check for
-   * registrations in the following order:
-   * /org.openbravo.api.ExportService/ReprintableReport/invoice/1234,
-   * /org.openbravo.api.ExportService/ReprintableReport/invoice/,
-   * /org.openbravo.api.ExportService/ReprintableReport/
-   *
-   * @param path
-   *          the complete path of the request
-   * @return an instance of the service
-   * @throws OBProviderException
-   */
-  public Object getMostSpecificService(String path) {
-
-    String localPath = path;
-    if (localPath.startsWith("/")) {
-      localPath = localPath.substring(1);
-    }
-    if (localPath.endsWith("/")) {
-      localPath = localPath.substring(0, localPath.length() - 1);
-    }
-
-    String[] segments = localPath.split("/");
-
-    for (int i = segments.length; i > 0; i--) {
-      String partialPath = String.join("/", Arrays.copyOfRange(segments, 0, i));
-
-      Registration reg = registrations.get(partialPath);
-      if (reg != null) {
-        return reg.getInstance();
-      }
-    }
-
-    throw new OBProviderException("No registration for name " + path);
   }
 
   class Registration {
