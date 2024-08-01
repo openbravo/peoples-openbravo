@@ -139,7 +139,7 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
   private AuthenticatedUser handleAuthorizationResponse(JSONObject credential) {
     try {
       OAuth2AuthenticationProvider config = OBDal.getInstance()
-          .get(OAuth2AuthenticationProvider.class, credential.getString("state"));
+          .get(OAuth2AuthenticationProvider.class, credential.getString("authProviderId"));
       String code = credential.getString("code");
       String redirectURL = credential.getString("redirectUri");
       return handleAuthorizationResponse(code, redirectURL, config);
@@ -176,7 +176,7 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
 
   private AuthenticatedUser findUserFromCredential(JSONObject credential) {
     try {
-      return getUser(credential, credential.getString("state"));
+      return getUser(credential, credential.getString("authProviderId"));
     } catch (OAuth2TokenVerificationException ex) {
       log.error("The token verification failed", ex);
       throw new AuthenticationException(buildError("AUTHENTICATION_DATA_VERIFICATION_FAILURE"));
