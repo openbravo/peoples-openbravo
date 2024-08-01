@@ -48,8 +48,6 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.HttpClientManager;
 import org.openbravo.cache.TimeInvalidatedCache;
-import org.openbravo.model.authentication.ApiOAuth2TokenAuthMgr;
-import org.openbravo.model.authentication.OAuth2AuthenticationProvider;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -58,11 +56,11 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 /**
- * Provides information about the user making an authentication request from the value of an OpenID
- * token in the JSON Web Token (JWT) format.
+ * Provides information about the user making an authentication request from the value of an OAuth
+ * 2.0 token in the JSON Web Token (JWT) format.
  */
 @ApplicationScoped
-class JWTDataProvider {
+class JWTTokenDataProvider {
   private static final Logger log = LogManager.getLogger();
 
   @Inject
@@ -70,7 +68,7 @@ class JWTDataProvider {
 
   private TimeInvalidatedCache<String, Map<String, RSAPublicKey>> rsaPublicKeys = TimeInvalidatedCache
       .newBuilder()
-      .name("Open ID RSA Public Keys")
+      .name("OAuth 2.0 RSA Public Keys")
       .expireAfterDuration(Duration.ofMinutes(10))
       .build(this::requestCertificateData);
 
@@ -130,65 +128,34 @@ class JWTDataProvider {
   }
 
   /**
-   * Extracts the authentication information from the given OpenID token. For the moment the
-   * returned map just contains the user email.
+   * Extracts the authentication information from the given OAuth2 2.0 token. For the moment the
+   * returned map just contains the user identifier.
    *
    * @param token
-   *          An OpenID token
-   * @param configuration
-   *          the OAuth 2.0 configuration with information that can be used to verify the token,
-   *          like the URL to get the public keys required by the algorithm used for encrypting the
-   *          token data.
+   *          An OAuth2 2.0 token
+   * @param certificateURL
+   *          the URL to get the public keys required by the algorithm used for encrypting the token
+   *          data.
+   * @param userIdentifier
+   *          property used to map the user to make the authentication
    *
-   * @return the authentication information extracted from the given OpenID token
+   * @return the authentication information extracted from the given OAuth 2.0 token
    *
    * @throws OAuth2TokenVerificationException
    *           if it is not possible to verify the token or extract the authentication data
    */
-  Map<String, Object> getData(String token, OAuth2AuthenticationProvider configuration)
-      throws OAuth2TokenVerificationException {
-    String certificatedUrl = configuration.getCertificateURL();
-    Map<String, Claim> claims = decodeJWT(token, certificatedUrl);
-    if (claims.containsKey("email")) {
-      return Map.of("email", claims.get("email").asString());
-    }
-    return Collections.emptyMap();
-  }
-
-  /**
-   * Extracts the authentication information from the given OpenID token. For the moment the
-   * returned map just contains the user email.
-   *
-   * @param token
-   *          A Client Secret token
-   * @param configuration
-   *          the API OAuth 2.0 configuration with information that can be used to verify the token,
-   *          like the JWKS URL and the name of the token property to map the user
-   *
-   * @return the authentication information extracted from the given Client Secret token
-   *
-   * @throws OAuth2TokenVerificationException
-   *           if it is not possible to verify the token or extract the authentication data
-   */
-  Map<String, Object> getData(String token, ApiOAuth2TokenAuthMgr configuration)
-      throws OAuth2TokenVerificationException {
-    String jwksUrl = configuration.getJwksUrl();
-    String key = configuration.getTokenProperty();
-    Map<String, Claim> claims = decodeJWT(token, jwksUrl);
-    if (claims.containsKey(key)) {
-      return Map.of(key, claims.get(key).asString());
-    }
-    return Collections.emptyMap();
-  }
-
-  private Map<String, Claim> decodeJWT(String token, String url)
+  Map<String, Object> getData(String token, String certificateURL, String userIdentifier)
       throws OAuth2TokenVerificationException {
     try {
       DecodedJWT decodedJWT = JWT.decode(token);
-      Algorithm algorithm = getAlgorithm(decodedJWT, url);
+      Algorithm algorithm = getAlgorithm(decodedJWT, certificateURL);
       JWTVerifier verifier = JWT.require(algorithm).build();
       DecodedJWT verifiedJWT = verifier.verify(token);
-      return verifiedJWT.getClaims();
+      Map<String, Claim> claims = verifiedJWT.getClaims();
+      if (claims.containsKey(userIdentifier)) {
+        return Map.of(userIdentifier, claims.get(userIdentifier).asString());
+      }
+      return Collections.emptyMap();
     } catch (NoSuchAlgorithmException ex) {
       throw new OAuth2TokenVerificationException("Could not retrieve data from OAuth2 token", ex);
     }
