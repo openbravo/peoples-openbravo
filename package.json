@@ -62,10 +62,10 @@
       "!**/WebContent/**",
       "!**/storybook/**",
       "!**/.storybook/**",
-      "!**/build/**",
       "!**/public/**",
       "!**/vite.config.js",
-      "!**/*-scripts/*.js"
+      "!**/*-scripts/*.js",
+      "!**/config/**"
     ],
     "moduleNameMapper": {
       "\\.(scss)$": "identity-obj-proxy",
