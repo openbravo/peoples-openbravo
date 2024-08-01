@@ -70,8 +70,10 @@ public abstract class ExternalAuthenticationManager extends AuthenticationManage
     AuthenticatedUser user = doExternalAuthentication(request, response);
     if (user.getUserName() != null) {
       loginName.set(user.getUserName());
-      RequestContext.get()
-          .setSessionAttribute("#AUTH_PROVIDER", request.getParameter("authProvider"));
+      if (request.getParameter("authProvider") != null) {
+        RequestContext.get()
+            .setSessionAttribute("#AUTH_PROVIDER", request.getParameter("authProvider"));
+      }
     }
     return user.getId();
   }
