@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2023 Openbravo SLU
+ * All portions are Copyright (C) 2023-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -63,6 +63,27 @@ public abstract class ReprintableSourceDocument<D extends BaseOBObject & ClientE
       default:
         throw new IllegalArgumentException("Unknown document type");
     }
+  }
+
+  /**
+   * Retrieves a {@link ReprintableSourceDocument} instance with the information of the document
+   * identified by its reprintable document
+   *
+   * @param reprintableDocument
+   *          The reprintable document from which it's taken its ID and DocumenType to retrieve a
+   *          {@link ReprintableSourceDocument} instance
+   *
+   * @return the source document with the information of the document referenced by the given
+   *         parameters
+   */
+  static ReprintableSourceDocument<?> newSourceDocument(ReprintableDocument reprintableDocument) {
+    if (reprintableDocument.getInvoice() != null) {
+      return newSourceDocument(reprintableDocument.getId(), DocumentType.INVOICE);
+    }
+    if (reprintableDocument.getOrder() != null) {
+      return newSourceDocument(reprintableDocument.getId(), DocumentType.ORDER);
+    }
+    throw new IllegalArgumentException("Unknown document type");
   }
 
   /**
