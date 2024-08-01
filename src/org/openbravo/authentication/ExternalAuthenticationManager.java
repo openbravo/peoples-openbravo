@@ -30,6 +30,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.Prioritizable;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.authentication.AuthenticationProvider;
 
@@ -69,6 +70,8 @@ public abstract class ExternalAuthenticationManager extends AuthenticationManage
     AuthenticatedUser user = doExternalAuthentication(request, response);
     if (user.getUserName() != null) {
       loginName.set(user.getUserName());
+      RequestContext.get()
+          .setSessionAttribute("#AUTH_PROVIDER", request.getParameter("authProvider"));
     }
     return user.getId();
   }
