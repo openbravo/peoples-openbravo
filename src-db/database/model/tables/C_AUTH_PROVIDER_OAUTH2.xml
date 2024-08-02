@@ -41,7 +41,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CLIENT_SECRET" primaryKey="false" required="true" type="VARCHAR" size="255" autoIncrement="false">
+      <column name="CLIENT_SECRET" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -83,5 +83,6 @@
         <whereClause><![CDATA[ISACTIVE='Y']]></whereClause>
       </index>
       <check name="C_AUTH_PROVIDER_OAUTH2_ACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_AUTH_PROVIDER_OAUTH2_PKCE"><![CDATA[CLIENT_SECRET IS NOT NULL OR AUTH_FLOW = 'PKCE']]></check>
     </table>
   </database>
