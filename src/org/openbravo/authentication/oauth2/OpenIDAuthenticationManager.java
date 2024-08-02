@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2023 Openbravo SLU
+ * All portions are Copyright (C) 2023-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -75,11 +76,23 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
   @Override
   public AuthenticatedUser doExternalAuthentication(HttpServletRequest request,
       HttpServletResponse response) {
-    if (!isValidAuthorizationResponse(request)) {
-      log.error("The authorization response validation was not passed");
-      throw new AuthenticationException(buildError());
+    if (request.getParameterMap().containsKey("code")) {
+      if (!isValidAuthorizationResponse(request)) {
+        log.error("The authorization response validation was not passed");
+        throw new AuthenticationException(buildError());
+      }
+      return handleAuthorizationResponse(request);
     }
-    return handleAuthorizationResponse(request);
+    JSONObject credential = getCredential(request)
+        .orElseThrow(() -> new AuthenticationException(buildError()));
+    return handleAuthorizationCredential(credential);
+  }
+
+  @Override
+  public Optional<User> authenticate(String authProvider, JSONObject credential)
+      throws JSONException {
+    AuthenticatedUser user = handleAuthorizationCredential(credential);
+    return Optional.of(OBDal.getInstance().get(User.class, user.getId()));
   }
 
   @Override
@@ -96,12 +109,51 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
   }
 
   private AuthenticatedUser handleAuthorizationResponse(HttpServletRequest request) {
+    OAuth2AuthenticationProvider config = authStateHandler
+        .getConfiguration(OAuth2AuthenticationProvider.class, request.getParameter("state"));
+    String code = request.getParameter("code");
+    String redirectURL = getRedirectURL(request);
+    return handleAuthorizationResponse(code, redirectURL, config);
+  }
+
+  private Optional<JSONObject> getCredential(HttpServletRequest request) {
+    try {
+      String body = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+      return body.isBlank() ? Optional.empty()
+          : Optional.of(new JSONObject(body).getJSONObject("credential"));
+    } catch (IOException | JSONException ex) {
+      log.error("Could not extract the credential data from the request body", ex);
+      return Optional.empty();
+    }
+  }
+
+  private AuthenticatedUser handleAuthorizationCredential(JSONObject credential) {
+    if (credential.has("id_token")) {
+      // PKCE flow: we only need to get the user information from the token data, the rest has
+      // already being handled on the client side
+      return findUserFromCredential(credential);
+    }
+    return handleAuthorizationResponse(credential);
+  }
+
+  private AuthenticatedUser handleAuthorizationResponse(JSONObject credential) {
+    try {
+      OAuth2AuthenticationProvider config = OBDal.getInstance()
+          .get(OAuth2AuthenticationProvider.class, credential.getString("authProviderId"));
+      String code = credential.getString("code");
+      String redirectURL = credential.getString("redirectUri");
+      return handleAuthorizationResponse(code, redirectURL, config);
+    } catch (JSONException ex) {
+      log.error("Unexpected authentication data: {}", credential, ex);
+      throw new AuthenticationException(buildError());
+    }
+  }
+
+  private AuthenticatedUser handleAuthorizationResponse(String code, String redirectURL,
+      OAuth2AuthenticationProvider config) {
     try {
       OBContext.setAdminMode(true);
-      OAuth2AuthenticationProvider config = authStateHandler
-          .getConfiguration(OAuth2AuthenticationProvider.class, request.getParameter("state"));
-
-      HttpRequest accessTokenRequest = buildAccessTokenRequest(request, config);
+      HttpRequest accessTokenRequest = buildAccessTokenRequest(code, redirectURL, config);
       HttpResponse<String> tokenResponse = httpClientManager.send(accessTokenRequest);
       int responseCode = tokenResponse.statusCode();
       if (responseCode >= 200 && responseCode < 300) {
@@ -122,12 +174,24 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
     }
   }
 
-  private HttpRequest buildAccessTokenRequest(HttpServletRequest request,
+  private AuthenticatedUser findUserFromCredential(JSONObject credential) {
+    try {
+      return getUser(credential, credential.getString("authProviderId"));
+    } catch (OAuth2TokenVerificationException ex) {
+      log.error("The token verification failed", ex);
+      throw new AuthenticationException(buildError("AUTHENTICATION_DATA_VERIFICATION_FAILURE"));
+    } catch (Exception ex) {
+      log.error("Error extracting user from credential data", ex);
+      throw new AuthenticationException(buildError());
+    }
+  }
+
+  private HttpRequest buildAccessTokenRequest(String code, String redirectURL,
       OAuth2AuthenticationProvider config) throws ServletException {
     //@formatter:off
     Map<String, String> params = Map.of("grant_type", "authorization_code",
-                                        "code", request.getParameter("code"),
-                                        "redirect_uri", getRedirectURL(request),
+                                        "code", code,
+                                        "redirect_uri", redirectURL,
                                         "client_id", config.getClientID(),
                                         "client_secret", FormatUtilities.encryptDecrypt(config.getClientSecret(), false));
     //@formatter:on
@@ -174,6 +238,24 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
       OAuth2AuthenticationProvider configuration)
       throws JSONException, OAuth2TokenVerificationException {
     JSONObject tokenData = new JSONObject(responseData);
+    return getUser(tokenData, configuration);
+  }
+
+  private AuthenticatedUser getUser(JSONObject tokenData, String configId)
+      throws JSONException, OAuth2TokenVerificationException {
+    try {
+      OBContext.setAdminMode(true);
+      OAuth2AuthenticationProvider config = OBDal.getInstance()
+          .get(OAuth2AuthenticationProvider.class, configId);
+      return getUser(tokenData, config);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  private AuthenticatedUser getUser(JSONObject tokenData,
+      OAuth2AuthenticationProvider configuration)
+      throws JSONException, OAuth2TokenVerificationException {
     String idToken = tokenData.getString("id_token");
     Map<String, Object> authData = openIDTokenDataProvider.getData(idToken, configuration);
     String email = (String) authData.get("email");

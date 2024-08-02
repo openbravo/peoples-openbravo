@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2023 Openbravo SLU
+ * All portions are Copyright (C) 2023-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,12 +21,16 @@ package org.openbravo.authentication.oauth2;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
+import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.authentication.AuthenticationProvider;
 import org.openbravo.model.authentication.OAuth2AuthenticationProvider;
 
 /**
@@ -55,6 +59,15 @@ class OAuth2AuthenticationProviderEventHandler extends EntityPersistenceEventObs
     return ENTITIES;
   }
 
+  public void onSave(@Observes EntityNewEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    OAuth2AuthenticationProvider oAuth2Provider = (OAuth2AuthenticationProvider) event
+        .getTargetInstance();
+    checkSupportedAuthenticationFlow(oAuth2Provider);
+  }
+
   public void onDelete(@Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
@@ -76,6 +89,7 @@ class OAuth2AuthenticationProviderEventHandler extends EntityPersistenceEventObs
     OAuth2AuthenticationProvider oAuth2Provider = (OAuth2AuthenticationProvider) event
         .getTargetInstance();
     invalidateOAuth2ConfigurationCache(oAuth2Provider.getAuthProvider().getType());
+    checkSupportedAuthenticationFlow(oAuth2Provider);
   }
 
   private void invalidateOpenIDPublicKeyCache(String certificateURL) {
@@ -86,5 +100,13 @@ class OAuth2AuthenticationProviderEventHandler extends EntityPersistenceEventObs
 
   private void invalidateOAuth2ConfigurationCache(String type) {
     oauth2SignInProvider.invalidateCache(type);
+  }
+
+  private void checkSupportedAuthenticationFlow(OAuth2AuthenticationProvider oAuth2Provider) {
+    AuthenticationProvider authProvider = oAuth2Provider.getAuthProvider();
+    if (OAuth2SignInProvider.BACKOFFICE_APP.equals(authProvider.getApplication().getId())
+        && oAuth2Provider.getAuthFlow().equals("PKCE")) {
+      throw new OBException(OBMessageUtils.messageBD("BackOfficeAppUnsupportedAuthFlow"));
+    }
   }
 }
