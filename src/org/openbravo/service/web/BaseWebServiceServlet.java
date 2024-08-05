@@ -79,18 +79,7 @@ public class BaseWebServiceServlet extends HttpServlet {
     }
 
     // do the login action
-
-    // we check if there's an OAuth 2.0 token authentication configuration set, if there is, we use
-    // it, if not, we use the default authentication manager
-    AuthenticationManager authManager = existsOAuth2TokenConfig()
-        ? (AuthenticationManager) ApiOAuth2TokenAuthenticationManager.newInstance("OAUTH2TOKEN")
-            .map(m -> {
-              m.init(this);
-              return m;
-            })
-            .orElseThrow(() -> new AuthenticationException(
-                "Could not find an ApiOAuth2TokenAuthenticationManager"))
-        : AuthenticationManager.getAuthenticationManager(this);
+    AuthenticationManager authManager = getAuthorizationManager();
 
     // if a stateless webservice then set the stateless flag
     try {
@@ -248,6 +237,29 @@ public class BaseWebServiceServlet extends HttpServlet {
       w.write(WebServiceUtil.getInstance().createErrorXML(t));
       w.close();
     }
+  }
+
+  /**
+   * Retrieve the authentication manager to be on authentication while processing the servelet
+   * request. Depending on the configuration done in the authentication providers window the
+   * specific manager for openbravo will be used.
+   * 
+   * In case there is defined a provider with type, OAuth 2.0 Token, the
+   * {@link ApiOAuth2TokenAuthenticationManager} will be used to manage authentication, otherwise,
+   * the one defined in openbravo properties file will be used instead
+   * 
+   * @return authentication manager instance to be used on authentication
+   */
+  protected AuthenticationManager getAuthorizationManager() {
+    return existsOAuth2TokenConfig()
+        ? (AuthenticationManager) ApiOAuth2TokenAuthenticationManager.newInstance("OAUTH2TOKEN")
+            .map(m -> {
+              m.init(this);
+              return m;
+            })
+            .orElseThrow(() -> new AuthenticationException(
+                "Could not find an ApiOAuth2TokenAuthenticationManager"))
+        : AuthenticationManager.getAuthenticationManager(this);
   }
 
   private boolean existsOAuth2TokenConfig() {
