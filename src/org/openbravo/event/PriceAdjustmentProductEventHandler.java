@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2023 Openbravo SLU
+ * All portions are Copyright (C) 2023-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -81,15 +81,15 @@ public class PriceAdjustmentProductEventHandler extends EntityPersistenceEventOb
     }
     if (discountProduct.getPriceAdjustmentType().equals("A")
         && discountProduct.getDiscountAmount() == null) {
-      throw new OBException("@PriceAdjustmentEmptyField@");
+      throw new OBException(OBMessageUtils.messageBD("PriceAdjustmentEmptyField@"));
     }
     if (discountProduct.getPriceAdjustmentType().equals("P")
         && discountProduct.getDiscount() == null) {
-      throw new OBException("@PriceAdjustmentEmptyField@");
+      throw new OBException(OBMessageUtils.messageBD("PriceAdjustmentEmptyField"));
     }
     if (discountProduct.getPriceAdjustmentType().equals("F")
         && discountProduct.getFixedPrice() == null) {
-      throw new OBException("@PriceAdjustmentEmptyField@");
+      throw new OBException(OBMessageUtils.messageBD("PriceAdjustmentEmptyField"));
     }
   }
 
@@ -110,11 +110,11 @@ public class PriceAdjustmentProductEventHandler extends EntityPersistenceEventOb
     }
     if (discountProduct.getStartingDate() != null
         && discountProduct.getStartingDate().before(discount.getStartingDate())) {
-      throw new OBException("@PriceAdjustmentProductDateError@");
+      throw new OBException(OBMessageUtils.messageBD("PriceAdjustmentProductDateError"));
     }
     if (discountProduct.getEndingDate() != null && discount.getEndingDate() != null
         && discountProduct.getEndingDate().after(discount.getEndingDate())) {
-      throw new OBException("@PriceAdjustmentProductDateError@");
+      throw new OBException(OBMessageUtils.messageBD("PriceAdjustmentProductDateError"));
     }
   }
 
@@ -147,7 +147,7 @@ public class PriceAdjustmentProductEventHandler extends EntityPersistenceEventOb
         // Discounts that are not price adjustment or doesn't have the scope "each product"
         // Should work like before, since we have remove the unique constraint, we have to implement
         // it here
-        throw new OBException("@M_OFFER_PRODUCT_UNIQUE@");
+        throw new OBException(OBMessageUtils.messageBD("M_OFFER_PRODUCT_UNIQUE"));
       } else {
         // For price adjustment discount with each product scope with more than one instance of
         // current product in current discount,
