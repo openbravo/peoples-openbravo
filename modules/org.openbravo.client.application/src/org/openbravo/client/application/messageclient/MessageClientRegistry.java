@@ -68,18 +68,17 @@ public class MessageClientRegistry implements OBSingleton {
   /**
    * Removes a message client from the Registry
    *
-   * @param messageClient
-   *          - messageClient to be removed
+   * @param searchKey
+   *          - searchKey of the message client to be removed
    */
-  public void removeClient(MessageClient messageClient) {
-    String messageClientSearchKey = messageClient.getSearchKey();
-    if (!messageClientsBySessionId.containsKey(messageClientSearchKey)) {
-      logger.warn("Trying to remove a non registered message client: {}. Ignoring.",
-          messageClientSearchKey);
+  public void removeClient(String searchKey) {
+    if (!messageClientsBySessionId.containsKey(searchKey)) {
+      logger.warn("Trying to remove a non registered message client: {}. Ignoring.", searchKey);
     }
 
-    messageClientsBySessionId.remove(messageClient.getSearchKey());
-    messageClientsByUserId.remove(messageClient.getUserId());
+    MessageClient messageClientRemoved = messageClientsBySessionId.get(searchKey);
+    messageClientsByUserId.remove(messageClientRemoved.getUserId());
+    messageClientsBySessionId.remove(searchKey);
   }
 
   /**
