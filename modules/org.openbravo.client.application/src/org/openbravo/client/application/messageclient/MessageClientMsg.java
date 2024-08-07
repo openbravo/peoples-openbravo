@@ -1,19 +1,22 @@
 package org.openbravo.client.application.messageclient;
 
+import java.util.Date;
+import java.util.Map;
+
 public class MessageClientMsg {
   String id;
   String type;
-  String context;
+  Map<String, String> context;
   String payload;
-  String expirationTime;
+  Date expirationDate;
 
-  public MessageClientMsg(String id, String type, String context, String payload,
-      String expirationTime) {
+  public MessageClientMsg(String id, String type, Map<String, String> context, String payload,
+      Date expirationTime) {
     this.id = id;
     this.type = type;
     this.context = context;
     this.payload = payload;
-    this.expirationTime = expirationTime;
+    this.expirationDate = expirationTime;
   }
 
   public String getId() {
@@ -24,7 +27,7 @@ public class MessageClientMsg {
     return type;
   }
 
-  public String getContext() {
+  public Map<String, String> getContext() {
     return context;
   }
 
@@ -32,7 +35,7 @@ public class MessageClientMsg {
     return payload;
   }
 
-  public String getExpirationTime() {
-    return expirationTime;
+  public Date getExpirationDate() {
+    return expirationDate;
   }
 }

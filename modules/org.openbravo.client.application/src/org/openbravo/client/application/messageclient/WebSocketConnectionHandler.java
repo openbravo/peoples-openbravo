@@ -2,7 +2,6 @@ package org.openbravo.client.application.messageclient;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openbravo.client.application.WebSocketCustomConfigurator;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -11,7 +10,7 @@ import javax.websocket.OnOpen;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 
-@ServerEndpoint(value = "/websocket", configurator = WebSocketCustomConfigurator.class)
+@ServerEndpoint(value = "/websocket", configurator = WebSocketConfigurator.class)
 public class WebSocketConnectionHandler {
   private static final Logger log = LogManager.getLogger();
 

@@ -31,7 +31,7 @@ public class MessageClientManager {
 
     // create, start the manager thread
     managerThread = new MessageClientManagerThread(this);
-    messageRegistry = WeldUtils.getInstanceFromStaticBeanManager(MessageRegistry.class);
+    messageRegistry = MessageRegistry.getInstance();
     messageClientRegistry = MessageClientRegistry.getInstance();
     executorService.submit(managerThread);
     isShutDown = false;
