@@ -33,15 +33,15 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_AUTH_PROVIDER_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="JWKS_URL" primaryKey="false" required="true" type="VARCHAR" size="255" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TOKEN_PROPERTY" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="C_AUTH_PROVIDER_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="TOKEN_PROPERTY" primaryKey="false" required="true" type="VARCHAR" size="255" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -54,6 +54,14 @@
       <foreign-key foreignTable="C_AUTH_PROVIDER" name="C_AUTH_PROV_OAUTH2_TOKEN_PROV">
         <reference local="C_AUTH_PROVIDER_ID" foreign="C_AUTH_PROVIDER_ID"/>
       </foreign-key>
+      <index name="C_AUTH_PROV_OAUTH2_TOKEN_PR" unique="false">
+        <index-column name="C_AUTH_PROVIDER_ID"/>
+      </index>
+      <index name="C_AUTH_PROV_OAUTH2_TOKEN_UN_PR" unique="true">
+        <index-column name="C_AUTH_PROVIDER_ID"/>
+        <index-column name="ISACTIVE"/>
+        <whereClause><![CDATA[ISACTIVE='Y']]></whereClause>
+      </index>
       <check name="C_AUTH_PROV_OAUTH2_TOKEN_CHCK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
