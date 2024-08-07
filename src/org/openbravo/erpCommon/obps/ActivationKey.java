@@ -1258,7 +1258,7 @@ public class ActivationKey {
           OBDal.getInstance().flush();
           log4j.debug("Instance refreshed");
         } else {
-          log4j.info("Problem refreshing instance " + msg.getMessage());
+          log4j.error("Problem refreshing instance. It was not refreshed: {}", msg.getMessage());
         }
       } catch (Exception e) {
         log4j.error("Error refreshing instance", e);
@@ -1271,7 +1271,9 @@ public class ActivationKey {
       // refresh in the following period of time
       resetRefreshTime();
 
-      log.info("License refreshed in " + (System.currentTimeMillis() - t) + "ms");
+      log.info("License refreshed in {} ms. Success: {}", System.currentTimeMillis() - t,
+          refreshed);
+
       return refreshed;
     } finally {
       refreshLicenseLock.unlock();
