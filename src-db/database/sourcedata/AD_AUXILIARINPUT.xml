@@ -1898,7 +1898,11 @@ and payout_allow ='Y' and payout_ismulticurrency='Y']]></CODE>
 <!--442F70A5D896494FA37293B63ACD69E1-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--442F70A5D896494FA37293B63ACD69E1-->  <AD_TAB_ID><![CDATA[118]]></AD_TAB_ID>
 <!--442F70A5D896494FA37293B63ACD69E1-->  <NAME><![CDATA[OAUTH2_TOKEN_CONFIGURATION]]></NAME>
-<!--442F70A5D896494FA37293B63ACD69E1-->  <CODE><![CDATA[@SQL=select id from AuthenticationProvider where type='OAUTH2TOKEN' and application.value = 'API']]></CODE>
+<!--442F70A5D896494FA37293B63ACD69E1-->  <CODE><![CDATA[@SQL=select * from c_auth_provider, ad_application 
+where c_auth_provider.ad_application_id = ad_application.ad_application_id 
+and ad_application.value = 'API' 
+and type='OAUTH2TOKEN' 
+and c_auth_provider.isactive = 'Y']]></CODE>
 <!--442F70A5D896494FA37293B63ACD69E1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--442F70A5D896494FA37293B63ACD69E1--></AD_AUXILIARINPUT>
 
