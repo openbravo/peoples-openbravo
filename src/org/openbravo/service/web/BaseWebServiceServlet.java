@@ -32,7 +32,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
-import org.openbravo.authentication.oauth2.ApiOAuth2TokenAuthenticationManager;
+import org.openbravo.authentication.oauth2.OAuth2TokenAuthenticationManager;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.AllowedCrossDomainsHandler;
@@ -245,14 +245,14 @@ public class BaseWebServiceServlet extends HttpServlet {
    * specific manager for openbravo will be used.
    * 
    * In case there is defined a provider with type, OAuth 2.0 Token, the
-   * {@link ApiOAuth2TokenAuthenticationManager} will be used to manage authentication, otherwise,
+   * {@link OAuth2TokenAuthenticationManager} will be used to manage authentication, otherwise,
    * the one defined in openbravo properties file will be used instead
    * 
    * @return authentication manager instance to be used on authentication
    */
   protected AuthenticationManager getAuthorizationManager() {
     return existsOAuth2TokenConfig()
-        ? (AuthenticationManager) ApiOAuth2TokenAuthenticationManager.newInstance("OAUTH2TOKEN")
+        ? (AuthenticationManager) OAuth2TokenAuthenticationManager.newInstance("OAUTH2TOKEN")
             .map(m -> {
               m.init(this);
               return m;

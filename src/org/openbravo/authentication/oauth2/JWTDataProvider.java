@@ -60,7 +60,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
  * 2.0 token in the JSON Web Token (JWT) format.
  */
 @ApplicationScoped
-class JWTTokenDataProvider {
+class JWTDataProvider {
   private static final Logger log = LogManager.getLogger();
 
   @Inject

@@ -37,27 +37,29 @@ import org.openbravo.authentication.AuthenticationType;
 import org.openbravo.authentication.ExternalAuthenticationManager;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.authentication.AuthenticationProvider;
 import org.openbravo.model.authentication.OAuth2TokenAuthenticationProvider;
 
 /**
- * Allows to authenticate with an external authentication provider by receiving an already processed
- * token in the authorization provider. The token will be validated against the keys directory and
- * the user information stored in the token will be returned
+ * Allows to authenticate with a JWT token provided by an external authentication provider. This
+ * token is validated using the keys provided by the configured JWKS URL. If the validation is
+ * passed, then the value of the property indicated by
+ * {@link OAuth2TokenAuthenticationProvider#PROPERTY_TOKENPROPERTY} is extracted of the token, and
+ * the user matching that value on its User#PROPERTY_OAUTH2TOKENVALUE is the one identified as the
+ * authenticated user.
  */
 @AuthenticationType("OAUTH2TOKEN")
-public class ApiOAuth2TokenAuthenticationManager extends ExternalAuthenticationManager {
+public class OAuth2TokenAuthenticationManager extends ExternalAuthenticationManager {
   private static final Logger log = LogManager.getLogger();
 
   @Inject
-  private JWTTokenDataProvider oauth2TokenDataProvider;
+  private JWTDataProvider jwtDataProvider;
 
   @Override
   public AuthenticatedUser doExternalAuthentication(HttpServletRequest request,
       HttpServletResponse response) {
-    throw new UnsupportedOperationException("doLogout is not implemented");
+    throw new UnsupportedOperationException("doExternalAuthentication is not implemented");
   }
 
   @Override
@@ -79,7 +81,7 @@ public class ApiOAuth2TokenAuthenticationManager extends ExternalAuthenticationM
 
       if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
         log.error("The authentication header token has not been received");
-        throw new AuthenticationException(buildError("MISSING_AUTHORIZATION_HEADER_TOKEN"));
+        return null;
       }
 
       AuthenticationProvider authProvider = OBDal.getInstance()
@@ -95,15 +97,15 @@ public class ApiOAuth2TokenAuthenticationManager extends ExternalAuthenticationM
 
       if (oauthTokenConfig.isEmpty()) {
         log.error("The oauth token configuration has not been defined");
-        throw new AuthenticationException(buildError("MISSING_OAUTH_TOKEN_CONFIGURATION"));
+        return null;
       }
 
       OAuth2TokenAuthenticationProvider config = oauthTokenConfig.get();
 
-      return getUser(authorizationHeader.substring(7), config).getId();
+      return getUser(authorizationHeader.substring(7), config);
     } catch (OAuth2TokenVerificationException ex) {
       log.error("The token verification failed", ex);
-      throw new AuthenticationException(buildError("AUTHENTICATION_DATA_VERIFICATION_FAILURE"));
+      return null;
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -126,11 +128,11 @@ public class ApiOAuth2TokenAuthenticationManager extends ExternalAuthenticationM
    * @throws AuthenticationException
    *           If there is no user linked to the retrieved user identifier
    */
-  protected AuthenticatedUser getUser(String tokenID,
-      OAuth2TokenAuthenticationProvider configuration) throws OAuth2TokenVerificationException {
+  private String getUser(String tokenID, OAuth2TokenAuthenticationProvider configuration)
+      throws OAuth2TokenVerificationException {
 
-    Map<String, Object> authData = oauth2TokenDataProvider.getData(tokenID,
-        configuration.getJwksUrl(), configuration.getTokenProperty());
+    Map<String, Object> authData = jwtDataProvider.getData(tokenID, configuration.getJwksUrl(),
+        configuration.getTokenProperty());
     String userIdentifierValue = (String) authData.get(configuration.getTokenProperty());
 
     if (StringUtils.isBlank(userIdentifierValue)) {
@@ -150,19 +152,7 @@ public class ApiOAuth2TokenAuthenticationManager extends ExternalAuthenticationM
         .setMaxResults(1)
         .uniqueResult();
 
-    if (user == null) {
-      throw new AuthenticationException(buildError("UNKNOWN_TOKEN_VALUE_AUTHENTICATION_FAILURE"));
-    }
-
-    return new AuthenticatedUser((String) user.get("id"), (String) user.get("userName"));
-  }
-
-  private OBError buildError(String message) {
-    OBError errorMsg = new OBError();
-    errorMsg.setType("Error");
-    errorMsg.setTitle("AUTHENTICATION_FAILURE");
-    errorMsg.setMessage(message);
-    return errorMsg;
+    return user != null ? (String) user.get("id") : null;
   }
 
 }

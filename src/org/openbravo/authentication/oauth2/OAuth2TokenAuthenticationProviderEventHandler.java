@@ -30,20 +30,20 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.model.authentication.OAuth2TokenAuthenticationProvider;
 
 /**
- * Used to invalidate the cache of public keys kept by {@link JWTTokenDataProvider} when changes
+ * Used to invalidate the cache of public keys kept by {@link JWTDataProvider} when changes
  * regarding an OAuth 2.0 authentication provider configuration are detected. Note that in case of
  * working in a clustered environment, this mechanism will only invalidate the cache in the node
  * were the changes occurred. For the rest of the nodes in the cluster it will be necessary to wait
  * for the expiration of the cache entry.
  *
- * @see JWTTokenDataProvider#invalidateCache()
+ * @see JWTDataProvider#invalidateCache()
  */
 class OAuth2TokenAuthenticationProviderEventHandler extends EntityPersistenceEventObserver {
   private static final Entity[] ENTITIES = {
       ModelProvider.getInstance().getEntity(OAuth2TokenAuthenticationProvider.ENTITY_NAME) };
 
   @Inject
-  private JWTTokenDataProvider oauthTokenDataProvider;
+  private JWTDataProvider jwtDataProvider;
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -71,7 +71,7 @@ class OAuth2TokenAuthenticationProviderEventHandler extends EntityPersistenceEve
 
   private void invalidateOAuthPublicKeyCache(String certificateURL) {
     if (certificateURL != null) {
-      oauthTokenDataProvider.invalidateCache(certificateURL);
+      jwtDataProvider.invalidateCache(certificateURL);
     }
   }
 }
