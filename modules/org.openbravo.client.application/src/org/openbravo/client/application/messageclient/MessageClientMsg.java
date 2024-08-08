@@ -21,6 +21,8 @@ package org.openbravo.client.application.messageclient;
 import java.util.Date;
 import java.util.Map;
 
+import org.openbravo.erpCommon.utility.SequenceIdData;
+
 /**
  * Structure that messages for message client infrastructure use. It is used to send, receive and
  * register messages.
@@ -31,14 +33,21 @@ public class MessageClientMsg {
   Map<String, String> context;
   String payload;
   Date expirationDate;
+  Date creationDate;
+
+  public MessageClientMsg(String type, Map<String, String> context, String payload,
+      Date expirationTime, Date creationDate) {
+    this(SequenceIdData.getUUID(), type, context, payload, expirationTime, creationDate);
+  }
 
   public MessageClientMsg(String id, String type, Map<String, String> context, String payload,
-      Date expirationTime) {
+      Date expirationTime, Date creationDate) {
     this.id = id;
     this.type = type;
     this.context = context;
     this.payload = payload;
     this.expirationDate = expirationTime;
+    this.creationDate = creationDate;
   }
 
   public String getId() {
@@ -59,5 +68,9 @@ public class MessageClientMsg {
 
   public Date getExpirationDate() {
     return expirationDate;
+  }
+
+  public Date getCreationDate() {
+    return creationDate;
   }
 }

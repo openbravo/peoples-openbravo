@@ -18,20 +18,30 @@
  */
 package org.openbravo.client.application.messageclient;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.weld.WeldUtils;
 
 /**
  * Common registry for Messages that should be sent through the MessageClient infrastructure
  */
 public class MessageRegistry {
+  private static final Logger log = LogManager.getLogger();
 
   static MessageRegistry instance;
 
   @Inject
   MessageRegistryPersistence messageRegistryPersistence;
+
+  @Inject
+  @Any
+  Instance<MessageHandler> messageHandlers;
 
   MessageRegistry() {
   }
@@ -60,6 +70,23 @@ public class MessageRegistry {
    * @return non-expired messages
    */
   public List<MessageClientMsg> getPendingMessages() {
-    return messageRegistryPersistence.getPendingMessages();
+    List<MessageClientMsg> messages = messageRegistryPersistence.getPendingMessages();
+
+    // Filter those messages that have no message handler implementation
+    return messages.stream()
+        .filter(this::checkMessageHandlerExistsForType)
+        .collect(Collectors.toList());
+  }
+
+  private boolean checkMessageHandlerExistsForType(MessageClientMsg messageClientMsg) {
+    Instance<MessageHandler> messageHandler = messageHandlers
+        .select(new MessageHandler.Selector(messageClientMsg.getType()));
+
+    if (!messageHandler.isResolvable()) {
+      log.warn("No available message handler for type:" + messageClientMsg.getType());
+      return false;
+    }
+
+    return true;
   }
 }

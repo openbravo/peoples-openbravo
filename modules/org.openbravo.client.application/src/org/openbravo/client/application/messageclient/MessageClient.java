@@ -18,6 +18,8 @@
  */
 package org.openbravo.client.application.messageclient;
 
+import java.util.Date;
+
 /**
  * Main message client class, which keeps track of the different properties of the Message Client
  * and also allows sending messages, which must be implemented by specific implementations (for
@@ -27,6 +29,7 @@ public abstract class MessageClient {
   String searchKey;
   String organizationId;
   String userId;
+  Date timestampLastMsgSent;
 
   public MessageClient(String searchKey, String organizationId, String userId) {
     this.searchKey = searchKey;
@@ -35,7 +38,7 @@ public abstract class MessageClient {
   }
 
   /**
-   * Sends a given message to the MessageClient
+   * Sends a given message to the MessageClient, should update the timestampLastMsgSent value
    * 
    * @param message
    *          Message to be sent
@@ -52,5 +55,9 @@ public abstract class MessageClient {
 
   public String getUserId() {
     return userId;
+  }
+
+  public Date getTimestampLastMsgSent() {
+    return timestampLastMsgSent;
   }
 }

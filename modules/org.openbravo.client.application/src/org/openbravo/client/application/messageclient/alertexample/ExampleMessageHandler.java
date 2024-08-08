@@ -16,37 +16,23 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.client.application.messageclient;
+package org.openbravo.client.application.messageclient.alertexample;
 
-import javax.websocket.Session;
-import java.util.Date;
+import org.openbravo.client.application.messageclient.MessageClient;
+import org.openbravo.client.application.messageclient.MessageClientMsg;
+import org.openbravo.client.application.messageclient.MessageHandler;
 
-import org.openbravo.base.exception.OBException;
+import java.util.List;
 
 /**
- * WebSocket specific message client, keeps track of the websocket session for sending messages
- * through websocket
+ * Implements an example of a message handler for MessageClientMsg type "example"
  */
-public class WebSocketClient extends MessageClient {
-
-  Session websocketSession;
-
-  public WebSocketClient(String searchKey, String organizationId, String userId) {
-    super(searchKey, organizationId, userId);
-  }
-
-  public WebSocketClient(String searchKey, String organizationId, String userId,
-      Session websocketSession) {
-    super(searchKey, organizationId, userId);
-    this.websocketSession = websocketSession;
-  }
-
+@MessageHandler.Qualifier("example")
+public class ExampleMessageHandler extends MessageHandler {
   @Override
-  public void sendMessage(String message) {
-    if (this.websocketSession == null) {
-      throw new OBException("WebSocket session has not been set, messages can't be sent.");
-    }
-    this.websocketSession.getAsyncRemote().sendText(message);
-    timestampLastMsgSent = new Date();
+  public List<MessageClient> getRecipientsByContext(MessageClientMsg messageClientMsg,
+      List<MessageClient> connectedClients) {
+    // TODO: Implement a real case instead of returning the connected clients
+    return connectedClients;
   }
 }

@@ -18,6 +18,10 @@
  */
 package org.openbravo.client.application.messageclient;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,8 +29,13 @@ import java.util.concurrent.Executors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Class that manages a MessageClientManagerThread that regularly checks for pending messages and
+ * sends them to their corresponding recipients
+ */
 public class MessageClientManager {
   private static final Logger log = LogManager.getLogger();
+  private static final long WAITING_TIME_FOR_POLLING = 10000L; // ms
   MessageRegistry messageRegistry;
   MessageClientRegistry messageClientRegistry;
   boolean threadsStarted = false;
@@ -34,8 +43,12 @@ public class MessageClientManager {
   MessageClientManagerThread managerThread;
   ExecutorService executorService;
 
+  @Inject
+  @Any
+  Instance<MessageHandler> messageHandlers;
+
   public synchronized void start() {
-    // TODO: maybe we don't want to have WebSocket system always on, preference to disable
+    // TODO: maybe we don't want to have MessageClient system always on, preference to disable
     // message client manager entirely
     if (threadsStarted) {
       return;
@@ -91,16 +104,13 @@ public class MessageClientManager {
           return;
         }
         List<MessageClientMsg> pendingMessages = manager.messageRegistry.getPendingMessages();
-        List<MessageClient> messageClients = manager.messageClientRegistry.getAllClients();
-        if (!pendingMessages.isEmpty() && !messageClients.isEmpty()) {
+        if (!pendingMessages.isEmpty()) {
           System.out.println("[MSG_CLIENT] Msgs to be sent have been detected. "
               + pendingMessages.size() + " msgs pending to be sent");
           pendingMessages.forEach(message -> {
             if (message.getPayload() != null) {
               try {
-                // TODO: Reimplement this to properly handle only pending messages and call the
-                // corresponding MessageHandler
-                MessageClientBroadcaster.send(message, messageClients);
+                MessageClientBroadcaster.send(message, getMessageRecipients(message));
               } catch (Exception e) {
                 e.printStackTrace();
               }
@@ -108,11 +118,21 @@ public class MessageClientManager {
           });
         }
         try {
-          Thread.sleep(1000);
+          Thread.sleep(WAITING_TIME_FOR_POLLING);
         } catch (InterruptedException e) {
           throw new RuntimeException(e);
         }
       }
+    }
+
+    List<MessageClient> getMessageRecipients(MessageClientMsg messageClientMsg) {
+      Instance<MessageHandler> messageHandler = manager.messageHandlers
+          .select(new MessageHandler.Selector(messageClientMsg.getType()));
+      if (messageHandler.isUnsatisfied()) {
+        log.warn("No available message handler for type: " + messageClientMsg.getType());
+        return Collections.emptyList();
+      }
+      return messageHandler.get().getRecipients(messageClientMsg);
     }
   }
 }

@@ -89,6 +89,8 @@ public class DatabaseMessageRegistryPersistence implements MessageRegistryPersis
       OBContext.setAdminMode();
       OBCriteria<MessagePersisted> criteria = OBDal.getInstance()
           .createCriteria(MessagePersisted.class);
+      criteria.setFilterOnReadableOrganization(false);
+      criteria.setFilterOnReadableClients(false);
       criteria.setFilterOnActive(true);
       criteria.add(Restrictions.ge(MessagePersisted.PROPERTY_EXPIRATIONDATE, new Date()));
       persistedMsgs = criteria.list();
@@ -115,7 +117,7 @@ public class DatabaseMessageRegistryPersistence implements MessageRegistryPersis
         context.put("role", msg.getRole().getId());
       }
       return new MessageClientMsg(msg.getId(), msg.getType(), context, msg.getPayload(),
-          msg.getExpirationdate());
+          msg.getExpirationdate(), msg.getCreationDate());
     }).collect(Collectors.toList());
   }
 }
