@@ -22810,7 +22810,7 @@ AND @MaterialMgmtShipmentInOut.businessPartner@ = e.businessPartner.id]]></HQLWH
 <!--FFD41992FA8140CE868499B74BDDB304-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--FFD41992FA8140CE868499B74BDDB304-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FFD41992FA8140CE868499B74BDDB304-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--FFD41992FA8140CE868499B74BDDB304-->  <NAME><![CDATA[OAuth2 2.0 Token]]></NAME>
+<!--FFD41992FA8140CE868499B74BDDB304-->  <NAME><![CDATA[OAuth 2.0 Token]]></NAME>
 <!--FFD41992FA8140CE868499B74BDDB304-->  <DESCRIPTION><![CDATA[Specific configuration of the external authentication providers that uses the OAuth2 protocol with tokens]]></DESCRIPTION>
 <!--FFD41992FA8140CE868499B74BDDB304-->  <HELP><![CDATA[Specific configuration of the external authentication providers that uses the OAuth2 protocol with tokens]]></HELP>
 <!--FFD41992FA8140CE868499B74BDDB304-->  <AD_TABLE_ID><![CDATA[DF50953DCF1A4F25B6BDD56B3090DED3]]></AD_TABLE_ID>

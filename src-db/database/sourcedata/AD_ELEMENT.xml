@@ -27449,10 +27449,10 @@ This field will display only when the base document type is Sales Order.]]></HEL
 <!--59D0D874799F433DB8C0EFAB49BAC9D6-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--59D0D874799F433DB8C0EFAB49BAC9D6-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--59D0D874799F433DB8C0EFAB49BAC9D6-->  <COLUMNNAME><![CDATA[Token_Property]]></COLUMNNAME>
-<!--59D0D874799F433DB8C0EFAB49BAC9D6-->  <NAME><![CDATA[Token property to Map User]]></NAME>
-<!--59D0D874799F433DB8C0EFAB49BAC9D6-->  <PRINTNAME><![CDATA[Token property to Map User]]></PRINTNAME>
-<!--59D0D874799F433DB8C0EFAB49BAC9D6-->  <DESCRIPTION><![CDATA[Token Property to Map User. It is the name of the property included in the authentication token that will be used to univocally identify an Openbravo user to create the context for the API request.]]></DESCRIPTION>
-<!--59D0D874799F433DB8C0EFAB49BAC9D6-->  <HELP><![CDATA[Token Property to Map User. It is the name of the property included in the authentication token that will be used to univocally identify an Openbravo user to create the context for the API request.]]></HELP>
+<!--59D0D874799F433DB8C0EFAB49BAC9D6-->  <NAME><![CDATA[JWT Property]]></NAME>
+<!--59D0D874799F433DB8C0EFAB49BAC9D6-->  <PRINTNAME><![CDATA[JWT Property]]></PRINTNAME>
+<!--59D0D874799F433DB8C0EFAB49BAC9D6-->  <DESCRIPTION><![CDATA[The name of the property included in the JWT authentication token that will be used to univocally identify an Openbravo user to create the context for the API request.]]></DESCRIPTION>
+<!--59D0D874799F433DB8C0EFAB49BAC9D6-->  <HELP><![CDATA[The name of the property included in the JWT authentication token that will be used to univocally identify an Openbravo user to create the context for the API request.]]></HELP>
 <!--59D0D874799F433DB8C0EFAB49BAC9D6-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--59D0D874799F433DB8C0EFAB49BAC9D6-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--59D0D874799F433DB8C0EFAB49BAC9D6--></AD_ELEMENT>
