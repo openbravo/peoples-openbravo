@@ -20,7 +20,6 @@ package org.openbravo.authentication.oauth2;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.persistence.Tuple;
@@ -32,13 +31,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.authentication.AuthenticatedUser;
-import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationType;
 import org.openbravo.authentication.ExternalAuthenticationManager;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.User;
-import org.openbravo.model.authentication.AuthenticationProvider;
 import org.openbravo.model.authentication.OAuth2TokenAuthenticationProvider;
 
 /**
@@ -55,6 +52,9 @@ public class OAuth2TokenAuthenticationManager extends ExternalAuthenticationMana
 
   @Inject
   private JWTDataProvider jwtDataProvider;
+
+  @Inject
+  private OAuth2TokenDataProvider oauth2TokenDataProvider;
 
   @Override
   public AuthenticatedUser doExternalAuthentication(HttpServletRequest request,
@@ -84,25 +84,14 @@ public class OAuth2TokenAuthenticationManager extends ExternalAuthenticationMana
         return null;
       }
 
-      AuthenticationProvider authProvider = OBDal.getInstance()
-          .createQuery(AuthenticationProvider.class, "where type = :type")
-          .setNamedParameter("type", "OAUTH2TOKEN")
-          .uniqueResult();
+      if (oauth2TokenDataProvider.existsOAuth2TokenConfig()) {
+        OAuth2TokenAuthenticationProvider config = oauth2TokenDataProvider
+            .getOAuth2TokenConfiguration();
 
-      Optional<OAuth2TokenAuthenticationProvider> oauthTokenConfig = authProvider
-          .getOAuth2TokenAuthenticationProviderList()
-          .stream()
-          .filter(l -> l.isActive())
-          .findFirst();
-
-      if (oauthTokenConfig.isEmpty()) {
-        log.error("The oauth token configuration has not been defined");
-        return null;
+        return getUser(authorizationHeader.substring(7), config);
       }
 
-      OAuth2TokenAuthenticationProvider config = oauthTokenConfig.get();
-
-      return getUser(authorizationHeader.substring(7), config);
+      return null;
     } catch (OAuth2TokenVerificationException ex) {
       log.error("The token verification failed", ex);
       return null;
@@ -121,12 +110,10 @@ public class OAuth2TokenAuthenticationManager extends ExternalAuthenticationMana
    *          token like the URL to get the public keys required by the algorithm used for
    *          encrypting the token data.
    *
-   * @return the {@link AuthenticatedUser} with the information of the authenticated {@link User}
+   * @return the identifier of the authenticated {@link User}
    *
    * @throws OAuth2TokenVerificationException
    *           If it is not possible to verify the token or extract the authentication data
-   * @throws AuthenticationException
-   *           If there is no user linked to the retrieved user identifier
    */
   private String getUser(String tokenID, OAuth2TokenAuthenticationProvider configuration)
       throws OAuth2TokenVerificationException {

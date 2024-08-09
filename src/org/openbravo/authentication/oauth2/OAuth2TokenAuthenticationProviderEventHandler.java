@@ -45,6 +45,9 @@ class OAuth2TokenAuthenticationProviderEventHandler extends EntityPersistenceEve
   @Inject
   private JWTDataProvider jwtDataProvider;
 
+  @Inject
+  private OAuth2TokenDataProvider oauth2TokenDataProvider;
+
   @Override
   protected Entity[] getObservedEntities() {
     return ENTITIES;
@@ -57,6 +60,7 @@ class OAuth2TokenAuthenticationProviderEventHandler extends EntityPersistenceEve
     OAuth2TokenAuthenticationProvider oAuth2Provider = (OAuth2TokenAuthenticationProvider) event
         .getTargetInstance();
     invalidateOAuthPublicKeyCache(oAuth2Provider.getJwksUrl());
+    invalidateOauthTokenConfigurationCache();
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -67,11 +71,16 @@ class OAuth2TokenAuthenticationProviderEventHandler extends EntityPersistenceEve
         .getProperty(OAuth2TokenAuthenticationProvider.PROPERTY_JWKSURL);
     String certificateURL = (String) event.getPreviousState(certificateURLProperty);
     invalidateOAuthPublicKeyCache(certificateURL);
+    invalidateOauthTokenConfigurationCache();
   }
 
   private void invalidateOAuthPublicKeyCache(String certificateURL) {
     if (certificateURL != null) {
       jwtDataProvider.invalidateCache(certificateURL);
     }
+  }
+
+  private void invalidateOauthTokenConfigurationCache() {
+    oauth2TokenDataProvider.invalidateCache();
   }
 }

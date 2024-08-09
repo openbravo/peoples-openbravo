@@ -22,6 +22,7 @@ package org.openbravo.service.web;
 import java.io.IOException;
 import java.io.Writer;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -32,16 +33,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
+import org.openbravo.authentication.ExternalAuthenticationManager;
 import org.openbravo.authentication.oauth2.OAuth2TokenAuthenticationManager;
+import org.openbravo.authentication.oauth2.OAuth2TokenDataProvider;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.AllowedCrossDomainsHandler;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.SessionInfo;
-import org.openbravo.model.authentication.AuthenticationProvider;
 
 /**
  * This servlet has two main responsibilities: 1) authenticate, 2) set the correct {@link OBContext}
@@ -64,6 +65,9 @@ public class BaseWebServiceServlet extends HttpServlet {
   private static Integer wsInactiveInterval = null;
   private static final int DEFAULT_WS_INACTIVE_INTERVAL = 60;
 
+  @Inject
+  private OAuth2TokenDataProvider oauth2TokenDataProvider;
+
   @Override
   protected final void service(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
@@ -77,9 +81,6 @@ public class BaseWebServiceServlet extends HttpServlet {
     if (request.getMethod().equals("OPTIONS")) {
       return;
     }
-
-    // do the login action
-    AuthenticationManager authManager = getAuthorizationManager();
 
     // if a stateless webservice then set the stateless flag
     try {
@@ -99,6 +100,7 @@ public class BaseWebServiceServlet extends HttpServlet {
 
     String userId = null;
     try {
+      AuthenticationManager authManager = getAuthorizationManager();
       userId = authManager.webServiceAuthenticate(request);
     } catch (AuthenticationException e) {
       final boolean sessionCreated = !sessionExists && null != request.getSession(false);
@@ -245,14 +247,14 @@ public class BaseWebServiceServlet extends HttpServlet {
    * specific manager for openbravo will be used.
    * 
    * In case there is defined a provider with type, OAuth 2.0 Token, the
-   * {@link OAuth2TokenAuthenticationManager} will be used to manage authentication, otherwise,
-   * the one defined in openbravo properties file will be used instead
+   * {@link OAuth2TokenAuthenticationManager} will be used to manage authentication, otherwise, the
+   * one defined in openbravo properties file will be used instead
    * 
    * @return authentication manager instance to be used on authentication
    */
   protected AuthenticationManager getAuthorizationManager() {
-    return existsOAuth2TokenConfig()
-        ? (AuthenticationManager) OAuth2TokenAuthenticationManager.newInstance("OAUTH2TOKEN")
+    return oauth2TokenDataProvider.existsOAuth2TokenConfig()
+        ? (AuthenticationManager) ExternalAuthenticationManager.newInstance("OAUTH2TOKEN")
             .map(m -> {
               m.init(this);
               return m;
@@ -260,18 +262,5 @@ public class BaseWebServiceServlet extends HttpServlet {
             .orElseThrow(() -> new AuthenticationException(
                 "Could not find an ApiOAuth2TokenAuthenticationManager"))
         : AuthenticationManager.getAuthenticationManager(this);
-  }
-
-  private boolean existsOAuth2TokenConfig() {
-    try {
-      OBContext.setAdminMode(true);
-      AuthenticationProvider oauth2TokenConfig = OBDal.getInstance()
-          .createQuery(AuthenticationProvider.class, "where type = :type")
-          .setNamedParameter("type", "OAUTH2TOKEN")
-          .uniqueResult();
-      return oauth2TokenConfig != null;
-    } finally {
-      OBContext.restorePreviousMode();
-    }
   }
 }
