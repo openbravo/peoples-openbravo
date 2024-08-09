@@ -85,8 +85,7 @@ public class OAuth2TokenAuthenticationManager extends ExternalAuthenticationMana
       }
 
       if (oauth2TokenDataProvider.existsOAuth2TokenConfig()) {
-        OAuth2TokenAuthenticationProvider config = oauth2TokenDataProvider
-            .getOAuth2TokenConfiguration();
+        OAuth2TokenAuthenticationProvider config = oauth2TokenDataProvider.get();
 
         return getUser(authorizationHeader.substring(7), config);
       }

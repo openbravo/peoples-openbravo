@@ -76,7 +76,7 @@ public class OAuth2TokenDataProvider {
    * @return {@link OAuth2TokenAuthenticationProvider}
    * 
    */
-  public OAuth2TokenAuthenticationProvider getOAuth2TokenConfiguration() {
+  public OAuth2TokenAuthenticationProvider get() {
     return oauthTokenConfig.get(CONFIG_ID);
   }
 
