@@ -2002,7 +2002,7 @@ isc.OBStandardView.addProperties({
         contextInfo = this.getContextInfo(false, true, true);
         this.addPreferenceValues(contextInfo, tabViewPane);
         if (
-          !this.isSubtabOpenedByDirectLink() &&
+          !this.isParentOfTargetTabId(this, this.standardWindow.targetTabId) &&
           tabViewPane.showTabIf &&
           !tabViewPane.showTabIf(contextInfo)
         ) {
@@ -2059,6 +2059,24 @@ isc.OBStandardView.addProperties({
         }
       }
     }
+  },
+
+  isParentOfTargetTabId: function(tab, targetTabId) {
+    var length, i, tabViewPane;
+    if (!tab.childTabSet || !targetTabId) {
+      return false;
+    }
+    length = tab.childTabSet.tabs.length;
+    for (i = 0; i < length; i++) {
+      tabViewPane = tab.childTabSet.tabs[i].pane;
+      if (tabViewPane.tabId === targetTabId) {
+        return true;
+      }
+      if (this.isParentOfTargetTabId(tabViewPane, targetTabId)) {
+        return true;
+      }
+    }
+    return false;
   },
 
   isSubtabOpenedByDirectLink: function() {
