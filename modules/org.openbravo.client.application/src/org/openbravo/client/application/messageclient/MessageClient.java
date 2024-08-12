@@ -27,14 +27,20 @@ import java.util.Date;
  */
 public abstract class MessageClient {
   String searchKey;
+  String clientId;
   String organizationId;
   String userId;
+  String roleId;
   Date timestampLastMsgSent;
+  // TODO: Add listenedChannels/messageTypesSubscription
 
-  public MessageClient(String searchKey, String organizationId, String userId) {
+  public MessageClient(String searchKey, String clientId, String organizationId, String userId,
+      String roleId) {
     this.searchKey = searchKey;
+    this.clientId = clientId;
     this.organizationId = organizationId;
     this.userId = userId;
+    this.roleId = roleId;
   }
 
   /**
@@ -49,12 +55,20 @@ public abstract class MessageClient {
     return searchKey;
   }
 
+  public String getClientId() {
+    return clientId;
+  }
+
   public String getOrganizationId() {
     return organizationId;
   }
 
   public String getUserId() {
     return userId;
+  }
+
+  public String getRoleId() {
+    return roleId;
   }
 
   public Date getTimestampLastMsgSent() {

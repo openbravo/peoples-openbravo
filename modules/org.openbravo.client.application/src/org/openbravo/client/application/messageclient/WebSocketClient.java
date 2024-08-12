@@ -31,13 +31,14 @@ public class WebSocketClient extends MessageClient {
 
   Session websocketSession;
 
-  public WebSocketClient(String searchKey, String organizationId, String userId) {
-    super(searchKey, organizationId, userId);
+  public WebSocketClient(String searchKey, String clientId, String organizationId, String userId,
+      String roleId) {
+    super(searchKey, clientId, organizationId, userId, roleId);
   }
 
-  public WebSocketClient(String searchKey, String organizationId, String userId,
-      Session websocketSession) {
-    super(searchKey, organizationId, userId);
+  public WebSocketClient(String searchKey, String clientId, String organizationId, String userId,
+      String roleId, Session websocketSession) {
+    super(searchKey, clientId, organizationId, userId, roleId);
     this.websocketSession = websocketSession;
   }
 

@@ -41,9 +41,12 @@ public class WebSocketConnectionHandler {
     // TODO: Remove log.info or change it to log.debug
     log.info("Websocket - Connection accepted. Session: " + session.getId());
     String sessionId = (String) session.getUserProperties().get("sessionId");
-    String userId = (String) session.getUserProperties().get("ad_user_id");
+    String userId = (String) session.getUserProperties().get("user_id");
+    String roleId = (String) session.getUserProperties().get("role_id");
+    String orgId = (String) session.getUserProperties().get("org_id");
+    String clientId = (String) session.getUserProperties().get("client_id");
 
-    WebSocketClient webSocketClient = new WebSocketClient(sessionId, null, userId, session);
+    WebSocketClient webSocketClient = new WebSocketClient(sessionId, clientId, orgId, userId, roleId, session);
     MessageClientConnectionHandler.connectionEstablished(webSocketClient);
   }
 

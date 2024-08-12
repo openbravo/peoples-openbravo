@@ -18,6 +18,7 @@
  */
 package org.openbravo.client.application.messageclient;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
@@ -30,6 +31,7 @@ import org.openbravo.model.ad.utility.MessagePersisted;
 import org.openbravo.model.common.enterprise.Organization;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,6 +44,10 @@ import java.util.stream.Collectors;
  */
 @ApplicationScoped
 public class DatabaseMessageRegistryPersistence implements MessageRegistryPersistence {
+
+  // Max expiration duration in days
+  private static final int MAX_EXPIRATION_DURATION = 1;
+
   @Override
   public void persistMessage(MessageClientMsg messageClientMsg) {
     OBContext.setAdminMode();
@@ -50,7 +56,7 @@ public class DatabaseMessageRegistryPersistence implements MessageRegistryPersis
       persistedMessage.setNewOBObject(true);
       persistedMessage.setPayload(messageClientMsg.getPayload());
       persistedMessage.setType(messageClientMsg.type);
-      persistedMessage.setExpirationdate(messageClientMsg.getExpirationDate());
+      persistedMessage.setExpirationdate(getExpirationDate(messageClientMsg));
       messageClientMsg.getContext().forEach((key, value) -> {
         switch (key) {
           case "user":
@@ -119,5 +125,27 @@ public class DatabaseMessageRegistryPersistence implements MessageRegistryPersis
       return new MessageClientMsg(msg.getId(), msg.getType(), context, msg.getPayload(),
           msg.getExpirationdate(), msg.getCreationDate());
     }).collect(Collectors.toList());
+  }
+
+  /**
+   * Retrieves the expiration date, it is the minimum between the provided expiration date and the
+   * hard minimum
+   * 
+   * @param messageClientMsg
+   *          Message with or without expiration date
+   */
+  private Date getExpirationDate(MessageClientMsg messageClientMsg) {
+    // TODO: Maybe should take into account creation time, instead of assuming expiration from
+    // current time
+    Date currentMaxExpirationDate = DateUtils.addDays(new Date(), MAX_EXPIRATION_DURATION);
+    if (messageClientMsg.getExpirationDate() == null) {
+      return currentMaxExpirationDate;
+    }
+
+    if (messageClientMsg.getExpirationDate().after(currentMaxExpirationDate)) {
+      return currentMaxExpirationDate;
+    }
+
+    return DateUtils.addDays(messageClientMsg.getExpirationDate(), MAX_EXPIRATION_DURATION);
   }
 }
