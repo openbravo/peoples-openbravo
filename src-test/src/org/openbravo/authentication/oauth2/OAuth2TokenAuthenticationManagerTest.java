@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openbravo.base.exception.OBException;
@@ -43,6 +44,14 @@ import org.openbravo.test.base.TestConstants;
  * {@link OAuth2TokenAuthenticationManager}
  */
 public class OAuth2TokenAuthenticationManagerTest extends WeldBaseTest {
+
+  private OAuth2TokenAuthenticationManager authManager;
+
+  @Before
+  public void setRequestContext() {
+    authManager = new OAuth2TokenAuthenticationManager();
+  }
+
   @After
   public void cleanUp() {
     rollback();
@@ -50,7 +59,6 @@ public class OAuth2TokenAuthenticationManagerTest extends WeldBaseTest {
 
   @Test
   public void externalAuthenticationNotImplemented() {
-    OAuth2TokenAuthenticationManager authManager = new OAuth2TokenAuthenticationManager();
     HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
     HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
@@ -61,7 +69,6 @@ public class OAuth2TokenAuthenticationManagerTest extends WeldBaseTest {
 
   @Test
   public void doLogoutNotImplemented() {
-    OAuth2TokenAuthenticationManager authManager = new OAuth2TokenAuthenticationManager();
     HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
     HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
 
@@ -72,7 +79,6 @@ public class OAuth2TokenAuthenticationManagerTest extends WeldBaseTest {
 
   @Test
   public void missingAuthorizationHeader() {
-    OAuth2TokenAuthenticationManager authManager = new OAuth2TokenAuthenticationManager();
     HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
 
     assertNull(authManager.doWebServiceAuthenticate(request));
@@ -80,7 +86,6 @@ public class OAuth2TokenAuthenticationManagerTest extends WeldBaseTest {
 
   @Test
   public void wrongFormatAuthorizationHeader() {
-    OAuth2TokenAuthenticationManager authManager = new OAuth2TokenAuthenticationManager();
     HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
 
     Mockito.when(request.getParameter("Authorization")).thenReturn("TOKEN_VALUE");
@@ -90,7 +95,6 @@ public class OAuth2TokenAuthenticationManagerTest extends WeldBaseTest {
 
   @Test
   public void missingTokenConfiguration() {
-    OAuth2TokenAuthenticationManager authManager = new OAuth2TokenAuthenticationManager();
     HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
     OAuth2TokenDataProvider provider = Mockito.mock(OAuth2TokenDataProvider.class);
 
@@ -102,7 +106,6 @@ public class OAuth2TokenAuthenticationManagerTest extends WeldBaseTest {
 
   @Test
   public void userDoesNotMatchWithProvidedProperty() {
-    OAuth2TokenAuthenticationManager authManager = new OAuth2TokenAuthenticationManager();
     HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
     OAuth2TokenDataProvider provider = Mockito.mock(OAuth2TokenDataProvider.class);
     JWTDataProvider jwtProv = Mockito.mock(JWTDataProvider.class);
@@ -125,7 +128,6 @@ public class OAuth2TokenAuthenticationManagerTest extends WeldBaseTest {
 
   @Test
   public void userWithPropertyNotFound() {
-    OAuth2TokenAuthenticationManager authManager = new OAuth2TokenAuthenticationManager();
     HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
     OAuth2TokenDataProvider provider = Mockito.mock(OAuth2TokenDataProvider.class);
     JWTDataProvider jwtProv = Mockito.mock(JWTDataProvider.class);
@@ -148,7 +150,6 @@ public class OAuth2TokenAuthenticationManagerTest extends WeldBaseTest {
 
   @Test
   public void userWithPropertyFound() {
-    OAuth2TokenAuthenticationManager authManager = new OAuth2TokenAuthenticationManager();
     HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
     OAuth2TokenDataProvider provider = Mockito.mock(OAuth2TokenDataProvider.class);
     JWTDataProvider jwtProv = Mockito.mock(JWTDataProvider.class);
