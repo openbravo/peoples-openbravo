@@ -19,6 +19,7 @@
 package org.openbravo.client.application.messageclient;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
+import org.openbravo.base.weld.WeldUtils;
+
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 
 /**
  * Provides a common Registry for MessageClients
@@ -36,11 +42,15 @@ public class MessageClientRegistry implements OBSingleton {
   Map<String, MessageClient> messageClientsBySessionId;
   Map<String, MessageClient> messageClientsByUserId;
 
+  @Inject
+  @Any
+  Instance<MessageHandler> messageHandlers;
+
   private static MessageClientRegistry instance;
 
   public static MessageClientRegistry getInstance() {
     if (instance == null) {
-      instance = OBProvider.getInstance().get(MessageClientRegistry.class);
+      instance = WeldUtils.getInstanceFromStaticBeanManager(MessageClientRegistry.class);
       instance.messageClientsBySessionId = new HashMap<>();
       instance.messageClientsByUserId = new HashMap<>();
     }
@@ -61,6 +71,13 @@ public class MessageClientRegistry implements OBSingleton {
           messageClientSearchKey);
     }
 
+    boolean isAllowedToSubscribe = areAllSubscribedTopicsAllowed(messageClient);
+    if (!isAllowedToSubscribe) {
+      // Some topic is not allowed to be subscribed to, aborting message client registration
+      logger.warn(
+          "Message Client will not be registered, as some subscribed topics can't be handled.");
+      return;
+    }
     messageClientsBySessionId.put(messageClientSearchKey, messageClient);
     messageClientsByUserId.put(messageClient.getUserId(), messageClient);
   }
@@ -88,5 +105,25 @@ public class MessageClientRegistry implements OBSingleton {
    */
   protected List<MessageClient> getAllClients() {
     return new ArrayList<>(messageClientsBySessionId.values());
+  }
+
+  private boolean areAllSubscribedTopicsAllowed(MessageClient messageClient) {
+    List<String> subscribedTopics = messageClient.getSubscribedTopics();
+    if (subscribedTopics.isEmpty()) {
+      return true; // TODO: No subscriptions, maybe it makes sense to close connection
+    }
+    return subscribedTopics.stream()
+        .allMatch(topic -> isSubscriptionAllowed(messageClient, topic));
+  }
+
+  private boolean isSubscriptionAllowed(MessageClient messageClient, String topic) {
+    Instance<MessageHandler> messageHandler = messageHandlers
+        .select(new MessageHandler.Selector(topic));
+    if (messageHandler.isUnsatisfied()) {
+      logger
+          .warn("No available message handler for subscribed topic, connection aborted: " + topic);
+      return false;
+    }
+    return messageHandler.get().isAllowedToSubscribeToTopic(messageClient);
   }
 }

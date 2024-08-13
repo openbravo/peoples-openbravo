@@ -24,6 +24,7 @@ import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,7 +47,12 @@ public class WebSocketConnectionHandler {
     String orgId = (String) session.getUserProperties().get("org_id");
     String clientId = (String) session.getUserProperties().get("client_id");
 
-    WebSocketClient webSocketClient = new WebSocketClient(sessionId, clientId, orgId, userId, roleId, session);
+    List<String> supportedMessageTypes = session.getRequestParameterMap()
+        .get("supportedMessageTypes");
+
+    WebSocketClient webSocketClient = new WebSocketClient(sessionId, clientId, orgId, userId,
+        roleId, session);
+    webSocketClient.setSubscribedTopics(supportedMessageTypes);
     MessageClientConnectionHandler.connectionEstablished(webSocketClient);
   }
 

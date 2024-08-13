@@ -19,6 +19,7 @@
 package org.openbravo.client.application.messageclient;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Main message client class, which keeps track of the different properties of the Message Client
@@ -33,6 +34,7 @@ public abstract class MessageClient {
   String roleId;
   Date timestampLastMsgSent;
   // TODO: Add listenedChannels/messageTypesSubscription
+  List<String> subscribedTopics;
 
   public MessageClient(String searchKey, String clientId, String organizationId, String userId,
       String roleId) {
@@ -50,6 +52,10 @@ public abstract class MessageClient {
    *          Message to be sent
    */
   public abstract void sendMessage(String message);
+
+  public void setSubscribedTopics(List<String> topics) {
+    this.subscribedTopics = topics;
+  }
 
   public String getSearchKey() {
     return searchKey;
@@ -73,5 +79,9 @@ public abstract class MessageClient {
 
   public Date getTimestampLastMsgSent() {
     return timestampLastMsgSent;
+  }
+
+  public List<String> getSubscribedTopics() {
+    return subscribedTopics;
   }
 }

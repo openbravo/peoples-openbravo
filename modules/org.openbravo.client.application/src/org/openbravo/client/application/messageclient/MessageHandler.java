@@ -36,6 +36,10 @@ public abstract class MessageHandler {
 
     // Filters those connectedClients who already received the message
     List<MessageClient> relevantClients = connectedClients.stream().filter(messageClient -> {
+      if (!messageClient.getSubscribedTopics().contains(messageClientMsg.getType())) {
+        // Filter non-subscribed-for topics
+        return false;
+      }
       if (messageClient.getTimestampLastMsgSent() == null) {
         return true;
       }
@@ -44,6 +48,8 @@ public abstract class MessageHandler {
 
     return getRecipientsByContext(messageClientMsg, relevantClients);
   }
+
+  public abstract boolean isAllowedToSubscribeToTopic(MessageClient messageClient);
 
   /**
    * Must return the recipients of the messageClientMsg by using the provided context in that same

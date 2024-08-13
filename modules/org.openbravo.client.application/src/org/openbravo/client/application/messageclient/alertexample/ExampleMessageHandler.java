@@ -35,4 +35,10 @@ public class ExampleMessageHandler extends MessageHandler {
     // TODO: Implement a real case instead of returning the connected clients
     return connectedClients;
   }
+
+  @Override
+  public boolean isAllowedToSubscribeToTopic(MessageClient messageClient) {
+    // TODO: Implement a real case instead of returning always true
+    return true;
+  }
 }
