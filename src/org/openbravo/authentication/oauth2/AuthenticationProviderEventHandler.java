@@ -29,9 +29,9 @@ import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.ad.module.Application;
 import org.openbravo.model.authentication.AuthenticationProvider;
 
 /**
@@ -48,6 +48,7 @@ import org.openbravo.model.authentication.AuthenticationProvider;
 class AuthenticationProviderEventHandler extends EntityPersistenceEventObserver {
   private static final Entity[] ENTITIES = {
       ModelProvider.getInstance().getEntity(AuthenticationProvider.ENTITY_NAME) };
+  private static final String API_APP = "5015B1E35DCB4717908A1A200F6616EC";
 
   @Inject
   private OAuth2SignInProvider oauth2SignInProvider;
@@ -105,15 +106,15 @@ class AuthenticationProviderEventHandler extends EntityPersistenceEventObserver 
   }
 
   private void validateUniquenessApiConfiguration(AuthenticationProvider authProvider) {
-    OBCriteria<AuthenticationProvider> criteria = OBDal.getInstance()
-        .createCriteria(AuthenticationProvider.class);
-    criteria.add(Restrictions.eq(AuthenticationProvider.PROPERTY_APPLICATION,
-        authProvider.getApplication()));
-    criteria.add(Restrictions
-        .not(Restrictions.eq(AuthenticationProvider.PROPERTY_ID, authProvider.getId())));
-
-    criteria.setMaxResults(1);
-    if (criteria.uniqueResult() != null) {
+    AuthenticationProvider other = (AuthenticationProvider) OBDal.getInstance()
+        .createCriteria(AuthenticationProvider.class)
+        .add(Restrictions.eq(AuthenticationProvider.PROPERTY_APPLICATION,
+            OBDal.getInstance().get(Application.class, API_APP)))
+        .add(Restrictions
+            .not(Restrictions.eq(AuthenticationProvider.PROPERTY_ID, authProvider.getId())))
+        .setMaxResults(1)
+        .uniqueResult();
+    if (other != null) {
       throw new OBException(OBMessageUtils.messageBD("AuthProviderApiAppNotUniqueConf"));
     }
   }

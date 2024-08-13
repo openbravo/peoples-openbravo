@@ -127,13 +127,17 @@ public class BaseWebServiceServlet extends HttpServlet {
       try {
         doService(request, response);
       } finally {
+        HttpSession session = request.getSession(false);
+        if ("false".equals(request.getParameter("_auth"))) {
+          session.invalidate();
+        }
+
         final boolean sessionCreated = !sessionExists && null != request.getSession(false);
         if (sessionCreated && AuthenticationManager.isStatelessRequest(request)) {
           log.warn("Stateless request, still a session was created " + request.getRequestURL() + " "
               + request.getQueryString());
         }
 
-        HttpSession session = request.getSession(false);
         if (sessionCreated && session != null) {
           // HttpSession for WS should typically expire fast
           // only update the expire interval if this session was created as a consequence of the ws
@@ -151,7 +155,9 @@ public class BaseWebServiceServlet extends HttpServlet {
     } else {
       log.debug("WS accessed by unauthenticated user, requesting authentication");
       // not logged in
-      if (!"false".equals(request.getParameter("auth"))) {
+      if (!"false".equals(request.getParameter("auth"))
+          && !"false".equals(request.getParameter("_auth"))
+          && !oauth2TokenDataProvider.existsOAuth2TokenConfig()) {
         response.setHeader("WWW-Authenticate", "Basic realm=\"Openbravo\"");
       }
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

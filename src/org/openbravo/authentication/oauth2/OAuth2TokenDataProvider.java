@@ -21,8 +21,6 @@ package org.openbravo.authentication.oauth2;
 import java.time.Duration;
 import java.util.Optional;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openbravo.cache.TimeInvalidatedCache;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -33,8 +31,6 @@ import org.openbravo.model.authentication.OAuth2TokenAuthenticationProvider;
  * Provides the configuration properties defined to make authorization with OAuth 2.0 with tokens
  */
 public class OAuth2TokenDataProvider {
-  private static final Logger log = LogManager.getLogger();
-
   private static final String CONFIG_ID = "OAuth2TokenConfig";
 
   private TimeInvalidatedCache<String, OAuth2TokenAuthenticationProvider> oauthTokenConfig = TimeInvalidatedCache
@@ -43,7 +39,7 @@ public class OAuth2TokenDataProvider {
       .expireAfterDuration(Duration.ofMinutes(10))
       .build(this::getConfiguration);
 
-  private OAuth2TokenAuthenticationProvider getConfiguration(String url) {
+  private OAuth2TokenAuthenticationProvider getConfiguration(String configId) {
     try {
       OBContext.setAdminMode(true);
       AuthenticationProvider authProvider = OBDal.getInstance()
@@ -62,8 +58,6 @@ public class OAuth2TokenDataProvider {
           return configResult.get();
         }
       }
-
-      log.error("The oauth token configuration has not been defined");
       return null;
     } finally {
       OBContext.restorePreviousMode();
