@@ -100,7 +100,7 @@ public class BaseWebServiceServlet extends HttpServlet {
 
     String userId = null;
     try {
-      AuthenticationManager authManager = getAuthorizationManager();
+      AuthenticationManager authManager = getAuthenticationManager();
       userId = authManager.webServiceAuthenticate(request);
     } catch (AuthenticationException e) {
       final boolean sessionCreated = !sessionExists && null != request.getSession(false);
@@ -253,7 +253,7 @@ public class BaseWebServiceServlet extends HttpServlet {
    * 
    * @return authentication manager instance to be used on authentication
    */
-  protected AuthenticationManager getAuthorizationManager() {
+  protected AuthenticationManager getAuthenticationManager() {
     return oauth2TokenDataProvider.existsOAuth2TokenConfig()
         ? (AuthenticationManager) ExternalAuthenticationManager.newInstance("OAUTH2TOKEN")
             .map(m -> {
