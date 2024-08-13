@@ -18,13 +18,26 @@
  */
 package org.openbravo.client.application.messageclient;
 
+import org.codehaus.jettison.json.JSONObject;
+
 import java.util.List;
+import java.util.Map;
 
 /**
  * Broadcasts messages to a list of MessageClient recipients
  */
 public class MessageClientBroadcaster {
   static void send(MessageClientMsg message, List<MessageClient> recipients) {
-    recipients.forEach(recipient -> recipient.sendMessage(message.getPayload()));
+    recipients.forEach(recipient -> {
+      recipient.sendMessage(getMessageToBeSent(message));
+    });
+  }
+
+  private static String getMessageToBeSent(MessageClientMsg messageClientMsg) {
+    String payload = messageClientMsg.getPayload();
+    String type = messageClientMsg.getType();
+
+    JSONObject jsonMessage = new JSONObject(Map.of("data", payload, "type", type));
+    return jsonMessage.toString();
   }
 }
