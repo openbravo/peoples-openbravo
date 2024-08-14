@@ -33,6 +33,7 @@ import org.apache.logging.log4j.Logger;
 import org.openbravo.authentication.AuthenticatedUser;
 import org.openbravo.authentication.AuthenticationType;
 import org.openbravo.authentication.ExternalAuthenticationManager;
+import org.openbravo.authentication.oauth2.OAuthTokenConfigProvider.Configuration;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.User;
@@ -43,18 +44,19 @@ import org.openbravo.model.authentication.OAuth2TokenAuthenticationProvider;
  * token is validated using the keys provided by the configured JWKS URL. If the validation is
  * passed, then the value of the property indicated by
  * {@link OAuth2TokenAuthenticationProvider#PROPERTY_TOKENPROPERTY} is extracted of the token, and
- * the user matching that value on its User#PROPERTY_OAUTH2TOKENVALUE is the one identified as the
- * authenticated user.
+ * the user matching that value on its {@link User#PROPERTY_OAUTH2TOKENVALUE} is the one identified
+ * as the authenticated user.
  */
 @AuthenticationType("OAUTH2TOKEN")
 public class OAuth2TokenAuthenticationManager extends ExternalAuthenticationManager {
   private static final Logger log = LogManager.getLogger();
+  private static final String BEARER = "Bearer ";
 
   @Inject
   private JWTDataProvider jwtDataProvider;
 
   @Inject
-  private OAuth2TokenDataProvider oauth2TokenDataProvider;
+  private OAuthTokenConfigProvider oauthTokenConfigProvider;
 
   @Override
   public AuthenticatedUser doExternalAuthentication(HttpServletRequest request,
@@ -79,18 +81,15 @@ public class OAuth2TokenAuthenticationManager extends ExternalAuthenticationMana
       OBContext.setAdminMode(true);
       String authorizationHeader = request.getHeader("Authorization");
 
-      if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+      if (authorizationHeader == null || !authorizationHeader.startsWith(BEARER)) {
         log.error("The authentication header token has not been received");
         return null;
       }
 
-      if (oauth2TokenDataProvider.existsOAuth2TokenConfig()) {
-        OAuth2TokenAuthenticationProvider config = oauth2TokenDataProvider.get();
+      Configuration config = oauthTokenConfigProvider.getConfiguration();
+      return config != null ? getUser(authorizationHeader.substring(BEARER.length()), config)
+          : null;
 
-        return getUser(authorizationHeader.substring(7), config);
-      }
-
-      return null;
     } catch (OAuth2TokenVerificationException ex) {
       log.error("The token verification failed", ex);
       return null;
@@ -114,10 +113,10 @@ public class OAuth2TokenAuthenticationManager extends ExternalAuthenticationMana
    * @throws OAuth2TokenVerificationException
    *           If it is not possible to verify the token or extract the authentication data
    */
-  private String getUser(String tokenID, OAuth2TokenAuthenticationProvider configuration)
+  private String getUser(String tokenID, Configuration configuration)
       throws OAuth2TokenVerificationException {
 
-    Map<String, Object> authData = jwtDataProvider.getData(tokenID, configuration.getJwksUrl(),
+    Map<String, Object> authData = jwtDataProvider.getData(tokenID, configuration.getJwksURL(),
         configuration.getTokenProperty());
     String userIdentifierValue = (String) authData.get(configuration.getTokenProperty());
 
@@ -140,5 +139,4 @@ public class OAuth2TokenAuthenticationManager extends ExternalAuthenticationMana
 
     return user != null ? (String) user.get("id") : null;
   }
-
 }

@@ -34,8 +34,8 @@ import org.apache.logging.log4j.Logger;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.authentication.ExternalAuthenticationManager;
+import org.openbravo.authentication.oauth2.ApiAuthConfigProvider;
 import org.openbravo.authentication.oauth2.OAuth2TokenAuthenticationManager;
-import org.openbravo.authentication.oauth2.OAuth2TokenDataProvider;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.AllowedCrossDomainsHandler;
@@ -66,7 +66,7 @@ public class BaseWebServiceServlet extends HttpServlet {
   private static final int DEFAULT_WS_INACTIVE_INTERVAL = 60;
 
   @Inject
-  private OAuth2TokenDataProvider oauth2TokenDataProvider;
+  private ApiAuthConfigProvider apiAuthConfigProvider;
 
   @Override
   protected final void service(HttpServletRequest request, HttpServletResponse response)
@@ -152,7 +152,7 @@ public class BaseWebServiceServlet extends HttpServlet {
       log.debug("WS accessed by unauthenticated user, requesting authentication");
       // not logged in
       if (!"false".equals(request.getParameter("auth"))
-          && !oauth2TokenDataProvider.existsOAuth2TokenConfig()) {
+          && !apiAuthConfigProvider.existsApiAuthConfiguration()) {
         response.setHeader("WWW-Authenticate", "Basic realm=\"Openbravo\"");
       }
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -254,7 +254,7 @@ public class BaseWebServiceServlet extends HttpServlet {
    * @return authentication manager instance to be used on authentication
    */
   protected AuthenticationManager getAuthenticationManager() {
-    return oauth2TokenDataProvider.existsOAuth2TokenConfig()
+    return apiAuthConfigProvider.existsApiAuthConfiguration()
         ? (AuthenticationManager) ExternalAuthenticationManager.newInstance("OAUTH2TOKEN")
             .map(m -> {
               m.init(this);

@@ -35,15 +35,18 @@ import org.openbravo.model.ad.module.Application;
 import org.openbravo.model.authentication.AuthenticationProvider;
 
 /**
- * Used to invalidate the cache of configurations kept by {@link OpenIDSignInProvider} when changes
- * regarding an authentication provider configuration are detected. Note that in case of working in
- * a clustered environment, this mechanism will only invalidate the cache in the node were the
- * changes occurred. For the rest of the nodes in the cluster it will be necessary to wait for the
- * expiration of the cache entry.
+ * Used to invalidate the cache of configurations kept by {@link OpenIDSignInProvider} and
+ * configuration save by {@link ApiAuthConfigProvider} and {@link OAuthTokenConfigProvider} when
+ * changes regarding an OAuth 2.0 authentication provider with tokens configuration are detected.
+ * Note that in case of working in a clustered environment, this mechanism will only invalidate the
+ * cache in the node were the changes occurred. For the rest of the nodes in the cluster it will be
+ * necessary to wait for the expiration of the cache entry.
  *
  * It also checks that the authentication providers of type OpenID are correctly configured.
  *
  * @see OpenIDSignInProvider#invalidateCache()
+ * @see ApiAuthConfigProvider#invalidateCache()
+ * @see OAuthTokenConfigProvider#invalidateCache()
  */
 class AuthenticationProviderEventHandler extends EntityPersistenceEventObserver {
   private static final Entity[] ENTITIES = {
@@ -52,6 +55,12 @@ class AuthenticationProviderEventHandler extends EntityPersistenceEventObserver 
 
   @Inject
   private OAuth2SignInProvider oauth2SignInProvider;
+
+  @Inject
+  private ApiAuthConfigProvider apiAuthConfigProvider;
+
+  @Inject
+  private OAuthTokenConfigProvider oauthTokenConfigProvider;
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -62,7 +71,7 @@ class AuthenticationProviderEventHandler extends EntityPersistenceEventObserver 
     if (!isValidEvent(event)) {
       return;
     }
-    invalidateOAuth2ConfigurationCache((AuthenticationProvider) event.getTargetInstance());
+    invalidateCaches((AuthenticationProvider) event.getTargetInstance());
   }
 
   public void onSave(@Observes EntityNewEvent event) {
@@ -71,7 +80,7 @@ class AuthenticationProviderEventHandler extends EntityPersistenceEventObserver 
     }
     AuthenticationProvider authProvider = (AuthenticationProvider) event.getTargetInstance();
     checkSupportedAppAndFlow(authProvider);
-    invalidateOAuth2ConfigurationCache(authProvider);
+    invalidateCaches(authProvider);
     validateUniquenessApiConfiguration(authProvider);
   }
 
@@ -81,12 +90,14 @@ class AuthenticationProviderEventHandler extends EntityPersistenceEventObserver 
     }
     AuthenticationProvider authProvider = (AuthenticationProvider) event.getTargetInstance();
     checkSupportedAppAndFlow(authProvider);
-    invalidateOAuth2ConfigurationCache(authProvider);
+    invalidateCaches(authProvider);
     validateUniquenessApiConfiguration(authProvider);
   }
 
-  private void invalidateOAuth2ConfigurationCache(AuthenticationProvider authProvider) {
+  private void invalidateCaches(AuthenticationProvider authProvider) {
     oauth2SignInProvider.invalidateCache(authProvider.getType());
+    apiAuthConfigProvider.invalidateCache();
+    oauthTokenConfigProvider.invalidateCache();
   }
 
   private void checkSupportedAppAndFlow(AuthenticationProvider authProvider) {

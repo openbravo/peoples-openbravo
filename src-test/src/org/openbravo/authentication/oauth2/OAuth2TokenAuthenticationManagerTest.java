@@ -31,6 +31,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.openbravo.authentication.oauth2.OAuthTokenConfigProvider.Configuration;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.core.OBContext;
@@ -96,10 +97,10 @@ public class OAuth2TokenAuthenticationManagerTest extends WeldBaseTest {
   @Test
   public void missingTokenConfiguration() {
     HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-    OAuth2TokenDataProvider provider = Mockito.mock(OAuth2TokenDataProvider.class);
+    ApiAuthConfigProvider apiProvider = Mockito.mock(ApiAuthConfigProvider.class);
 
     Mockito.when(request.getParameter("Authorization")).thenReturn("Bearer TOKEN_VALUE");
-    Mockito.when(provider.existsOAuth2TokenConfig()).thenReturn(false);
+    Mockito.when(apiProvider.existsApiAuthConfiguration()).thenReturn(false);
 
     assertNull(authManager.doWebServiceAuthenticate(request));
   }
@@ -107,15 +108,16 @@ public class OAuth2TokenAuthenticationManagerTest extends WeldBaseTest {
   @Test
   public void userDoesNotMatchWithProvidedProperty() {
     HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-    OAuth2TokenDataProvider provider = Mockito.mock(OAuth2TokenDataProvider.class);
+    ApiAuthConfigProvider apiProvider = Mockito.mock(ApiAuthConfigProvider.class);
+    OAuthTokenConfigProvider oauthTokenProvider = Mockito.mock(OAuthTokenConfigProvider.class);
     JWTDataProvider jwtProv = Mockito.mock(JWTDataProvider.class);
 
     Map<String, Object> userProperties = new HashMap<>();
     userProperties.put("TOKEN_PROPERTY", "");
 
     Mockito.when(request.getParameter("Authorization")).thenReturn("Bearer TOKEN_VALUE");
-    Mockito.when(provider.existsOAuth2TokenConfig()).thenReturn(true);
-    Mockito.when(provider.get()).thenReturn(getProviderConfiguration());
+    Mockito.when(apiProvider.existsApiAuthConfiguration()).thenReturn(true);
+    Mockito.when(oauthTokenProvider.getConfiguration()).thenReturn(getProviderConfiguration());
     try {
       Mockito.when(jwtProv.getData("Bearer TOKEN_VALUE", "CERTIFICATE_URL", "TOKEN_PROPERTY"))
           .thenReturn(userProperties);
@@ -129,15 +131,16 @@ public class OAuth2TokenAuthenticationManagerTest extends WeldBaseTest {
   @Test
   public void userWithPropertyNotFound() {
     HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-    OAuth2TokenDataProvider provider = Mockito.mock(OAuth2TokenDataProvider.class);
+    ApiAuthConfigProvider apiProvider = Mockito.mock(ApiAuthConfigProvider.class);
+    OAuthTokenConfigProvider oauthTokenProvider = Mockito.mock(OAuthTokenConfigProvider.class);
     JWTDataProvider jwtProv = Mockito.mock(JWTDataProvider.class);
 
     Map<String, Object> userProperties = new HashMap<>();
     userProperties.put("TOKEN_PROPERTY", "PROPERTY_VALUE");
 
     Mockito.when(request.getParameter("Authorization")).thenReturn("Bearer TOKEN_VALUE");
-    Mockito.when(provider.existsOAuth2TokenConfig()).thenReturn(true);
-    Mockito.when(provider.get()).thenReturn(getProviderConfiguration());
+    Mockito.when(apiProvider.existsApiAuthConfiguration()).thenReturn(true);
+    Mockito.when(oauthTokenProvider.getConfiguration()).thenReturn(getProviderConfiguration());
     try {
       Mockito.when(jwtProv.getData("Bearer TOKEN_VALUE", "CERTIFICATE_URL", "TOKEN_PROPERTY"))
           .thenReturn(userProperties);
@@ -151,15 +154,16 @@ public class OAuth2TokenAuthenticationManagerTest extends WeldBaseTest {
   @Test
   public void userWithPropertyFound() {
     HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-    OAuth2TokenDataProvider provider = Mockito.mock(OAuth2TokenDataProvider.class);
+    ApiAuthConfigProvider apiProvider = Mockito.mock(ApiAuthConfigProvider.class);
+    OAuthTokenConfigProvider oauthTokenProvider = Mockito.mock(OAuthTokenConfigProvider.class);
     JWTDataProvider jwtProv = Mockito.mock(JWTDataProvider.class);
 
     Map<String, Object> userProperties = new HashMap<>();
     userProperties.put("TOKEN_PROPERTY", "PROPERTY_VALUE");
 
     Mockito.when(request.getParameter("Authorization")).thenReturn("Bearer TOKEN_VALUE");
-    Mockito.when(provider.existsOAuth2TokenConfig()).thenReturn(true);
-    Mockito.when(provider.get()).thenReturn(getProviderConfiguration());
+    Mockito.when(apiProvider.existsApiAuthConfiguration()).thenReturn(true);
+    Mockito.when(oauthTokenProvider.getConfiguration()).thenReturn(getProviderConfiguration());
 
     try {
       Mockito.when(jwtProv.getData("Bearer TOKEN_VALUE", "CERTIFICATE_URL", "TOKEN_PROPERTY"))
@@ -179,12 +183,12 @@ public class OAuth2TokenAuthenticationManagerTest extends WeldBaseTest {
     assertNull(authManager.doWebServiceAuthenticate(request));
   }
 
-  private OAuth2TokenAuthenticationProvider getProviderConfiguration() {
+  private Configuration getProviderConfiguration() {
     OAuth2TokenAuthenticationProvider config = new OAuth2TokenAuthenticationProvider();
     config.setJwksUrl("CERTIFICATE_URL");
     config.setTokenProperty("TOKEN_PROPERTY");
 
-    return config;
+    return new Configuration(config);
   }
 
   private void updateUserWithTokenProperty() {

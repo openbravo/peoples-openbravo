@@ -30,13 +30,16 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.model.authentication.OAuth2TokenAuthenticationProvider;
 
 /**
- * Used to invalidate the cache of public keys kept by {@link JWTDataProvider} when changes
- * regarding an OAuth 2.0 authentication provider configuration are detected. Note that in case of
+ * Used to invalidate the cache of public keys kept by {@link JWTDataProvider} and configuration
+ * save by {@link ApiAuthConfigProvider} and {@link OAuthTokenConfigProvider} when changes regarding
+ * an OAuth 2.0 authentication provider with tokens configuration are detected. Note that in case of
  * working in a clustered environment, this mechanism will only invalidate the cache in the node
  * were the changes occurred. For the rest of the nodes in the cluster it will be necessary to wait
  * for the expiration of the cache entry.
  *
  * @see JWTDataProvider#invalidateCache()
+ * @see ApiAuthConfigProvider#invalidateCache()
+ * @see OAuthTokenConfigProvider#invalidateCache()
  */
 class OAuth2TokenAuthenticationProviderEventHandler extends EntityPersistenceEventObserver {
   private static final Entity[] ENTITIES = {
@@ -46,7 +49,10 @@ class OAuth2TokenAuthenticationProviderEventHandler extends EntityPersistenceEve
   private JWTDataProvider jwtDataProvider;
 
   @Inject
-  private OAuth2TokenDataProvider oauth2TokenDataProvider;
+  private ApiAuthConfigProvider apiAuthConfigProvider;
+
+  @Inject
+  private OAuthTokenConfigProvider oathTokenConfigProvider;
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -59,8 +65,7 @@ class OAuth2TokenAuthenticationProviderEventHandler extends EntityPersistenceEve
     }
     OAuth2TokenAuthenticationProvider oAuth2Provider = (OAuth2TokenAuthenticationProvider) event
         .getTargetInstance();
-    invalidateOAuthPublicKeyCache(oAuth2Provider.getJwksUrl());
-    invalidateOauthTokenConfigurationCache();
+    invalidateCaches(oAuth2Provider.getJwksUrl());
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -70,17 +75,14 @@ class OAuth2TokenAuthenticationProviderEventHandler extends EntityPersistenceEve
     Property certificateURLProperty = ENTITIES[0]
         .getProperty(OAuth2TokenAuthenticationProvider.PROPERTY_JWKSURL);
     String certificateURL = (String) event.getPreviousState(certificateURLProperty);
-    invalidateOAuthPublicKeyCache(certificateURL);
-    invalidateOauthTokenConfigurationCache();
+    invalidateCaches(certificateURL);
   }
 
-  private void invalidateOAuthPublicKeyCache(String certificateURL) {
+  private void invalidateCaches(String certificateURL) {
     if (certificateURL != null) {
       jwtDataProvider.invalidateCache(certificateURL);
     }
-  }
-
-  private void invalidateOauthTokenConfigurationCache() {
-    oauth2TokenDataProvider.invalidateCache();
+    apiAuthConfigProvider.invalidateCache();
+    oathTokenConfigProvider.invalidateCache();
   }
 }

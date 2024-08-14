@@ -34,16 +34,15 @@ import org.openbravo.model.authentication.AuthenticationProvider;
 import org.openbravo.model.authentication.OAuth2AuthenticationProvider;
 
 /**
- * Used to invalidate both the cache of public keys kept by {@link JWTDataProvider} and the cache of
- * configurations kept by {@link OpenIDSignInProvider} and {@link OAuth2TokenDataProvider} when
- * changes regarding an OAuth 2.0 authentication provider configuration are detected. Note that in
- * case of working in a clustered environment, this mechanism will only invalidate the cache in the
- * node were the changes occurred. For the rest of the nodes in the cluster it will be necessary to
- * wait for the expiration of the cache entry.
+ * Used to invalidate both the cache of public keys kept by {@link OpenIDTokenDataProvider} and the
+ * cache of configurations kept by {@link OpenIDSignInProvider} when changes regarding an OAuth 2.0
+ * authentication provider configuration are detected. Note that in case of working in a clustered
+ * environment, this mechanism will only invalidate the cache in the node were the changes occurred.
+ * For the rest of the nodes in the cluster it will be necessary to wait for the expiration of the
+ * cache entry.
  *
  * @see JWTDataProvider#invalidateCache()
  * @see OpenIDSignInProvider#invalidateCache()
- * @see OAuth2TokenDataProvider#invalidateCache()
  */
 class OAuth2AuthenticationProviderEventHandler extends EntityPersistenceEventObserver {
   private static final Entity[] ENTITIES = {
@@ -54,9 +53,6 @@ class OAuth2AuthenticationProviderEventHandler extends EntityPersistenceEventObs
 
   @Inject
   private OAuth2SignInProvider oauth2SignInProvider;
-
-  @Inject
-  private OAuth2TokenDataProvider oauth2TokenDataProvider;
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -80,7 +76,6 @@ class OAuth2AuthenticationProviderEventHandler extends EntityPersistenceEventObs
         .getTargetInstance();
     invalidateOpenIDPublicKeyCache(oAuth2Provider.getCertificateURL());
     invalidateOAuth2ConfigurationCache(oAuth2Provider.getAuthProvider().getType());
-    invalidateOauthTokenConfigurationCache();
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -95,7 +90,6 @@ class OAuth2AuthenticationProviderEventHandler extends EntityPersistenceEventObs
         .getTargetInstance();
     invalidateOAuth2ConfigurationCache(oAuth2Provider.getAuthProvider().getType());
     checkSupportedAuthenticationFlow(oAuth2Provider);
-    invalidateOauthTokenConfigurationCache();
   }
 
   private void invalidateOpenIDPublicKeyCache(String certificateURL) {
@@ -106,10 +100,6 @@ class OAuth2AuthenticationProviderEventHandler extends EntityPersistenceEventObs
 
   private void invalidateOAuth2ConfigurationCache(String type) {
     oauth2SignInProvider.invalidateCache(type);
-  }
-
-  private void invalidateOauthTokenConfigurationCache() {
-    oauth2TokenDataProvider.invalidateCache();
   }
 
   private void checkSupportedAuthenticationFlow(OAuth2AuthenticationProvider oAuth2Provider) {

@@ -31784,8 +31784,8 @@ In case the field is not checked, the preference is defined by Attribute, which 
 <!--8769EDD44D3F40CC8227CA84C17482AB-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--8769EDD44D3F40CC8227CA84C17482AB-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--8769EDD44D3F40CC8227CA84C17482AB-->  <COLUMNNAME><![CDATA[C_Oauth2_Token_Value]]></COLUMNNAME>
-<!--8769EDD44D3F40CC8227CA84C17482AB-->  <NAME><![CDATA[OAuth 2.0 Token property To Map Value]]></NAME>
-<!--8769EDD44D3F40CC8227CA84C17482AB-->  <PRINTNAME><![CDATA[OAuth 2.0 Token property To Map Value]]></PRINTNAME>
+<!--8769EDD44D3F40CC8227CA84C17482AB-->  <NAME><![CDATA[OAuth 2.0 Token Value]]></NAME>
+<!--8769EDD44D3F40CC8227CA84C17482AB-->  <PRINTNAME><![CDATA[OAuth 2.0 Token Value]]></PRINTNAME>
 <!--8769EDD44D3F40CC8227CA84C17482AB-->  <DESCRIPTION><![CDATA[Value of an authentication token property that maps current user to create context in API calls. This property is defined in the Authentication Provider Configuration window.]]></DESCRIPTION>
 <!--8769EDD44D3F40CC8227CA84C17482AB-->  <HELP><![CDATA[Value of an authentication token property that maps current user to create context in API calls. This property is defined in the Authentication Provider Configuration window.]]></HELP>
 <!--8769EDD44D3F40CC8227CA84C17482AB-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
