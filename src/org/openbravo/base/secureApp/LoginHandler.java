@@ -176,7 +176,15 @@ public class LoginHandler extends HttpBaseServlet {
     return !StringUtils.isBlank(vars.getStringParameter("loginMethod"));
   }
 
-  private AuthenticationManager getAuthenticationManager(String method) {
+  /**
+   * This method retrieves the AuthenticationManager instance to be used to authenticate the User
+   * that is logging in
+   *
+   * @param method
+   *          Optional identifier of an authentication method used to get an instance of
+   *          ExternalAuthenticationManager
+   */
+  protected AuthenticationManager getAuthenticationManager(String method) {
     if (StringUtils.isBlank(method)) {
       return AuthenticationManager.getAuthenticationManager(this);
     }
