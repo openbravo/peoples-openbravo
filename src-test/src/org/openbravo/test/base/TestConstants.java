@@ -98,6 +98,7 @@ public class TestConstants {
 
   public static class Applications {
     public static final String BACKOFFICE = "85A6864E67B3427C9DEA981AAE11B306";
+    public static final String API = "5015B1E35DCB4717908A1A200F6616EC";
   }
 
   private TestConstants() {

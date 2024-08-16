@@ -68,7 +68,7 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
   private LoginStateHandler authStateHandler;
 
   @Inject
-  private OpenIDTokenDataProvider openIDTokenDataProvider;
+  private JWTDataProvider jwtDataProvider;
 
   @Inject
   private HttpClientManager httpClientManager;
@@ -257,7 +257,8 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
       OAuth2AuthenticationProvider configuration)
       throws JSONException, OAuth2TokenVerificationException {
     String idToken = tokenData.getString("id_token");
-    Map<String, Object> authData = openIDTokenDataProvider.getData(idToken, configuration);
+    Map<String, Object> authData = jwtDataProvider.getData(idToken,
+        configuration.getCertificateURL(), "email");
     String email = (String) authData.get("email");
 
     if (StringUtils.isBlank(email)) {

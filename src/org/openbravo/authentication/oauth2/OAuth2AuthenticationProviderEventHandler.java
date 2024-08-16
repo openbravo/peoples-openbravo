@@ -41,7 +41,7 @@ import org.openbravo.model.authentication.OAuth2AuthenticationProvider;
  * For the rest of the nodes in the cluster it will be necessary to wait for the expiration of the
  * cache entry.
  *
- * @see OpenIDTokenDataProvider#invalidateCache()
+ * @see JWTDataProvider#invalidateCache()
  * @see OpenIDSignInProvider#invalidateCache()
  */
 class OAuth2AuthenticationProviderEventHandler extends EntityPersistenceEventObserver {
@@ -49,7 +49,7 @@ class OAuth2AuthenticationProviderEventHandler extends EntityPersistenceEventObs
       ModelProvider.getInstance().getEntity(OAuth2AuthenticationProvider.ENTITY_NAME) };
 
   @Inject
-  private OpenIDTokenDataProvider openIDTokenDataProvider;
+  private JWTDataProvider jwtDataProvider;
 
   @Inject
   private OAuth2SignInProvider oauth2SignInProvider;
@@ -94,7 +94,7 @@ class OAuth2AuthenticationProviderEventHandler extends EntityPersistenceEventObs
 
   private void invalidateOpenIDPublicKeyCache(String certificateURL) {
     if (certificateURL != null) {
-      openIDTokenDataProvider.invalidateCache(certificateURL);
+      jwtDataProvider.invalidateCache(certificateURL);
     }
   }
 
