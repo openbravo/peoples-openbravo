@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,6 +30,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.ThreadHandler;
 
 /**
@@ -52,6 +54,23 @@ public class KernelFilter implements Filter {
   @Override
   public void doFilter(final ServletRequest request, final ServletResponse response,
       final FilterChain chain) throws IOException, ServletException {
+
+    HttpServletResponse httpResp = (HttpServletResponse) response;
+    String contextName = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
+        .getProperty("context.name");
+    String reportUri = "/" + contextName + "/csp";
+    if (OBContext.getOBContext() != null) {
+      httpResp.setHeader("Content-Security-Policy-Report-Only",
+          "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-src 'self' http://oj0ijfii34kccq3ioto7mdspc7r2s7o9.ig.ig.gmodules.com; report-uri "
+              + reportUri + ";");
+    }
+    httpResp.setHeader("X-Frame-Options", "SAMEORIGIN");
+    httpResp.setHeader("X-Content-Type-Options", "nosniff");
+    httpResp.setHeader("X-Permitted-Cross-Domain-Policies", "none");
+    httpResp.setHeader("Referrer-Policy", "same-origin");
+    httpResp.setHeader("X-Frame-Options", "SAMEORIGIN");
+
     final ThreadHandler dth = new ThreadHandler() {
 
       @Override
