@@ -113,14 +113,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_INVOICE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="C_ORDER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="REPRINT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -152,14 +144,9 @@
       <foreign-key foreignTable="M_PRICELIST" name="C_SUBSINV_FK_M_PRICELIST_ID">
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_INVOICE" name="C_SUBSINVOICE_C_INVOICE">
-        <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ORDER" name="C_SUBSINVOICE_C_ORDER">
-        <reference local="C_ORDER_ID" foreign="C_ORDER_ID"/>
-      </foreign-key>
       <index name="C_SUBSTITUTIVEINVOICE_DOCNO" unique="false">
         <index-column name="DOCUMENTNO"/>
       </index>
+      <check name="REPRINT_CHK"><![CDATA[REPRINT IN ('Y', 'N')]]></check>
     </table>
   </database>
