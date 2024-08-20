@@ -37,9 +37,6 @@ public class WebSocketConfigurator extends ServerEndpointConfig.Configurator {
       throw new OBException("WebSocket authentication failed, not authenticated");
     }
 
-    // TODO: To think if it might make sense to store some user properties information, for later
-    // use in the WebSocket initialization
-
     // Add sessionId to the userProperties
     sec.getUserProperties().put("sessionId", session.getId());
     sec.getUserProperties().put("user_id", session.getAttribute("#AD_USER_ID"));

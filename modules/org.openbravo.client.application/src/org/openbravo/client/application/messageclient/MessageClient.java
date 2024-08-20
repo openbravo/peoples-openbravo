@@ -33,7 +33,6 @@ public abstract class MessageClient {
   String userId;
   String roleId;
   Date timestampLastMsgSent;
-  // TODO: Add listenedChannels/messageTypesSubscription
   List<String> subscribedTopics;
 
   public MessageClient(String searchKey, String clientId, String organizationId, String userId,
