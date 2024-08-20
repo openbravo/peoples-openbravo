@@ -48,7 +48,7 @@ public class WebSocketConnectionHandler {
     String clientId = (String) session.getUserProperties().get("client_id");
 
     List<String> supportedMessageTypes = session.getRequestParameterMap()
-        .get("supportedMessageTypes");
+        .get("supportedTopics");
 
     WebSocketClient webSocketClient = new WebSocketClient(sessionId, clientId, orgId, userId,
         roleId, session);

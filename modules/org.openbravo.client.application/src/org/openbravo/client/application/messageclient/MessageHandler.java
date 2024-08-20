@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * MessageHandler by type
  */
 public abstract class MessageHandler {
-  public List<MessageClient> getRecipients(MessageClientMsg messageClientMsg) {
+  protected final List<MessageClient> getRecipients(MessageClientMsg messageClientMsg) {
     List<MessageClient> connectedClients = MessageClientRegistry.getInstance().getAllClients();
 
     // Filters those connectedClients who already received the message
@@ -49,7 +49,7 @@ public abstract class MessageHandler {
     return getRecipientsByContext(messageClientMsg, relevantClients);
   }
 
-  public abstract boolean isAllowedToSubscribeToTopic(MessageClient messageClient);
+  protected abstract boolean isAllowedToSubscribeToTopic(MessageClient messageClient);
 
   /**
    * Must return the recipients of the messageClientMsg by using the provided context in that same
@@ -62,8 +62,25 @@ public abstract class MessageHandler {
    *          Relevant connected clients, function should filter those
    * @return List of MessageClient that should receive the message
    */
-  public abstract List<MessageClient> getRecipientsByContext(MessageClientMsg messageClientMsg,
-      List<MessageClient> connectedClients);
+  protected final List<MessageClient> getRecipientsByContext(MessageClientMsg messageClientMsg,
+      List<MessageClient> connectedClients) {
+    return connectedClients.stream()
+        .filter(messageClient -> this.isValidRecipient(messageClientMsg, messageClient))
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * Must return if the recipient is valid for the messageClientMsg by using the provided context in
+   * that same object.
+   *
+   * @param messageClientMsg
+   *          Message that also contains the context
+   * @param messageClient
+   *          Meessage client to be validated
+   * @return true if the message client should receive the message, false otherwise
+   */
+  protected abstract boolean isValidRecipient(MessageClientMsg messageClientMsg,
+      MessageClient messageClient);
 
   /**
    * Defines the qualifier used to register a message handler type.

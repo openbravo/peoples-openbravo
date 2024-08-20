@@ -30,10 +30,10 @@ import java.util.List;
 @MessageHandler.Qualifier("example")
 public class ExampleMessageHandler extends MessageHandler {
   @Override
-  public List<MessageClient> getRecipientsByContext(MessageClientMsg messageClientMsg,
-      List<MessageClient> connectedClients) {
-    // TODO: Implement a real case instead of returning the connected clients
-    return connectedClients;
+  protected boolean isValidRecipient(MessageClientMsg messageClientMsg,
+      MessageClient messageClient) {
+    // TODO: Implement a real case instead of returning always true
+    return true;
   }
 
   @Override
