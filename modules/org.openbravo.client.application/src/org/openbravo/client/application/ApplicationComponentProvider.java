@@ -514,6 +514,9 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     // Product Services
     globalResources.add(createStaticResource("web/js/productServices.js", true));
 
+    // BOM Production type
+    globalResources.add(createStaticResource("web/js/billOfMaterialsProductionType.js", true));
+
     // Cancel and Replace
     globalResources.add(createStaticResource("web/js/cancelAndReplace.js", false));
 
