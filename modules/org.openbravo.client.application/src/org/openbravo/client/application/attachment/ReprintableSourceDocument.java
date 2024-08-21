@@ -38,7 +38,7 @@ public abstract class ReprintableSourceDocument<D extends BaseOBObject & ClientE
    * Supported document types that can be linked to a {@link ReprintableDocument}
    */
   public enum DocumentType {
-    INVOICE, ORDER;
+    INVOICE, ORDER, SUBSTITUTIVEINVOICE;
   }
 
   /**
@@ -60,6 +60,8 @@ public abstract class ReprintableSourceDocument<D extends BaseOBObject & ClientE
         return new ReprintableInvoice(id);
       case ORDER:
         return new ReprintableOrder(id);
+      case SUBSTITUTIVEINVOICE:
+        return new ReprintableSubstitutiveInvoice(id);
       default:
         throw new IllegalArgumentException("Unknown document type");
     }

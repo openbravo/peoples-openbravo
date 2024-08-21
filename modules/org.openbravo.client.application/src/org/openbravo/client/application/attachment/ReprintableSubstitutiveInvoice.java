@@ -39,7 +39,7 @@ public class ReprintableSubstitutiveInvoice extends ReprintableSourceDocument<Su
 
   @Override
   String getProperty() {
-    return ReprintableDocument.PROPERTY_INVOICE;
+    return ReprintableDocument.PROPERTY_SUBSTITUTIVEINVOICE;
   }
 
   @Override
