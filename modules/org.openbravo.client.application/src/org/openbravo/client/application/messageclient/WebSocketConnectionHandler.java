@@ -39,16 +39,14 @@ public class WebSocketConnectionHandler {
 
   @OnOpen
   public void onOpen(javax.websocket.Session session) {
-    // TODO: Remove log.info or change it to log.debug
-    log.info("Websocket - Connection accepted. Session: " + session.getId());
+    log.debug("Websocket - Connection accepted. Session: " + session.getId());
     String sessionId = (String) session.getUserProperties().get("sessionId");
     String userId = (String) session.getUserProperties().get("user_id");
     String roleId = (String) session.getUserProperties().get("role_id");
     String orgId = (String) session.getUserProperties().get("org_id");
     String clientId = (String) session.getUserProperties().get("client_id");
 
-    List<String> supportedMessageTypes = session.getRequestParameterMap()
-        .get("supportedTopics");
+    List<String> supportedMessageTypes = session.getRequestParameterMap().get("supportedTopics");
 
     WebSocketClient webSocketClient = new WebSocketClient(sessionId, clientId, orgId, userId,
         roleId, session);
@@ -58,8 +56,7 @@ public class WebSocketConnectionHandler {
 
   @OnClose
   public void onClose(javax.websocket.Session session) {
-    // TODO: Remove log.info or change it to log.debug
-    log.info("Websocket - Connection terminated. Session: " + session.getId());
+    log.debug("Websocket - Connection terminated. Session: " + session.getId());
     String sessionId = (String) session.getUserProperties().get("sessionId");
 
     MessageClientConnectionHandler.connectionClosed(sessionId);
@@ -68,16 +65,14 @@ public class WebSocketConnectionHandler {
   @OnMessage
   public void onMessage(String message, javax.websocket.Session session) {
     String sessionId = (String) session.getUserProperties().get("sessionId");
-    MessageClientConnectionHandler.handleMessage(message, sessionId);
+    String messageToSendBack = MessageClientConnectionHandler.handleMessage(message, sessionId);
+    if (messageToSendBack != null) {
+      session.getAsyncRemote().sendText(messageToSendBack);
+    }
   }
 
   @OnError
   public void onError(javax.websocket.Session session, Throwable t) {
-    if (t instanceof IOException) {
-      // Ignore IOExceptions in case of broken pipe from client side
-      // TODO: Make sure this is what we want
-    } else {
-      MessageClientConnectionHandler.handleError(t);
-    }
+    MessageClientConnectionHandler.handleError(t);
   }
 }

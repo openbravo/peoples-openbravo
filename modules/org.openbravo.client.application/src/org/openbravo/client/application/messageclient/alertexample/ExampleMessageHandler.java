@@ -22,8 +22,6 @@ import org.openbravo.client.application.messageclient.MessageClient;
 import org.openbravo.client.application.messageclient.MessageClientMsg;
 import org.openbravo.client.application.messageclient.MessageHandler;
 
-import java.util.List;
-
 /**
  * Implements an example of a message handler for MessageClientMsg type "example"
  */
@@ -34,6 +32,15 @@ public class ExampleMessageHandler extends MessageHandler {
       MessageClient messageClient) {
     // TODO: Implement a real case instead of returning always true
     return true;
+  }
+
+  @Override
+  protected String handleReceivedMessage(String message, MessageClient messageClient) {
+    if ("ping".equals(message)) {
+      return "pong";
+    }
+
+    return null;
   }
 
   @Override

@@ -107,13 +107,23 @@ public class MessageClientRegistry implements OBSingleton {
     return new ArrayList<>(messageClientsBySessionId.values());
   }
 
+  /**
+   * Returns a Message Client that was registered with the given Search Key
+   * 
+   * @param searchKey
+   *          Search Key of the message client to search
+   * @return Message Client corresponding to that Search Key
+   */
+  public MessageClient getBySearchKey(String searchKey) {
+    return messageClientsBySessionId.get(searchKey);
+  }
+
   private boolean areAllSubscribedTopicsAllowed(MessageClient messageClient) {
     List<String> subscribedTopics = messageClient.getSubscribedTopics();
     if (subscribedTopics.isEmpty()) {
       return true; // TODO: No subscriptions, maybe it makes sense to close connection
     }
-    return subscribedTopics.stream()
-        .allMatch(topic -> isSubscriptionAllowed(messageClient, topic));
+    return subscribedTopics.stream().allMatch(topic -> isSubscriptionAllowed(messageClient, topic));
   }
 
   private boolean isSubscriptionAllowed(MessageClient messageClient, String topic) {

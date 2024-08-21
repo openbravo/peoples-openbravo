@@ -83,6 +83,17 @@ public abstract class MessageHandler {
       MessageClient messageClient);
 
   /**
+   * Handles a message received from the connected message client with the annotated topic
+   * 
+   * @param message
+   *          Message received from the client
+   * @param messageClient
+   *          Connected message client that sent the message
+   * @return A string that will be sent to the client, null if nothing should be sent back
+   */
+  protected abstract String handleReceivedMessage(String message, MessageClient messageClient);
+
+  /**
    * Defines the qualifier used to register a message handler type.
    */
   @javax.inject.Qualifier

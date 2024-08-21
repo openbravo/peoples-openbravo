@@ -18,8 +18,15 @@
  */
 package org.openbravo.client.application.messageclient;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
+import org.openbravo.base.weld.WeldUtils;
 
 /**
  * Defines a common API for Connection Handlers to trigger connection calls(established/closed) and
@@ -36,14 +43,36 @@ public class MessageClientConnectionHandler {
     MessageClientRegistry.getInstance().removeClient(searchKey);
   }
 
-  static void handleMessage(String message, String messageClientSearchKey) {
-    // TODO: Maybe implement how messages are handled by the infra, responses and so on.
-    log.info(String.format("[MSG_CLIENT] Message received from client %s. Message: %s",
+  static String handleMessage(String message, String messageClientSearchKey) {
+    log.debug(String.format("[Message Client] Message received from client %s. Message: %s",
         messageClientSearchKey, message));
+
+    try {
+      JSONObject jsonMessage = new JSONObject(message);
+      String topic = jsonMessage.getString("type");
+      String messageToBeHandled = jsonMessage.getString("data");
+      List<MessageHandler> messageHandlers = WeldUtils.getInstances(MessageHandler.class,
+          new MessageHandler.Selector(topic));
+      MessageClient messageClient = MessageClientRegistry.getInstance()
+          .getBySearchKey(messageClientSearchKey);
+      if (!messageHandlers.isEmpty() && messageClient != null) {
+        String messageToSendBack = messageHandlers.get(0)
+            .handleReceivedMessage(messageToBeHandled, messageClient);
+        if (messageToSendBack != null && !messageToSendBack.isBlank()) {
+          JSONObject jsonMessageToSendBack = new JSONObject(
+              Map.of("data", messageToSendBack, "type", topic));
+          return jsonMessageToSendBack.toString();
+        }
+      }
+    } catch (JSONException e) {
+      throw new OBException("Could not handle non-json message.", e);
+    }
+    return null;
   }
 
   static void handleError(Throwable e) {
-    // TODO: To be implemented
-    log.error("Received error: ", e);
+    log.error("Message Client - Received error: ", e);
+    // Error always trigger a connection closed event, which is properly handled in the
+    // connectionClosed method
   }
 }
