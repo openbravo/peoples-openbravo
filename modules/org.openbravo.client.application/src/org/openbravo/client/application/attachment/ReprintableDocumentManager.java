@@ -472,7 +472,7 @@ public class ReprintableDocumentManager {
   /**
    * Checks if reprintable documents can be generated from a given window. For the moment it is only
    * supported to generate reprintable documents from these windows: Sales Order, Sales Invoice,
-   * Purchase Order and Purchase Invoice.
+   * Purchase Order, Substitutive Invoices and Purchase Invoice.
    *
    * @param windowId
    *          The ID of the AD window
