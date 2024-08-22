@@ -35,9 +35,9 @@ public class MessageClientBroadcaster {
 
   private static String getMessageToBeSent(MessageClientMsg messageClientMsg) {
     String payload = messageClientMsg.getPayload();
-    String type = messageClientMsg.getType();
+    String type = messageClientMsg.getType(); // TODO: Change it to topic/getTopic
 
-    JSONObject jsonMessage = new JSONObject(Map.of("data", payload, "type", type));
+    JSONObject jsonMessage = new JSONObject(Map.of("data", payload, "topic", type));
     return jsonMessage.toString();
   }
 }

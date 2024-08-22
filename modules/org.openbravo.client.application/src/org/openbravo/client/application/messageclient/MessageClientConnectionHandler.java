@@ -49,7 +49,7 @@ public class MessageClientConnectionHandler {
 
     try {
       JSONObject jsonMessage = new JSONObject(message);
-      String topic = jsonMessage.getString("type");
+      String topic = jsonMessage.getString("topic");
       String messageToBeHandled = jsonMessage.getString("data");
       List<MessageHandler> messageHandlers = WeldUtils.getInstances(MessageHandler.class,
           new MessageHandler.Selector(topic));
@@ -60,7 +60,7 @@ public class MessageClientConnectionHandler {
             .handleReceivedMessage(messageToBeHandled, messageClient);
         if (messageToSendBack != null && !messageToSendBack.isBlank()) {
           JSONObject jsonMessageToSendBack = new JSONObject(
-              Map.of("data", messageToSendBack, "type", topic));
+              Map.of("data", messageToSendBack, "topic", topic));
           return jsonMessageToSendBack.toString();
         }
       }
