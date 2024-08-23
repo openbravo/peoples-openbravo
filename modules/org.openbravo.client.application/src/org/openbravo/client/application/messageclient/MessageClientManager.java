@@ -105,14 +105,13 @@ public class MessageClientManager {
         }
         List<MessageClientMsg> pendingMessages = manager.messageRegistry.getPendingMessages();
         if (!pendingMessages.isEmpty()) {
-          System.out.println("[MSG_CLIENT] Msgs to be sent have been detected. "
-              + pendingMessages.size() + " msgs pending to be sent");
+          log.debug("[Message Client] There are " + pendingMessages.size() + " pending to be sent.");
           pendingMessages.forEach(message -> {
             if (message.getPayload() != null) {
               try {
                 MessageClientBroadcaster.send(message, getMessageRecipients(message));
               } catch (Exception e) {
-                e.printStackTrace();
+                log.error("[Message Client] Message failed be sent to the message clients.", e);
               }
             }
           });

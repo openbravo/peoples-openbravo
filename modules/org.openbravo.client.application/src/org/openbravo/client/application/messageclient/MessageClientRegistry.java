@@ -121,7 +121,7 @@ public class MessageClientRegistry implements OBSingleton {
   private boolean areAllSubscribedTopicsAllowed(MessageClient messageClient) {
     List<String> subscribedTopics = messageClient.getSubscribedTopics();
     if (subscribedTopics.isEmpty()) {
-      return true; // TODO: No subscriptions, maybe it makes sense to close connection
+      return true;
     }
     return subscribedTopics.stream().allMatch(topic -> isSubscriptionAllowed(messageClient, topic));
   }
