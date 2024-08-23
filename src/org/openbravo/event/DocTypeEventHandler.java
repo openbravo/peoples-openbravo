@@ -47,7 +47,6 @@ class DocTypeEventHandler extends EntityPersistenceEventObserver {
     }
     final DocumentType docType = (DocumentType) event.getTargetInstance();
     checkDocumentSoSubType(docType);
-    checkDocumentArSubType(docType);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -56,7 +55,6 @@ class DocTypeEventHandler extends EntityPersistenceEventObserver {
     }
     final DocumentType docType = (DocumentType) event.getTargetInstance();
     checkDocumentSoSubType(docType);
-    checkDocumentArSubType(docType);
   }
 
   private void checkDocumentSoSubType(DocumentType docType) {
@@ -68,12 +66,4 @@ class DocTypeEventHandler extends EntityPersistenceEventObserver {
     }
   }
 
-  private void checkDocumentArSubType(DocumentType docType) {
-    if (docType.getDocumentCategory().equals("ARI")
-        && (docType.getInvoiceType() == null || docType.getInvoiceType().equals(""))) {
-      String language = OBContext.getOBContext().getLanguage().getLanguage();
-      ConnectionProvider conn = new DalConnectionProvider(false);
-      throw new OBException(Utility.messageBD(conn, "ArSubTypeNotDefined", language));
-    }
-  }
 }
