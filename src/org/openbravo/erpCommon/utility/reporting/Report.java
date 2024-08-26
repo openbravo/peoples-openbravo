@@ -113,6 +113,10 @@ public class Report implements Serializable {
         reportData = ReportData.getInvoiceInfo(connectionProvider, documentId);
         break;
 
+      case SUBSTITUTIVEINVOICE: // Retrieve substitutive invoice information
+        reportData = ReportData.getSubstitutiveInvoiceInfo(connectionProvider, documentId);
+        break;
+
       case SHIPMENT: // Retrieve shipment information
         reportData = ReportData.getShipmentInfo(connectionProvider, documentId);
         break;
