@@ -116,6 +116,36 @@
            <![CDATA[ and c_invoice.c_invoice_id in ]]>
         </Parameter>
    </SqlMethod>
+
+   <SqlMethod name="getContactDetailsForSubstitutiveInvoices" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      <![CDATA[
+		select
+			c_substitutiveinvoice.c_substitutiveinvoice_id as document_id,
+			'' as docstatus,
+			c_substitutiveinvoice.documentno as ourreference,
+			'' as yourreference,
+			'' as salesrep_user_id,
+			'' as salesrep_email,
+			'' as salesrep_name,
+			c_substitutiveinvoice.c_bpartner_id as bpartner_id,
+			c_bpartner.name as bpartner_name,
+			c_substitutiveinvoice.ad_user_id as contact_user_id,
+			customercontact.email as contact_email,
+			customercontact.name as contact_name
+		from
+			c_substitutiveinvoice
+				left join ad_user customercontact on c_substitutiveinvoice.ad_user_id = customercontact.ad_user_id
+				left join c_bpartner on c_substitutiveinvoice.c_bpartner_id = c_bpartner.c_bpartner_id
+		where
+			1=1
+        ]]>
+        </Sql>
+        <Parameter name="cSubstitutiveInvoiceId" optional="false" type="argument" after="1=1">
+           <![CDATA[ and c_substitutiveinvoice.c_substitutiveinvoice_id in ]]>
+        </Parameter>
+   </SqlMethod>
   
     <SqlMethod name="getContactDetailsForShipments" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
