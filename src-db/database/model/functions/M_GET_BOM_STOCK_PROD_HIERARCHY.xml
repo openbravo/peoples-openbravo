@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+  <database name="FUNCTION M_GET_BOM_STOCK_PROD_HIERARCHY">
+    <function name="M_GET_BOM_STOCK_PROD_HIERARCHY" type="NULL" volatility="STABLE">
+      <parameter name="p_productid" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="m_product_id" type="VARCHAR" mode="out">
+        <default/>
+      </parameter>
+      <parameter name="name" type="VARCHAR" mode="out">
+        <default/>
+      </parameter>
+      <parameter name="isstocked" type="CHAR" mode="out">
+        <default/>
+      </parameter>
+      <parameter name="isbom" type="CHAR" mode="out">
+        <default/>
+      </parameter>
+      <parameter name="qty" type="NUMERIC" mode="out">
+        <default/>
+      </parameter>
+      <body><![CDATA[/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2001-2019 Openbravo SLU
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+  v_ResultStr VARCHAR2(2000):='';
+BEGIN
+  RETURN QUERY 
+  WITH RECURSIVE bom_product_hierarchy AS (
+	  SELECT p.m_product_id, p.name, p.isstocked, p.isBom, '1'::NUMERIC as qty
+	  FROM m_product p
+	  WHERE p.m_product_id = p_productid
+	  UNION ALL
+	  SELECT p.m_product_id, p.name, p.isstocked, p.isBom, pb.bomqty::INT*ph.qty::NUMERIC as qty
+	  FROM m_product p
+	  JOIN M_PRODUCT_BOM pb ON p.m_product_id = pb.M_PRODUCTBOM_id
+	  JOIN bom_product_hierarchy ph ON pb.m_product_id = ph.m_product_id 
+	  where (ph.isstocked='N' and ph.isBom='Y')--Iterate Only if the product is non stocked BoM
+  )
+  SELECT ph.m_product_id, ph.name, ph.isstocked, ph.isBom, ph.qty FROM bom_product_hierarchy ph;
+EXCEPTION
+WHEN OTHERS THEN
+  v_ResultStr:= '@ERROR=' || SQLERRM;
+  DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
+  RAISE;
+  RETURN;
+END M_GET_BOM_STOCK_PROD_HIERARCHY
+]]></body>
+    </function>
+  </database>
