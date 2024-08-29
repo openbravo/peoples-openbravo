@@ -80,20 +80,20 @@ public class OAuthTokenConfigProvider {
     oauth2TokenConfig.invalidate(CONFIG_ID);
   }
 
-  public static class Configuration {
+  static class Configuration {
     private final String jwksURL;
     private final String tokenProperty;
 
-    public Configuration(OAuth2TokenAuthenticationProvider config) {
+    private Configuration(OAuth2TokenAuthenticationProvider config) {
       jwksURL = config.getJwksUrl();
       tokenProperty = config.getTokenProperty();
     }
 
-    public String getJwksURL() {
+    String getJwksURL() {
       return jwksURL;
     }
 
-    public String getTokenProperty() {
+    String getTokenProperty() {
       return tokenProperty;
     }
   }
