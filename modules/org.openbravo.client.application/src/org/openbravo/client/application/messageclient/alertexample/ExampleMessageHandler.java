@@ -18,6 +18,8 @@
  */
 package org.openbravo.client.application.messageclient.alertexample;
 
+import java.util.Map;
+
 import org.openbravo.client.application.messageclient.MessageClient;
 import org.openbravo.client.application.messageclient.MessageClientMsg;
 import org.openbravo.client.application.messageclient.MessageHandler;
@@ -27,11 +29,19 @@ import org.openbravo.client.application.messageclient.MessageHandler;
  */
 @MessageHandler.Qualifier("example")
 public class ExampleMessageHandler extends MessageHandler {
+
+  public static final String VALLBLANCA_ORGANIZATION_ID = "D270A5AC50874F8BA67A88EE977F8E3B";
+
   @Override
   protected boolean isValidRecipient(MessageClientMsg messageClientMsg,
       MessageClient messageClient) {
-    // TODO: Implement a real case instead of returning always true
-    return true;
+    // Only send messages to their respective role, or ignore if no role is set
+    Map<String, String> context = messageClientMsg.getContext();
+    if (context.get("roleId") == null) {
+      return true;
+    }
+
+    return messageClient.getRoleId().equals(context.get("roleId"));
   }
 
   @Override
@@ -45,7 +55,7 @@ public class ExampleMessageHandler extends MessageHandler {
 
   @Override
   public boolean isAllowedToSubscribeToTopic(MessageClient messageClient) {
-    // TODO: Implement a real case instead of returning always true
-    return true;
+    // Only accepts subscribers of Vallblanca organization
+    return VALLBLANCA_ORGANIZATION_ID.equals(messageClient.getOrganizationId());
   }
 }

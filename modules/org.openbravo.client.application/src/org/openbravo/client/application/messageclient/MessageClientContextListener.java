@@ -28,7 +28,6 @@ import org.openbravo.base.weld.WeldUtils;
  * pipeline
  */
 public class MessageClientContextListener implements ServletContextListener {
-
   private MessageClientManager messageClientManager;
 
   @Override

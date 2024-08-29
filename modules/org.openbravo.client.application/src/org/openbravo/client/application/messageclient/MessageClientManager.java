@@ -28,6 +28,9 @@ import java.util.concurrent.Executors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 
 /**
  * Class that manages a MessageClientManagerThread that regularly checks for pending messages and
@@ -48,11 +51,14 @@ public class MessageClientManager {
   Instance<MessageHandler> messageHandlers;
 
   public synchronized void start() {
-    // TODO: maybe we don't want to have MessageClient system always on, preference to disable
-    // message client manager entirely
     if (threadsStarted) {
       return;
     }
+
+    if (!isMessageClientManagerEnabled()) {
+      return;
+    }
+
     threadsStarted = true;
 
     log.debug("Starting Message Client Manager");
@@ -105,7 +111,8 @@ public class MessageClientManager {
         }
         List<MessageClientMsg> pendingMessages = manager.messageRegistry.getPendingMessages();
         if (!pendingMessages.isEmpty()) {
-          log.debug("[Message Client] There are " + pendingMessages.size() + " pending to be sent.");
+          log.debug(
+              "[Message Client] There are " + pendingMessages.size() + " pending to be sent.");
           pendingMessages.forEach(message -> {
             if (message.getPayload() != null) {
               try {
@@ -133,5 +140,25 @@ public class MessageClientManager {
       }
       return messageHandler.get().getRecipients(messageClientMsg);
     }
+  }
+
+  private static boolean isMessageClientManagerEnabled() {
+    try {
+      OBContext.setAdminMode();
+      String enableMessageManagerPreference = Preferences.getPreferenceValue(
+          "OBUIAPP_Enable_Message_Manager", true, OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null);
+      if (!Preferences.YES.equals(enableMessageManagerPreference)) {
+        return false;
+      }
+    } catch (PropertyException e) {
+      log.error(
+          "Preference OBUIAPP_Enable_Message_Manager is not properly set, Message Client Manager will not be started.");
+      return false;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return true;
   }
 }

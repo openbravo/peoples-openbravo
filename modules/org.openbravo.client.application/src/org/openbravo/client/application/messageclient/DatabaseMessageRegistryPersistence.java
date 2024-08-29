@@ -135,9 +135,8 @@ public class DatabaseMessageRegistryPersistence implements MessageRegistryPersis
    *          Message with or without expiration date
    */
   private Date getExpirationDate(MessageClientMsg messageClientMsg) {
-    // TODO: Maybe should take into account creation time, instead of assuming expiration from
-    // current time
-    Date currentMaxExpirationDate = DateUtils.addDays(new Date(), MAX_EXPIRATION_DURATION);
+    Date currentMaxExpirationDate = DateUtils.addDays(messageClientMsg.getCreationDate(),
+        MAX_EXPIRATION_DURATION);
     if (messageClientMsg.getExpirationDate() == null) {
       return currentMaxExpirationDate;
     }
