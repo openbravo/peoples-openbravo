@@ -133,9 +133,9 @@ public class MessageClientManager {
 
     List<MessageClient> getMessageRecipients(MessageClientMsg messageClientMsg) {
       Instance<MessageHandler> messageHandler = manager.messageHandlers
-          .select(new MessageHandler.Selector(messageClientMsg.getType()));
+          .select(new MessageHandler.Selector(messageClientMsg.getTopic()));
       if (messageHandler.isUnsatisfied()) {
-        log.warn("No available message handler for type: " + messageClientMsg.getType());
+        log.warn("No available message handler for type: " + messageClientMsg.getTopic());
         return Collections.emptyList();
       }
       return messageHandler.get().getRecipients(messageClientMsg);

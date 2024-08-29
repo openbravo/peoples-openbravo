@@ -29,21 +29,21 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
  */
 public class MessageClientMsg {
   String id;
-  String type;
+  String topic;
   Map<String, String> context;
   String payload;
   Date expirationDate;
   Date creationDate;
 
-  public MessageClientMsg(String type, Map<String, String> context, String payload,
+  public MessageClientMsg(String topic, Map<String, String> context, String payload,
       Date expirationTime, Date creationDate) {
-    this(SequenceIdData.getUUID(), type, context, payload, expirationTime, creationDate);
+    this(SequenceIdData.getUUID(), topic, context, payload, expirationTime, creationDate);
   }
 
-  public MessageClientMsg(String id, String type, Map<String, String> context, String payload,
+  public MessageClientMsg(String id, String topic, Map<String, String> context, String payload,
       Date expirationTime, Date creationDate) {
     this.id = id;
-    this.type = type;
+    this.topic = topic;
     this.context = context;
     this.payload = payload;
     this.expirationDate = expirationTime;
@@ -54,8 +54,8 @@ public class MessageClientMsg {
     return id;
   }
 
-  public String getType() {
-    return type;
+  public String getTopic() {
+    return topic;
   }
 
   public Map<String, String> getContext() {

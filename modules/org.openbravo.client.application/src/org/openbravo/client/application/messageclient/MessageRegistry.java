@@ -80,10 +80,10 @@ public class MessageRegistry {
 
   private boolean checkMessageHandlerExistsForType(MessageClientMsg messageClientMsg) {
     Instance<MessageHandler> messageHandler = messageHandlers
-        .select(new MessageHandler.Selector(messageClientMsg.getType()));
+        .select(new MessageHandler.Selector(messageClientMsg.getTopic()));
 
     if (!messageHandler.isResolvable()) {
-      log.warn("No available message handler for type:" + messageClientMsg.getType());
+      log.warn("No available message handler for type:" + messageClientMsg.getTopic());
       return false;
     }
 

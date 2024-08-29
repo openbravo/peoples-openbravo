@@ -36,7 +36,7 @@ public abstract class MessageHandler {
 
     // Filters those connectedClients who already received the message
     List<MessageClient> relevantClients = connectedClients.stream().filter(messageClient -> {
-      if (!messageClient.getSubscribedTopics().contains(messageClientMsg.getType())) {
+      if (!messageClient.getSubscribedTopics().contains(messageClientMsg.getTopic())) {
         // Filter non-subscribed-for topics
         return false;
       }

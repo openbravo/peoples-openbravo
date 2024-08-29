@@ -31,7 +31,6 @@ import org.openbravo.model.ad.utility.MessagePersisted;
 import org.openbravo.model.common.enterprise.Organization;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,7 +54,7 @@ public class DatabaseMessageRegistryPersistence implements MessageRegistryPersis
       MessagePersisted persistedMessage = OBProvider.getInstance().get(MessagePersisted.class);
       persistedMessage.setNewOBObject(true);
       persistedMessage.setPayload(messageClientMsg.getPayload());
-      persistedMessage.setType(messageClientMsg.type);
+      persistedMessage.setType(messageClientMsg.getTopic());
       persistedMessage.setExpirationdate(getExpirationDate(messageClientMsg));
       messageClientMsg.getContext().forEach((key, value) -> {
         switch (key) {
