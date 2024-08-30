@@ -201,7 +201,7 @@ public class ReprintableDocumentManager {
     if (document.getInvoice() != null) {
       SynchronizationEvent.getInstance()
           .triggerEvent("API_ReprintableInvoiceCreated", sourceDocument.getId());
-    } else if (document.getSubstitutiveinvoice() != null) {
+    } else if (document.getSubstitutiveInvoice() != null) {
       SynchronizationEvent.getInstance()
           .triggerEvent("API_ReprintableSubstitutiveInvoiceCreated", sourceDocument.getId());
     }
