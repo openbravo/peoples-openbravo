@@ -82,7 +82,7 @@ public abstract class ReprintableSourceDocument<D extends BaseOBObject & ClientE
     if (reprintableDocument.getInvoice() != null) {
       return newSourceDocument(reprintableDocument.getId(), DocumentType.INVOICE);
     }
-    if (reprintableDocument.getSubstitutiveinvoice() != null) {
+    if (reprintableDocument.getSubstitutiveInvoice() != null) {
       return newSourceDocument(reprintableDocument.getId(), DocumentType.SUBSTITUTIVEINVOICE);
     }
     if (reprintableDocument.getOrder() != null) {
