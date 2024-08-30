@@ -137,6 +137,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="FREE_FREIGHT_MIN" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_BPARTNER" name="C_BUSPARTNER_M_PRODUCT_PO">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
@@ -164,6 +168,7 @@
       <unique name="M_PRODUCT_PO_PRODUCT_BPARTN_UN">
         <unique-column name="M_PRODUCT_ID"/>
         <unique-column name="C_BPARTNER_ID"/>
+        <unique-column name="AD_ORG_ID"/>
       </unique>
       <check name="M_PRODUCT_PO_DISCONTINUED_CHK"><![CDATA[DISCONTINUED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_PO_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
