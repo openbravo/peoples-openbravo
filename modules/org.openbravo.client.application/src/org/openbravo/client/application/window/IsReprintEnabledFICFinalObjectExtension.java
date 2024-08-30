@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2023 Openbravo SLU 
+ * All portions are Copyright (C) 2023-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,7 +49,8 @@ public class IsReprintEnabledFICFinalObjectExtension implements FICFinalObjectEx
       BaseOBObject row, JSONObject jsContent) throws JSONException {
     JSONObject newObject = new JSONObject();
     if (!((mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION"))
-        && (jsContent.has("C_Order_ID") || jsContent.has("C_Invoice_ID")))
+        && (jsContent.has("C_Order_ID") || jsContent.has("C_Invoice_ID")
+            || jsContent.has("C_Substitutiveinvoice_ID")))
         || !isReprintableWindow(tab)) {
       newObject.put("isReprintEnabled", false);
       return newObject;
