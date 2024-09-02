@@ -60,17 +60,18 @@ import org.openbravo.test.base.TestConstants.Users;
  * Test cases to cover the purchase configuration validations done to the lines of purchase orders.
  */
 public class PurchaseDocumentLineTest extends WeldBaseTest {
-  private static final String WHITE_VALLEY_CLIENT = "39363B0921BB4293B48383844325E84C";
-  private static final String WHITE_VALLEY_ADM = "E717F902C44C455793463450495FF36B";
-  private static final String VALL_BLANCA_STORE = "D270A5AC50874F8BA67A88EE977F8E3B";
-  private static final String PRODUCT_ID = "934E7D7587EC4C7A9E9FF58F0382D450";
-  private static final String VENDOR_ID = "5E905532BD4E4173A544B855CBEC5DCE";
-  private static final String PRICELIST_ID = "ABA6AC5A2CDC45759DF181341C57024A";
-  private static final String WAREHOUSE_ID = "A154EC30A296479BB078B0AFFD74CA22";
+
+  private static final String FB_ESPANA_NORTE_ORGANIZATION_ID = "E443A31992CB4635AFCAEABE7183CE85";
+  private static final String FB_CLIENT_ID = "23C59575B9CF467C9620760EB255B389";
+  private static final String FB_ADMIN_ID = "42D0EEB1C66F497A90DD526DC597E6F0";
+  private static final String PRICELIST_ID = "AEE66281A08F42B6BC509B8A80A33C29";
+  private static final String PAYMENT_TERM_ID = "66BA1164A7394344BB9CD1A6ECEED05D";
+  private static final String WAREHOUSE_ID = "B2D40D8A5D644DD89E329DC297309055";
+  private static final String PRODUCT_ID = "DA7FC1BB3BA44EC48EC1AB9C74168CED";
   private static final String UOM_ID = "100";
+  private static final String VENDOR_ID = "A6750F0D15334FB890C254369AC750A8";
   private static final String CURRENCY_ID = "102";
-  private static final String PAYMENT_TERM_ID = "7C351AA1573C4211BAD680387E98A657";
-  private static final String ORDER_DOC_TYPE = "ADEB2488EE654883A36EFF9077DDF956";
+  private static final String ORDER_DOC_TYPE = "24C649C1402B4ABDA4C59046BB45B9FF";
 
   private static final List<Map<String, Object>> PARAMS = Arrays.asList(
   //@formatter:off
@@ -100,8 +101,8 @@ public class PurchaseDocumentLineTest extends WeldBaseTest {
   @Before
   public void init() {
     IncomingGoodsDocumentLine.invalidateCache();
-    OBContext.setOBContext(Users.OPENBRAVO, WHITE_VALLEY_ADM, WHITE_VALLEY_CLIENT,
-        VALL_BLANCA_STORE);
+    OBContext.setOBContext(Users.OPENBRAVO, FB_ADMIN_ID, FB_CLIENT_ID,
+        FB_ESPANA_NORTE_ORGANIZATION_ID);
     addApprovedVendorConfiguration();
   }
 
@@ -152,7 +153,8 @@ public class PurchaseDocumentLineTest extends WeldBaseTest {
 
     Product product = OBDal.getInstance().get(Product.class, PRODUCT_ID);
 
-    appVendor.setOrganization(OBDal.getInstance().getProxy(Organization.class, VALL_BLANCA_STORE));
+    appVendor.setOrganization(
+        OBDal.getInstance().getProxy(Organization.class, FB_ESPANA_NORTE_ORGANIZATION_ID));
     appVendor.setProduct(product);
     appVendor.setMinimumOrderQty(BigDecimal.valueOf(minQty));
     appVendor.setStandardQuantity(BigDecimal.valueOf(stdQty));
@@ -165,7 +167,8 @@ public class PurchaseDocumentLineTest extends WeldBaseTest {
 
   private Order createPurchaseOrder() {
     Order order = OBProvider.getInstance().get(Order.class);
-    order.setOrganization(OBDal.getInstance().getProxy(Organization.class, VALL_BLANCA_STORE));
+    order.setOrganization(
+        OBDal.getInstance().getProxy(Organization.class, FB_ESPANA_NORTE_ORGANIZATION_ID));
     order.setSalesTransaction(false);
     order.setDocumentType(OBDal.getInstance().getProxy(DocumentType.class, ORDER_DOC_TYPE));
     order.setTransactionDocument(OBDal.getInstance().getProxy(DocumentType.class, ORDER_DOC_TYPE));
@@ -234,7 +237,8 @@ public class PurchaseDocumentLineTest extends WeldBaseTest {
         params = new String[] { testData.get("stdQty").toString() };
         break;
       case "NoPurchaseConfiguration":
-        Organization organization = OBDal.getInstance().get(Organization.class, VALL_BLANCA_STORE);
+        Organization organization = OBDal.getInstance()
+            .get(Organization.class, FB_ESPANA_NORTE_ORGANIZATION_ID);
         BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class, VENDOR_ID);
         Product product = OBDal.getInstance().get(Product.class, PRODUCT_ID);
         params = new String[] { organization.getName(), businessPartner.getIdentifier(),
