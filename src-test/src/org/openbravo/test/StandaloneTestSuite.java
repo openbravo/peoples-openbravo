@@ -57,6 +57,7 @@ import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.erpCommon.utility.OBDateUtilsTest;
 import org.openbravo.event.CharacteristicEventHandlerTest;
 import org.openbravo.event.ProductEventHandlerTest;
+import org.openbravo.materialmgmt.PurchaseDocumentLineTest;
 import org.openbravo.materialmgmt.RelevantCharacteristicFieldTerminologyChecker;
 import org.openbravo.materialmgmt.RelevantCharacteristicPropertyTest;
 import org.openbravo.scheduling.ProcessBundleSerializationTest;
@@ -326,6 +327,9 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     CharacteristicEventHandlerTest.class, //
     RelevantCharacteristicPropertyTest.class, //
     RelevantCharacteristicFieldTerminologyChecker.class, //
+
+    // POValidations
+    PurchaseDocumentLineTest.class, //
 
     // PLM Status
     ProductStatusTest.class, //
