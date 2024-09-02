@@ -171,7 +171,7 @@ public class PrintController extends HttpSecureAppServlet {
     }
     if (request.getServletPath().toLowerCase().indexOf("shipments") != -1) {
       documentType = DocumentType.SHIPMENT;
-      // The prefix PRINTINVOICES is a fixed name based on the KEY of the
+      // The prefix PRINTSHIPMENTS is a fixed name based on the KEY of the
       // AD_PROCESS
       sessionValuePrefix = "PRINTSHIPMENTS";
 
@@ -813,6 +813,8 @@ public class PrintController extends HttpSecureAppServlet {
         return PocData.getContactDetailsForOrders(this, strDocumentId);
       case SALESINVOICE:
         return PocData.getContactDetailsForInvoices(this, strDocumentId);
+      case SUBSTITUTIVEINVOICE:
+        return PocData.getContactDetailsForSubstitutiveInvoices(this, strDocumentId);
       case SHIPMENT:
         return PocData.getContactDetailsForShipments(this, strDocumentId);
       case PURCHASEORDER:
@@ -1612,6 +1614,11 @@ public class PrintController extends HttpSecureAppServlet {
     int i = 0;
     if (strTable.equals("C_INVOICE")) {
       printControllerData = PrintControllerData.selectInvoices(this, strIds.toString());
+      for (PrintControllerData docID : printControllerData) {
+        documentIdsOrdered[i++] = docID.getField("Id");
+      }
+    } else if (strTable.equals("C_SUBSTITUTIVEINVOICE")) {
+      printControllerData = PrintControllerData.selectSubstitutiveInvoices(this, strIds.toString());
       for (PrintControllerData docID : printControllerData) {
         documentIdsOrdered[i++] = docID.getField("Id");
       }

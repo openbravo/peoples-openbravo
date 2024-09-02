@@ -46,6 +46,7 @@ import org.openbravo.client.application.attachment.ReprintableDocumentManager.Fo
 import org.openbravo.client.application.attachment.ReprintableInvoice;
 import org.openbravo.client.application.attachment.ReprintableOrder;
 import org.openbravo.client.application.attachment.ReprintableSourceDocument;
+import org.openbravo.client.application.attachment.ReprintableSubstitutiveInvoice;
 import org.openbravo.client.application.attachment.TransformerNotFoundException;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
@@ -57,6 +58,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.invoice.SubstitutiveInvoice;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.Replace;
@@ -178,9 +180,14 @@ public class ReportManager {
       String documentId = report.getDocumentId();
       DocumentType documentType = report.getDocumentType();
       try {
-        ReprintableSourceDocument<?> reprintableSource = DocumentType.SALESORDER.equals(
-            documentType) ? new ReprintableOrder(documentId) : new ReprintableInvoice(documentId);
-        reprintableManager.findReprintableDocument(reprintableSource);
+        ReprintableSourceDocument<?> reprintableSource = null;
+        if (DocumentType.SALESORDER.equals(documentType)) {
+          reprintableSource = new ReprintableOrder(documentId);
+        } else if (DocumentType.SUBSTITUTIVEINVOICE.equals(documentType)) {
+          reprintableSource = new ReprintableSubstitutiveInvoice(documentId);
+        } else {
+          reprintableSource = new ReprintableInvoice(documentId);
+        }
         File reprintable = new File(
             report.getTargetDirectory().toString() + '/' + report.getFilename());
         try (OutputStream outputStream = new FileOutputStream(reprintable)) {
@@ -205,8 +212,13 @@ public class ReportManager {
           jsonReprintable.put("documentData",
               Base64.getEncoder().encodeToString(Files.readAllBytes(tmp)));
           jsonReprintable.put("documentId", documentId);
-          jsonReprintable.put("documentType",
-              documentType.equals(DocumentType.SALESORDER) ? "ORDER" : "INVOICE");
+          if (DocumentType.SALESORDER.equals(documentType)) {
+            jsonReprintable.put("documentType", "ORDER");
+          } else if (DocumentType.SUBSTITUTIVEINVOICE.equals(documentType)) {
+            jsonReprintable.put("documentType", "SUBSTITUTIVEINVOICE");
+          } else {
+            jsonReprintable.put("documentType", "INVOICE");
+          }
           jsonReprintable.put("documentFormat", "PDF");
           reprintableManager.upload(jsonReprintable);
         } catch (IOException | JSONException | JRException ex) {
@@ -244,6 +256,11 @@ public class ReportManager {
         orgId = OBDal.getInstance().get(Order.class, documentId).getOrganization().getId();
       } else if (DocumentType.SALESINVOICE.equals(documentType)) {
         orgId = OBDal.getInstance().get(Invoice.class, documentId).getOrganization().getId();
+      } else if (DocumentType.SUBSTITUTIVEINVOICE.equals(documentType)) {
+        orgId = OBDal.getInstance()
+            .get(SubstitutiveInvoice.class, documentId)
+            .getOrganization()
+            .getId();
       }
       return orgId != null && reprintableManager.isReprintDocumentsEnabled(orgId);
     } finally {

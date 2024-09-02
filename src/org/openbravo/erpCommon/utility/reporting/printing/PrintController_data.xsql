@@ -33,6 +33,19 @@
         </Sql>
         <Parameter name="Id" optional="true" type="replace" after="WHERE C_Invoice_ID IN (" text="'1'"/>
     </SqlMethod>
+
+    <SqlMethod name="selectSubstitutiveInvoices" type="preparedStatement" return="multiple">
+        <SqlMethodComment></SqlMethodComment>
+        <Sql>
+            <![CDATA[
+            SELECT C_SubstitutiveInvoice_ID as ID
+            FROM C_SubstitutiveInvoice
+            WHERE C_SubstitutiveInvoice_ID IN ('1')
+            ORDER BY DocumentNo ASC
+            ]]>
+        </Sql>
+        <Parameter name="Id" optional="true" type="replace" after="WHERE C_SubstitutiveInvoice_ID IN (" text="'1'"/>
+    </SqlMethod>
     
     <SqlMethod name="selectOrders" type="preparedStatement" return="multiple">
         <SqlMethodComment></SqlMethodComment>
