@@ -147,6 +147,6 @@
       <index name="C_SUBSTITUTIVEINVOICE_DOCNO" unique="false">
         <index-column name="DOCUMENTNO"/>
       </index>
-      <check name="C_SUBSTITUTIVEINVOICE_PRINT_CHK"><![CDATA[ISPRINTED IN ('Y', 'N')]]></check>
+      <check name="C_SUBSTITUTIVEINVOICE_PRINT_CK"><![CDATA[ISPRINTED IN ('Y', 'N')]]></check>
     </table>
   </database>
