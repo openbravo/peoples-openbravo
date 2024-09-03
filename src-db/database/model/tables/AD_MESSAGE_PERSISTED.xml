@@ -41,7 +41,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PAYLOAD" primaryKey="false" required="true" type="VARCHAR" size="2000" autoIncrement="false">
+      <column name="PAYLOAD" primaryKey="false" required="true" type="CLOB" size="4000" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

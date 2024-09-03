@@ -61,7 +61,7 @@ public class MessageClientManager {
 
     threadsStarted = true;
 
-    log.debug("Starting Message Client Manager");
+    log.info("Starting Message Client Manager");
 
     executorService = Executors.newCachedThreadPool();
 
@@ -77,7 +77,7 @@ public class MessageClientManager {
     if (!threadsStarted) {
       return;
     }
-    log.debug("Shutting down Message Client Manager");
+    log.info("Shutting down Message Client Manager");
 
     isShutDown = true;
 

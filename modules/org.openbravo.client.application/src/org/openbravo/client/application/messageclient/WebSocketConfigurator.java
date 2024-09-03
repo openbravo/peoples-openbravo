@@ -41,7 +41,7 @@ public class WebSocketConfigurator extends ServerEndpointConfig.Configurator {
     sec.getUserProperties().put("sessionId", session.getId());
     sec.getUserProperties().put("user_id", session.getAttribute("#AD_USER_ID"));
     sec.getUserProperties().put("client_id", session.getAttribute("#AD_CLIENT_ID"));
-    sec.getUserProperties().put("ord_id", session.getAttribute("#AD_ORG_ID"));
+    sec.getUserProperties().put("org_id", session.getAttribute("#AD_ORG_ID"));
     sec.getUserProperties().put("role_id", session.getAttribute("#AD_ROLE_ID"));
   }
 

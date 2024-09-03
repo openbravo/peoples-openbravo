@@ -23,7 +23,6 @@ import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.server.ServerEndpoint;
-import java.io.IOException;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -37,10 +36,18 @@ import org.apache.logging.log4j.Logger;
 public class WebSocketConnectionHandler {
   private static final Logger log = LogManager.getLogger();
 
+  /**
+   * Handles websocket connection creation, it is executed after the connection has already been
+   * authenticated
+   * 
+   * @param session
+   *          WebSocket session which should include as part of user properties the context and
+   *          sessionId
+   */
   @OnOpen
   public void onOpen(javax.websocket.Session session) {
-    log.debug("Websocket - Connection accepted. Session: " + session.getId());
     String sessionId = (String) session.getUserProperties().get("sessionId");
+    log.debug("Websocket - Connection accepted. Session: " + sessionId);
     String userId = (String) session.getUserProperties().get("user_id");
     String roleId = (String) session.getUserProperties().get("role_id");
     String orgId = (String) session.getUserProperties().get("org_id");
@@ -54,14 +61,31 @@ public class WebSocketConnectionHandler {
     MessageClientConnectionHandler.connectionEstablished(webSocketClient);
   }
 
+  /**
+   * Handles connection being closed, this is executed both on connection being closed intentionally
+   * and also on an error
+   * 
+   * @param session
+   *          WebSocket session, should include the sessionId as part of its user properties
+   */
   @OnClose
   public void onClose(javax.websocket.Session session) {
-    log.debug("Websocket - Connection terminated. Session: " + session.getId());
     String sessionId = (String) session.getUserProperties().get("sessionId");
+    log.debug("Websocket - Connection terminated. Session: " + sessionId);
 
     MessageClientConnectionHandler.connectionClosed(sessionId);
   }
 
+  /**
+   * Handles messsage being received from a WebSocket session, in some cases we might want to send a
+   * message in response to the received one
+   * 
+   * @param message
+   *          Message received from the WebSocket client
+   * @param session
+   *          WebSocket session, includes sessionId and other context info as part of its user
+   *          properties
+   */
   @OnMessage
   public void onMessage(String message, javax.websocket.Session session) {
     String sessionId = (String) session.getUserProperties().get("sessionId");
@@ -71,8 +95,19 @@ public class WebSocketConnectionHandler {
     }
   }
 
+  /**
+   * Handles errors on the WebSocket session connection, it is executed when an error happens on the
+   * connection, message sending process or the message handling infrastructure on the frontend
+   * 
+   * @param session
+   *          WebSocket session, include the sessionId and other context info as part of its user
+   *          properties
+   * @param t
+   *          Throwable, usually an exception that explains why the error has happened
+   */
   @OnError
   public void onError(javax.websocket.Session session, Throwable t) {
-    MessageClientConnectionHandler.handleError(t);
+    String sessionId = (String) session.getUserProperties().getOrDefault("sessionId", null);
+    MessageClientConnectionHandler.handleError(sessionId, t);
   }
 }

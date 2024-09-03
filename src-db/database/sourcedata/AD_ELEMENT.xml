@@ -35050,7 +35050,7 @@ STARTED: The scheduler is active and executing jobs]]></HELP>
 <!--B3485EB22B924C3DB446B1C8CDC623A4-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--B3485EB22B924C3DB446B1C8CDC623A4-->  <COLUMNNAME><![CDATA[Type]]></COLUMNNAME>
 <!--B3485EB22B924C3DB446B1C8CDC623A4-->  <NAME><![CDATA[Message Persisted Type]]></NAME>
-<!--B3485EB22B924C3DB446B1C8CDC623A4-->  <PRINTNAME><![CDATA[Type of the message to be persisted, it will be handled by i]]></PRINTNAME>
+<!--B3485EB22B924C3DB446B1C8CDC623A4-->  <PRINTNAME><![CDATA[Message Persisted Type]]></PRINTNAME>
 <!--B3485EB22B924C3DB446B1C8CDC623A4-->  <DESCRIPTION><![CDATA[Type of the message to be persisted, it will be handled by its specific message handler.]]></DESCRIPTION>
 <!--B3485EB22B924C3DB446B1C8CDC623A4-->  <HELP><![CDATA[Type of the message to be persisted, it will be handled by its specific message handler.]]></HELP>
 <!--B3485EB22B924C3DB446B1C8CDC623A4-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>

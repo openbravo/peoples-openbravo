@@ -70,9 +70,9 @@ public class MessageClientConnectionHandler {
     return null;
   }
 
-  static void handleError(Throwable e) {
-    log.error("Message Client - Received error: ", e);
-    // Error always trigger a connection closed event, which is properly handled in the
+  static void handleError(String sessionId, Throwable e) {
+    log.error("Message Client with SessionID({}) - Received error: {}", sessionId, e);
+    // Error always triggers a connection closed event, which is properly handled in the
     // connectionClosed method
   }
 }
