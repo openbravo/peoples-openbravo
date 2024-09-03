@@ -203,7 +203,7 @@ public class ReprintableDocumentManager {
           .triggerEvent("API_ReprintableInvoiceCreated", sourceDocument.getId());
     } else if (document.getSubstitutiveInvoice() != null) {
       SynchronizationEvent.getInstance()
-          .triggerEvent("API_ReprintableSubstitutiveInvoiceCreated", sourceDocument.getId());
+          .triggerEvent("API_ReprintableSubsInvoiceCreated", sourceDocument.getId());
     }
 
     ReprintableDocumentAttachHandler handler = getHandler(document);
