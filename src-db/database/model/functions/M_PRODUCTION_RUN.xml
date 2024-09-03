@@ -811,19 +811,52 @@ BEGIN --BODY
                 WHERE pp.M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
                 AND p.isstocked='N' AND p.IsBOM='Y'
               ) LOOP
-			      SELECT COUNT(ph.M_PRODUCT_ID) INTO v_BomCount FROM m_get_bom_stock_prod_hierarchy(CUR_PLineBOM.M_Product_ID) ph 
-                  WHERE ph.isstocked='Y' 
+			  	  WITH RECURSIVE bom_product_hierarchy AS (
+					SELECT p.m_product_id, p.name, p.isstocked, p.isBom, '1'::NUMERIC as qty
+					FROM m_product p
+					WHERE p.m_product_id = CUR_PLineBOM.M_Product_ID
+					UNION ALL
+					SELECT p.m_product_id, p.name, p.isstocked, p.isBom, pb.bomqty::INT*ph.qty::NUMERIC as qty
+					FROM m_product p
+					JOIN M_PRODUCT_BOM pb ON p.m_product_id = pb.M_PRODUCTBOM_id
+					JOIN bom_product_hierarchy ph ON pb.m_product_id = ph.m_product_id 
+					where (ph.isstocked='N' and ph.isBom='Y')--Iterate Only if the product is non stocked BoM
+				  )
+				  SELECT COUNT(ph.M_PRODUCT_ID) INTO v_BomCount FROM bom_product_hierarchy ph
+				  WHERE ph.isstocked='Y' 
                   AND NOT EXISTS (SELECT 1 FROM M_PRODUCTIONLINE WHERE 
                   M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
-                  AND M_Product_ID=ph.m_product_id AND line<>'10');
-				  
+                  AND M_Product_ID=ph.m_product_id AND line<>'10');			  
+				  -- SELECT COUNT(ph.M_PRODUCT_ID) INTO v_BomCount FROM m_get_bom_stock_prod_hierarchy(CUR_PLineBOM.M_Product_ID) ph 
+				  -- WHERE ph.isstocked='Y' 
+				  -- AND NOT EXISTS (SELECT 1 FROM M_PRODUCTIONLINE WHERE 
+				  -- M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
+				  -- AND M_Product_ID=ph.m_product_id AND line<>'10');
                   IF (v_BomCount <> 0) THEN
-                    FOR CUR_BOM_PRODHR IN (SELECT ph.name 
-                    FROM m_get_bom_stock_prod_hierarchy(CUR_PLineBOM.M_Product_ID) ph 
-                    WHERE ph.isstocked='Y' 
-                    AND NOT EXISTS (SELECT 1 FROM M_PRODUCTIONLINE WHERE 
-                    M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
-                    AND M_Product_ID=ph.m_product_id AND line<>'10'))
+				    FOR CUR_BOM_PRODHR IN (
+					  WITH RECURSIVE bom_product_hierarchy AS (
+						SELECT p.m_product_id, p.name, p.isstocked, p.isBom, '1'::NUMERIC as qty
+						FROM m_product p
+						WHERE p.m_product_id = CUR_PLineBOM.M_Product_ID
+						UNION ALL
+						SELECT p.m_product_id, p.name, p.isstocked, p.isBom, pb.bomqty::INT*ph.qty::NUMERIC as qty
+						FROM m_product p
+						JOIN M_PRODUCT_BOM pb ON p.m_product_id = pb.M_PRODUCTBOM_id
+						JOIN bom_product_hierarchy ph ON pb.m_product_id = ph.m_product_id 
+						where (ph.isstocked='N' and ph.isBom='Y')--Iterate Only if the product is non stocked BoM
+					  )
+					  SELECT ph.name FROM bom_product_hierarchy ph
+					  WHERE ph.isstocked='Y' 
+                      AND NOT EXISTS (SELECT 1 FROM M_PRODUCTIONLINE WHERE 
+                      M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
+                      AND M_Product_ID=ph.m_product_id AND line<>'10')
+					)
+					-- FOR CUR_BOM_PRODHR IN (SELECT ph.name 
+					-- FROM m_get_bom_stock_prod_hierarchy(CUR_PLineBOM.M_Product_ID) ph 
+					-- WHERE ph.isstocked='Y' 
+					-- AND NOT EXISTS (SELECT 1 FROM M_PRODUCTIONLINE WHERE 
+					-- M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
+					-- AND M_Product_ID=ph.m_product_id AND line<>'10'))
                     LOOP
                       IF v_Message IS NULL THEN
                         v_Message := CUR_BOM_PRODHR.name;
@@ -868,10 +901,25 @@ BEGIN --BODY
                       WHERE pp.M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
                       AND p.isstocked='N' AND p.IsBOM='Y'
                     ) LOOP
-                      SELECT COUNT(ph.M_PRODUCT_ID) INTO v_BomCount 
-                      FROM m_get_bom_stock_prod_hierarchy(CUR_BOMLine.M_Product_ID) ph 
-                      WHERE M_Product_ID=CUR_PLine.M_Product_ID 
-                      and ph.isstocked='Y';
+					  WITH RECURSIVE bom_product_hierarchy AS (
+						SELECT p.m_product_id, p.name, p.isstocked, p.isBom, '1'::NUMERIC as qty
+						FROM m_product p
+						WHERE p.m_product_id = CUR_BOMLine.M_Product_ID
+						UNION ALL
+						SELECT p.m_product_id, p.name, p.isstocked, p.isBom, pb.bomqty::INT*ph.qty::NUMERIC as qty
+						FROM m_product p
+						JOIN M_PRODUCT_BOM pb ON p.m_product_id = pb.M_PRODUCTBOM_id
+						JOIN bom_product_hierarchy ph ON pb.m_product_id = ph.m_product_id 
+						where (ph.isstocked='N' and ph.isBom='Y')--Iterate Only if the product is non stocked BoM
+					  )
+					  SELECT COUNT(ph.M_PRODUCT_ID) INTO v_BomCount 
+					  FROM bom_product_hierarchy ph
+					  WHERE M_Product_ID=CUR_PLine.M_Product_ID 
+                      and ph.isstocked='Y';				  
+					  -- SELECT COUNT(ph.M_PRODUCT_ID) INTO v_BomCount 
+					  -- FROM m_get_bom_stock_prod_hierarchy(CUR_BOMLine.M_Product_ID) ph 
+					  -- WHERE M_Product_ID=CUR_PLine.M_Product_ID 
+					  -- and ph.isstocked='Y';
                       IF (v_BomCount > 0) THEN
                         v_ProductExists = true;
                         EXIT; --Product exists
@@ -936,9 +984,23 @@ BEGIN --BODY
                     WHERE pp.M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
                     AND p.isstocked='N' AND p.IsBOM='Y'
                   ) LOOP
-                    SELECT coalesce(sum(ph.qty), 0) INTO v_BomQty
-                    FROM m_get_bom_stock_prod_hierarchy(CUR_BOMLine.M_Product_ID) ph 
-                    WHERE M_Product_ID=CUR_PLine.M_Product_ID and ph.isstocked='Y';
+				    WITH RECURSIVE bom_product_hierarchy AS (
+					  SELECT p.m_product_id, p.name, p.isstocked, p.isBom, '1'::NUMERIC as qty
+					  FROM m_product p
+					  WHERE p.m_product_id = CUR_BOMLine.M_Product_ID
+					  UNION ALL
+					  SELECT p.m_product_id, p.name, p.isstocked, p.isBom, pb.bomqty::INT*ph.qty::NUMERIC as qty
+					  FROM m_product p
+					  JOIN M_PRODUCT_BOM pb ON p.m_product_id = pb.M_PRODUCTBOM_id
+					  JOIN bom_product_hierarchy ph ON pb.m_product_id = ph.m_product_id 
+					  where (ph.isstocked='N' and ph.isBom='Y')--Iterate Only if the product is non stocked BoM
+				    )
+				    SELECT coalesce(sum(ph.qty), 0) INTO v_BomQty
+				    FROM bom_product_hierarchy ph
+					WHERE M_Product_ID=CUR_PLine.M_Product_ID and ph.isstocked='Y';
+					-- SELECT coalesce(sum(ph.qty), 0) INTO v_BomQty
+					-- FROM m_get_bom_stock_prod_hierarchy(CUR_BOMLine.M_Product_ID) ph 
+					-- WHERE M_Product_ID=CUR_PLine.M_Product_ID and ph.isstocked='Y';
                     v_QtyAcumulated := v_QtyAcumulated + v_BomQty;
                   END LOOP;
                 END IF;
@@ -984,7 +1046,19 @@ BEGIN --BODY
 				  WHERE pp.M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
 				  AND p.isstocked='N' AND p.IsBOM='Y'
 			    ) LOOP
-				  SELECT coalesce(sum(ph.qty), 0) INTO v_BomQty FROM m_get_bom_stock_prod_hierarchy(CUR_BOMLine.M_Product_ID) ph WHERE ph.isstocked='Y'; 
+				  WITH RECURSIVE bom_product_hierarchy AS (
+				    SELECT p.m_product_id, p.name, p.isstocked, p.isBom, '1'::NUMERIC as qty
+				    FROM m_product p
+				    WHERE p.m_product_id = CUR_BOMLine.M_Product_ID
+				    UNION ALL
+				    SELECT p.m_product_id, p.name, p.isstocked, p.isBom, pb.bomqty::INT*ph.qty::NUMERIC as qty
+				    FROM m_product p
+				    JOIN M_PRODUCT_BOM pb ON p.m_product_id = pb.M_PRODUCTBOM_id
+				    JOIN bom_product_hierarchy ph ON pb.m_product_id = ph.m_product_id 
+				    where (ph.isstocked='N' and ph.isBom='Y')--Iterate Only if the product is non stocked BoM
+				  )
+				  SELECT coalesce(sum(ph.qty), 0) INTO v_BomQty FROM bom_product_hierarchy ph WHERE ph.isstocked='Y'; 
+				  -- SELECT coalesce(sum(ph.qty), 0) INTO v_BomQty FROM m_get_bom_stock_prod_hierarchy(CUR_BOMLine.M_Product_ID) ph WHERE ph.isstocked='Y'; 
                   v_QtyAcumulated := v_QtyAcumulated + v_BomQty;
                 END LOOP;
 			  END IF;
