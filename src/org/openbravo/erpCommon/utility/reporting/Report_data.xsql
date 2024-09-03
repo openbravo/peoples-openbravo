@@ -164,9 +164,9 @@
 				c_bpartner.ad_language as bpartner_language,
 				c_substitutiveinvoice.dateinvoiced as docdate,
 				'' as minduedate,
-                '' as maxduedate,
-                c_substitutiveinvoice.description as docdesc,
-                customercontact.name as contact_name
+				'' as maxduedate,
+				c_substitutiveinvoice.description as docdesc,
+				customercontact.name as contact_name
 			from
 				c_substitutiveinvoice left join c_doctype on c_substitutiveinvoice.c_doctypetarget_id = c_doctype.c_doctype_id
 				left join c_bpartner on c_substitutiveinvoice.c_bpartner_id = c_bpartner.c_bpartner_id
