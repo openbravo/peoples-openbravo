@@ -29,6 +29,7 @@ import java.util.concurrent.Executors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
@@ -41,15 +42,25 @@ public class MessageClientManager {
   private static final Logger log = LogManager.getLogger();
   private static final long WAITING_TIME_FOR_POLLING = getOBProperty("messageclient.wait.time",
       10000, 5000);
-  MessageRegistry messageRegistry;
-  boolean threadsStarted = false;
-  boolean isShutDown = false;
-  MessageClientManagerThread managerThread;
-  ExecutorService executorService;
+
+  private static MessageClientManager instance;
+
+  private MessageRegistry messageRegistry;
+  private boolean threadsStarted = false;
+  private boolean isShutDown = false;
+  private MessageClientManagerThread managerThread;
+  private ExecutorService executorService;
 
   @Inject
   @Any
-  Instance<MessageHandler> messageHandlers;
+  private Instance<MessageHandler> messageHandlers;
+
+  public static MessageClientManager getInstance() {
+    if (instance == null) {
+      instance = WeldUtils.getInstanceFromStaticBeanManager(MessageClientManager.class);
+    }
+    return instance;
+  }
 
   /**
    * Starts the MessageClientManager thread and its corresponding message registry

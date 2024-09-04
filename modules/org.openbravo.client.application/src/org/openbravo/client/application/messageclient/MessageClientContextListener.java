@@ -21,25 +21,18 @@ package org.openbravo.client.application.messageclient;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.openbravo.base.weld.WeldUtils;
-
 /**
  * Context listener for the MessageClientManager, it starts and stops it in the ServletContext
  * pipeline
  */
 public class MessageClientContextListener implements ServletContextListener {
-  private MessageClientManager messageClientManager;
-
   @Override
   public void contextInitialized(ServletContextEvent servletContextEvent) {
-    messageClientManager = WeldUtils.getInstanceFromStaticBeanManager(MessageClientManager.class);
-    messageClientManager.start();
+    MessageClientManager.getInstance().start();
   }
 
   @Override
   public void contextDestroyed(ServletContextEvent servletContextEvent) {
-    if (messageClientManager != null) {
-      messageClientManager.shutdown();
-    }
+    MessageClientManager.getInstance().shutdown();
   }
 }
