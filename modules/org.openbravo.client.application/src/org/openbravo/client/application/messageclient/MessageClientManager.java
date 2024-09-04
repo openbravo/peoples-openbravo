@@ -28,6 +28,7 @@ import java.util.concurrent.Executors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
@@ -38,9 +39,9 @@ import org.openbravo.erpCommon.utility.PropertyException;
  */
 public class MessageClientManager {
   private static final Logger log = LogManager.getLogger();
-  private static final long WAITING_TIME_FOR_POLLING = 10000L; // ms
+  private static final long WAITING_TIME_FOR_POLLING = getOBProperty("messageclient.wait.time",
+      10000, 5000);
   MessageRegistry messageRegistry;
-  MessageClientRegistry messageClientRegistry;
   boolean threadsStarted = false;
   boolean isShutDown = false;
   MessageClientManagerThread managerThread;
@@ -68,7 +69,6 @@ public class MessageClientManager {
     // create, start the manager thread
     managerThread = new MessageClientManagerThread(this);
     messageRegistry = MessageRegistry.getInstance();
-    messageClientRegistry = MessageClientRegistry.getInstance();
     executorService.submit(managerThread);
     isShutDown = false;
   }
@@ -89,7 +89,6 @@ public class MessageClientManager {
     threadsStarted = false;
     managerThread = null;
     messageRegistry = null;
-    messageClientRegistry = null;
   }
 
   static class MessageClientManagerThread implements Runnable {
@@ -114,16 +113,19 @@ public class MessageClientManager {
           log.debug(
               "[Message Client] There are " + pendingMessages.size() + " pending to be sent.");
           pendingMessages.forEach(message -> {
-            if (message.getPayload() != null) {
-              try {
-                MessageClientBroadcaster.send(message, getMessageRecipients(message));
-              } catch (Exception e) {
-                log.error("[Message Client] Message failed be sent to the message clients.", e);
-              }
+            try {
+              MessageClientBroadcaster.send(message, getMessageRecipients(message));
+            } catch (Exception e) {
+              log.error(
+                  "[Message Client] Message with ID {}, failed to be sent to the message clients.",
+                  message.getId(), e);
             }
           });
         }
         try {
+          log.debug(
+              "{} messages have been handled. Wait {} ms, and try again to capture new messages which have been added.",
+              pendingMessages.size(), WAITING_TIME_FOR_POLLING);
           Thread.sleep(WAITING_TIME_FOR_POLLING);
         } catch (InterruptedException e) {
           throw new RuntimeException(e);
@@ -160,5 +162,50 @@ public class MessageClientManager {
       OBContext.restorePreviousMode();
     }
     return true;
+  }
+
+  /**
+   * Returns an integer property or its min/default value if not set
+   * 
+   * @param property
+   *          Property to be retrieved
+   * @param defaultValue
+   *          Default value if not set
+   * @param minValue
+   *          Minimum value, to avoid user setting it too low
+   * @return value of the property
+   */
+  private static int getOBProperty(String property, int defaultValue, int minValue) {
+    int value = getOpenbravoProperty(property, defaultValue);
+    if (value < minValue) {
+      log.warn("Value of property " + property + " is set too low (" + value
+          + "), using valid minValue instead " + minValue);
+      return minValue;
+    }
+    return value;
+  }
+
+  /**
+   * Retrieves an integer property from OBProperties Provider, if it is not properly set, it will
+   * fallback to a provided default value
+   * 
+   * @param propName
+   *          Property name to be retrieved
+   * @param defaultValue
+   *          Default value in case it is not properly set
+   * @return value of the property
+   */
+  private static int getOpenbravoProperty(String propName, int defaultValue) {
+    final String val = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
+        .getProperty(propName);
+    if (val == null) {
+      return defaultValue;
+    }
+    try {
+      return Integer.parseInt(val);
+    } catch (NumberFormatException ignore) {
+      return defaultValue;
+    }
   }
 }

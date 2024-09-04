@@ -52,34 +52,77 @@ public abstract class MessageClient {
    */
   public abstract void sendMessage(String message);
 
+  /**
+   * Sets the subscribed topics to the provided topics
+   * 
+   * @param topics
+   *          List of topics, each must be a String
+   */
   public void setSubscribedTopics(List<String> topics) {
     this.subscribedTopics = topics;
   }
 
+  /**
+   * Returns the MessageClient searchKey, it is useful to differentiate one MessageClient from
+   * another
+   * 
+   * @return MessageClient searchKey
+   */
   public String getSearchKey() {
     return searchKey;
   }
 
+  /**
+   * Returns the MessageClient client ID, this is a Client ID as in Openbravo
+   * 
+   * @return clientId of MessageClient
+   */
   public String getClientId() {
     return clientId;
   }
 
+  /**
+   * Returns the MessageClient organization ID, this is an Organization ID as in Openbravo
+   * 
+   * @return organizationId of MessageClient
+   */
   public String getOrganizationId() {
     return organizationId;
   }
 
+  /**
+   * Returns the MessageClient user ID, this is a User ID as in Openbravo
+   * 
+   * @return userId of MessageClient
+   */
   public String getUserId() {
     return userId;
   }
 
+  /**
+   * Returns the MessageClient role ID, this is a Role ID as in Openbravo
+   * 
+   * @return roleId of MessageClient
+   */
   public String getRoleId() {
     return roleId;
   }
 
+  /**
+   * Returns the last timestamps message sent, which indicates the last message that was sent to the
+   * client
+   * 
+   * @return timestamp of the last message successfully sent
+   */
   public Date getTimestampLastMsgSent() {
     return timestampLastMsgSent;
   }
 
+  /**
+   * Returns the topics that the MessageClient is subscribed to
+   * 
+   * @return List of subscribed topics
+   */
   public List<String> getSubscribedTopics() {
     return subscribedTopics;
   }

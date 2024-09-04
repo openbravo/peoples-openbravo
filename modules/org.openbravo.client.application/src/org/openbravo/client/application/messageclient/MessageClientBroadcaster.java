@@ -27,6 +27,15 @@ import java.util.Map;
  * Broadcasts messages to a list of MessageClient recipients
  */
 public class MessageClientBroadcaster {
+
+  /**
+   * Sends a message to a list of MessageClient that act as recipients
+   * 
+   * @param message
+   *          Message to be sent
+   * @param recipients
+   *          list of MessageClient that should receive the message
+   */
   static void send(MessageClientMsg message, List<MessageClient> recipients) {
     recipients.forEach(recipient -> {
       recipient.sendMessage(getMessageToBeSent(message));
