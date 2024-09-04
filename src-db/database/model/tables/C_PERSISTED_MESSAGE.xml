@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-  <database name="TABLE AD_MESSAGE_PERSISTED">
-    <table name="AD_MESSAGE_PERSISTED" primaryKey="AD_MESSAGE_PERSISTED_KEY">
-      <column name="AD_MESSAGE_PERSISTED_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+  <database name="TABLE C_PERSISTED_MESSAGE">
+    <table name="C_PERSISTED_MESSAGE" primaryKey="C_PERSISTED_MESSAGE_KEY">
+      <column name="C_PERSISTED_MESSAGE_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -53,16 +53,16 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="AD_MESSAGE_PERSISTED_CLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_PERSISTED_MESSAGE_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="AD_MESSAGE_PERSISTED_ORG">
+      <foreign-key foreignTable="AD_ORG" name="C_PERSISTED_MESSAGE_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ROLE" name="AD_MESSAGE_PERSISTED_ROLE">
+      <foreign-key foreignTable="AD_ROLE" name="C_PERSISTED_MESSAGE_ROLE">
         <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="AD_MESSAGE_PERSISTED_USER">
+      <foreign-key foreignTable="AD_USER" name="C_PERSISTED_MESSAGE_USER">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
     </table>

@@ -27,7 +27,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.system.Client;
-import org.openbravo.model.ad.utility.MessagePersisted;
+import org.openbravo.model.ad.utility.PersistedMessage;
 import org.openbravo.model.common.enterprise.Organization;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -51,7 +51,7 @@ public class DatabaseMessageRegistryPersistence implements MessageRegistryPersis
   public void persistMessage(MessageClientMsg messageClientMsg) {
     OBContext.setAdminMode();
     try {
-      MessagePersisted persistedMessage = OBProvider.getInstance().get(MessagePersisted.class);
+      PersistedMessage persistedMessage = OBProvider.getInstance().get(PersistedMessage.class);
       persistedMessage.setNewOBObject(true);
       persistedMessage.setPayload(messageClientMsg.getPayload());
       persistedMessage.setType(messageClientMsg.getTopic());
@@ -84,20 +84,20 @@ public class DatabaseMessageRegistryPersistence implements MessageRegistryPersis
 
   @Override
   public List<MessageClientMsg> getPendingMessages() {
-    List<MessagePersisted> persistedMsgs = getPendingMessagesPersisted();
-    return mapMessagePersistedToMessageClientMsg(persistedMsgs);
+    List<PersistedMessage> persistedMsgs = getPendingMessagesPersisted();
+    return mapPersistedMessageToMessageClientMsg(persistedMsgs);
   }
 
-  private List<MessagePersisted> getPendingMessagesPersisted() {
-    List<MessagePersisted> persistedMsgs = new ArrayList<>();
+  private List<PersistedMessage> getPendingMessagesPersisted() {
+    List<PersistedMessage> persistedMsgs = new ArrayList<>();
     try {
       OBContext.setAdminMode();
-      OBCriteria<MessagePersisted> criteria = OBDal.getInstance()
-          .createCriteria(MessagePersisted.class);
+      OBCriteria<PersistedMessage> criteria = OBDal.getInstance()
+          .createCriteria(PersistedMessage.class);
       criteria.setFilterOnReadableOrganization(false);
       criteria.setFilterOnReadableClients(false);
       criteria.setFilterOnActive(true);
-      criteria.add(Restrictions.ge(MessagePersisted.PROPERTY_EXPIRATIONDATE, new Date()));
+      criteria.add(Restrictions.ge(PersistedMessage.PROPERTY_EXPIRATIONDATE, new Date()));
       persistedMsgs = criteria.list();
     } finally {
       OBContext.restorePreviousMode();
@@ -105,8 +105,8 @@ public class DatabaseMessageRegistryPersistence implements MessageRegistryPersis
     return persistedMsgs;
   }
 
-  private List<MessageClientMsg> mapMessagePersistedToMessageClientMsg(
-      List<MessagePersisted> persistedMsgs) {
+  private List<MessageClientMsg> mapPersistedMessageToMessageClientMsg(
+      List<PersistedMessage> persistedMsgs) {
     return persistedMsgs.stream().map(msg -> {
       Map<String, String> context = new HashMap<>();
       if (msg.getClient() != null) {
