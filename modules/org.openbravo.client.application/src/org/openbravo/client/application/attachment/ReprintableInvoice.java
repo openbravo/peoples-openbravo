@@ -18,6 +18,8 @@
  */
 package org.openbravo.client.application.attachment;
 
+import java.util.Optional;
+
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.ReprintableDocument;
 import org.openbravo.model.common.invoice.Invoice;
@@ -44,5 +46,13 @@ public class ReprintableInvoice extends ReprintableSourceDocument<Invoice> {
   @Override
   protected String getName() {
     return getBaseDocument().getDocumentNo();
+  }
+
+  @Override
+  protected Optional<String> getUploadEvent() {
+    // Although this code creates a dependency with the Business API module due to the string with
+    // the name of the event triggered and this is not totally clean, with it we do not have to
+    // overcomplicate by adding an abstraction layer with hooks to be implemented by modules.
+    return Optional.of("API_ReprintableInvoiceCreated");
   }
 }

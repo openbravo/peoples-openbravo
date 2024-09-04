@@ -18,6 +18,8 @@
  */
 package org.openbravo.client.application.attachment;
 
+import java.util.Optional;
+
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.ReprintableDocument;
 import org.openbravo.model.common.invoice.SubstitutiveInvoice;
@@ -45,5 +47,10 @@ public class ReprintableSubstitutiveInvoice extends ReprintableSourceDocument<Su
   @Override
   protected String getName() {
     return getBaseDocument().getDocumentNo();
+  }
+
+  @Override
+  protected Optional<String> getUploadEvent() {
+    return Optional.of("API_ReprintableSubsInvoiceCreated");
   }
 }

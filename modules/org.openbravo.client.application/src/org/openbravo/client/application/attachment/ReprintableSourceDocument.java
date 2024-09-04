@@ -166,4 +166,13 @@ public abstract class ReprintableSourceDocument<D extends BaseOBObject & ClientE
       OBContext.restorePreviousMode();
     }
   }
+
+  /**
+   * @return an Optional describing the search key of the event to be triggered when the
+   *         ReprintableDocument linked to the document is uploaded. If an empty optional is
+   *         returned this means that no event is triggered when the document is uploaded.
+   */
+  protected Optional<String> getUploadEvent() {
+    return Optional.empty();
+  }
 }
