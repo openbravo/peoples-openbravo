@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2023 Openbravo SLU
+ * All portions are Copyright (C) 2023-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,7 +27,9 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.openbravo.authentication.LoginStateHandler;
+import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.client.kernel.BaseTemplateComponent;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.Template;
 
 /**
@@ -81,7 +83,8 @@ public class OAuth2LoginButtonGenerator extends BaseTemplateComponent {
     }
 
     public String getRedirectURL() {
-      return OpenIDAuthenticationManager.getRedirectURL();
+      return HttpBaseUtils.getLocalAddress(RequestContext.get().getRequest())
+          + OpenIDAuthenticationManager.DEFAULT_REDIRECT_PATH;
     }
 
     public String getState() {

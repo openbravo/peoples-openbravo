@@ -62,7 +62,7 @@ import org.openbravo.utils.FormatUtilities;
 @AuthenticationType("OPENID")
 public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
   private static final Logger log = LogManager.getLogger();
-  private static final String DEFAULT_REDIRECT_PATH = "/secureApp/LoginHandler.html?loginMethod=OPENID";
+  static final String DEFAULT_REDIRECT_PATH = "/secureApp/LoginHandler.html?loginMethod=OPENID";
 
   @Inject
   private LoginStateHandler authStateHandler;
@@ -109,10 +109,9 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
   }
 
   private AuthenticatedUser handleAuthorizationResponse(HttpServletRequest request) {
-    OAuth2AuthenticationProvider config = authStateHandler
-        .getConfiguration(OAuth2AuthenticationProvider.class, request.getParameter("state"));
+    OAuth2AuthenticationProvider config = getConfig(request);
     String code = request.getParameter("code");
-    String redirectURL = getRedirectURL(request);
+    String redirectURL = getRedirectURL();
     return handleAuthorizationResponse(code, redirectURL, config);
   }
 
@@ -153,16 +152,8 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
       OAuth2AuthenticationProvider config) {
     try {
       OBContext.setAdminMode(true);
-      HttpRequest accessTokenRequest = buildAccessTokenRequest(code, redirectURL, config);
-      HttpResponse<String> tokenResponse = httpClientManager.send(accessTokenRequest);
-      int responseCode = tokenResponse.statusCode();
-      if (responseCode >= 200 && responseCode < 300) {
-        return getUser(tokenResponse.body(), config);
-      }
-      log.error("The token request failed with a {} error {}", responseCode, tokenResponse.body());
-      throw new AuthenticationException(buildError());
-    } catch (AuthenticationException ex) {
-      throw ex;
+      String tokenResponseBody = getAuthorizationBody(code, redirectURL, config);
+      return getUser(tokenResponseBody, config);
     } catch (OAuth2TokenVerificationException ex) {
       log.error("The token verification failed", ex);
       throw new AuthenticationException(buildError("AUTHENTICATION_DATA_VERIFICATION_FAILURE"));
@@ -184,6 +175,73 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
       log.error("Error extracting user from credential data", ex);
       throw new AuthenticationException(buildError());
     }
+  }
+
+  /**
+   * Retrieves the user's email from the request, doing an OAuth2 authentication and token request
+   *
+   * @param request
+   *          - Request that should allow oauth2 authentication
+   * @param config
+   *          - OAuth2 authentication provider
+   * @return Email of the user, provided by the OAuth2 provider
+   */
+  protected String getAuthenticatedUserEmail(HttpServletRequest request,
+      OAuth2AuthenticationProvider config) {
+    try {
+      OBContext.setAdminMode(true);
+      String code = request.getParameter("code");
+      String redirectURL = getRedirectURL();
+      String tokenResponseBody = getAuthorizationBody(code, redirectURL, config);
+      JSONObject tokenData = new JSONObject(tokenResponseBody);
+      return getEmail(tokenData, config);
+    } catch (OAuth2TokenVerificationException ex) {
+      log.error("The token verification failed", ex);
+      throw new AuthenticationException(buildError("AUTHENTICATION_DATA_VERIFICATION_FAILURE"));
+    } catch (Exception ex) {
+      log.error("Error handling the authorization response", ex);
+      throw new AuthenticationException(buildError());
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  private String getAuthorizationBody(String code, String redirectURL,
+      OAuth2AuthenticationProvider config) {
+    try {
+      OBContext.setAdminMode(true);
+
+      HttpRequest accessTokenRequest = buildAccessTokenRequest(code, redirectURL, config);
+      HttpResponse<String> tokenResponse = httpClientManager.send(accessTokenRequest);
+      int responseCode = tokenResponse.statusCode();
+      if (responseCode >= 200 && responseCode < 300) {
+        return tokenResponse.body();
+      }
+      log.error("The token request failed with a {} error {}", responseCode, tokenResponse.body());
+      throw new AuthenticationException(buildError());
+    } catch (AuthenticationException ex) {
+      throw ex;
+    } catch (Exception ex) {
+      log.error("Error handling the authorization response", ex);
+      throw new AuthenticationException(buildError());
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  private OAuth2AuthenticationProvider getConfig(HttpServletRequest request)
+      throws AuthenticationException {
+    return authStateHandler.getConfiguration(OAuth2AuthenticationProvider.class, getState(request));
+  }
+
+  /**
+   * Retrieves the state parameter from the request
+   *
+   * @param request
+   *          Request that might contain the state
+   */
+  protected String getState(HttpServletRequest request) {
+    return request.getParameter("state");
   }
 
   private HttpRequest buildAccessTokenRequest(String code, String redirectURL,
@@ -256,10 +314,7 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
   private AuthenticatedUser getUser(JSONObject tokenData,
       OAuth2AuthenticationProvider configuration)
       throws JSONException, OAuth2TokenVerificationException {
-    String idToken = tokenData.getString("id_token");
-    Map<String, Object> authData = jwtDataProvider.getData(idToken,
-        configuration.getCertificateURL(), "email");
-    String email = (String) authData.get("email");
+    String email = getEmail(tokenData, configuration);
 
     if (StringUtils.isBlank(email)) {
       throw new OAuth2TokenVerificationException("The user e-mail was not found");
@@ -284,6 +339,14 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
     return new AuthenticatedUser((String) user.get("id"), (String) user.get("userName"));
   }
 
+  protected String getEmail(JSONObject tokenData, OAuth2AuthenticationProvider configuration)
+      throws JSONException, OAuth2TokenVerificationException {
+    String idToken = tokenData.getString("id_token");
+    Map<String, Object> authData = jwtDataProvider.getData(idToken,
+        configuration.getCertificateURL(), "email");
+    return (String) authData.get("email");
+  }
+
   private OBError buildError() {
     return buildError("EXTERNAL_AUTHENTICATION_FAILURE");
   }
@@ -299,26 +362,26 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
   /**
    * Retrieves the standard URL where OAuth 2.0 requests coming from the external provided should be
    * redirected by using the information of the request in the {@link RequestContext}.
-   * 
+   *
    * @see #getRedirectURL(HttpServletRequest)
-   * 
+   *
    * @return the standard URL where OAuth 2.0 requests coming from the external provided should be
    *         redirected
    */
-  static String getRedirectURL() {
+  protected String getRedirectURL() {
     return getRedirectURL(RequestContext.get().getRequest());
   }
 
   /**
    * Retrieves the standard URL where OAuth 2.0 requests coming from the external provided should be
    * redirected by using the information in the provided request.
-   * 
+   *
    * @param request
    *          the HTTP request
    * @return the standard URL where OAuth 2.0 requests coming from the external provided should be
    *         redirected
    */
-  private static String getRedirectURL(HttpServletRequest request) {
+  private String getRedirectURL(HttpServletRequest request) {
     return HttpBaseUtils.getLocalAddress(request) + DEFAULT_REDIRECT_PATH;
   }
 }
