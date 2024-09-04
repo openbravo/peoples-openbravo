@@ -113,10 +113,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ISPRINTED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_SUBSINV_FK_AD_CLIENT_ID">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -147,6 +143,5 @@
       <index name="C_SUBSTITUTIVEINVOICE_DOCNO" unique="false">
         <index-column name="DOCUMENTNO"/>
       </index>
-      <check name="C_SUBSTITUTIVEINVOICE_PRINT_CK"><![CDATA[ISPRINTED IN ('Y', 'N')]]></check>
     </table>
   </database>
