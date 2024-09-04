@@ -54,7 +54,8 @@ class ProductionEventHandler extends EntityPersistenceEventObserver {
     }
 
     final ProductionTransaction production = (ProductionTransaction) event.getTargetInstance();
-    if (production.getProductionbomType().getType().equalsIgnoreCase("T")) {
+    if (production.getProductionbomType() != null
+        && production.getProductionbomType().getType().equalsIgnoreCase("T")) {
       final Entity productionEntity = ModelProvider.getInstance()
           .getEntity(ProductionTransaction.ENTITY_NAME);
       final Property recordsCreatedProperty = productionEntity
@@ -81,12 +82,17 @@ class ProductionEventHandler extends EntityPersistenceEventObserver {
 
     ProductionBOMType bomType = (ProductionBOMType) event.getCurrentState(bomTypeProperty);
     ProductionBOMType previousBomType = (ProductionBOMType) event.getPreviousState(bomTypeProperty);
-    if (!previousBomType.getId().equals(bomType.getId())) {
-      if (bomType.getType().equalsIgnoreCase("T")) {
-        event.setCurrentState(recordsCreatedProperty, true);
-      } else {
-        event.setCurrentState(recordsCreatedProperty, false);
+
+    if (bomType != null) {
+      if (previousBomType == null || !previousBomType.getId().equals(bomType.getId())) {
+        if (bomType.getType().equalsIgnoreCase("T")) {
+          event.setCurrentState(recordsCreatedProperty, true);
+        } else {
+          event.setCurrentState(recordsCreatedProperty, false);
+        }
       }
+    } else if (previousBomType != null && previousBomType.getType().equalsIgnoreCase("T")) {
+      event.setCurrentState(recordsCreatedProperty, false);
     }
 
     User assignedUser = (User) event.getCurrentState(userProperty);

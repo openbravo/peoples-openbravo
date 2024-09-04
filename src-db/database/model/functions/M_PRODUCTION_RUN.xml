@@ -89,21 +89,6 @@
   v_storage CUR_STOCK%ROWTYPE;
   NEXT_PRODUCT BOOLEAN:=false;
   CUR_STOCK_ISOPEN BOOLEAN:=false;
-
-    CURSOR CUR_BOM_Hierarchy (v_productId VARCHAR)IS
-    WITH RECURSIVE bom_product_hierarchy AS (
-      SELECT p.m_product_id, p.name, p.isstocked, p.isBom, '1'::INT as qty
-      FROM m_product p
-      WHERE p.m_product_id = v_productId
-      UNION ALL
-      SELECT p.m_product_id, p.name, p.isstocked, p.isBom, pb.bomqty::INT*ph.qty::INT as qty
-      FROM m_product p
-      JOIN M_PRODUCT_BOM pb ON p.m_product_id = pb.M_PRODUCTBOM_id
-      JOIN bom_product_hierarchy ph ON pb.m_product_id = ph.m_product_id 
-      where (ph.isstocked='N' and ph.isBom='Y')
-    )
-    SELECT m_product_id, name, isstocked, isBom, qty FROM bom_product_hierarchy ph;
-
 BEGIN
   --  Update AD_PInstance
   DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || PInstance_ID) ;
