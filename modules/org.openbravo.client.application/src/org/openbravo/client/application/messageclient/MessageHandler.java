@@ -31,8 +31,19 @@ import java.util.stream.Collectors;
  * MessageHandler by type
  */
 public abstract class MessageHandler {
+  /**
+   * Returns the list of recipients filtered first by client, then by subscribed topic, timestamp
+   * from last message sent and finally by the isValidReceipt function, which is to be implemented
+   * by each MessageHandler
+   * 
+   * @param messageClientMsg
+   *          Message to be sent and retrieve the expected recipients for that message
+   * @return List of MessageClient representing each recipient
+   */
   protected final List<MessageClient> getRecipients(MessageClientMsg messageClientMsg) {
-    List<MessageClient> connectedClients = MessageClientRegistry.getInstance().getAllClients();
+    String clientId = messageClientMsg.getContext().get("client");
+    List<MessageClient> connectedClients = MessageClientRegistry.getInstance()
+        .getRegisteredClientsOfClientId(clientId);
 
     // Filters those connectedClients who already received the message
     List<MessageClient> relevantClients = connectedClients.stream().filter(messageClient -> {
@@ -46,9 +57,18 @@ public abstract class MessageHandler {
       return messageClient.getTimestampLastMsgSent().before(messageClientMsg.getCreationDate());
     }).collect(Collectors.toList());
 
-    return getRecipientsByContext(messageClientMsg, relevantClients);
+    return getRecipients(messageClientMsg, relevantClients);
   }
 
+  /**
+   * Defines if a message client is allowed to subscribe to the current MessageHandler topic, each
+   * message handler must implement this method and define rules to identify when a message client
+   * can subscribe to its specific topic, by ideally using the message client context.
+   * 
+   * @param messageClient
+   *          Message client that wants to subscribe to the topic
+   * @return true if it can subscribe, false otherwise
+   */
   protected abstract boolean isAllowedToSubscribeToTopic(MessageClient messageClient);
 
   /**
@@ -62,7 +82,7 @@ public abstract class MessageHandler {
    *          Relevant connected clients, function should filter those
    * @return List of MessageClient that should receive the message
    */
-  protected final List<MessageClient> getRecipientsByContext(MessageClientMsg messageClientMsg,
+  protected final List<MessageClient> getRecipients(MessageClientMsg messageClientMsg,
       List<MessageClient> connectedClients) {
     return connectedClients.stream()
         .filter(messageClient -> this.isValidRecipient(messageClientMsg, messageClient))
@@ -76,7 +96,7 @@ public abstract class MessageHandler {
    * @param messageClientMsg
    *          Message that also contains the context
    * @param messageClient
-   *          Meessage client to be validated
+   *          Message client to be validated
    * @return true if the message client should receive the message, false otherwise
    */
   protected abstract boolean isValidRecipient(MessageClientMsg messageClientMsg,

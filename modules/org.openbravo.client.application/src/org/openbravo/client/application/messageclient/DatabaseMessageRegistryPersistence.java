@@ -19,6 +19,7 @@
 package org.openbravo.client.application.messageclient;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
@@ -84,11 +85,11 @@ public class DatabaseMessageRegistryPersistence implements MessageRegistryPersis
 
   @Override
   public List<MessageClientMsg> getPendingMessages() {
-    List<PersistedMessage> persistedMsgs = getPendingMessagesPersisted();
+    List<PersistedMessage> persistedMsgs = getPendingPersistedMessages();
     return mapPersistedMessageToMessageClientMsg(persistedMsgs);
   }
 
-  private List<PersistedMessage> getPendingMessagesPersisted() {
+  private List<PersistedMessage> getPendingPersistedMessages() {
     List<PersistedMessage> persistedMsgs = new ArrayList<>();
     try {
       OBContext.setAdminMode();
@@ -98,6 +99,7 @@ public class DatabaseMessageRegistryPersistence implements MessageRegistryPersis
       criteria.setFilterOnReadableClients(false);
       criteria.setFilterOnActive(true);
       criteria.add(Restrictions.ge(PersistedMessage.PROPERTY_EXPIRATIONDATE, new Date()));
+      criteria.addOrder(Order.asc(PersistedMessage.PROPERTY_CREATIONDATE));
       persistedMsgs = criteria.list();
     } finally {
       OBContext.restorePreviousMode();
@@ -144,6 +146,6 @@ public class DatabaseMessageRegistryPersistence implements MessageRegistryPersis
       return currentMaxExpirationDate;
     }
 
-    return DateUtils.addDays(messageClientMsg.getExpirationDate(), MAX_EXPIRATION_DURATION);
+    return messageClientMsg.getExpirationDate();
   }
 }

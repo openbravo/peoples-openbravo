@@ -35,17 +35,43 @@ import org.openbravo.base.weld.WeldUtils;
 public class MessageClientConnectionHandler {
   private static final Logger log = LogManager.getLogger();
 
+  /**
+   * Handles connection establishment by registering the message client
+   * 
+   * @param messageClient
+   *          Message Client to be registered
+   */
   static void connectionEstablished(MessageClient messageClient) {
     MessageClientRegistry.getInstance().registerClient(messageClient);
   }
 
+  /**
+   * Handles connection being closed, in particular it un-registers the message client
+   * 
+   * @param searchKey
+   *          SearchKey of the message client
+   */
   static void connectionClosed(String searchKey) {
     MessageClientRegistry.getInstance().removeClient(searchKey);
   }
 
+  /**
+   * Handles a message sent by the client and received by this function. Allows to send a message
+   * back by providing a String as a return value.
+   *
+   * The message is handled by a MessageHandler of the topic of the message through
+   * "handleReceivedMessage" method. If there is no existing MessageHandler, there will be a warning
+   * being logged.
+   * 
+   * @param message
+   *          Message received from the client
+   * @param messageClientSearchKey
+   *          Search Key of the message client, to identify who sent the message
+   * @return Optional message that will be sent to the user, return null to not send anything back
+   */
   static String handleMessage(String message, String messageClientSearchKey) {
-    log.debug(String.format("[Message Client] Message received from client %s. Message: %s",
-        messageClientSearchKey, message));
+    log.debug("[Message Client] Message received from client {}. Message: {}",
+        messageClientSearchKey, message);
 
     try {
       JSONObject jsonMessage = new JSONObject(message);
@@ -55,23 +81,44 @@ public class MessageClientConnectionHandler {
           new MessageHandler.Selector(topic));
       MessageClient messageClient = MessageClientRegistry.getInstance()
           .getBySearchKey(messageClientSearchKey);
-      if (!messageHandlers.isEmpty() && messageClient != null) {
-        String messageToSendBack = messageHandlers.get(0)
-            .handleReceivedMessage(messageToBeHandled, messageClient);
-        if (messageToSendBack != null && !messageToSendBack.isBlank()) {
-          JSONObject jsonMessageToSendBack = new JSONObject(
-              Map.of("data", messageToSendBack, "topic", topic));
-          return jsonMessageToSendBack.toString();
-        }
+
+      if (messageHandlers.isEmpty()) {
+        log.error("[Message Client] No handler for message received with topic ({})", topic);
+        return null;
       }
+
+      if (messageClient == null) {
+        log.error(
+            "[Message Client] No message client is registered with search key ({}), can't handle message received.",
+            messageClientSearchKey);
+        return null;
+      }
+
+      String messageToSendBack = messageHandlers.get(0)
+          .handleReceivedMessage(messageToBeHandled, messageClient);
+
+      if (messageToSendBack == null || messageToSendBack.isBlank()) {
+        return null;
+      }
+
+      JSONObject jsonMessageToSendBack = new JSONObject(
+          Map.of("data", messageToSendBack, "topic", topic));
+      return jsonMessageToSendBack.toString();
     } catch (JSONException e) {
       throw new OBException("Could not handle non-json message.", e);
     }
-    return null;
   }
 
-  static void handleError(String sessionId, Throwable e) {
-    log.error("Message Client with SessionID({}) - Received error: {}", sessionId, e);
+  /**
+   * Handles an error received from the MessageClient
+   * 
+   * @param searchKey
+   *          SearchKey of the MessageClient that originated the error
+   * @param e
+   *          Throwable, usually an exception representing the error
+   */
+  static void handleError(String searchKey, Throwable e) {
+    log.error("Message Client with search key({}) - Received error: {}", searchKey, e);
     // Error always triggers a connection closed event, which is properly handled in the
     // connectionClosed method
   }

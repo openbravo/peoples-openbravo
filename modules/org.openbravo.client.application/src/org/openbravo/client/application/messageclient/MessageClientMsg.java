@@ -28,12 +28,12 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
  * register messages.
  */
 public class MessageClientMsg {
-  String id;
-  String topic;
-  Map<String, String> context;
-  String payload;
-  Date expirationDate;
-  Date creationDate;
+  private final String id;
+  private final String topic;
+  private final Map<String, String> context;
+  private final String payload;
+  private final Date expirationDate;
+  private final Date creationDate;
 
   public MessageClientMsg(String topic, Map<String, String> context, String payload,
       Date expirationTime, Date creationDate) {

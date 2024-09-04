@@ -18,15 +18,19 @@
  */
 package org.openbravo.client.application.messageclient;
 
-import org.codehaus.jettison.json.JSONObject;
-
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONObject;
 
 /**
  * Broadcasts messages to a list of MessageClient recipients
  */
 public class MessageClientBroadcaster {
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Sends a message to a list of MessageClient that act as recipients
@@ -38,7 +42,12 @@ public class MessageClientBroadcaster {
    */
   static void send(MessageClientMsg message, List<MessageClient> recipients) {
     recipients.forEach(recipient -> {
-      recipient.sendMessage(getMessageToBeSent(message));
+      try {
+        recipient.sendMessage(getMessageToBeSent(message));
+      } catch (Exception e) {
+        log.error("Message {} failed to be sent to recipient with search key {}.", message.getId(),
+            recipient.getSearchKey(), e);
+      }
     });
   }
 

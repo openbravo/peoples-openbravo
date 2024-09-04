@@ -51,6 +51,9 @@ public class MessageClientManager {
   @Any
   Instance<MessageHandler> messageHandlers;
 
+  /**
+   * Starts the MessageClientManager thread and its corresponding message registry
+   */
   public synchronized void start() {
     if (threadsStarted) {
       return;
@@ -73,6 +76,9 @@ public class MessageClientManager {
     isShutDown = false;
   }
 
+  /**
+   * Stops the message client manager and clears no longer required instance variables
+   */
   public void shutdown() {
     if (!threadsStarted) {
       return;
@@ -113,13 +119,7 @@ public class MessageClientManager {
           log.debug(
               "[Message Client] There are " + pendingMessages.size() + " pending to be sent.");
           pendingMessages.forEach(message -> {
-            try {
-              MessageClientBroadcaster.send(message, getMessageRecipients(message));
-            } catch (Exception e) {
-              log.error(
-                  "[Message Client] Message with ID {}, failed to be sent to the message clients.",
-                  message.getId(), e);
-            }
+            MessageClientBroadcaster.send(message, getMessageRecipients(message));
           });
         }
         try {

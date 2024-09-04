@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -105,6 +106,25 @@ public class MessageClientRegistry implements OBSingleton {
    */
   protected List<MessageClient> getAllClients() {
     return new ArrayList<>(messageClientsBySessionId.values());
+  }
+
+  /**
+   * Returns the connected MessageClients of a given client id.
+   *
+   * @param clientId
+   *          Client ID to filter message clients by
+   * @return all the connected MessageClients that are of that client
+   */
+  protected List<MessageClient> getRegisteredClientsOfClientId(String clientId) {
+    if ("0".equals(clientId)) {
+      // ClientID 0 indicates that all clients should be returned
+      return getAllClients();
+    }
+
+    return messageClientsBySessionId.values()
+        .stream()
+        .filter(messageClient -> clientId.equals(messageClient.getClientId()))
+        .collect(Collectors.toList());
   }
 
   /**
