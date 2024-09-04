@@ -25,8 +25,7 @@ import org.openbravo.model.ad.utility.ReprintableDocument;
 import org.openbravo.model.common.invoice.SubstitutiveInvoice;
 
 /**
- * Used to generate the data of a {@link ReprintableDocument} based in an
- * {@link SubstitutiveInvoice}
+ * Used to generate the data of a {@link ReprintableDocument} based in a {@link SubstitutiveInvoice}
  */
 public class ReprintableSubstitutiveInvoice extends ReprintableSourceDocument<SubstitutiveInvoice> {
 
