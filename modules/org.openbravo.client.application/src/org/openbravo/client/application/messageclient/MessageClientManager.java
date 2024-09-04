@@ -39,6 +39,7 @@ import org.openbravo.erpCommon.utility.PropertyException;
  * sends them to their corresponding recipients
  */
 public class MessageClientManager {
+  public static final String MESSAGE_MANAGER_ENABLED_PREFERENCE = "OBUIAPP_Enable_Message_Manager";
   private static final Logger log = LogManager.getLogger();
   private static final long WAITING_TIME_FOR_POLLING = getOBProperty("messageclient.wait.time",
       10000, 5000);
@@ -159,7 +160,7 @@ public class MessageClientManager {
     try {
       OBContext.setAdminMode();
       String enableMessageManagerPreference = Preferences.getPreferenceValue(
-          "OBUIAPP_Enable_Message_Manager", true, OBContext.getOBContext().getCurrentClient(),
+          MESSAGE_MANAGER_ENABLED_PREFERENCE, true, OBContext.getOBContext().getCurrentClient(),
           OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
           OBContext.getOBContext().getRole(), null);
       if (!Preferences.YES.equals(enableMessageManagerPreference)) {
