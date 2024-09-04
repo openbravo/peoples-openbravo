@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2023 Openbravo SLU
+ * All portions are Copyright (C) 2015-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -171,6 +171,9 @@ public class CoreAttachImplementation extends AttachImplementation
     if (document.getInvoice() != null) {
       return "318"; // c_invoice
     }
+    if (document.getSubstitutiveInvoice() != null) {
+      return "B7E4F28CAA9949378E6CAABC879E84E6"; // c_substitutiveinvoice
+    }
     throw new IllegalArgumentException(
         "Unknown source document linked to ReprintableDocument " + document.getId());
   }
@@ -181,6 +184,9 @@ public class CoreAttachImplementation extends AttachImplementation
     }
     if (document.getInvoice() != null) {
       return document.getInvoice().getId();
+    }
+    if (document.getSubstitutiveInvoice() != null) {
+      return document.getSubstitutiveInvoice().getId();
     }
     throw new IllegalArgumentException(
         "Unknown source document linked to ReprintableDocument " + document.getId());

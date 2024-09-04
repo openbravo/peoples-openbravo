@@ -67,9 +67,10 @@ import org.openbravo.synchronization.event.SynchronizationEvent;
 @ApplicationScoped
 public class ReprintableDocumentManager {
   private static final Logger log = LogManager.getLogger();
-  // Sales Order, Sales Invoice, Purchase Order, Purchase Invoice and Return from Customer windows
+  // Sales Order, Sales Invoice, Purchase Order, Purchase Invoice, Substitutive Invoices and Return
+  // from Customer windows
   private static final Set<String> WINDOWS_WITH_REPRINT = Set.of("143", "167", "181", "183",
-      "FF808081330213E60133021822E40007");
+      "6916326417DB4A6FBD07870C0884E569", "FF808081330213E60133021822E40007");
 
   private TimeInvalidatedCache<String, String> methodsOfAttachmentConfigs;
   private TimeInvalidatedCache<String, Boolean> reprintDocumentsConfiguration;
@@ -194,14 +195,6 @@ public class ReprintableDocumentManager {
     long init = System.currentTimeMillis();
     ReprintableDocument document = createReprintableDocument(format, sourceDocument);
 
-    // Although this code creates a dependency with the Business API module due to the string with
-    // the name of the event triggered and this is not totally clean, with it we do not have to
-    // overcomplicate by adding an abstraction layer with hooks to be implemented by modules.
-    if (document.getInvoice() != null) {
-      SynchronizationEvent.getInstance()
-          .triggerEvent("API_ReprintableInvoiceCreated", sourceDocument.getId());
-    }
-
     ReprintableDocumentAttachHandler handler = getHandler(document);
     try (documentData) {
       handler.upload(document, documentData);
@@ -212,7 +205,15 @@ public class ReprintableDocumentManager {
     log.trace("Reprintable document {} uploaded in {} ms", document.getId(),
         System.currentTimeMillis() - init);
 
+    triggerUploadEvent(sourceDocument);
+
     return document;
+  }
+
+  private void triggerUploadEvent(ReprintableSourceDocument<?> sourceDocument) {
+    sourceDocument.getUploadEvent()
+        .ifPresent(event -> SynchronizationEvent.getInstance()
+            .triggerEvent(event, sourceDocument.getId()));
   }
 
   /**
@@ -471,7 +472,7 @@ public class ReprintableDocumentManager {
   /**
    * Checks if reprintable documents can be generated from a given window. For the moment it is only
    * supported to generate reprintable documents from these windows: Sales Order, Sales Invoice,
-   * Purchase Order and Purchase Invoice.
+   * Purchase Order, Substitutive Invoices and Purchase Invoice.
    *
    * @param windowId
    *          The ID of the AD window

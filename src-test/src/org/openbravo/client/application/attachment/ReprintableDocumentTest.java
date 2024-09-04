@@ -297,7 +297,8 @@ public class ReprintableDocumentTest extends WeldBaseTest {
 
   @Test
   public void checkReprintableDocumentsWindows() {
-    for (String windowId : Set.of("143", "167", "181", "183")) {
+    for (String windowId : Set.of("143", "167", "181", "183", "6916326417DB4A6FBD07870C0884E569",
+        "FF808081330213E60133021822E40007")) {
       assertThat("Window " + windowId + " supports reprintable documents",
           reprintableDocumentManager.isReprintableDocumentsWindow(windowId), equalTo(true));
     }

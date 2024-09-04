@@ -38,7 +38,7 @@ public abstract class ReprintableSourceDocument<D extends BaseOBObject & ClientE
    * Supported document types that can be linked to a {@link ReprintableDocument}
    */
   public enum DocumentType {
-    INVOICE, ORDER;
+    INVOICE, ORDER, SUBSTITUTIVEINVOICE;
   }
 
   /**
@@ -60,6 +60,8 @@ public abstract class ReprintableSourceDocument<D extends BaseOBObject & ClientE
         return new ReprintableInvoice(id);
       case ORDER:
         return new ReprintableOrder(id);
+      case SUBSTITUTIVEINVOICE:
+        return new ReprintableSubstitutiveInvoice(id);
       default:
         throw new IllegalArgumentException("Unknown document type");
     }
@@ -79,6 +81,9 @@ public abstract class ReprintableSourceDocument<D extends BaseOBObject & ClientE
   static ReprintableSourceDocument<?> newSourceDocument(ReprintableDocument reprintableDocument) {
     if (reprintableDocument.getInvoice() != null) {
       return newSourceDocument(reprintableDocument.getId(), DocumentType.INVOICE);
+    }
+    if (reprintableDocument.getSubstitutiveInvoice() != null) {
+      return newSourceDocument(reprintableDocument.getId(), DocumentType.SUBSTITUTIVEINVOICE);
     }
     if (reprintableDocument.getOrder() != null) {
       return newSourceDocument(reprintableDocument.getId(), DocumentType.ORDER);
@@ -160,5 +165,14 @@ public abstract class ReprintableSourceDocument<D extends BaseOBObject & ClientE
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  /**
+   * @return an Optional describing the search key of the event to be triggered when the
+   *         ReprintableDocument linked to the document is uploaded. If an empty optional is
+   *         returned this means that no event is triggered when the document is uploaded.
+   */
+  protected Optional<String> getUploadEvent() {
+    return Optional.empty();
   }
 }

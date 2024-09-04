@@ -10,7 +10,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2001-2010 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2001-2024 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  * ***********************************************************************
  */
@@ -21,6 +21,7 @@ public enum DocumentType {
   QUOTATION("C_ORDER", "quotations/"),
   SALESORDER("C_ORDER", "orders/"),
   SALESINVOICE("C_INVOICE", "invoices/"),
+  SUBSTITUTIVEINVOICE("C_SUBSTITUTITVENVOICE", "substitutiveinvoices/"),
   SHIPMENT("M_INOUT", "shipments/"),
   PURCHASEORDER("C_ORDER", "purchaseorders/"),
   PAYMENT("FIN_PAYMENT", "payments/");

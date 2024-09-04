@@ -58,6 +58,7 @@ import org.openbravo.client.application.attachment.ReprintableDocumentManager.Fo
 import org.openbravo.client.application.attachment.ReprintableInvoice;
 import org.openbravo.client.application.attachment.ReprintableOrder;
 import org.openbravo.client.application.attachment.ReprintableSourceDocument;
+import org.openbravo.client.application.attachment.ReprintableSubstitutiveInvoice;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.dal.core.OBContext;
@@ -89,6 +90,7 @@ import org.openbravo.model.common.enterprise.EmailServerConfiguration;
 import org.openbravo.model.common.enterprise.EmailTemplate;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.invoice.SubstitutiveInvoice;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -156,9 +158,20 @@ public class PrintController extends HttpSecureAppServlet {
         strDocumentId = vars.getSessionValue(sessionValuePrefix + ".inpcInvoiceId");
       }
     }
+    if (request.getServletPath().toLowerCase().indexOf("substitutiveinvoices") != -1) {
+      documentType = DocumentType.SUBSTITUTIVEINVOICE;
+      // The prefix PRINTSUBSTITUTIVEINVOICES is a fixed name based on the KEY of the
+      // AD_PROCESS
+      sessionValuePrefix = "PRINTSUBSTITUTIVEINVOICES";
+
+      strDocumentId = vars.getSessionValue(sessionValuePrefix + ".inpcSubstitutiveInvoiceId_R");
+      if (strDocumentId.equals("")) {
+        strDocumentId = vars.getSessionValue(sessionValuePrefix + ".inpcSubstitutiveInvoiceId");
+      }
+    }
     if (request.getServletPath().toLowerCase().indexOf("shipments") != -1) {
       documentType = DocumentType.SHIPMENT;
-      // The prefix PRINTINVOICES is a fixed name based on the KEY of the
+      // The prefix PRINTSHIPMENTS is a fixed name based on the KEY of the
       // AD_PROCESS
       sessionValuePrefix = "PRINTSHIPMENTS";
 
@@ -271,6 +284,12 @@ public class PrintController extends HttpSecureAppServlet {
           sourceDocument = new ReprintableInvoice(documentIds[0]);
           organizationId = OBDal.getInstance()
               .get(Invoice.class, documentIds[0])
+              .getOrganization()
+              .getId();
+        } else if (DocumentType.SUBSTITUTIVEINVOICE.equals(documentType)) {
+          sourceDocument = new ReprintableSubstitutiveInvoice(documentIds[0]);
+          organizationId = OBDal.getInstance()
+              .get(SubstitutiveInvoice.class, documentIds[0])
               .getOrganization()
               .getId();
         } else {
@@ -794,6 +813,8 @@ public class PrintController extends HttpSecureAppServlet {
         return PocData.getContactDetailsForOrders(this, strDocumentId);
       case SALESINVOICE:
         return PocData.getContactDetailsForInvoices(this, strDocumentId);
+      case SUBSTITUTIVEINVOICE:
+        return PocData.getContactDetailsForSubstitutiveInvoices(this, strDocumentId);
       case SHIPMENT:
         return PocData.getContactDetailsForShipments(this, strDocumentId);
       case PURCHASEORDER:
@@ -1593,6 +1614,11 @@ public class PrintController extends HttpSecureAppServlet {
     int i = 0;
     if (strTable.equals("C_INVOICE")) {
       printControllerData = PrintControllerData.selectInvoices(this, strIds.toString());
+      for (PrintControllerData docID : printControllerData) {
+        documentIdsOrdered[i++] = docID.getField("Id");
+      }
+    } else if (strTable.equals("C_SUBSTITUTIVEINVOICE")) {
+      printControllerData = PrintControllerData.selectSubstitutiveInvoices(this, strIds.toString());
       for (PrintControllerData docID : printControllerData) {
         documentIdsOrdered[i++] = docID.getField("Id");
       }

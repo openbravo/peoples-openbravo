@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -111,6 +111,10 @@ public class Report implements Serializable {
 
       case SALESINVOICE: // Retrieve invoice information
         reportData = ReportData.getInvoiceInfo(connectionProvider, documentId);
+        break;
+
+      case SUBSTITUTIVEINVOICE: // Retrieve substitutive invoice information
+        reportData = ReportData.getSubstitutiveInvoiceInfo(connectionProvider, documentId);
         break;
 
       case SHIPMENT: // Retrieve shipment information

@@ -682,11 +682,9 @@ isc.OBToolbar.addClassProperties({
         }
         if (
           view.isReprintEnabled &&
-          view.viewGrid.getSelectedRecords().size() === 1 &&
-          view.viewGrid
-            .getSelectedRecords()
-            .get(0)
-            .documentStatus.includes('DR')
+          selectedRecords.size() === 1 &&
+          selectedRecords.get(0).documentStatus &&
+          selectedRecords.get(0).documentStatus.includes('DR')
         ) {
           disabled = true;
         }
@@ -1939,6 +1937,7 @@ isc.OBToolbar.addProperties({
             auxInputs = data.auxiliaryInputValues,
             prop;
           me.view.attachmentExists = attachmentExists;
+          me.view.isReprintEnabled = data.isReprintEnabled;
 
           // Added sessionAttributes to updateSubtabVisibility
           me.view.viewForm.sessionAttributes = data.sessionAttributes;

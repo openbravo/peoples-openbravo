@@ -53,6 +53,13 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_SUBSTITUTIVEINVOICE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="C_SUBSTITUTIVEINVOICE" name="C_REPRINTABLE_D_ITUTIVEINVOICE">
+        <reference local="C_SUBSTITUTIVEINVOICE_ID" foreign="C_SUBSTITUTIVEINVOICE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="C_REPRINTABLE_DOC_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -76,7 +83,11 @@
         <index-column name="C_ORDER_ID"/>
         <whereClause><![CDATA[C_ORDER_ID IS NOT NULL]]></whereClause>
       </index>
+      <index name="C_REPRINT_DOC_S_VEINVOICE_UNIQ" unique="true">
+        <index-column name="C_SUBSTITUTIVEINVOICE_ID"/>
+        <whereClause><![CDATA[C_SUBSTITUTIVEINVOICE_ID IS NOT NULL]]></whereClause>
+      </index>
       <check name="C_REPRINTABLE_DOC_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="C_REPRINTABLE_DOC_NULLDOC_CHK"><![CDATA[C_ORDER_ID IS NOT NULL OR C_INVOICE_ID IS NOT NULL]]></check>
+      <check name="C_REPRINTABLE_DOC_NULLDOC_CHK"><![CDATA[C_ORDER_ID IS NOT NULL OR C_INVOICE_ID IS NOT NULL OR C_SUBSTITUTIVEINVOICE_ID IS NOT NULL]]></check>
     </table>
   </database>
