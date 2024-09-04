@@ -25,6 +25,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.reporting.DocumentType;
 
+/**
+ * Used to set the proper values for the print request for Substitutive Invoices
+ */
 @SuppressWarnings("serial")
 public class PrintSubstitutiveInvoices extends PrintController {
 
@@ -34,6 +37,9 @@ public class PrintSubstitutiveInvoices extends PrintController {
     boolHist = false;
   }
 
+  /**
+   * Calls the print controller with the Substitutive Invoices printing process
+   */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
