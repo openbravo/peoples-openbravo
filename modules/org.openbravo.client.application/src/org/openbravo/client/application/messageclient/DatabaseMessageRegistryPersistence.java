@@ -45,8 +45,9 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class DatabaseMessageRegistryPersistence implements MessageRegistryPersistence {
 
-  // Max expiration duration in days
-  private static final int MAX_EXPIRATION_DURATION = 1;
+  // Max expiration duration in days, a min of 1 and maximum of 7 days has been set
+  private static final int MAX_EXPIRATION_DURATION = MessageClientUtils
+      .getOBProperty("messageclient.max.expiration", 1, 1, 7);
 
   @Override
   public void persistMessage(MessageClientMsg messageClientMsg) {

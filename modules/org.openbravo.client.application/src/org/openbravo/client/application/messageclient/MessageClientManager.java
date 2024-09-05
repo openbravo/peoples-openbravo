@@ -28,7 +28,6 @@ import java.util.concurrent.Executors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -41,8 +40,8 @@ import org.openbravo.erpCommon.utility.PropertyException;
 public class MessageClientManager {
   public static final String MESSAGE_MANAGER_ENABLED_PREFERENCE = "OBUIAPP_Enable_Message_Manager";
   private static final Logger log = LogManager.getLogger();
-  private static final long WAITING_TIME_FOR_POLLING = getOBProperty("messageclient.wait.time",
-      10000, 5000);
+  private static final long WAITING_TIME_FOR_POLLING = MessageClientUtils
+      .getOBProperty("messageclient.wait.time", 10000, 5000);
 
   private static MessageClientManager instance;
 
@@ -176,48 +175,4 @@ public class MessageClientManager {
     return true;
   }
 
-  /**
-   * Returns an integer property or its min/default value if not set
-   * 
-   * @param property
-   *          Property to be retrieved
-   * @param defaultValue
-   *          Default value if not set
-   * @param minValue
-   *          Minimum value, to avoid user setting it too low
-   * @return value of the property
-   */
-  private static int getOBProperty(String property, int defaultValue, int minValue) {
-    int value = getOpenbravoProperty(property, defaultValue);
-    if (value < minValue) {
-      log.warn("Value of property " + property + " is set too low (" + value
-          + "), using valid minValue instead " + minValue);
-      return minValue;
-    }
-    return value;
-  }
-
-  /**
-   * Retrieves an integer property from OBProperties Provider, if it is not properly set, it will
-   * fallback to a provided default value
-   * 
-   * @param propName
-   *          Property name to be retrieved
-   * @param defaultValue
-   *          Default value in case it is not properly set
-   * @return value of the property
-   */
-  private static int getOpenbravoProperty(String propName, int defaultValue) {
-    final String val = OBPropertiesProvider.getInstance()
-        .getOpenbravoProperties()
-        .getProperty(propName);
-    if (val == null) {
-      return defaultValue;
-    }
-    try {
-      return Integer.parseInt(val);
-    } catch (NumberFormatException ignore) {
-      return defaultValue;
-    }
-  }
 }
