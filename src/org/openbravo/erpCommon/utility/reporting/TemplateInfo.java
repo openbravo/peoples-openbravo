@@ -1,17 +1,20 @@
 /*
- * ************************************************************************ The
- * contents of this file are subject to the Openbravo Public License Version 1.1
- * (the "License"), being the Mozilla Public License Version 1.1 with a
- * permitted attribution clause; you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- * http://www.openbravo.com/legal/license.html Software distributed under the
- * License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND,
- * either express or implied. See the License for the specific language
- * governing rights and limitations under the License. The Original Code is
- * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2001-2017 Openbravo SLU All Rights Reserved.
- * Contributor(s): ______________________________________.
- * ***********************************************************************
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
  */
 package org.openbravo.erpCommon.utility.reporting;
 
@@ -55,6 +58,14 @@ public class TemplateInfo {
       _Id = emailDefinitionData.getField("id");
     }
 
+    EmailDefinition() {
+      _Subject = "";
+      _Body = "";
+      _Language = "en_US";
+      _IsDefault = false;
+      _Id = "";
+    }
+
     public String getSubject() {
       return _Subject;
     }
@@ -92,23 +103,25 @@ public class TemplateInfo {
       _EmailDefinitions = new HashMap<String, EmailDefinition>();
       final EmailDefinitionData[] emailDefinitionsData = EmailDefinitionData
           .getEmailDefinitions(connectionProvider, orgId, template.id);
-      if (emailDefinitionsData.length > 0) {
-        for (final EmailDefinitionData emailDefinitionData : emailDefinitionsData) {
-          final EmailDefinition emailDefinition = new EmailDefinition(emailDefinitionData);
-          String language = emailDefinition.getLanguage();
-          if (emailDefinition.isDefault()) {
-            _DefaultEmailDefinition = emailDefinition;
-            _EmailDefinitions.put(language, emailDefinition);
-          } else if (!_EmailDefinitions.containsKey(language)) {
-            _EmailDefinitions.put(language, emailDefinition);
-          }
+
+      for (final EmailDefinitionData emailDefinitionData : emailDefinitionsData) {
+        final EmailDefinition emailDefinition = new EmailDefinition(emailDefinitionData);
+        String language = emailDefinition.getLanguage();
+        if (emailDefinition.isDefault()) {
+          _DefaultEmailDefinition = emailDefinition;
+          _EmailDefinitions.put(language, emailDefinition);
+        } else if (!_EmailDefinitions.containsKey(language)) {
+          _EmailDefinitions.put(language, emailDefinition);
         }
-        if (_DefaultEmailDefinition == null && !_EmailDefinitions.isEmpty()) {
-          _DefaultEmailDefinition = _EmailDefinitions.values().iterator().next();
-        }
-      } else {
-        throw new ReportingException(
-            Utility.messageBD(connectionProvider, "NoEmailDefinitions", strLanguage) + template.id);
+      }
+
+      if (_EmailDefinitions.isEmpty()) {
+        // there are no email definitions for this template, let's create an empty one
+        _EmailDefinitions.put("en_US", new EmailDefinition());
+      }
+
+      if (_DefaultEmailDefinition == null) {
+        _DefaultEmailDefinition = _EmailDefinitions.values().iterator().next();
       }
     } else {
       throw new ServletException(
