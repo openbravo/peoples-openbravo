@@ -18,32 +18,35 @@
  */
 package org.openbravo.client.application.messageclient;
 
+import javax.enterprise.context.ApplicationScoped;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.access.Role;
-import org.openbravo.model.ad.access.User;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.PersistedMessage;
-import org.openbravo.model.common.enterprise.Organization;
-
-import javax.enterprise.context.ApplicationScoped;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Handles the persistence of MessageClientMsg objects in the database and their retrieval
  */
 @ApplicationScoped
 public class DatabaseMessageRegistryPersistence implements MessageRegistryPersistence {
+  private static final Logger log = LogManager.getLogger();
 
   // Max expiration duration in days, a min of 1 and maximum of 7 days has been set
   private static final int MAX_EXPIRATION_DURATION = MessageClientUtils
@@ -58,25 +61,7 @@ public class DatabaseMessageRegistryPersistence implements MessageRegistryPersis
       persistedMessage.setPayload(messageClientMsg.getPayload());
       persistedMessage.setType(messageClientMsg.getTopic());
       persistedMessage.setExpirationdate(getExpirationDate(messageClientMsg));
-      messageClientMsg.getContext().forEach((key, value) -> {
-        switch (key) {
-          case "user":
-            persistedMessage.setUserContact(OBDal.getInstance().get(User.class, value));
-            break;
-          case "role":
-            persistedMessage.setRole(OBDal.getInstance().get(Role.class, value));
-            break;
-          case "organization":
-            persistedMessage.setOrganization(OBDal.getInstance().get(Organization.class, value));
-            break;
-          case "client":
-            persistedMessage.setClient(OBDal.getInstance().get(Client.class, value));
-            break;
-          default:
-            // No other context info is supported on the persistence layer
-            break;
-        }
-      });
+      persistedMessage.setContext(getContext(messageClientMsg));
       OBDal.getInstance().save(persistedMessage);
       OBDal.getInstance().flush();
     } finally {
@@ -88,6 +73,11 @@ public class DatabaseMessageRegistryPersistence implements MessageRegistryPersis
   public List<MessageClientMsg> getPendingMessages() {
     List<PersistedMessage> persistedMsgs = getPendingPersistedMessages();
     return mapPersistedMessageToMessageClientMsg(persistedMsgs);
+  }
+
+  private String getContext(MessageClientMsg messageClientMsg) {
+    JSONObject contextJson = new JSONObject(messageClientMsg.getContext());
+    return contextJson.toString();
   }
 
   private List<PersistedMessage> getPendingPersistedMessages() {
@@ -111,22 +101,29 @@ public class DatabaseMessageRegistryPersistence implements MessageRegistryPersis
   private List<MessageClientMsg> mapPersistedMessageToMessageClientMsg(
       List<PersistedMessage> persistedMsgs) {
     return persistedMsgs.stream().map(msg -> {
-      Map<String, String> context = new HashMap<>();
-      if (msg.getClient() != null) {
-        context.put("client", msg.getClient().getId());
+      try {
+        JSONObject contextJson = new JSONObject(msg.getContext());
+        Map<String, String> mappedContext = jsonToStringMap(contextJson);
+        return new MessageClientMsg(msg.getId(), msg.getType(), mappedContext, msg.getPayload(),
+            msg.getExpirationdate(), msg.getCreationDate());
+      } catch (JSONException e) {
+        log.error(
+            "Failed to extract context from PersistedMessage with ID ({}). Skipping the message, it must be fixed.",
+            msg.getId(), e);
+        return null;
       }
-      if (msg.getOrganization() != null) {
-        context.put("organization", msg.getOrganization().getId());
-      }
-      if (msg.getUserContact() != null) {
-        context.put("user", msg.getUserContact().getId());
-      }
-      if (msg.getRole() != null) {
-        context.put("role", msg.getRole().getId());
-      }
-      return new MessageClientMsg(msg.getId(), msg.getType(), context, msg.getPayload(),
-          msg.getExpirationdate(), msg.getCreationDate());
-    }).collect(Collectors.toList());
+    }).filter(Objects::nonNull).collect(Collectors.toList());
+  }
+
+  private Map<String, String> jsonToStringMap(JSONObject json) throws JSONException {
+    Map<String, String> result = new HashMap<>();
+    Iterator<String> keys = json.keys();
+    while (json.keys().hasNext()) {
+      String key = keys.next();
+      String value = json.getString(key);
+      result.put(key, value);
+    }
+    return result;
   }
 
   /**

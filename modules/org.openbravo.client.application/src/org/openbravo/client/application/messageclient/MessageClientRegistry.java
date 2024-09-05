@@ -116,7 +116,7 @@ public class MessageClientRegistry implements OBSingleton {
    * @return all the connected MessageClients that are of that client
    */
   protected List<MessageClient> getRegisteredClientsOfClientId(String clientId) {
-    if ("0".equals(clientId)) {
+    if (clientId == null || "0".equals(clientId)) {
       // ClientID 0 indicates that all clients should be returned
       return getAllClients();
     }

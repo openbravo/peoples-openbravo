@@ -5,19 +5,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AD_USER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="AD_CLIENT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
       <column name="AD_ORG_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="AD_ROLE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -53,17 +45,15 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="CONTEXT" primaryKey="false" required="true" type="CLOB" size="4000" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_PERSISTED_MESSAGE_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="C_PERSISTED_MESSAGE_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ROLE" name="C_PERSISTED_MESSAGE_ROLE">
-        <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="C_PERSISTED_MESSAGE_USER">
-        <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
     </table>
   </database>
