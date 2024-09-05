@@ -159,9 +159,7 @@ public class MessageClientManager {
     try {
       OBContext.setAdminMode();
       String enableMessageManagerPreference = Preferences.getPreferenceValue(
-          MESSAGE_MANAGER_ENABLED_PREFERENCE, true, OBContext.getOBContext().getCurrentClient(),
-          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-          OBContext.getOBContext().getRole(), null);
+          MESSAGE_MANAGER_ENABLED_PREFERENCE, true, (String) null, null, null, null, null);
       if (!Preferences.YES.equals(enableMessageManagerPreference)) {
         return false;
       }
