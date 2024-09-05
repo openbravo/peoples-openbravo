@@ -40,9 +40,11 @@ public class MessageClientConnectionHandler {
    * 
    * @param messageClient
    *          Message Client to be registered
+   * @return true if connection was properly established, false otherwise. On non-proper connection,
+   *         the connection should be closed by the caller.
    */
-  static void connectionEstablished(MessageClient messageClient) {
-    MessageClientRegistry.getInstance().registerClient(messageClient);
+  static boolean connectionEstablished(MessageClient messageClient) {
+    return MessageClientRegistry.getInstance().registerClient(messageClient);
   }
 
   /**

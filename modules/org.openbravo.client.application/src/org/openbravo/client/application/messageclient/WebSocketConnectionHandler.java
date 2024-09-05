@@ -18,11 +18,13 @@
  */
 package org.openbravo.client.application.messageclient;
 
+import javax.websocket.CloseReason;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.server.ServerEndpoint;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -45,7 +47,7 @@ public class WebSocketConnectionHandler {
    *          sessionId
    */
   @OnOpen
-  public void onOpen(javax.websocket.Session session) {
+  public void onOpen(javax.websocket.Session session) throws IOException {
     String sessionId = (String) session.getUserProperties().get("sessionId");
     log.debug("Websocket - Connection accepted. Session: " + sessionId);
     String userId = (String) session.getUserProperties().get("user_id");
@@ -58,7 +60,12 @@ public class WebSocketConnectionHandler {
     WebSocketClient webSocketClient = new WebSocketClient(sessionId, clientId, orgId, userId,
         roleId, session);
     webSocketClient.setSubscribedTopics(supportedMessageTypes);
-    MessageClientConnectionHandler.connectionEstablished(webSocketClient);
+    boolean registrationSuccessful = MessageClientConnectionHandler
+        .connectionEstablished(webSocketClient);
+    if (!registrationSuccessful) {
+      session.close(new CloseReason(CloseReason.CloseCodes.CANNOT_ACCEPT,
+          "Cannot establish connection, registration failed. Check subscribed topics."));
+    }
   }
 
   /**

@@ -63,8 +63,9 @@ public class MessageClientRegistry implements OBSingleton {
    *
    * @param messageClient
    *          - Message client to be registered
+   * @return true if the registration was done, false if it failed
    */
-  public void registerClient(MessageClient messageClient) {
+  public boolean registerClient(MessageClient messageClient) {
     String messageClientSearchKey = messageClient.getSearchKey();
     if (messageClientsBySessionId.containsKey(messageClientSearchKey)) {
       logger.warn(
@@ -77,10 +78,11 @@ public class MessageClientRegistry implements OBSingleton {
       // Some topic is not allowed to be subscribed to, aborting message client registration
       logger.warn(
           "Message Client will not be registered, as some subscribed topics can't be handled.");
-      return;
+      return false;
     }
     messageClientsBySessionId.put(messageClientSearchKey, messageClient);
     messageClientsByUserId.put(messageClient.getUserId(), messageClient);
+    return true;
   }
 
   /**
@@ -92,6 +94,7 @@ public class MessageClientRegistry implements OBSingleton {
   public void removeClient(String searchKey) {
     if (!messageClientsBySessionId.containsKey(searchKey)) {
       logger.warn("Trying to remove a non registered message client: {}. Ignoring.", searchKey);
+      return;
     }
 
     MessageClient messageClientRemoved = messageClientsBySessionId.get(searchKey);
