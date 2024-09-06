@@ -151,6 +151,12 @@ public class MessageClientManager {
         log.warn("No available message handler for type: " + messageClientMsg.getTopic());
         return Collections.emptyList();
       }
+      if (messageHandler.isAmbiguous()) {
+        log.error(
+            "There are several message handlers for type {}. This is not supported, others must be removed. The message will not be handled.",
+            messageClientMsg.getTopic());
+        return Collections.emptyList();
+      }
       return messageHandler.get().getRecipients(messageClientMsg);
     }
   }

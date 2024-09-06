@@ -82,9 +82,15 @@ public class MessageRegistry {
     Instance<MessageHandler> messageHandler = messageHandlers
         .select(new MessageHandler.Selector(messageClientMsg.getTopic()));
 
-    if (!messageHandler.isResolvable()) {
+    if (messageHandler.isUnsatisfied()) {
       log.warn("No available message handler for type:" + messageClientMsg.getTopic());
       return false;
+    }
+
+    if (messageHandler.isAmbiguous()) {
+      log.warn(
+          "There are several message handlers for type {}. This is not supported, only the first one will be used, the rest are ignored. Review and remove them.",
+          messageClientMsg.getTopic());
     }
 
     return true;
