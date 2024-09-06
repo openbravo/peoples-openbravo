@@ -78,17 +78,19 @@ public abstract class ReprintableSourceDocument<D extends BaseOBObject & ClientE
    * @return the source document with the information of the document referenced by the given
    *         parameters
    */
-  static ReprintableSourceDocument<?> newSourceDocument(ReprintableDocument reprintableDocument) {
+  public static ReprintableSourceDocument<?> newSourceDocument(ReprintableDocument reprintableDocument) {
     if (reprintableDocument.getInvoice() != null) {
-      return newSourceDocument(reprintableDocument.getId(), DocumentType.INVOICE);
+      return newSourceDocument(reprintableDocument.getInvoice().getId(), DocumentType.INVOICE);
     }
     if (reprintableDocument.getSubstitutiveInvoice() != null) {
-      return newSourceDocument(reprintableDocument.getId(), DocumentType.SUBSTITUTIVEINVOICE);
+      return newSourceDocument(reprintableDocument.getSubstitutiveInvoice().getId(),
+          DocumentType.SUBSTITUTIVEINVOICE);
     }
     if (reprintableDocument.getOrder() != null) {
-      return newSourceDocument(reprintableDocument.getId(), DocumentType.ORDER);
+      return newSourceDocument(reprintableDocument.getOrder().getId(), DocumentType.ORDER);
     }
-    throw new IllegalArgumentException("Unknown document type");
+    throw new IllegalArgumentException(
+        "Unknown document type for ReprintableDocument " + reprintableDocument.getId());
   }
 
   /**
@@ -117,8 +119,18 @@ public abstract class ReprintableSourceDocument<D extends BaseOBObject & ClientE
     this.id = id;
   }
 
-  protected String getId() {
+  /**
+   * @return the ID of the source document
+   */
+  public String getId() {
     return id;
+  }
+
+  /**
+   * @return the ID of the AD table of the source document
+   */
+  public String getTableId() {
+    return getBaseDocument().getEntity().getTableId();
   }
 
   /**

@@ -150,8 +150,10 @@ public class CoreAttachImplementation extends AttachImplementation
   }
 
   private Path getReprintableDocumentAttachmentPath(ReprintableDocument document) {
-    String fileDirPath = getAttachmentDirectoryForNewAttachments(getTableId(document),
-        getDocumentId(document));
+    ReprintableSourceDocument<?> sourceDocument = ReprintableSourceDocument
+        .newSourceDocument(document);
+    String fileDirPath = getAttachmentDirectoryForNewAttachments(sourceDocument.getTableId(),
+        sourceDocument.getId());
     String reprintablePath = OBPropertiesProvider.getInstance()
         .getOpenbravoProperties()
         .getProperty("reprintable.path");
@@ -162,34 +164,6 @@ public class CoreAttachImplementation extends AttachImplementation
         .getOpenbravoProperties()
         .getProperty("attach.path");
     return Paths.get(attachmentPath, "reprintable", fileDirPath, document.getName());
-  }
-
-  private String getTableId(ReprintableDocument document) {
-    if (document.getOrder() != null) {
-      return "259"; // c_order
-    }
-    if (document.getInvoice() != null) {
-      return "318"; // c_invoice
-    }
-    if (document.getSubstitutiveInvoice() != null) {
-      return "B7E4F28CAA9949378E6CAABC879E84E6"; // c_substitutiveinvoice
-    }
-    throw new IllegalArgumentException(
-        "Unknown source document linked to ReprintableDocument " + document.getId());
-  }
-
-  private String getDocumentId(ReprintableDocument document) {
-    if (document.getOrder() != null) {
-      return document.getOrder().getId();
-    }
-    if (document.getInvoice() != null) {
-      return document.getInvoice().getId();
-    }
-    if (document.getSubstitutiveInvoice() != null) {
-      return document.getSubstitutiveInvoice().getId();
-    }
-    throw new IllegalArgumentException(
-        "Unknown source document linked to ReprintableDocument " + document.getId());
   }
 
   /**
