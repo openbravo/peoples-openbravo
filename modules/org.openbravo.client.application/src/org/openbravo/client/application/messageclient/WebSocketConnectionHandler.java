@@ -18,14 +18,15 @@
  */
 package org.openbravo.client.application.messageclient;
 
+import java.io.IOException;
+import java.util.List;
+
 import javax.websocket.CloseReason;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.server.ServerEndpoint;
-import java.io.IOException;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -84,7 +85,7 @@ public class WebSocketConnectionHandler {
   }
 
   /**
-   * Handles messsage being received from a WebSocket session, in some cases we might want to send a
+   * Handles message being received from a WebSocket session, in some cases we might want to send a
    * message in response to the received one
    * 
    * @param message
