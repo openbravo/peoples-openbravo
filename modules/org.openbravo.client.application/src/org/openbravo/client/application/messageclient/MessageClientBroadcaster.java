@@ -53,9 +53,11 @@ public class MessageClientBroadcaster {
 
   private static String getMessageToBeSent(MessageClientMsg messageClientMsg) {
     String payload = messageClientMsg.getPayload();
-    String type = messageClientMsg.getTopic();
+    String topic = messageClientMsg.getTopic();
+    long timestamp = messageClientMsg.getCreationDate().getTime();
 
-    JSONObject jsonMessage = new JSONObject(Map.of("data", payload, "topic", type));
+    JSONObject jsonMessage = new JSONObject(
+        Map.of("data", payload, "topic", topic, "timestamp", timestamp));
     return jsonMessage.toString();
   }
 }

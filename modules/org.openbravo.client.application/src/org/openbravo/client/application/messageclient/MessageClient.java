@@ -18,6 +18,7 @@
  */
 package org.openbravo.client.application.messageclient;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -52,7 +53,7 @@ public abstract class MessageClient {
    * @param timestamp
    *          Date timestamp of message creation for further filtering
    */
-  public abstract void sendMessage(String message, Date timestamp);
+  public abstract void sendMessage(String message, Date timestamp) throws IOException;
 
   /**
    * Sets the subscribed topics to the provided topics
@@ -111,13 +112,24 @@ public abstract class MessageClient {
   }
 
   /**
-   * Returns the last timestamps message sent, which indicates the last message that was sent to the
+   * Returns the last timestamp message sent, which indicates the last message that was sent to the
    * client
    * 
    * @return timestamp of the last message successfully sent
    */
   public Date getTimestampLastMsgSent() {
     return timestampLastMsgSent;
+  }
+
+  /**
+   * Sets the last timestamp message sent, which indicates the last message that was sent to the
+   * client
+   * 
+   * @param timestampLastMsgSent
+   *          timestamp new value to set it to
+   */
+  public void setTimestampLastMsgSent(Date timestampLastMsgSent) {
+    this.timestampLastMsgSent = timestampLastMsgSent;
   }
 
   /**

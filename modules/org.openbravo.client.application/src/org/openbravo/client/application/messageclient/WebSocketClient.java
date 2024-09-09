@@ -19,6 +19,7 @@
 package org.openbravo.client.application.messageclient;
 
 import javax.websocket.Session;
+import java.io.IOException;
 import java.util.Date;
 
 import org.openbravo.base.exception.OBException;
@@ -38,11 +39,11 @@ public class WebSocketClient extends MessageClient {
   }
 
   @Override
-  public void sendMessage(String message, Date timestamp) {
+  public void sendMessage(String message, Date timestamp) throws IOException {
     if (this.websocketSession == null) {
       throw new OBException("WebSocket session has not been set, messages can't be sent.");
     }
-    this.websocketSession.getAsyncRemote().sendText(message);
+    this.websocketSession.getBasicRemote().sendText(message);
     this.timestampLastMsgSent = timestamp;
   }
 }

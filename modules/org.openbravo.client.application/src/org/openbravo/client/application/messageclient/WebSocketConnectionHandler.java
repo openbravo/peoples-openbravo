@@ -19,6 +19,7 @@
 package org.openbravo.client.application.messageclient;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import javax.websocket.CloseReason;
@@ -57,10 +58,19 @@ public class WebSocketConnectionHandler {
     String clientId = (String) session.getUserProperties().get("client_id");
 
     List<String> supportedMessageTypes = session.getRequestParameterMap().get("supportedTopics");
+    List<String> lastMessageTimestampParams = session.getRequestParameterMap()
+        .get("lastMessageTimestamp");
 
     WebSocketClient webSocketClient = new WebSocketClient(sessionId, clientId, orgId, userId,
         roleId, session);
     webSocketClient.setSubscribedTopics(supportedMessageTypes);
+
+    if (lastMessageTimestampParams != null && !lastMessageTimestampParams.isEmpty()) {
+      long lastMessageTimestamp = Long
+          .parseLong(session.getRequestParameterMap().get("lastMessageTimestamp").get(0));
+      webSocketClient.setTimestampLastMsgSent(new Date(lastMessageTimestamp));
+    }
+
     boolean registrationSuccessful = MessageClientConnectionHandler
         .connectionEstablished(webSocketClient);
     if (!registrationSuccessful) {
