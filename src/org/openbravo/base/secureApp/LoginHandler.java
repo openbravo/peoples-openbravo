@@ -130,8 +130,7 @@ public class LoginHandler extends HttpBaseServlet {
             updatePassword(user, password, language);
           }
 
-          AuthenticationManager authManager = getAuthenticationManager(
-              vars.getStringParameter("loginMethod"));
+          AuthenticationManager authManager = getAuthenticationManager(vars);
 
           final String strUserAuth = authManager.authenticate(req, res);
           final String sessionId = vars.getSessionValue("#AD_Session_ID");
@@ -177,14 +176,18 @@ public class LoginHandler extends HttpBaseServlet {
   }
 
   /**
-   * This method retrieves the AuthenticationManager instance to be used to authenticate the User
-   * that is logging in
+   * Selects the {@link AuthenticationManager} instance to be used to authenticate the user that is
+   * logging in
    *
-   * @param method
-   *          Optional identifier of an authentication method used to get an instance of
-   *          ExternalAuthenticationManager
+   * @param vars
+   *          Allows to access to request or session variables, if needed for the instance selection
+   *
+   * @return the authentication manager instance to use for the login
+   * @throws AuthenticationException
+   *           if a valid {@link AuthenticationManager} instance cannot be found
    */
-  protected AuthenticationManager getAuthenticationManager(String method) {
+  protected AuthenticationManager getAuthenticationManager(VariablesSecureApp vars) {
+    String method = vars.getStringParameter("loginMethod");
     if (StringUtils.isBlank(method)) {
       return AuthenticationManager.getAuthenticationManager(this);
     }
