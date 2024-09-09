@@ -38,11 +38,11 @@ public class WebSocketClient extends MessageClient {
   }
 
   @Override
-  public void sendMessage(String message) {
+  public void sendMessage(String message, Date timestamp) {
     if (this.websocketSession == null) {
       throw new OBException("WebSocket session has not been set, messages can't be sent.");
     }
     this.websocketSession.getAsyncRemote().sendText(message);
-    timestampLastMsgSent = new Date();
+    this.timestampLastMsgSent = timestamp;
   }
 }

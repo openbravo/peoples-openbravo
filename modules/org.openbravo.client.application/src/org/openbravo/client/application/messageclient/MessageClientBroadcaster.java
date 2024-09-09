@@ -43,7 +43,7 @@ public class MessageClientBroadcaster {
   static void send(MessageClientMsg message, List<MessageClient> recipients) {
     recipients.forEach(recipient -> {
       try {
-        recipient.sendMessage(getMessageToBeSent(message));
+        recipient.sendMessage(getMessageToBeSent(message), message.getCreationDate());
       } catch (Exception e) {
         log.error("Message {} failed to be sent to recipient with search key {}.", message.getId(),
             recipient.getSearchKey(), e);

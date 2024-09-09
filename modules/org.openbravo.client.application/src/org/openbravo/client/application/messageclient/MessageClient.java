@@ -49,8 +49,10 @@ public abstract class MessageClient {
    * 
    * @param message
    *          Message to be sent
+   * @param timestamp
+   *          Date timestamp of message creation for further filtering
    */
-  public abstract void sendMessage(String message);
+  public abstract void sendMessage(String message, Date timestamp);
 
   /**
    * Sets the subscribed topics to the provided topics
