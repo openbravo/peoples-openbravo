@@ -20,6 +20,7 @@ package org.openbravo.client.application.messageclient;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -96,15 +97,15 @@ public class MessageClientConnectionHandler {
         return null;
       }
 
-      String messageToSendBack = messageHandlers.get(0)
+      Optional<String> messageToSendBack = messageHandlers.get(0)
           .handleReceivedMessage(messageToBeHandled, messageClient);
 
-      if (messageToSendBack == null || messageToSendBack.isBlank()) {
+      if (messageToSendBack.isEmpty()) {
         return null;
       }
 
       JSONObject jsonMessageToSendBack = new JSONObject(
-          Map.of("data", messageToSendBack, "topic", topic));
+          Map.of("data", messageToSendBack.get(), "topic", topic));
       return jsonMessageToSendBack.toString();
     } catch (JSONException e) {
       throw new OBException("Could not handle non-json message.", e);

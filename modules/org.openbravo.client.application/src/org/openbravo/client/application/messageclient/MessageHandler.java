@@ -24,6 +24,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -109,9 +110,10 @@ public abstract class MessageHandler {
    *          Message received from the client
    * @param messageClient
    *          Connected message client that sent the message
-   * @return A string that will be sent to the client, null if nothing should be sent back
+   * @return An optional string that will be sent to the client
    */
-  protected abstract String handleReceivedMessage(String message, MessageClient messageClient);
+  protected abstract Optional<String> handleReceivedMessage(String message,
+      MessageClient messageClient);
 
   /**
    * Defines the qualifier used to register a message handler type.
