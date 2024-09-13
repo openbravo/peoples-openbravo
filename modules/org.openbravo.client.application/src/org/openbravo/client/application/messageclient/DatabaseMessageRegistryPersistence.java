@@ -117,9 +117,9 @@ public class DatabaseMessageRegistryPersistence implements MessageRegistryPersis
 
   private Map<String, String> jsonToStringMap(JSONObject json) throws JSONException {
     Map<String, String> result = new HashMap<>();
-    Iterator<String> keys = json.keys();
+    Iterator<?> keys = json.keys();
     while (json.keys().hasNext()) {
-      String key = keys.next();
+      String key = (String) keys.next();
       String value = json.getString(key);
       result.put(key, value);
     }

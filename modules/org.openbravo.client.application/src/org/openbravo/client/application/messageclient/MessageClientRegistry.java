@@ -19,7 +19,6 @@
 package org.openbravo.client.application.messageclient;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,6 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.weld.WeldUtils;
 
