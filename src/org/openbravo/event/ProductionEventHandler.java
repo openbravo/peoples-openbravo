@@ -104,7 +104,27 @@ class ProductionEventHandler extends EntityPersistenceEventObserver {
       updateProductionLinesConfirmedQty(productionPlanList, null);
     } else if (previousAssignedUser == null && assignedUser != null) {
       updateProductionLinesConfirmedQty(productionPlanList, BigDecimal.ZERO);
+      updateProductionLinesPlanConfirmedQty(productionPlanList);
     }
+  }
+
+  private int updateProductionLinesPlanConfirmedQty(List<ProductionPlan> productionPlanList) {
+    //@formatter:off
+    String hql =
+             "update ManufacturingProductionLine pl" +
+             "  set pl.confirmedQuantity = pl.movementQuantity," +
+             "  pl.updated = :newDate," +
+             "  pl.updatedBy.id = :currentUserId" +
+             "  where pl.productionPlan.id in :planId and lineNo='10'";
+    //@formatter:on
+
+    return OBDal.getInstance()
+        .getSession()
+        .createQuery(hql)
+        .setParameter("newDate", new Date())
+        .setParameter("currentUserId", OBContext.getOBContext().getUser().getId())
+        .setParameterList("planId", getPlanIdListFromPlans(productionPlanList))
+        .executeUpdate();
   }
 
   private int updateProductionLinesConfirmedQty(List<ProductionPlan> productionPlanList,
