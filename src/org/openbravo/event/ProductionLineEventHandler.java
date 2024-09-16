@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,7 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.OBContext;
@@ -56,6 +57,74 @@ class ProductionLineEventHandler extends EntityPersistenceEventObserver {
   @Override
   protected Entity[] getObservedEntities() {
     return entities;
+  }
+
+  public void onSave(@Observes EntityNewEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    VariablesSecureApp vars = null;
+    try {
+      vars = RequestContext.get().getVariablesSecureApp();
+    } catch (Exception e) {
+      throw new OBException("Error: " + e.getMessage());
+    }
+    String currentTabId = vars.getStringParameter("tabId");
+    if (BOM_PRODUCTION.equals(currentTabId)) {
+      final Entity productionLineEntity = ModelProvider.getInstance()
+          .getEntity(ProductionLine.ENTITY_NAME);
+      final Property productionPlanProperty = productionLineEntity
+          .getProperty(ProductionLine.PROPERTY_PRODUCTIONPLAN);
+      final Property productProperty = productionLineEntity
+          .getProperty(ProductionLine.PROPERTY_PRODUCT);
+      final ProductionPlan productionPlan = (ProductionPlan) event
+          .getCurrentState(productionPlanProperty);
+      final Product currentProduct = (Product) event.getCurrentState(productProperty);
+
+      // Product validation only for Bundle and Unbundle type
+      if (productionPlan.getProduction().getProductionbomType() != null
+          && !productionPlan.getProduction()
+              .getProductionbomType()
+              .getType()
+              .equalsIgnoreCase("T")) {
+        boolean allowProductChange = productionPlan.getProduction()
+            .getProductionbomType()
+            .isAllowproductchange();
+        // Product change not allowed for the selected type
+        if (!allowProductChange) {
+          // Product Exists in Production Product
+          if (!productionPlan.getProduct().getId().equals(currentProduct.getId())) {
+            // Product Exists in Bom Product - Stocked
+            if (!productExistsInBomProductList(productionPlan, currentProduct)) {
+              List<ProductBOM> nonStockedBomProductList = getNonStockedBomProductList(
+                  productionPlan.getProduct());
+              if (nonStockedBomProductList.size() > 0) {
+                // Product Exists in Bom Product - Non Stocked
+                boolean productExists = false;
+                for (ProductBOM nonStockProdBom : nonStockedBomProductList) {
+                  if (productExistsInNonStockedBomProductHierarchy(nonStockProdBom.getBOMProduct(),
+                      currentProduct)) {
+                    productExists = true;
+                    break;
+                  }
+                }
+                if (!productExists) {
+                  String language = OBContext.getOBContext().getLanguage().getLanguage();
+                  ConnectionProvider conn = new DalConnectionProvider(false);
+                  throw new OBException(
+                      Utility.messageBD(conn, "@OnlyBoMProductsAllowed@", language));
+                }
+              } else {
+                String language = OBContext.getOBContext().getLanguage().getLanguage();
+                ConnectionProvider conn = new DalConnectionProvider(false);
+                throw new OBException(
+                    Utility.messageBD(conn, "@OnlyBoMProductsAllowed@", language));
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
