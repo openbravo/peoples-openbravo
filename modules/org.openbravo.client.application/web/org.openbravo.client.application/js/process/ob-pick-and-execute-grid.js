@@ -1020,6 +1020,16 @@ isc.OBPickAndExecuteGrid.addProperties({
     editField.setValueMap(map);
   },
 
+  getEditorValueMap: function(field, values) {
+    if (this.getEditForm() && this.getEditForm().getField(field.name)) {
+      const liveField = this.getEditForm().getField(field.name);
+      if (liveField.valueMap) {
+        return liveField.valueMap;
+      }
+    }
+    return this.Super('getEditorValueMap', arguments);
+  },
+
   processColumnValue: function(rowNum, columnName, columnValue) {
     var field,
       valueMap = [];
