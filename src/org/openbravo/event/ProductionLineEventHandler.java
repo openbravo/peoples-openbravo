@@ -81,49 +81,7 @@ class ProductionLineEventHandler extends EntityPersistenceEventObserver {
           .getCurrentState(productionPlanProperty);
       final Product currentProduct = (Product) event.getCurrentState(productProperty);
 
-      // Product validation only for Bundle and Unbundle type
-      if (productionPlan.getProduction().getProductionbomType() != null
-          && !productionPlan.getProduction()
-              .getProductionbomType()
-              .getType()
-              .equalsIgnoreCase("T")) {
-        boolean allowProductChange = productionPlan.getProduction()
-            .getProductionbomType()
-            .isAllowproductchange();
-        // Product change not allowed for the selected type
-        if (!allowProductChange) {
-          // Product Exists in Production Product
-          if (!productionPlan.getProduct().getId().equals(currentProduct.getId())) {
-            // Product Exists in Bom Product - Stocked
-            if (!productExistsInBomProductList(productionPlan, currentProduct)) {
-              List<ProductBOM> nonStockedBomProductList = getNonStockedBomProductList(
-                  productionPlan.getProduct());
-              if (nonStockedBomProductList.size() > 0) {
-                // Product Exists in Bom Product - Non Stocked
-                boolean productExists = false;
-                for (ProductBOM nonStockProdBom : nonStockedBomProductList) {
-                  if (productExistsInNonStockedBomProductHierarchy(nonStockProdBom.getBOMProduct(),
-                      currentProduct)) {
-                    productExists = true;
-                    break;
-                  }
-                }
-                if (!productExists) {
-                  String language = OBContext.getOBContext().getLanguage().getLanguage();
-                  ConnectionProvider conn = new DalConnectionProvider(false);
-                  throw new OBException(
-                      Utility.messageBD(conn, "@OnlyBoMProductsAllowed@", language));
-                }
-              } else {
-                String language = OBContext.getOBContext().getLanguage().getLanguage();
-                ConnectionProvider conn = new DalConnectionProvider(false);
-                throw new OBException(
-                    Utility.messageBD(conn, "@OnlyBoMProductsAllowed@", language));
-              }
-            }
-          }
-        }
-      }
+      validateProductChange(productionPlan, currentProduct);
     }
   }
 
@@ -156,50 +114,9 @@ class ProductionLineEventHandler extends EntityPersistenceEventObserver {
           .getPreviousState(movementQtyProperty);
 
       if (!previousProduct.getId().equals(currentProduct.getId())) {
-        // Product validation only for Bundle and Unbundle type
-        if (productionPlan.getProduction().getProductionbomType() != null
-            && !productionPlan.getProduction()
-                .getProductionbomType()
-                .getType()
-                .equalsIgnoreCase("T")) {
-          boolean allowProductChange = productionPlan.getProduction()
-              .getProductionbomType()
-              .isAllowproductchange();
-          // Product change not allowed for the selected type
-          if (!allowProductChange) {
-            // Product Exists in Production Product
-            if (!productionPlan.getProduct().getId().equals(currentProduct.getId())) {
-              // Product Exists in Bom Product - Stocked
-              if (!productExistsInBomProductList(productionPlan, currentProduct)) {
-                List<ProductBOM> nonStockedBomProductList = getNonStockedBomProductList(
-                    productionPlan.getProduct());
-                if (nonStockedBomProductList.size() > 0) {
-                  // Product Exists in Bom Product - Non Stocked
-                  boolean productExists = false;
-                  for (ProductBOM nonStockProdBom : nonStockedBomProductList) {
-                    if (productExistsInNonStockedBomProductHierarchy(
-                        nonStockProdBom.getBOMProduct(), currentProduct)) {
-                      productExists = true;
-                      break;
-                    }
-                  }
-                  if (!productExists) {
-                    String language = OBContext.getOBContext().getLanguage().getLanguage();
-                    ConnectionProvider conn = new DalConnectionProvider(false);
-                    throw new OBException(
-                        Utility.messageBD(conn, "@OnlyBoMProductsAllowed@", language));
-                  }
-                } else {
-                  String language = OBContext.getOBContext().getLanguage().getLanguage();
-                  ConnectionProvider conn = new DalConnectionProvider(false);
-                  throw new OBException(
-                      Utility.messageBD(conn, "@OnlyBoMProductsAllowed@", language));
-                }
-              }
-            }
-          }
-        }
+        validateProductChange(productionPlan, currentProduct);
       }
+
       // Quantity validation only for without production type
       if (productionPlan.getProduction().getProductionbomType() == null) {
         OBCriteria<ProductionLine> productionLineCriteria = OBDal.getInstance()
@@ -281,5 +198,48 @@ class ProductionLineEventHandler extends EntityPersistenceEventObserver {
         .setParameter("lineProductId", lineProduct.getId());
     List<BigInteger> ls = qry.list();
     return (Long) ls.get(0).longValue() > Long.parseLong("0");
+  }
+
+  private void validateProductChange(ProductionPlan productionPlan, Product currentProduct) {
+    // Product validation only for Bundle and Unbundle type
+    if (productionPlan.getProduction().getProductionbomType() != null
+        && !productionPlan.getProduction().getProductionbomType().getType().equalsIgnoreCase("T")) {
+      boolean allowProductChange = productionPlan.getProduction()
+          .getProductionbomType()
+          .isAllowproductchange();
+      // Product change not allowed for the selected type
+      if (!allowProductChange) {
+        // Product not Exists in Production Product and Bom Product List (Stocked)
+        if (!productionPlan.getProduct().getId().equals(currentProduct.getId())
+            && !productExistsInBomProductList(productionPlan, currentProduct)) {
+          // In case product not exists in production plan as well as stocked bom product list,
+          // then check for BillofMaterial product in non stocked bom product list, if non stocked
+          // BillofMaterial product exists, then verify the product exists in non stocked
+          // BillofMaterial product's BOM Hierarchy
+          List<ProductBOM> nonStockedBomProductList = getNonStockedBomProductList(
+              productionPlan.getProduct());
+          if (nonStockedBomProductList.size() > 0) {
+            // Check Product Exists in Non Stocked Bom Product Hierarchy
+            boolean productExists = false;
+            for (ProductBOM nonStockProdBom : nonStockedBomProductList) {
+              if (productExistsInNonStockedBomProductHierarchy(nonStockProdBom.getBOMProduct(),
+                  currentProduct)) {
+                productExists = true;
+                break;
+              }
+            }
+            if (!productExists) {
+              String language = OBContext.getOBContext().getLanguage().getLanguage();
+              ConnectionProvider conn = new DalConnectionProvider(false);
+              throw new OBException(Utility.messageBD(conn, "@OnlyBoMProductsAllowed@", language));
+            }
+          } else {
+            String language = OBContext.getOBContext().getLanguage().getLanguage();
+            ConnectionProvider conn = new DalConnectionProvider(false);
+            throw new OBException(Utility.messageBD(conn, "@OnlyBoMProductsAllowed@", language));
+          }
+        }
+      }
+    }
   }
 }

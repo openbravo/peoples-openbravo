@@ -26,6 +26,10 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.utils.FormatUtilities;
 
+/**
+ * Callout executed only on Metadata Tab of "Windows, Tabs and Fields" window. It auto populates
+ * product, storagebin and attributes fields based on product stock selector values
+ */
 public class SL_ProductionPlan_Stock extends SimpleCallout {
 
   @Override

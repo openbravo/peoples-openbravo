@@ -401,6 +401,7 @@ BEGIN --BODY
                 now(), p_User, CUR_BOM.M_ProductBOM_ID, v_MovementQtyBasedOnType,
                 v_ConfirmetQtyBasedOnAssign, CUR_BOM.M_Locator_ID, CUR_BOM.C_UOM_ID
             );
+			v_QtyAcumulated:= CUR_BOM.ProductionQty*CUR_BOM.BOMQty;
           END IF;
           v_Line:=v_Line;
           --Skip stock validation for unbundle
