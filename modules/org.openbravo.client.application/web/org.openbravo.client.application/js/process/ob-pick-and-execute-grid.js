@@ -1042,6 +1042,9 @@ isc.OBPickAndExecuteGrid.addProperties({
     }
     if (columnValue.entries) {
       this.setValueMapInEditForm(field.name, columnValue.entries);
+      if (this.isEditing() && columnValue.value) {
+        this.setEditValue(this.getEditRow(), field.name, columnValue.value);
+      }
     } else if (
       field.fkField &&
       columnValue.value &&
