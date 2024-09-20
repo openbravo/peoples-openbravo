@@ -12566,7 +12566,7 @@ Openbravo Administrator]]></MSGTEXT>
 <!--1000400005-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1000400005-->  <VALUE><![CDATA[Employee_threshold]]></VALUE>
 <!--1000400005-->  <MSGTEXT><![CDATA[The total discount applied on this sales transaction exceeds the employee discount threshold]]></MSGTEXT>
-<!--1000400005-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
+<!--1000400005-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--1000400005-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000400005-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
 <!--1000400005--></AD_MESSAGE>
