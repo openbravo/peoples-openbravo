@@ -21,6 +21,8 @@ package org.openbravo.client.application.messageclient;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.openbravo.dal.core.DalThreadCleaner;
+
 /**
  * Context listener for the MessageClientManager, it starts and stops it in the ServletContext
  * pipeline
@@ -28,7 +30,11 @@ import javax.servlet.ServletContextListener;
 public class MessageClientContextListener implements ServletContextListener {
   @Override
   public void contextInitialized(ServletContextEvent servletContextEvent) {
-    MessageClientManager.getInstance().start();
+    try {
+      MessageClientManager.getInstance().start();
+    } finally {
+      DalThreadCleaner.getInstance().cleanWithCommit();
+    }
   }
 
   @Override
