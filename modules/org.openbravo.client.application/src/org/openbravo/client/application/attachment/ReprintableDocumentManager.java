@@ -67,7 +67,7 @@ import org.openbravo.synchronization.event.SynchronizationEvent;
 @ApplicationScoped
 public class ReprintableDocumentManager {
   private static final Logger log = LogManager.getLogger();
-  // Sales Order, Sales Invoice, Purchase Order, Purchase Invoice, Substitutive Invoices and Return
+  // Sales Order, Sales Invoice, Purchase Order, Purchase Invoice, Substitute Invoice and Return
   // from Customer windows
   private static final Set<String> WINDOWS_WITH_REPRINT = Set.of("143", "167", "181", "183",
       "6916326417DB4A6FBD07870C0884E569", "FF808081330213E60133021822E40007");
@@ -472,7 +472,7 @@ public class ReprintableDocumentManager {
   /**
    * Checks if reprintable documents can be generated from a given window. For the moment it is only
    * supported to generate reprintable documents from these windows: Sales Order, Sales Invoice,
-   * Purchase Order, Substitutive Invoices and Purchase Invoice.
+   * Purchase Order, Substitute Invoice and Purchase Invoice.
    *
    * @param windowId
    *          The ID of the AD window

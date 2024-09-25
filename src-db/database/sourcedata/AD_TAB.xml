@@ -18955,8 +18955,8 @@ AND (e.storageBin is null OR ad_org_isinnaturaltree(@MaterialMgmtShipmentInOut.o
 <!--9F4E6329360B4F2CA2C688F78950A59E-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--9F4E6329360B4F2CA2C688F78950A59E-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--9F4E6329360B4F2CA2C688F78950A59E-->  <NAME><![CDATA[Header]]></NAME>
-<!--9F4E6329360B4F2CA2C688F78950A59E-->  <DESCRIPTION><![CDATA[Create and edit customer subsitituive invoices.]]></DESCRIPTION>
-<!--9F4E6329360B4F2CA2C688F78950A59E-->  <HELP><![CDATA[Customer substitutive invoices can be registered, booked and managed in the header section of the substitutive invoices window.]]></HELP>
+<!--9F4E6329360B4F2CA2C688F78950A59E-->  <DESCRIPTION><![CDATA[Create and edit customer substitute invoices.]]></DESCRIPTION>
+<!--9F4E6329360B4F2CA2C688F78950A59E-->  <HELP><![CDATA[Customer substitute invoices can be registered, booked and managed in the header section of the substitute invoice window.]]></HELP>
 <!--9F4E6329360B4F2CA2C688F78950A59E-->  <AD_TABLE_ID><![CDATA[B7E4F28CAA9949378E6CAABC879E84E6]]></AD_TABLE_ID>
 <!--9F4E6329360B4F2CA2C688F78950A59E-->  <AD_WINDOW_ID><![CDATA[6916326417DB4A6FBD07870C0884E569]]></AD_WINDOW_ID>
 <!--9F4E6329360B4F2CA2C688F78950A59E-->  <SEQNO><![CDATA[10]]></SEQNO>

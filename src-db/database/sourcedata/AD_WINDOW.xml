@@ -3084,9 +3084,9 @@ You can also select if transactions are allowed or not for this organization typ
 <!--6916326417DB4A6FBD07870C0884E569-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--6916326417DB4A6FBD07870C0884E569-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--6916326417DB4A6FBD07870C0884E569-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--6916326417DB4A6FBD07870C0884E569-->  <NAME><![CDATA[Substitutive Invoices]]></NAME>
-<!--6916326417DB4A6FBD07870C0884E569-->  <DESCRIPTION><![CDATA[Create and edit substitutive invoices for your customers.]]></DESCRIPTION>
-<!--6916326417DB4A6FBD07870C0884E569-->  <HELP><![CDATA[Substitutive invoice window allows to issue and manage customer's substitutive invoices.]]></HELP>
+<!--6916326417DB4A6FBD07870C0884E569-->  <NAME><![CDATA[Substitute Invoice]]></NAME>
+<!--6916326417DB4A6FBD07870C0884E569-->  <DESCRIPTION><![CDATA[Create and edit substitute invoices for your customers.]]></DESCRIPTION>
+<!--6916326417DB4A6FBD07870C0884E569-->  <HELP><![CDATA[Substitute invoice window allows to issue and manage customer's substitute invoices.]]></HELP>
 <!--6916326417DB4A6FBD07870C0884E569-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--6916326417DB4A6FBD07870C0884E569-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--6916326417DB4A6FBD07870C0884E569-->  <PROCESSING><![CDATA[N]]></PROCESSING>

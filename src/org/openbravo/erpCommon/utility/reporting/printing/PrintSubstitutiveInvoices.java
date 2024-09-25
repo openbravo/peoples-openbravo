@@ -26,7 +26,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.reporting.DocumentType;
 
 /**
- * Used to set the proper values for the print request for Substitutive Invoices
+ * Used to set the proper values for the print request for Substitute Invoices
  */
 @SuppressWarnings("serial")
 public class PrintSubstitutiveInvoices extends PrintController {
@@ -38,7 +38,7 @@ public class PrintSubstitutiveInvoices extends PrintController {
   }
 
   /**
-   * Calls the print controller with the Substitutive Invoices printing process
+   * Calls the print controller with the Substitute Invoices printing process
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)

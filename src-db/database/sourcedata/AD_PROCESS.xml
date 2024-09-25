@@ -5000,7 +5000,7 @@ If the Generic Product already has any Variant created the process returns an er
 <!--CC648B63E8C942DBA7E4CEBDAAEA73F8-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--CC648B63E8C942DBA7E4CEBDAAEA73F8-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--CC648B63E8C942DBA7E4CEBDAAEA73F8-->  <VALUE><![CDATA[PRINT SUBSTITUTIVE INVOICES]]></VALUE>
-<!--CC648B63E8C942DBA7E4CEBDAAEA73F8-->  <NAME><![CDATA[Print substitutive invoices process]]></NAME>
+<!--CC648B63E8C942DBA7E4CEBDAAEA73F8-->  <NAME><![CDATA[Print substitute invoices process]]></NAME>
 <!--CC648B63E8C942DBA7E4CEBDAAEA73F8-->  <DESCRIPTION><![CDATA[Process to print invoices or send them through email to the client]]></DESCRIPTION>
 <!--CC648B63E8C942DBA7E4CEBDAAEA73F8-->  <HELP><![CDATA[Process to print invoices or send them through email to the client]]></HELP>
 <!--CC648B63E8C942DBA7E4CEBDAAEA73F8-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
