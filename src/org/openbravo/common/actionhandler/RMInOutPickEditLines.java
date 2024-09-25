@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2024 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -129,21 +128,15 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
       newInOutLine.setStorageBin(
           OBDal.getInstance().get(Locator.class, selectedLine.getString("storageBin")));
       newInOutLine.setProduct(orderLine.getProduct());
-      newInOutLine.setAttributeSetValue(
-          orderLine.getAttributeSetValue() != null ? orderLine.getAttributeSetValue()
-              : orderLine.getGoodsShipmentLine() != null
-                  && orderLine.getGoodsShipmentLine().getAttributeSetValue() != null
-                      ? orderLine.getGoodsShipmentLine().getAttributeSetValue()
-                      : null);
+      newInOutLine.setAttributeSetValue(orderLine.getAttributeSetValue());
       newInOutLine.setUOM(orderLine.getUOM());
       // Ordered Quantity = returned quantity.
       BigDecimal qtyReceived = new BigDecimal(selectedLine.getString("receiving"));
-      String alternateUomId = selectedLine.getString("alternativeUOM");
-      if (isUomManagementEnabled && (alternateUomId != null && !StringUtils.isEmpty(alternateUomId)
-          && !StringUtils.equals(alternateUomId, "null"))) {
+      if (isUomManagementEnabled) {
         try {
           OBContext.setAdminMode(true);
-          UOM operativeUOM = OBDal.getInstance().get(UOM.class, alternateUomId);
+          UOM operativeUOM = OBDal.getInstance()
+              .get(UOM.class, selectedLine.getString("alternativeUOM"));
           newInOutLine.setOperativeUOM(operativeUOM);
           newInOutLine.setOperativeQuantity(qtyReceived.negate());
           if (alternativeUOMEqualsToReturnedUOM(selectedLine)) {
