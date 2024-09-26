@@ -50,6 +50,10 @@
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_CH_DESC_ORG_M_PROD">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <index name="M_PROD_CH_DSC_ORG_PROD_IDX" unique="false">
+        <index-column name="AD_ORG_ID"/>
+        <index-column name="M_PRODUCT_ID"/>
+      </index>
       <check name="M_PRODUCT_CH_DESC_ORG_ISACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
