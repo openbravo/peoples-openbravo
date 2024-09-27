@@ -66,8 +66,18 @@
       <foreign-key foreignTable="M_PRODUCTPRICE" name="M_PRODUCTPRICE_EXC_M_PPRICE" onDelete="cascade">
         <reference local="M_PRODUCTPRICE_ID" foreign="M_PRODUCTPRICE_ID"/>
       </foreign-key>
+      <index name="M_PRODUCTPRICE_EXC_ORG" unique="false">
+        <index-column name="AD_ORG_ID"/>
+      </index>
       <index name="M_PRODUCTPRICE_EXC_PP" unique="false">
         <index-column name="M_PRODUCTPRICE_ID"/>
+      </index>
+      <index name="M_PRODUCTPRICE_EXC_SEARCH_IDX" unique="false">
+        <index-column name="M_PRODUCTPRICE_ID"/>
+        <index-column name="AD_ORG_ID"/>
+        <index-column name="VALIDFROM"/>
+        <index-column name="VALIDTO"/>
+        <index-column name="ISACTIVE"/>
       </index>
       <check name="M_PPRICE_EXC_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
