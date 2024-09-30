@@ -851,7 +851,7 @@ BEGIN --BODY
                       END IF;
                     END LOOP;
                     v_Message:= '@MissingBOMHierarchyProductLineEntry@' || ': ' || v_Message;
-                    RAISE v_Message; --OBTG:-20000-
+					RAISE_APPLICATION_ERROR(-20000, v_Message);
                   END IF;
               END LOOP;
             END IF;
@@ -914,7 +914,7 @@ BEGIN --BODY
                   END IF;
                   IF (NOT v_ProductExists) THEN
                     v_Message:= '@ProductNotPresentInBomLines@' || ': ' || CUR_PLine.name;
-                    RAISE v_Message; --OBTG:-20000-
+                    RAISE_APPLICATION_ERROR(-20000, v_Message);
                   END IF;
                 END IF;
             END LOOP;          
@@ -929,10 +929,10 @@ BEGIN --BODY
               WHERE pp.M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID and pl.line='10';
               IF (v_ProductionType = 'B' AND v_MvmtQty<>v_PlanQty) THEN
                 v_Message:= '@BuildProductLineQty@' || ': ' || v_MvmtQty || ' ' || '@Mismatch@' || ' ' || '@ProductPlanQty@' || ' : ' ||  v_PlanQty || ' - ' || v_Product_Name;
-                RAISE v_Message; --OBTG:-20000-
+				RAISE_APPLICATION_ERROR(-20000, v_Message);
               ELSIF (v_ProductionType = 'U' AND ABS(v_MvmtQty)<>v_PlanQty) THEN 
                 v_Message:= '@ConsumeProductLineQty@' || ': ' || ABS(v_MvmtQty) || ' ' || '@Mismatch@' || ' ' || '@ProductPlanQty@' || ' : ' ||  v_PlanQty || ' - ' || v_Product_Name;
-                RAISE v_Message; --OBTG:-20000-
+				RAISE_APPLICATION_ERROR(-20000, v_Message);
               END IF;
 
               --Validate Production Line Qty with BoM Qty 
@@ -993,10 +993,10 @@ BEGIN --BODY
                 v_TotalBomQty = v_QtyAcumulated * CUR_PP.productionqty;
                 IF (v_ProductionType = 'B' AND ABS(CUR_PLine.movementqty)<>v_TotalBomQty) THEN
                   v_Message:= '@ConsumeProductLineQty@' || ': ' || ABS(CUR_PLine.movementqty) || ' ' || '@Mismatch@' || ' ' || '@BomQty@' || ' : ' ||  v_TotalBomQty || ' - ' || CUR_PLine.name;
-                  RAISE v_Message; --OBTG:-20000-
+                  RAISE_APPLICATION_ERROR(-20000, v_Message);
                 ELSIF (v_ProductionType = 'U' AND CUR_PLine.movementqty<>v_TotalBomQty) THEN 
                   v_Message:= '@BuildProductLineQty@' || ': ' || CUR_PLine.movementqty || ' ' || '@Mismatch@' || ' ' || '@BomQty@' || ' : ' ||  v_TotalBomQty || ' - ' || CUR_PLine.name;
-                  RAISE v_Message; --OBTG:-20000-
+                  RAISE_APPLICATION_ERROR(-20000, v_Message);
                 END IF;
               END LOOP; 
             END IF;
@@ -1052,18 +1052,18 @@ BEGIN --BODY
 			  IF (v_ProductionType = 'B') THEN
 			  	IF (v_BuildQty<>CUR_PP.productionqty) THEN
 			      v_Message:= '@TotalBuildProductQty@' || ': ' || v_BuildQty || ' ' || '@Mismatch@' || ' ' || '@ProductPlanQty@' || ' : ' ||  CUR_PP.productionqty;
-                  RAISE v_Message; --OBTG:-20000-
+                  RAISE_APPLICATION_ERROR(-20000, v_Message);
 				ELSIF (ABS(v_ConsumeQty)<>v_TotalBomQty) THEN
 				  v_Message:= '@TotalConsumeProductQty@' || ': ' || ABS(v_ConsumeQty) || ' ' || '@Mismatch@' || ' ' || '@TotalBomQty@' || ' : ' ||  v_TotalBomQty;
-			      RAISE v_Message; --OBTG:-20000-
+			      RAISE_APPLICATION_ERROR(-20000, v_Message);
 				END IF;
 			  ELSE
 			  	IF (ABS(v_ConsumeQty)<>CUR_PP.productionqty) THEN
 				  v_Message:= '@TotalConsumeProductQty@' || ': ' || ABS(v_ConsumeQty) || ' ' || '@Mismatch@' || ' ' || '@ProductPlanQty@' || ' : ' ||  CUR_PP.productionqty;
-				  RAISE v_Message; --OBTG:-20000-
+				  RAISE_APPLICATION_ERROR(-20000, v_Message);
 				ELSIF (v_BuildQty<>v_TotalBomQty) THEN
 				  v_Message:= '@TotalBuildProductQty@' || ': ' || v_BuildQty || ' ' || '@Mismatch@' || ' ' || '@TotalBomQty@' || ' : ' ||  v_TotalBomQty;
-				  RAISE v_Message; --OBTG:-20000-
+				  RAISE_APPLICATION_ERROR(-20000, v_Message);
 				END IF;
 			  END IF;
             END IF;
