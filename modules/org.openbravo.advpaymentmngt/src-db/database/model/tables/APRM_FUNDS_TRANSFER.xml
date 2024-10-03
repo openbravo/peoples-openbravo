@@ -29,7 +29,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="ISACTIVE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
@@ -37,7 +37,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TERMINAL" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="TERMINAL" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
