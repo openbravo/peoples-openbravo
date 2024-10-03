@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-  <database name="TABLE APRM_FUNDS_TRANSFER">
-    <table name="APRM_FUNDS_TRANSFER" primaryKey="APRM_FUNDS_TRANSFER_KEY">
-      <column name="APRM_FUNDS_TRANSFER_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+  <database name="TABLE APRM_FUND_TRANSFER_RECORDS">
+    <table name="APRM_FUND_TRANSFER_RECORDS" primaryKey="APRM_FUND_TRANSFER_RECORDS_KEY">
+      <column name="APRM_FUND_TRANSFER_RECORDS_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -61,16 +61,16 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="APRM_FT_CLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="APRM_FTR_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="FIN_FINANCIAL_ACCOUNT" name="APRM_FT_FINACC_FROM">
+      <foreign-key foreignTable="FIN_FINANCIAL_ACCOUNT" name="APRM_FTR_FINACC_FROM">
         <reference local="FIN_ACC_FROM" foreign="FIN_FINANCIAL_ACCOUNT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="FIN_FINANCIAL_ACCOUNT" name="APRM_FT_FINACC_TO">
+      <foreign-key foreignTable="FIN_FINANCIAL_ACCOUNT" name="APRM_FTR_FINACC_TO">
         <reference local="FIN_ACC_TO" foreign="FIN_FINANCIAL_ACCOUNT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="APRM_FT_ORG">
+      <foreign-key foreignTable="AD_ORG" name="APRM_FTR_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
     </table>
