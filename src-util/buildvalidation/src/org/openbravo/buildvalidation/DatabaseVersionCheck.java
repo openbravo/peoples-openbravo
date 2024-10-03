@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2019 Openbravo SLU
+ * All portions are Copyright (C) 2015-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  
  *************************************************************************
@@ -38,7 +38,7 @@ public class DatabaseVersionCheck extends BuildValidation {
   private static Logger log4j = LogManager.getLogger();
   private final static String POSTGRES = "PostgreSQL";
   private final static String ORACLE = "Oracle";
-  private final static String MIN_PG_VERSION = "10";
+  private final static String MIN_PG_VERSION = "12";
   private final static String MIN_ORA_VERSION = "19";
   private final static String[] WARNING_PG_VERSIONS = {};
   private final static String[] WARNING_ORA_VERSIONS = {};
