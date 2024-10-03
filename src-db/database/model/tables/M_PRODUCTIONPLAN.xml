@@ -133,6 +133,20 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="M_PRODUCTSTOCK_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="M_ATTRIBUTESETINSTANCE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="M_PRODPLAN_M_ATTSETID">
+        <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="M_PRODPLAN_M_PRODSTOID">
+        <reference local="M_PRODUCTSTOCK_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCTIONPLAN_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>

@@ -38,6 +38,11 @@
   v_Result NUMBER:=1;
   v_is_included NUMBER:=0;
   v_MovementDate DATE;
+  v_UserAssigned VARCHAR(32);
+  v_ProductionBomType VARCHAR(32);
+  v_ProductionType VARCHAR(60);
+  v_AllowQuantityChange CHAR(1);
+  v_AllowProductChange CHAR(1);
   v_available_period NUMBER:=0;
   v_is_ready AD_Org.IsReady%TYPE;
   v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
@@ -60,6 +65,8 @@
   --
   v_Line NUMBER;
   v_Count NUMBER;
+  v_MovementQtyBasedOnType NUMBER;
+  v_ConfirmetQtyBasedOnAssign NUMBER;
   p_User VARCHAR2(32);
   v_NegStockLocator VARCHAR2(32);
   v_NegStockWarehosue VARCHAR2(32);
@@ -117,10 +124,17 @@ BEGIN --BODY
   * Get Info + Lock
   */
   v_ResultStr:='ReadingRecord';
-  SELECT IsCreated, Processed, AD_Client_ID, AD_Org_ID, MovementDate
-    INTO v_IsCreated, v_Processed, v_Client_ID, v_Org_ID, v_MovementDate
-  FROM M_PRODUCTION
+  SELECT p.IsCreated, p.Processed, p.AD_Client_ID, p.AD_Org_ID, p.MovementDate, p.AD_User_ID, p.M_Productionbom_Type_ID
+    INTO v_IsCreated, v_Processed, v_Client_ID, v_Org_ID, v_MovementDate, v_UserAssigned, v_ProductionBomType
+  FROM M_PRODUCTION p
   WHERE M_Production_ID=v_Record_ID  FOR UPDATE;
+  
+  IF (v_ProductionBomType IS NOT NULL) THEN
+	  SELECT pt.type, pt.allowquantitychange, pt.allowproductchange
+		INTO v_ProductionType, v_AllowQuantityChange, v_AllowProductChange
+	  FROM M_PRODUCTIONBOM_TYPE pt
+	  WHERE pt.M_Productionbom_Type_ID=v_ProductionBomType  FOR UPDATE;
+  END IF;
   /**
   * No Action
   */
@@ -178,323 +192,376 @@ BEGIN --BODY
   END IF;
 
   IF (v_IsCreated <> 'Y') THEN
-    -- For every Production Plan
-    FOR CUR_PP IN (
-        SELECT M_PRODUCTIONPLAN.*, M_PRODUCT.C_UOM_ID,
-            (CASE WHEN M_PRODUCT.ATTRSETVALUETYPE='D' THEN M_PRODUCT.M_AttributeSetInstance_ID ELSE NULL END) AS M_AttributeSetInstance_ID
-        FROM M_PRODUCTIONPLAN, M_PRODUCT
-        WHERE M_PRODUCTIONPLAN.M_Product_ID=M_PRODUCT.M_Product_ID
-          AND M_PRODUCTIONPLAN.M_Production_ID=v_Record_ID
-        ORDER BY M_PRODUCTIONPLAN.Line, M_PRODUCTIONPLAN.M_Product_ID
-    ) LOOP
-      IF (CUR_PP.M_Locator_ID IS NULL) THEN
-        RAISE_APPLICATION_ERROR(-20000, '@ProductionPlanLocatorNeeded@');
-      END IF;
-      -- Delete prior lines
-      DELETE
-      FROM M_PRODUCTIONLINE
-      WHERE M_ProductionPlan_ID=CUR_PP.M_ProductionPlan_ID;
-      -- Create BOM Line
-      v_ResultStr:='CreatingLine BOM';
-      v_Line:=10; -- OriginLine
-      INSERT INTO M_PRODUCTIONLINE (
-          M_ProductionLine_ID, M_ProductionPlan_ID, Line, AD_Client_ID,
-          AD_Org_ID, IsActive, Created, CreatedBy,
-          Updated, UpdatedBy, M_Product_ID, MovementQty,
-          M_Locator_ID, Description, C_UOM_ID,
-          M_AttributeSetInstance_ID
-      ) VALUES (
-          get_uuid(), CUR_PP.M_ProductionPlan_ID, v_Line, CUR_PP.AD_Client_ID,
-          CUR_PP.AD_Org_ID, 'Y', now(), p_User,
-          now(), p_User, CUR_PP.M_Product_ID, CUR_PP.ProductionQty,
-          CUR_PP.M_Locator_ID, CUR_PP.Description, CUR_PP.C_UOM_ID,
-          CUR_PP.M_AttributeSetInstance_ID
-      );
-    END LOOP;
-    --Creating BOM Lines
-    DECLARE
-      v_Product_old VARCHAR2(32);
-      v_Warehouse_old VARCHAR2(32);
-      v_UOM_old VARCHAR2(32);
-      v_Qty NUMBER;
-      v_QtyStorage NUMBER:=0;
-      v_QtyAcumulated NUMBER;
-      v_QtyOrder NUMBER;
-      v_QtyOrderRate NUMBER;
-      v_ProductionLineCount NUMBER;
-      v_pinstance_id VARCHAR2(32);
-      CUR_BOM RECORD;
-    BEGIN
-      FOR CUR_BOM IN (
-          SELECT pb.*,
-              p.C_UOM_ID, p.IsStocked, pp.M_LOCATOR_ID, pp.AD_Org_ID AS ORG_ID,
-              pp.ProductionQty, pp.M_ProductionPlan_ID, pp.AD_Client_ID AS Client_ID, p.name as pname,
-              l.m_warehouse_id
-          FROM M_PRODUCT_BOM pb
-              JOIN M_PRODUCT p ON pb.M_ProductBOM_ID=p.M_Product_ID
-              JOIN M_PRODUCTIONPLAN pp ON pb.M_Product_ID=pp.M_PRODUCT_ID
-              JOIN M_LOCATOR l ON pp.m_locator_id = l.m_locator_id
-        WHERE pp.M_PRODUCTION_ID=v_Record_ID
-          AND pb.isactive='Y'
-        ORDER BY pb.M_PRODUCTBOM_ID, pb.Line
+    --Skip line creation for Transformation
+    IF (v_ProductionType IS NULL OR v_ProductionType<>'T') THEN
+      -- For every Production Plan
+      FOR CUR_PP IN (
+          SELECT M_PRODUCTIONPLAN.*, M_PRODUCT.C_UOM_ID, M_PRODUCT.ISVERIFIED, M_PRODUCT.NAME,
+              (CASE WHEN M_PRODUCT.ATTRSETVALUETYPE='D' THEN M_PRODUCT.M_AttributeSetInstance_ID ELSE NULL END) AS M_AttributeSetInstance_ID
+          FROM M_PRODUCTIONPLAN, M_PRODUCT
+          WHERE M_PRODUCTIONPLAN.M_Product_ID=M_PRODUCT.M_Product_ID
+            AND M_PRODUCTIONPLAN.M_Production_ID=v_Record_ID
+          ORDER BY M_PRODUCTIONPLAN.Line, M_PRODUCTIONPLAN.M_Product_ID
       ) LOOP
-        v_ResultStr:='CreatingLine Products';
-        IF (CUR_BOM.IsStocked = 'Y') THEN
-          v_QtyAcumulated:=0;
-          IF ((NOT CUR_STOCK_ISOPEN) 
-              OR (v_Product_old <> CUR_BOM.M_ProductBOM_ID OR v_Warehouse_old <> cur_bom.m_warehouse_id OR v_UOM_old <> CUR_BOM.C_UOM_ID)) THEN
-            NEXT_PRODUCT:=false;
-            v_product_old := cur_bom.m_productbom_id;
-            v_warehouse_old := cur_bom.m_warehouse_id;
-            v_uom_old := cur_bom.c_uom_id;
-            IF (CUR_STOCK_ISOPEN) THEN
-              CLOSE CUR_STOCK;
-              CUR_STOCK_ISOPEN:=false;
-            END IF;
-            
-            -- Call M_GET_STOCK
-            DECLARE
-              v_pinstance_result AD_PInstance.result%TYPE;
-              v_pinstance_msg AD_PInstance.errormsg%TYPE;
-            BEGIN
-              v_pinstance_id := get_uuid();
-              IF (forceUseOfWHOfSelectedLocator = 'Y') THEN
-                M_GET_STOCK_PARAM(v_pinstance_id, v_record_id, null, v_Product_old, null, v_Warehouse_old, null, cur_bom.org_id, null, p_user, v_client_id, null, v_UOM_old, null, null, null, 10, '137', null, 'N', v_pinstance_result, v_pinstance_msg, 'Y', null, null);
-              ELSE
-                M_GET_STOCK_PARAM(v_pinstance_id, v_record_id, null, v_Product_old, null, null, v_Warehouse_old, cur_bom.org_id, null, p_user, v_client_id, null, v_UOM_old, null, null, null, 10, '137', null, 'N', v_pinstance_result, v_pinstance_msg, 'Y', null, null);
-              END IF;
-              -- Check result
-              IF (v_pinstance_result = 0) THEN
-                -- Error on m_get_stock
-                RAISE_APPLICATION_ERROR(-20000, v_pinstance_msg);
-              END IF;
-            END; -- End Call M_GET_STOCK
-            
-            OPEN CUR_STOCK(v_pinstance_id);
-            CUR_STOCK_ISOPEN:=true;
-            FETCH CUR_STOCK INTO v_storage;
-            IF (CUR_STOCK%NOTFOUND) THEN
-              NEXT_PRODUCT:=true;
-            END IF;
-            v_qtystorage:=v_storage.qty;
+        IF (CUR_PP.M_Locator_ID IS NULL) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@ProductionPlanLocatorNeeded@');
+        END IF;
+        --Verify products in production plan are BOM Verified
+        IF (CUR_PP.ISVERIFIED <> 'Y') THEN
+          RAISE_APPLICATION_ERROR(-20000, '@ProductsNotBomVerified@' || CUR_PP.NAME);
+        END IF;
+        --Verify stock in case of unbundle, therefore qty can be consumed
+        IF (v_ProductionType IS NOT NULL AND v_ProductionType='U') THEN
+          M_Check_Stock(CUR_PP.M_Product_ID, v_Client_ID, v_Org_ID, v_Result, v_Message, CUR_PP.M_Locator_ID);
+          IF (v_Result = 0) THEN
+            v_Message:=v_Message || CUR_PP.NAME;
+            RAISE_APPLICATION_ERROR(-20000, v_Message);
           END IF;
-          IF (NOT NEXT_PRODUCT) THEN
-            LOOP           
-              IF (v_storage.OVERISSUE = 'Y' AND v_NegStockLocator IS NULL) THEN
-                v_NegStockLocator:= v_storage.m_locator_id;
-              END IF;
-
-              v_Qty := LEAST(v_QtyStorage, CUR_BOM.ProductionQty * CUR_BOM.BOMQty - v_QtyAcumulated) ;
-              v_QtyStorage := v_QtyStorage - v_Qty;
-              v_QtyAcumulated := v_QtyAcumulated + v_Qty;
-              v_QtyOrder := ROUND(v_storage.QtyOrder*(v_Qty/v_storage.Qty), v_storage.stdprecision);
-              SELECT COALESCE(MAX(Line), 0) + 10 INTO v_Line
-              FROM M_PRODUCTIONLINE
-              WHERE M_ProductionPlan_ID=CUR_BOM.M_ProductionPlan_ID;
-              INSERT INTO M_PRODUCTIONLINE (
-                  M_ProductionLine_ID, M_ProductionPlan_ID, Line, AD_Client_ID,
-                  AD_Org_ID, IsActive, Created, CreatedBy,
-                  Updated, UpdatedBy, M_Product_ID, C_UOM_ID,
-                  MovementQty, M_Locator_ID, 
-                  M_AttributeSetInstance_ID, 
-                  M_Product_UOM_ID,
-                  QuantityOrder
-              ) VALUES (
-                  get_uuid(), CUR_BOM.M_ProductionPlan_ID, v_Line, CUR_BOM.Client_ID,
-                  CUR_BOM.Org_ID, 'Y', now(), p_User,
-                  now(), p_User, CUR_BOM.M_ProductBOM_ID, CUR_BOM.C_UOM_ID,
-                  -v_Qty, v_storage.M_Locator_ID, 
-                  (CASE WHEN (SELECT ATTRSETVALUETYPE FROM M_PRODUCT WHERE M_PRODUCT_ID=CUR_BOM.M_ProductBOM_ID)='F' THEN NULL ELSE v_storage.M_AttributeSetInstance_ID END), 
-                  v_storage.M_Product_UOM_ID,
-                  -v_QtyOrder
-              );
-              IF (v_QtyAcumulated >= CUR_BOM.ProductionQty*CUR_BOM.BOMQty) THEN
-                EXIT;
-              END IF;
-              v_QtyStorage:=0;
-              v_ResultStr:='FetchingData';
-              FETCH CUR_STOCK INTO v_storage;
-              IF (CUR_STOCK%NOTFOUND) THEN
+        END IF;
+        -- Delete prior lines
+        DELETE
+        FROM M_PRODUCTIONLINE
+        WHERE M_ProductionPlan_ID=CUR_PP.M_ProductionPlan_ID;
+        -- Create BOM Line
+        v_ResultStr:='CreatingLine BOM';
+        v_Line:=10; -- OriginLine
+        v_ConfirmetQtyBasedOnAssign:=NULL;
+        --Set Movement Qty based on type
+        IF (v_ProductionType IS NOT NULL AND v_ProductionType='U') THEN
+          --Consumed Product
+          v_MovementQtyBasedOnType:=(-CUR_PP.ProductionQty);
+          --Set Confirmed Consume Qty based on user assigned
+          --Set Confirmed Qty same as Movement Qty for lines created for the product in production plan
+          --Because it is not confirmed in front end
+          IF (v_UserAssigned IS NOT NULL) THEN
+            v_ConfirmetQtyBasedOnAssign:=(-CUR_PP.ProductionQty);
+          END IF;
+        ELSE
+          --Production Product
+          v_MovementQtyBasedOnType:=CUR_PP.ProductionQty;
+          --Set Confirmed Production Qty based on user assigned
+          --Set Confirmed Qty same as Movement Qty for lines created for the product in production plan
+          --Because it is not confirmed in front end
+          IF (v_UserAssigned IS NOT NULL) THEN
+            v_ConfirmetQtyBasedOnAssign:=CUR_PP.ProductionQty;
+          END IF;
+        END IF;
+        INSERT INTO M_PRODUCTIONLINE (
+            M_ProductionLine_ID, M_ProductionPlan_ID, Line, AD_Client_ID,
+            AD_Org_ID, IsActive, Created, CreatedBy,
+            Updated, UpdatedBy, M_Product_ID, MovementQty,
+            ConfirmedQty, M_Locator_ID, Description, C_UOM_ID,
+            M_AttributeSetInstance_ID
+        ) VALUES (
+            get_uuid(), CUR_PP.M_ProductionPlan_ID, v_Line, CUR_PP.AD_Client_ID,
+            CUR_PP.AD_Org_ID, 'Y', now(), p_User,
+            now(), p_User, CUR_PP.M_Product_ID, v_MovementQtyBasedOnType,
+            v_ConfirmetQtyBasedOnAssign, CUR_PP.M_Locator_ID, CUR_PP.Description, CUR_PP.C_UOM_ID,
+            CUR_PP.M_AttributeSetInstance_ID
+        );
+      END LOOP;
+    
+      v_ConfirmetQtyBasedOnAssign:=NULL;
+      --Set Confirmed Qty Zero based on user assigned
+      IF (v_UserAssigned IS NOT NULL) THEN
+        v_ConfirmetQtyBasedOnAssign:=0;
+      END IF;
+      --Creating BOM Lines
+      DECLARE
+        v_Product_old VARCHAR2(32);
+        v_Warehouse_old VARCHAR2(32);
+        v_UOM_old VARCHAR2(32);
+        v_Qty NUMBER;
+        v_QtyStorage NUMBER:=0;
+        v_QtyAcumulated NUMBER;
+        v_QtyOrder NUMBER;
+        v_QtyOrderRate NUMBER;
+        v_ProductionLineCount NUMBER;
+        v_pinstance_id VARCHAR2(32);
+        CUR_BOM RECORD;
+      BEGIN
+        FOR CUR_BOM IN (
+            SELECT pb.*,
+                p.C_UOM_ID, p.IsStocked, pp.M_LOCATOR_ID, pp.AD_Org_ID AS ORG_ID,
+                pp.ProductionQty, pp.M_ProductionPlan_ID, pp.AD_Client_ID AS Client_ID, p.name as pname,
+                l.m_warehouse_id
+            FROM M_PRODUCT_BOM pb
+                JOIN M_PRODUCT p ON pb.M_ProductBOM_ID=p.M_Product_ID
+                JOIN M_PRODUCTIONPLAN pp ON pb.M_Product_ID=pp.M_PRODUCT_ID
+                JOIN M_LOCATOR l ON pp.m_locator_id = l.m_locator_id
+          WHERE pp.M_PRODUCTION_ID=v_Record_ID
+            AND pb.isactive='Y'
+          ORDER BY pb.M_PRODUCTBOM_ID, pb.Line
+        ) LOOP
+          v_ResultStr:='CreatingLine Products';
+          --Skip stock validation for unbundle
+          IF ((v_ProductionType IS NULL OR v_ProductionType<>'U') AND CUR_BOM.IsStocked = 'Y') THEN
+            v_QtyAcumulated:=0;
+            IF ((NOT CUR_STOCK_ISOPEN) 
+                OR (v_Product_old <> CUR_BOM.M_ProductBOM_ID OR v_Warehouse_old <> cur_bom.m_warehouse_id OR v_UOM_old <> CUR_BOM.C_UOM_ID)) THEN
+              NEXT_PRODUCT:=false;
+              v_product_old := cur_bom.m_productbom_id;
+              v_warehouse_old := cur_bom.m_warehouse_id;
+              v_uom_old := cur_bom.c_uom_id;
+              IF (CUR_STOCK_ISOPEN) THEN
                 CLOSE CUR_STOCK;
                 CUR_STOCK_ISOPEN:=false;
-                EXIT;
               END IF;
-              EXIT WHEN CUR_STOCK%NOTFOUND;
-              v_QtyStorage:=v_storage.Qty;
-            END LOOP;
-          END IF; --NEXT_PRODUCT
-        ELSE
-          SELECT COALESCE(MAX(Line), 0) + 10
-          INTO v_Line
-          FROM M_PRODUCTIONLINE
-          WHERE M_ProductionPlan_ID=CUR_BOM.M_ProductionPlan_ID;
-          INSERT INTO M_PRODUCTIONLINE (
-              M_ProductionLine_ID, M_ProductionPlan_ID, Line, AD_Client_ID,
-              AD_Org_ID, IsActive, Created, CreatedBy,
-              Updated, UpdatedBy, M_Product_ID, MovementQty,
-              M_Locator_ID, C_UOM_ID
-          ) VALUES (
-              get_uuid(), CUR_BOM.M_ProductionPlan_ID, v_Line, CUR_BOM.Client_ID,
-              CUR_BOM.Org_ID, 'Y', now(), p_User,
-              now(), p_User, CUR_BOM.M_ProductBOM_ID, -CUR_BOM.ProductionQty*CUR_BOM.BOMQty,
-              CUR_BOM.M_Locator_ID, CUR_BOM.C_UOM_ID
-          );
-        END IF;
-        v_Line:=v_Line;
-        IF (v_QtyAcumulated < CUR_BOM.BOMQTY*CUR_BOM.ProductionQty) THEN
-          IF (MustBeStocked='Y') THEN
-            v_Message := '@NotEnoughStocked@: ' || CUR_BOM.pname || ' ' || v_QtyAcumulated || ' / '|| CUR_BOM.BOMQTY*CUR_BOM.ProductionQty;
-            RAISE_APPLICATION_ERROR(-20000, v_Message);
-          ELSE
-            IF (v_NegStockLocator IS NULL) THEN
-              -- Get Locator with negative Stock that belongs to the same Warehosue
-              SELECT m_warehouse_id
-              INTO v_NegStockWarehosue
-              FROM m_locator
-             WHERE m_locator_id = (SELECT m_locator_id
-                                   FROM M_PRODUCTIONPLAN
-                                   WHERE M_ProductionPlan_ID=CUR_BOM.M_ProductionPlan_ID);
-        
-              SELECT MIN(l.m_locator_id)
-              INTO v_NegStockLocator
-              FROM m_locator l
-              JOIN m_inventorystatus invs ON l.m_inventorystatus_id = invs.m_inventorystatus_id
-              WHERE l.m_warehouse_id = v_NegStockWarehosue
-              AND invs.overissue = 'Y'
-              AND l.isactive= 'Y'
-              AND priorityno = (SELECT MIN(priorityno)
-                                FROM m_locator l
-                                JOIN m_inventorystatus invs ON l.m_inventorystatus_id = invs.m_inventorystatus_id
-                                WHERE l.m_warehouse_id = v_NegStockWarehosue
-                                AND invs.overissue = 'Y'
-                                AND l.isactive='Y');
-            END IF;         
-            
-            -- If there is a Storage Bin that allows negative stock and MustBeStocked is disabled and there is not enough stock,
-            -- pending quantity will be created for the same locator as production plan product, keeping a negative stock
-            IF (v_NegStockLocator IS NOT NULL) THEN   
-            
-              -- Check if exists a production line for this product with the same locator
-              SELECT count(M_ProductionLine_ID)
-              INTO v_ProductionLineCount
-              FROM M_PRODUCTIONLINE
-              WHERE M_ProductionPlan_ID=CUR_BOM.M_ProductionPlan_ID
-              AND M_Product_ID=CUR_BOM.M_ProductBOM_ID
-              AND M_Locator_ID=v_NegStockLocator;
+              
+              -- Call M_GET_STOCK
+              DECLARE
+                v_pinstance_result AD_PInstance.result%TYPE;
+                v_pinstance_msg AD_PInstance.errormsg%TYPE;
+              BEGIN
+                v_pinstance_id := get_uuid();
+                IF (forceUseOfWHOfSelectedLocator = 'Y') THEN
+                  M_GET_STOCK_PARAM(v_pinstance_id, v_record_id, null, v_Product_old, null, v_Warehouse_old, null, cur_bom.org_id, null, p_user, v_client_id, null, v_UOM_old, null, null, null, 10, '137', null, 'N', v_pinstance_result, v_pinstance_msg, 'Y', null, null);
+                ELSE
+                  M_GET_STOCK_PARAM(v_pinstance_id, v_record_id, null, v_Product_old, null, null, v_Warehouse_old, cur_bom.org_id, null, p_user, v_client_id, null, v_UOM_old, null, null, null, 10, '137', null, 'N', v_pinstance_result, v_pinstance_msg, 'Y', null, null);
+                END IF;
+                -- Check result
+                IF (v_pinstance_result = 0) THEN
+                  -- Error on m_get_stock
+                  RAISE_APPLICATION_ERROR(-20000, v_pinstance_msg);
+                END IF;
+              END; -- End Call M_GET_STOCK
+              
+              OPEN CUR_STOCK(v_pinstance_id);
+              CUR_STOCK_ISOPEN:=true;
+              FETCH CUR_STOCK INTO v_storage;
+              IF (CUR_STOCK%NOTFOUND) THEN
+                NEXT_PRODUCT:=true;
+              END IF;
+              v_qtystorage:=v_storage.qty;
+            END IF;
+            IF (NOT NEXT_PRODUCT) THEN
+              LOOP           
+                IF (v_storage.OVERISSUE = 'Y' AND v_NegStockLocator IS NULL) THEN
+                  v_NegStockLocator:= v_storage.m_locator_id;
+                END IF;
 
-              -- If exists update it            
-              IF (v_ProductionLineCount <> 0) THEN
-                
-                SELECT QuantityOrder / CASE WHEN (MovementQty <> 0) THEN MovementQty ELSE 1 END
-                INTO v_QtyOrderRate
+                v_Qty := LEAST(v_QtyStorage, CUR_BOM.ProductionQty * CUR_BOM.BOMQty - v_QtyAcumulated) ;
+                v_QtyStorage := v_QtyStorage - v_Qty;
+                v_QtyAcumulated := v_QtyAcumulated + v_Qty;
+                v_QtyOrder := ROUND(v_storage.QtyOrder*(v_Qty/v_storage.Qty), v_storage.stdprecision);
+                SELECT COALESCE(MAX(Line), 0) + 10 INTO v_Line
                 FROM M_PRODUCTIONLINE
-                WHERE M_ProductionPlan_ID=CUR_BOM.M_ProductionPlan_ID
-                AND M_Product_ID=CUR_BOM.M_ProductBOM_ID
-                AND M_Locator_ID=v_NegStockLocator;               
-                
-                UPDATE M_PRODUCTIONLINE
-                SET MovementQty = MovementQty - (CUR_BOM.BOMQTY*CUR_BOM.ProductionQty - v_QtyAcumulated),
-                QuantityOrder = v_QtyOrderRate * (MovementQty - (CUR_BOM.BOMQTY*CUR_BOM.ProductionQty - v_QtyAcumulated))
+                WHERE M_ProductionPlan_ID=CUR_BOM.M_ProductionPlan_ID;
+                INSERT INTO M_PRODUCTIONLINE (
+                    M_ProductionLine_ID, M_ProductionPlan_ID, Line, AD_Client_ID,
+                    AD_Org_ID, IsActive, Created, CreatedBy,
+                    Updated, UpdatedBy, M_Product_ID, C_UOM_ID,
+                    MovementQty, ConfirmedQty, M_Locator_ID, 
+                    M_AttributeSetInstance_ID, 
+                    M_Product_UOM_ID,
+                    QuantityOrder
+                ) VALUES (
+                    get_uuid(), CUR_BOM.M_ProductionPlan_ID, v_Line, CUR_BOM.Client_ID,
+                    CUR_BOM.Org_ID, 'Y', now(), p_User,
+                    now(), p_User, CUR_BOM.M_ProductBOM_ID, CUR_BOM.C_UOM_ID,
+                    -v_Qty, v_ConfirmetQtyBasedOnAssign, v_storage.M_Locator_ID, 
+                    (CASE WHEN (SELECT ATTRSETVALUETYPE FROM M_PRODUCT WHERE M_PRODUCT_ID=CUR_BOM.M_ProductBOM_ID)='F' THEN NULL ELSE v_storage.M_AttributeSetInstance_ID END), 
+                    v_storage.M_Product_UOM_ID,
+                    -v_QtyOrder
+                );
+                IF (v_QtyAcumulated >= CUR_BOM.ProductionQty*CUR_BOM.BOMQty) THEN
+                  EXIT;
+                END IF;
+                v_QtyStorage:=0;
+                v_ResultStr:='FetchingData';
+                FETCH CUR_STOCK INTO v_storage;
+                IF (CUR_STOCK%NOTFOUND) THEN
+                  CLOSE CUR_STOCK;
+                  CUR_STOCK_ISOPEN:=false;
+                  EXIT;
+                END IF;
+                EXIT WHEN CUR_STOCK%NOTFOUND;
+                v_QtyStorage:=v_storage.Qty;
+              END LOOP;
+            END IF; --NEXT_PRODUCT
+          ELSE
+            --Set Movement Qty based on type
+            v_MovementQtyBasedOnType:=-CUR_BOM.ProductionQty*CUR_BOM.BOMQty;
+            IF (v_ProductionType IS NOT NULL AND v_ProductionType='U') THEN
+              --Production Product
+              v_MovementQtyBasedOnType:=CUR_BOM.ProductionQty*CUR_BOM.BOMQty;
+            END IF;
+            SELECT COALESCE(MAX(Line), 0) + 10
+            INTO v_Line
+            FROM M_PRODUCTIONLINE
+            WHERE M_ProductionPlan_ID=CUR_BOM.M_ProductionPlan_ID;
+            INSERT INTO M_PRODUCTIONLINE (
+                M_ProductionLine_ID, M_ProductionPlan_ID, Line, AD_Client_ID,
+                AD_Org_ID, IsActive, Created, CreatedBy,
+                Updated, UpdatedBy, M_Product_ID, MovementQty,
+                ConfirmedQty, M_Locator_ID, C_UOM_ID
+            ) VALUES (
+                get_uuid(), CUR_BOM.M_ProductionPlan_ID, v_Line, CUR_BOM.Client_ID,
+                CUR_BOM.Org_ID, 'Y', now(), p_User,
+                now(), p_User, CUR_BOM.M_ProductBOM_ID, v_MovementQtyBasedOnType,
+                v_ConfirmetQtyBasedOnAssign, CUR_BOM.M_Locator_ID, CUR_BOM.C_UOM_ID
+            );
+			v_QtyAcumulated:= CUR_BOM.ProductionQty*CUR_BOM.BOMQty;
+          END IF;
+          v_Line:=v_Line;
+          --Skip stock validation for unbundle
+          IF ((v_ProductionType IS NULL OR v_ProductionType<>'U') AND v_QtyAcumulated < CUR_BOM.BOMQTY*CUR_BOM.ProductionQty) THEN
+            IF (MustBeStocked='Y') THEN
+              v_Message := '@NotEnoughStocked@: ' || CUR_BOM.pname || ' ' || v_QtyAcumulated || ' / '|| CUR_BOM.BOMQTY*CUR_BOM.ProductionQty;
+              RAISE_APPLICATION_ERROR(-20000, v_Message);
+            ELSE
+              IF (v_NegStockLocator IS NULL) THEN
+                -- Get Locator with negative Stock that belongs to the same Warehosue
+                SELECT m_warehouse_id
+                INTO v_NegStockWarehosue
+                FROM m_locator
+               WHERE m_locator_id = (SELECT m_locator_id
+                                     FROM M_PRODUCTIONPLAN
+                                     WHERE M_ProductionPlan_ID=CUR_BOM.M_ProductionPlan_ID);
+          
+                SELECT MIN(l.m_locator_id)
+                INTO v_NegStockLocator
+                FROM m_locator l
+                JOIN m_inventorystatus invs ON l.m_inventorystatus_id = invs.m_inventorystatus_id
+                WHERE l.m_warehouse_id = v_NegStockWarehosue
+                AND invs.overissue = 'Y'
+                AND l.isactive= 'Y'
+                AND priorityno = (SELECT MIN(priorityno)
+                                  FROM m_locator l
+                                  JOIN m_inventorystatus invs ON l.m_inventorystatus_id = invs.m_inventorystatus_id
+                                  WHERE l.m_warehouse_id = v_NegStockWarehosue
+                                  AND invs.overissue = 'Y'
+                                  AND l.isactive='Y');
+              END IF;         
+              
+              -- If there is a Storage Bin that allows negative stock and MustBeStocked is disabled and there is not enough stock,
+              -- pending quantity will be created for the same locator as production plan product, keeping a negative stock
+              IF (v_NegStockLocator IS NOT NULL) THEN   
+              
+                -- Check if exists a production line for this product with the same locator
+                SELECT count(M_ProductionLine_ID)
+                INTO v_ProductionLineCount
+                FROM M_PRODUCTIONLINE
                 WHERE M_ProductionPlan_ID=CUR_BOM.M_ProductionPlan_ID
                 AND M_Product_ID=CUR_BOM.M_ProductBOM_ID
                 AND M_Locator_ID=v_NegStockLocator;
 
-              -- If not exists, insert a new production line
-              ELSE
-                    
-                SELECT COALESCE(MAX(Line), 0) + 10 INTO v_Line
-                FROM M_PRODUCTIONLINE
-                WHERE M_ProductionPlan_ID=CUR_BOM.M_ProductionPlan_ID;         
+                -- If exists update it            
+                IF (v_ProductionLineCount <> 0) THEN
+                  
+                  SELECT QuantityOrder / CASE WHEN (MovementQty <> 0) THEN MovementQty ELSE 1 END
+                  INTO v_QtyOrderRate
+                  FROM M_PRODUCTIONLINE
+                  WHERE M_ProductionPlan_ID=CUR_BOM.M_ProductionPlan_ID
+                  AND M_Product_ID=CUR_BOM.M_ProductBOM_ID
+                  AND M_Locator_ID=v_NegStockLocator;               
+                  
+                  UPDATE M_PRODUCTIONLINE
+                  SET MovementQty = MovementQty - (CUR_BOM.BOMQTY*CUR_BOM.ProductionQty - v_QtyAcumulated),
+				  ConfirmedQty = v_ConfirmetQtyBasedOnAssign,
+                  QuantityOrder = v_QtyOrderRate * (MovementQty - (CUR_BOM.BOMQTY*CUR_BOM.ProductionQty - v_QtyAcumulated))
+                  WHERE M_ProductionPlan_ID=CUR_BOM.M_ProductionPlan_ID
+                  AND M_Product_ID=CUR_BOM.M_ProductBOM_ID
+                  AND M_Locator_ID=v_NegStockLocator;
+
+                -- If not exists, insert a new production line
+                ELSE
+                      
+                  SELECT COALESCE(MAX(Line), 0) + 10 INTO v_Line
+                  FROM M_PRODUCTIONLINE
+                  WHERE M_ProductionPlan_ID=CUR_BOM.M_ProductionPlan_ID;         
+                  
+                  INSERT INTO M_PRODUCTIONLINE (
+                    M_ProductionLine_ID, M_ProductionPlan_ID, Line, AD_Client_ID,
+                    AD_Org_ID, IsActive, Created, CreatedBy,
+                    Updated, UpdatedBy, M_Product_ID, C_UOM_ID,
+                    MovementQty, ConfirmedQty, M_Locator_ID
+                ) VALUES (
+                    get_uuid(), CUR_BOM.M_ProductionPlan_ID, v_Line, CUR_BOM.Client_ID,
+                    CUR_BOM.Org_ID, 'Y', now(), p_User,
+                    now(), p_User, CUR_BOM.M_ProductBOM_ID, CUR_BOM.C_UOM_ID,
+                    - (CUR_BOM.BOMQTY*CUR_BOM.ProductionQty - v_QtyAcumulated), v_ConfirmetQtyBasedOnAssign, v_NegStockLocator                  
+                );
                 
-                INSERT INTO M_PRODUCTIONLINE (
-                  M_ProductionLine_ID, M_ProductionPlan_ID, Line, AD_Client_ID,
-                  AD_Org_ID, IsActive, Created, CreatedBy,
-                  Updated, UpdatedBy, M_Product_ID, C_UOM_ID,
-                  MovementQty, M_Locator_ID
-              ) VALUES (
-                  get_uuid(), CUR_BOM.M_ProductionPlan_ID, v_Line, CUR_BOM.Client_ID,
-                  CUR_BOM.Org_ID, 'Y', now(), p_User,
-                  now(), p_User, CUR_BOM.M_ProductBOM_ID, CUR_BOM.C_UOM_ID,
-                  - (CUR_BOM.BOMQTY*CUR_BOM.ProductionQty - v_QtyAcumulated), v_NegStockLocator                  
-              );
-              
-              END IF;          
-            END IF;
-          END IF;   
+                END IF;          
+              END IF;
+            END IF;   
+          END IF;
+          IF (CUR_BOM.ProductionQty <= 0) THEN
+            v_Message := '@NegativeBOMProductionQty@';
+            RAISE_APPLICATION_ERROR(-20000, v_Message);
+          END IF;
+        END LOOP;
+        IF (CUR_STOCK_ISOPEN) THEN
+          CLOSE CUR_STOCK;
+          CUR_STOCK_ISOPEN := false;
         END IF;
-        IF (CUR_BOM.ProductionQty <= 0) THEN
-          v_Message := '@NegativeBOMProductionQty@';
-          RAISE_APPLICATION_ERROR(-20000, v_Message);
-        END IF;
-      END LOOP;
-      IF (CUR_STOCK_ISOPEN) THEN
-        CLOSE CUR_STOCK;
-        CUR_STOCK_ISOPEN := false;
-      END IF;
-    END; --END OF DECLARE FOR BOM PRODUCTS INSERTION
-    -- While we have BOMs
-    LOOP
-      -- Are there non-stored BOMs to list details:8
-      v_ResultStr:='CreatingLine CheckBOM';
-      SELECT COUNT(*) INTO v_count
-      FROM M_PRODUCTIONLINE pl,
-        M_PRODUCT p,
-        M_PRODUCTIONPLAN pp
-      WHERE pl.M_Product_ID=p.M_Product_ID
-        AND pl.M_ProductionPlan_ID=pp.M_ProductionPlan_ID
-        AND pp.M_PRODUCTION_ID=v_Record_ID
-        AND pl.Line<>10 -- Origin Line
-        AND p.IsBOM='Y'
-        AND p.IsStocked='N';
-      -- Nothing to do
-      EXIT WHEN(v_count=0) ;
-      --
-      -- Resolve BOMs in ProductLine which are not stocked
-      FOR CUR_PLineBOM IN (
-          SELECT pl.M_ProductionLine_ID, pl.Line, pl.M_Product_ID, pl.MovementQty,
-              pp.M_LOCATOR_ID, pp.AD_Org_ID AS ORG_ID, pp.ProductionQty, pp.M_ProductionPlan_ID,
-              pp.AD_Client_ID AS Client_ID
-          FROM M_PRODUCTIONLINE pl, M_PRODUCT p, M_PRODUCTIONPLAN pp
-        WHERE pl.M_ProductionPlan_ID=pp.M_ProductionPlan_ID
-          AND pp.M_Production_ID=v_Record_ID
-          AND pl.M_Product_ID=p.M_Product_ID
+      END; --END OF DECLARE FOR BOM PRODUCTS INSERTION
+      
+      -- While we have BOMs
+      LOOP
+        -- Are there non-stored BOMs to list details:8
+        v_ResultStr:='CreatingLine CheckBOM';
+        SELECT COUNT(*) INTO v_count
+        FROM M_PRODUCTIONLINE pl,
+          M_PRODUCT p,
+          M_PRODUCTIONPLAN pp
+        WHERE pl.M_Product_ID=p.M_Product_ID
+          AND pl.M_ProductionPlan_ID=pp.M_ProductionPlan_ID
+          AND pp.M_PRODUCTION_ID=v_Record_ID
           AND pl.Line<>10 -- Origin Line
           AND p.IsBOM='Y'
-          AND p.IsStocked='N'
-      ) LOOP
-        v_ResultStr:='CreatingLineBOM Resolution';
-        v_Line:=CUR_PLineBOM.Line;
-        -- Resolve BOM Line in product line
-        FOR CUR_BOM_PRODUCT IN (
-            SELECT pb.*, p.C_UOM_ID, p.IsStocked
-            FROM M_PRODUCT_BOM pb, M_PRODUCT p
-            WHERE pb.M_ProductBOM_ID=p.M_Product_ID
-              AND pb.M_Product_ID=CUR_PLineBOM.M_Product_ID
-              AND pb.isactive='Y'
-            ORDER BY pb.M_PRODUCTBOM_ID, pb.Line
+          AND p.IsStocked='N';
+        -- Nothing to do
+        EXIT WHEN(v_count=0) ;
+        --
+        -- Resolve BOMs in ProductLine which are not stocked
+        FOR CUR_PLineBOM IN (
+            SELECT pl.M_ProductionLine_ID, pl.Line, pl.M_Product_ID, pl.MovementQty,
+                pp.M_LOCATOR_ID, pp.AD_Org_ID AS ORG_ID, pp.ProductionQty, pp.M_ProductionPlan_ID,
+                pp.AD_Client_ID AS Client_ID
+            FROM M_PRODUCTIONLINE pl, M_PRODUCT p, M_PRODUCTIONPLAN pp
+          WHERE pl.M_ProductionPlan_ID=pp.M_ProductionPlan_ID
+            AND pp.M_Production_ID=v_Record_ID
+            AND pl.M_Product_ID=p.M_Product_ID
+            AND pl.Line<>10 -- Origin Line
+            AND p.IsBOM='Y'
+            AND p.IsStocked='N'
         ) LOOP
-          v_ResultStr:='CreatingLine Products2';
-          SELECT COALESCE(MAX(Line), 0) + 10 INTO v_Line
+          v_ResultStr:='CreatingLineBOM Resolution';
+          v_Line:=CUR_PLineBOM.Line;
+          -- Resolve BOM Line in product line
+          FOR CUR_BOM_PRODUCT IN (
+              SELECT pb.*, p.C_UOM_ID, p.IsStocked
+              FROM M_PRODUCT_BOM pb, M_PRODUCT p
+              WHERE pb.M_ProductBOM_ID=p.M_Product_ID
+                AND pb.M_Product_ID=CUR_PLineBOM.M_Product_ID
+                AND pb.isactive='Y'
+              ORDER BY pb.M_PRODUCTBOM_ID, pb.Line
+          ) LOOP
+            v_ResultStr:='CreatingLine Products2';
+            SELECT COALESCE(MAX(Line), 0) + 10 INTO v_Line
+            FROM M_PRODUCTIONLINE
+            WHERE M_ProductionPlan_ID=CUR_PLineBOM.M_ProductionPlan_ID;
+            INSERT INTO M_PRODUCTIONLINE (
+                M_ProductionLine_ID, M_ProductionPlan_ID, Line, AD_Client_ID,
+                AD_Org_ID, IsActive, Created, CreatedBy,
+                Updated, UpdatedBy, M_Product_ID, MovementQty,
+                ConfirmedQty, M_Locator_ID, C_UOM_ID
+            ) VALUES (
+                get_uuid(), CUR_PLineBOM.M_ProductionPlan_ID, v_Line, CUR_PLineBOM.Client_ID,
+                CUR_PLineBOM.Org_ID, 'Y', now(), p_User,
+                now(), p_User, CUR_BOM_PRODUCT.M_ProductBOM_ID, CUR_PLineBOM.MovementQty*CUR_BOM_PRODUCT.BOMQty,
+                v_ConfirmetQtyBasedOnAssign, CUR_PLineBOM.M_Locator_ID, CUR_BOM_PRODUCT.C_UOM_ID
+            );
+          END LOOP;
+          -- Delete BOM line
+          DELETE
           FROM M_PRODUCTIONLINE
-          WHERE M_ProductionPlan_ID=CUR_PLineBOM.M_ProductionPlan_ID;
-          INSERT INTO M_PRODUCTIONLINE (
-              M_ProductionLine_ID, M_ProductionPlan_ID, Line, AD_Client_ID,
-              AD_Org_ID, IsActive, Created, CreatedBy,
-              Updated, UpdatedBy, M_Product_ID, MovementQty,
-              M_Locator_ID, C_UOM_ID
-          ) VALUES (
-              get_uuid(), CUR_PLineBOM.M_ProductionPlan_ID, v_Line, CUR_PLineBOM.Client_ID,
-              CUR_PLineBOM.Org_ID, 'Y', now(), p_User,
-              now(), p_User, CUR_BOM_PRODUCT.M_ProductBOM_ID, CUR_PLineBOM.MovementQty*CUR_BOM_PRODUCT.BOMQty,
-              CUR_PLineBOM.M_Locator_ID, CUR_BOM_PRODUCT.C_UOM_ID
-          );
+          WHERE M_ProductionLine_ID=CUR_PLineBOM.M_ProductionLine_ID;
         END LOOP;
-        -- Delete BOM line
-        DELETE
-        FROM M_PRODUCTIONLINE
-        WHERE M_ProductionLine_ID=CUR_PLineBOM.M_ProductionLine_ID;
-      END LOOP;
-    END LOOP; -- While we have BOMs
+      END LOOP; -- While we have BOMs
+    END IF;
     -- Modifying locator to have sufficient stock
     -- Indicate that it is Created
     UPDATE M_PRODUCTION  SET IsCreated='Y',Updated=now(),UpdatedBy=p_User  WHERE M_Production_ID=v_Record_ID;
@@ -526,55 +593,483 @@ BEGIN --BODY
       RAISE_APPLICATION_ERROR(-20000, v_Message);
     END IF;
 
-    SELECT COUNT(M_ProductionPlan_ID)
-    INTO v_count
-    FROM M_ProductionPlan pp
-    WHERE pp.M_Production_ID = v_Record_ID
-    AND NOT EXISTS (SELECT 1 FROM M_ProductionLine WHERE M_ProductionPlan_ID = pp.M_ProductionPlan_ID AND MovementQty > 0);
-
-    v_Message := NULL;      
-    IF(v_count <> 0) THEN
-      FOR CUR_ProductionPlan IN (
-	SELECT DISTINCT(pp.line)
-	FROM M_ProductionPlan pp
-	WHERE pp.M_Production_ID = v_Record_ID
-	AND NOT EXISTS (SELECT 1 FROM M_ProductionLine WHERE M_ProductionPlan_ID = pp.M_ProductionPlan_ID AND MovementQty > 0)
-	ORDER BY Line
+    IF (v_ProductionType IS NULL OR (v_ProductionType<>'U' AND v_ProductionType<>'T')) THEN
+      -- Produced Products cannot have negative quantity
+      SELECT COUNT(M_ProductionPlan_ID)
+      INTO v_count
+      FROM M_ProductionPlan pp
+      WHERE pp.M_Production_ID = v_Record_ID
+      AND NOT EXISTS (SELECT 1 FROM M_ProductionLine WHERE M_ProductionPlan_ID = pp.M_ProductionPlan_ID AND coalesce(ConfirmedQty, MovementQty) > 0);
+      v_Message := NULL;      
+      IF(v_count <> 0) THEN
+        FOR CUR_ProductionPlan IN (
+      	SELECT DISTINCT(pp.line)
+      	FROM M_ProductionPlan pp
+      	WHERE pp.M_Production_ID = v_Record_ID
+      	AND NOT EXISTS (SELECT 1 FROM M_ProductionLine WHERE M_ProductionPlan_ID = pp.M_ProductionPlan_ID AND coalesce(ConfirmedQty, MovementQty) > 0)
+      	ORDER BY Line
         )
-      LOOP
-        IF v_Message IS NULL THEN
-          v_Message := CUR_ProductionPlan.line;
-        ELSE
-	  v_Message := v_Message || ', ' || CUR_ProductionPlan.line;
-	END IF;
-      END LOOP;
-      v_Message := '@ProducedProductWithNegativeQty@' || ' @ReferProductionPlanLines@' || ': ' || v_Message;
-      RAISE_APPLICATION_ERROR(-20000, v_Message);
-    END IF;   
+        LOOP
+          IF v_Message IS NULL THEN
+            v_Message := CUR_ProductionPlan.line;
+          ELSE
+  	        v_Message := v_Message || ', ' || CUR_ProductionPlan.line;
+  	      END IF;
+        END LOOP;
+        v_Message := '@ProducedProductWithNegativeQty@' || ' @ReferProductionPlanLines@' || ': ' || v_Message;
+        RAISE_APPLICATION_ERROR(-20000, v_Message);
+      END IF;   
+      -- Consumed Products cannot have positive quantity
+      SELECT COUNT(M_ProductionPlan_ID)
+      INTO v_count
+      FROM M_ProductionPlan pp
+      WHERE pp.M_Production_ID = v_Record_ID
+      AND (SELECT COUNT(M_ProductionLine_ID) FROM M_ProductionLine WHERE M_ProductionPlan_ID = pp.M_ProductionPlan_ID AND coalesce(ConfirmedQty, movementQty) > 0) > 1;
+      IF (v_count <> 0) THEN
+        FOR CUR_ProductionPlan IN (
+        	SELECT DISTINCT(pp.line)
+        	FROM M_ProductionPlan pp
+        	WHERE pp.M_Production_ID = v_Record_ID
+        	AND (SELECT COUNT(M_ProductionLine_ID) FROM M_ProductionLine WHERE M_ProductionPlan_ID = pp.M_ProductionPlan_ID AND coalesce(ConfirmedQty, movementQty) > 0) > 1
+        	ORDER BY Line
+              )
+        LOOP
+          IF v_Message IS NULL THEN
+            v_Message := CUR_ProductionPlan.line;
+          ELSE
+  	        v_Message := v_Message || ', ' || CUR_ProductionPlan.line;
+	        END IF;
+        END LOOP;
+        v_Message:= '@ConsumedProductWithPostiveQty@' || ' @ReferProductionPlanLines@' || ': ' || v_Message;
+        RAISE_APPLICATION_ERROR(-20000, v_Message);
+      END IF;
+    ELSIF (v_ProductionType IS NOT NULL AND v_ProductionType='U') THEN
+      -- Consumed Products cannot have positive quantity
+      SELECT COUNT(M_ProductionPlan_ID)
+      INTO v_count
+      FROM M_ProductionPlan pp
+      WHERE pp.M_Production_ID = v_Record_ID
+      AND NOT EXISTS (SELECT 1 FROM M_ProductionLine WHERE M_ProductionPlan_ID = pp.M_ProductionPlan_ID AND coalesce(ConfirmedQty, MovementQty) < 0);
+      v_Message := NULL;      
+      IF(v_count <> 0) THEN
+        FOR CUR_ProductionPlan IN (
+        SELECT DISTINCT(pp.line)
+        FROM M_ProductionPlan pp
+        WHERE pp.M_Production_ID = v_Record_ID
+        AND NOT EXISTS (SELECT 1 FROM M_ProductionLine WHERE M_ProductionPlan_ID = pp.M_ProductionPlan_ID AND coalesce(ConfirmedQty, MovementQty) < 0)
+        ORDER BY Line
+        )
+        LOOP
+          IF v_Message IS NULL THEN
+            v_Message := CUR_ProductionPlan.line;
+          ELSE
+            v_Message := v_Message || ', ' || CUR_ProductionPlan.line;
+          END IF;
+        END LOOP;
+        v_Message := '@ConsumedProductWithPostiveQty@' || ' @ReferProductionPlanLines@' || ': ' || v_Message;
+        RAISE_APPLICATION_ERROR(-20000, v_Message);
+      END IF;   
+      -- Produced Products cannot have negative quantity
+      SELECT COUNT(M_ProductionPlan_ID)
+      INTO v_count
+      FROM M_ProductionPlan pp
+      WHERE pp.M_Production_ID = v_Record_ID
+      AND (SELECT COUNT(M_ProductionLine_ID) FROM M_ProductionLine WHERE M_ProductionPlan_ID = pp.M_ProductionPlan_ID AND coalesce(confirmedQty, movementQty) < 0) > 1;
+      IF (v_count <> 0) THEN
+        FOR CUR_ProductionPlan IN (
+          SELECT DISTINCT(pp.line)
+          FROM M_ProductionPlan pp
+          WHERE pp.M_Production_ID = v_Record_ID
+          AND (SELECT COUNT(M_ProductionLine_ID) FROM M_ProductionLine WHERE M_ProductionPlan_ID = pp.M_ProductionPlan_ID AND coalesce(confirmedQty, movementQty) < 0) > 1
+          ORDER BY Line
+              )
+        LOOP
+          IF v_Message IS NULL THEN
+            v_Message := CUR_ProductionPlan.line;
+          ELSE
+            v_Message := v_Message || ', ' || CUR_ProductionPlan.line;
+          END IF;
+        END LOOP;
+        v_Message:= '@ProducedProductWithNegativeQty@' || ' @ReferProductionPlanLines@' || ': ' || v_Message;
+        RAISE_APPLICATION_ERROR(-20000, v_Message);
+      END IF;    
+    ELSE
+      -- Must have min one Produced Product for Transformation
+      SELECT COUNT(M_ProductionPlan_ID)
+      INTO v_count
+      FROM M_ProductionPlan pp
+      WHERE pp.M_Production_ID = v_Record_ID
+      AND NOT EXISTS (SELECT 1 FROM M_ProductionLine WHERE M_ProductionPlan_ID = pp.M_ProductionPlan_ID AND coalesce(ConfirmedQty, MovementQty) > 0);
+      v_Message := NULL;      
+      IF(v_count <> 0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@TransformationAlteastOneProductToProduce@');
+      END IF;
+      -- Must have min one Consumed Product for Transformation
+      SELECT COUNT(M_ProductionPlan_ID)
+      INTO v_count
+      FROM M_ProductionPlan pp
+      WHERE pp.M_Production_ID = v_Record_ID
+      AND NOT EXISTS (SELECT 1 FROM M_ProductionLine WHERE M_ProductionPlan_ID = pp.M_ProductionPlan_ID AND coalesce(ConfirmedQty, MovementQty) < 0);
+      v_Message := NULL;      
+      IF(v_count <> 0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@TransformationAlteastOneProductToConsume@');
+      END IF;
+    END IF;
 
-    SELECT COUNT(M_ProductionPlan_ID)
-    INTO v_count
-    FROM M_ProductionPlan pp
-    WHERE pp.M_Production_ID = v_Record_ID
-    AND (SELECT COUNT(M_ProductionLine_ID) FROM M_ProductionLine WHERE M_ProductionPlan_ID = pp.M_ProductionPlan_ID AND movementQty > 0) > 1;
-    
-    IF (v_count <> 0) THEN
-      FOR CUR_ProductionPlan IN (
-	SELECT DISTINCT(pp.line)
-	FROM M_ProductionPlan pp
-	WHERE pp.M_Production_ID = v_Record_ID
-	AND (SELECT COUNT(M_ProductionLine_ID) FROM M_ProductionLine WHERE M_ProductionPlan_ID = pp.M_ProductionPlan_ID AND movementQty > 0) > 1
-	ORDER BY Line
-      )
-      LOOP
-        IF v_Message IS NULL THEN
-          v_Message := CUR_ProductionPlan.line;
-        ELSE
-	  v_Message := v_Message || ', ' || CUR_ProductionPlan.line;
-	END IF;
-      END LOOP;
-      v_Message:= '@ConsumedProductWithPostiveQty@' || ' @ReferProductionPlanLines@' || ': ' || v_Message;
-      RAISE_APPLICATION_ERROR(-20000, v_Message);
+    --Validate Allow Product and Qty Change for each production plan
+    IF (v_ProductionType IS NOT NULL AND (v_ProductionType='B' or v_ProductionType='U')) THEN
+      DECLARE
+          CUR_BOM_PROD RECORD;
+          CUR_BOM_PRODHR RECORD;
+		  CUR_BOMLine RECORD;
+          CUR_PLine RECORD;
+          v_BomCount NUMBER;
+          v_MvmtQty NUMBER;
+          v_PlanQty NUMBER;
+          v_BomQty NUMBER;
+          v_TotalBomQty NUMBER;
+		  v_BuildQty NUMBER;
+		  v_ConsumeQty NUMBER;
+          v_QtyAcumulated NUMBER;
+          v_ProductExists BOOLEAN:=false;
+      BEGIN
+        FOR CUR_PP IN (
+          SELECT pp.M_PRODUCTIONPLAN_ID, p.name, pp.productionqty  
+          FROM M_PRODUCTIONPLAN pp 
+          JOIN M_PRODUCT p on pp.M_PRODUCT_ID=p.M_PRODUCT_ID
+          WHERE pp.M_Production_ID = v_Record_ID
+        ) LOOP
+          v_Message := NULL;
+          IF (v_AllowProductChange<>'Y') THEN
+            --Validate production line exists for Origin Product
+            SELECT COUNT(pp.M_PRODUCTIONPLAN_ID) INTO v_Count
+            FROM M_PRODUCTIONPLAN pp
+            JOIN M_PRODUCTIONLINE pl ON pp.M_ProductionPlan_ID=pl.M_ProductionPlan_ID 
+            and pp.M_PRODUCT_ID=pl.M_PRODUCT_ID
+            WHERE pp.M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID and pl.line='10';
+            IF (v_Count < 1) THEN
+              RAISE_APPLICATION_ERROR(-20000, '@MissingProductionProductLineEntry@'|| CUR_PP.name);
+            END IF;
+
+            --Validate production lines exists for all products in BOM - Stocked
+            SELECT COUNT(M_ProductionPlan_ID) INTO v_Count
+            FROM M_PRODUCTIONPLAN pp
+            JOIN M_PRODUCT_BOM pb ON pb.M_Product_ID=pp.M_Product_ID 
+            JOIN M_PRODUCT p on pb.M_PRODUCTBOM_id=p.M_Product_ID 
+            WHERE pp.M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
+            AND (p.isstocked='Y' OR p.IsBOM='N')
+            AND NOT EXISTS (SELECT 1 FROM M_PRODUCTIONLINE 
+            WHERE M_ProductionPlan_ID = pp.M_ProductionPlan_ID 
+            AND M_Product_ID=p.M_Product_ID AND line<>'10');
+            IF (v_Count <> 0) THEN 
+              FOR CUR_BOM_PROD IN (SELECT p.name FROM M_PRODUCTIONPLAN pp
+              JOIN M_PRODUCT_BOM pb ON pb.M_Product_ID=pp.M_Product_ID 
+              JOIN M_PRODUCT p on pb.M_PRODUCTBOM_id=p.M_Product_ID 
+              WHERE pp.M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
+              AND (p.isstocked='Y' OR IsBOM='N')
+              AND NOT EXISTS (SELECT 1 FROM M_PRODUCTIONLINE 
+              WHERE M_ProductionPlan_ID = pp.M_ProductionPlan_ID 
+              AND M_Product_ID=p.M_Product_ID AND line<>'10'))
+              LOOP
+                IF v_Message IS NULL THEN
+                  v_Message := CUR_BOM_PROD.name;
+                ELSE
+                  v_Message := v_Message || ', ' || CUR_BOM_PROD.name;
+                END IF;
+              END LOOP;
+              v_Message:= '@MissingBOMProductLineEntry@' || ': ' || v_Message;
+              RAISE_APPLICATION_ERROR(-20000, v_Message);
+            END IF;
+
+            --Validate production lines exists for all products in BOM - Not Stocked Hierarchy
+            SELECT COUNT(M_ProductionPlan_ID) INTO v_Count
+            FROM M_PRODUCTIONPLAN pp
+            JOIN M_PRODUCT_BOM pb ON pb.M_Product_ID=pp.M_Product_ID 
+            JOIN M_PRODUCT p on pb.M_PRODUCTBOM_id=p.M_Product_ID 
+            WHERE pp.M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID  
+            AND p.isstocked='N' AND p.IsBOM='Y';
+            IF (v_Count > 0) THEN
+              FOR CUR_PLineBOM IN (
+                SELECT p.M_Product_ID, p.name
+                FROM M_PRODUCTIONPLAN pp
+                JOIN M_PRODUCT_BOM pb ON pb.M_Product_ID=pp.M_Product_ID 
+                JOIN M_PRODUCT p on pb.M_PRODUCTBOM_id=p.M_Product_ID 
+                WHERE pp.M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
+                AND p.isstocked='N' AND p.IsBOM='Y'
+              ) LOOP
+			  	  WITH RECURSIVE bom_product_hierarchy AS (
+					SELECT p.m_product_id, p.name, p.isstocked, p.isBom, '1'::NUMERIC as qty
+					FROM m_product p
+					WHERE p.m_product_id = CUR_PLineBOM.M_Product_ID
+					UNION ALL
+					SELECT p.m_product_id, p.name, p.isstocked, p.isBom, pb.bomqty::INT*ph.qty::NUMERIC as qty
+					FROM m_product p
+					JOIN M_PRODUCT_BOM pb ON p.m_product_id = pb.M_PRODUCTBOM_id
+					JOIN bom_product_hierarchy ph ON pb.m_product_id = ph.m_product_id 
+					where (ph.isstocked='N' and ph.isBom='Y')--Iterate Only if the product is non stocked BoM
+				  )
+				  SELECT COUNT(ph.M_PRODUCT_ID) INTO v_BomCount FROM bom_product_hierarchy ph
+				  WHERE ph.isstocked='Y' 
+                  AND NOT EXISTS (SELECT 1 FROM M_PRODUCTIONLINE WHERE 
+                  M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
+                  AND M_Product_ID=ph.m_product_id AND line<>'10');			  
+				  -- SELECT COUNT(ph.M_PRODUCT_ID) INTO v_BomCount FROM m_get_bom_stock_prod_hierarchy(CUR_PLineBOM.M_Product_ID) ph 
+				  -- WHERE ph.isstocked='Y' 
+				  -- AND NOT EXISTS (SELECT 1 FROM M_PRODUCTIONLINE WHERE 
+				  -- M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
+				  -- AND M_Product_ID=ph.m_product_id AND line<>'10');
+                  IF (v_BomCount <> 0) THEN
+				    FOR CUR_BOM_PRODHR IN (
+					  WITH RECURSIVE bom_product_hierarchy AS (
+						SELECT p.m_product_id, p.name, p.isstocked, p.isBom, '1'::NUMERIC as qty
+						FROM m_product p
+						WHERE p.m_product_id = CUR_PLineBOM.M_Product_ID
+						UNION ALL
+						SELECT p.m_product_id, p.name, p.isstocked, p.isBom, pb.bomqty::INT*ph.qty::NUMERIC as qty
+						FROM m_product p
+						JOIN M_PRODUCT_BOM pb ON p.m_product_id = pb.M_PRODUCTBOM_id
+						JOIN bom_product_hierarchy ph ON pb.m_product_id = ph.m_product_id 
+						where (ph.isstocked='N' and ph.isBom='Y')--Iterate Only if the product is non stocked BoM
+					  )
+					  SELECT ph.name FROM bom_product_hierarchy ph
+					  WHERE ph.isstocked='Y' 
+                      AND NOT EXISTS (SELECT 1 FROM M_PRODUCTIONLINE WHERE 
+                      M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
+                      AND M_Product_ID=ph.m_product_id AND line<>'10')
+					)
+					-- FOR CUR_BOM_PRODHR IN (SELECT ph.name 
+					-- FROM m_get_bom_stock_prod_hierarchy(CUR_PLineBOM.M_Product_ID) ph 
+					-- WHERE ph.isstocked='Y' 
+					-- AND NOT EXISTS (SELECT 1 FROM M_PRODUCTIONLINE WHERE 
+					-- M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
+					-- AND M_Product_ID=ph.m_product_id AND line<>'10'))
+                    LOOP
+                      IF v_Message IS NULL THEN
+                        v_Message := CUR_BOM_PRODHR.name;
+                      ELSE
+                        v_Message := v_Message || ', ' || CUR_BOM_PRODHR.name;
+                      END IF;
+                    END LOOP;
+                    v_Message:= '@MissingBOMHierarchyProductLineEntry@' || ': ' || v_Message;
+					RAISE_APPLICATION_ERROR(-20000, v_Message);
+                  END IF;
+              END LOOP;
+            END IF;
+
+            --Validate production lines created only for BOM products 
+            FOR CUR_PLine IN (
+              SELECT p.name, p.m_product_id, pl.M_PRODUCTIONLINE_ID, pp.M_PRODUCTIONPLAN_ID, pp.M_Product_ID 
+              FROM M_PRODUCTIONPLAN pp
+              JOIN M_PRODUCTIONLINE pl ON pp.M_ProductionPlan_ID=pl.M_ProductionPlan_ID 
+              JOIN M_PRODUCT p on pl.M_Product_ID=p.M_Product_ID 
+              WHERE pp.M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID AND pl.line<>'10'
+            ) LOOP
+                SELECT COUNT(M_PRODUCT_BOM_ID) INTO v_BomCount
+                FROM M_PRODUCT_BOM pb 
+                JOIN M_PRODUCTIONPLAN pp on pb.M_Product_ID=pp.M_Product_ID
+                WHERE pp.M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
+                AND pb.M_PRODUCTBOM_id=CUR_PLine.M_Product_ID;
+                --Product not exists in stocked BoM Line, check non stocked BoM line
+                IF (v_BomCount < 1) THEN 
+                  v_ProductExists= false;
+                  SELECT COUNT(M_ProductionPlan_ID) INTO v_Count
+                  FROM M_PRODUCTIONPLAN pp
+                  JOIN M_PRODUCT_BOM pb ON pb.M_Product_ID=pp.M_Product_ID 
+                  JOIN M_PRODUCT p on pb.M_PRODUCTBOM_id=p.M_Product_ID 
+                  WHERE pp.M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID  
+                  AND p.isstocked='N' AND p.IsBOM='Y';
+                  IF (v_Count > 0) THEN
+                    FOR CUR_BOMLine IN (
+                      SELECT p.M_Product_ID, p.name
+                      FROM M_PRODUCTIONPLAN pp
+                      JOIN M_PRODUCT_BOM pb ON pb.M_Product_ID=pp.M_Product_ID 
+                      JOIN M_PRODUCT p on pb.M_PRODUCTBOM_id=p.M_Product_ID 
+                      WHERE pp.M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
+                      AND p.isstocked='N' AND p.IsBOM='Y'
+                    ) LOOP
+					  WITH RECURSIVE bom_product_hierarchy AS (
+						SELECT p.m_product_id, p.name, p.isstocked, p.isBom, '1'::NUMERIC as qty
+						FROM m_product p
+						WHERE p.m_product_id = CUR_BOMLine.M_Product_ID
+						UNION ALL
+						SELECT p.m_product_id, p.name, p.isstocked, p.isBom, pb.bomqty::INT*ph.qty::NUMERIC as qty
+						FROM m_product p
+						JOIN M_PRODUCT_BOM pb ON p.m_product_id = pb.M_PRODUCTBOM_id
+						JOIN bom_product_hierarchy ph ON pb.m_product_id = ph.m_product_id 
+						where (ph.isstocked='N' and ph.isBom='Y')--Iterate Only if the product is non stocked BoM
+					  )
+					  SELECT COUNT(ph.M_PRODUCT_ID) INTO v_BomCount 
+					  FROM bom_product_hierarchy ph
+					  WHERE M_Product_ID=CUR_PLine.M_Product_ID 
+                      and ph.isstocked='Y';				  
+					  -- SELECT COUNT(ph.M_PRODUCT_ID) INTO v_BomCount 
+					  -- FROM m_get_bom_stock_prod_hierarchy(CUR_BOMLine.M_Product_ID) ph 
+					  -- WHERE M_Product_ID=CUR_PLine.M_Product_ID 
+					  -- and ph.isstocked='Y';
+                      IF (v_BomCount > 0) THEN
+                        v_ProductExists = true;
+                        EXIT; --Product exists
+                      END IF;
+                    END LOOP;
+                  END IF;
+                  IF (NOT v_ProductExists) THEN
+                    v_Message:= '@ProductNotPresentInBomLines@' || ': ' || CUR_PLine.name;
+                    RAISE_APPLICATION_ERROR(-20000, v_Message);
+                  END IF;
+                END IF;
+            END LOOP;          
+
+            IF (v_AllowQuantityChange<>'Y') THEN
+              --Validate Origin Product Qty
+              SELECT coalesce(pl.confirmedqty, pl.movementqty), pp.productionqty, p.name INTO v_MvmtQty, v_PlanQty, v_Product_Name
+              FROM M_PRODUCTIONPLAN pp
+              JOIN M_PRODUCTIONLINE pl ON pp.M_ProductionPlan_ID=pl.M_ProductionPlan_ID 
+              and pp.M_PRODUCT_ID=pl.M_PRODUCT_ID 
+              JOIN M_PRODUCT p ON pl.M_PRODUCT_ID = p.M_PRODUCT_ID 
+              WHERE pp.M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID and pl.line='10';
+              IF (v_ProductionType = 'B' AND v_MvmtQty<>v_PlanQty) THEN
+                v_Message:= '@BuildProductLineQty@' || ': ' || v_MvmtQty || ' ' || '@Mismatch@' || ' ' || '@ProductPlanQty@' || ' : ' ||  v_PlanQty || ' - ' || v_Product_Name;
+				RAISE_APPLICATION_ERROR(-20000, v_Message);
+              ELSIF (v_ProductionType = 'U' AND ABS(v_MvmtQty)<>v_PlanQty) THEN 
+                v_Message:= '@ConsumeProductLineQty@' || ': ' || ABS(v_MvmtQty) || ' ' || '@Mismatch@' || ' ' || '@ProductPlanQty@' || ' : ' ||  v_PlanQty || ' - ' || v_Product_Name;
+				RAISE_APPLICATION_ERROR(-20000, v_Message);
+              END IF;
+
+              --Validate Production Line Qty with BoM Qty 
+              FOR CUR_PLine IN(
+                SELECT coalesce(sum(coalesce(pl.confirmedqty, pl.movementqty)), 0) as movementqty, pl.M_Product_ID, p.name
+                FROM M_PRODUCTIONLINE pl
+                JOIN M_PRODUCT p ON pl.M_PRODUCT_ID = p.M_PRODUCT_ID 
+                WHERE pl.M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
+                AND pl.line<>'10' 
+                GROUP BY pl.M_Product_ID, p.name
+              ) LOOP
+                v_QtyAcumulated = 0;
+                --Sum of stocked bom lines qty of the product
+                SELECT coalesce(sum(bomqty), 0) INTO v_BomQty
+                FROM M_PRODUCT_BOM pb 
+                JOIN M_PRODUCTIONPLAN pp on pb.M_Product_ID=pp.M_Product_ID  
+                JOIN M_PRODUCT p on pb.M_PRODUCTBOM_id=p.M_PRODUCT_ID
+                WHERE pp.M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
+                AND pb.M_PRODUCTBOM_id=CUR_PLine.M_Product_ID
+                AND (p.isstocked='Y' OR p.IsBOM='N');
+                v_QtyAcumulated := v_QtyAcumulated + v_BomQty;
+                --Sum of non stocked bom lines qty of the product
+                SELECT COUNT(M_ProductionPlan_ID) INTO v_Count
+                FROM M_PRODUCTIONPLAN pp
+                JOIN M_PRODUCT_BOM pb ON pb.M_Product_ID=pp.M_Product_ID 
+                JOIN M_PRODUCT p on pb.M_PRODUCTBOM_id=p.M_Product_ID 
+                WHERE pp.M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID  
+                AND p.isstocked='N' AND p.IsBOM='Y';
+                IF (v_Count > 0) THEN
+                  FOR CUR_BOMLine IN (
+                    SELECT p.M_Product_ID, p.name
+                    FROM M_PRODUCTIONPLAN pp
+                    JOIN M_PRODUCT_BOM pb ON pb.M_Product_ID=pp.M_Product_ID 
+                    JOIN M_PRODUCT p on pb.M_PRODUCTBOM_id=p.M_Product_ID 
+                    WHERE pp.M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
+                    AND p.isstocked='N' AND p.IsBOM='Y'
+                  ) LOOP
+				    WITH RECURSIVE bom_product_hierarchy AS (
+					  SELECT p.m_product_id, p.name, p.isstocked, p.isBom, '1'::NUMERIC as qty
+					  FROM m_product p
+					  WHERE p.m_product_id = CUR_BOMLine.M_Product_ID
+					  UNION ALL
+					  SELECT p.m_product_id, p.name, p.isstocked, p.isBom, pb.bomqty::INT*ph.qty::NUMERIC as qty
+					  FROM m_product p
+					  JOIN M_PRODUCT_BOM pb ON p.m_product_id = pb.M_PRODUCTBOM_id
+					  JOIN bom_product_hierarchy ph ON pb.m_product_id = ph.m_product_id 
+					  where (ph.isstocked='N' and ph.isBom='Y')--Iterate Only if the product is non stocked BoM
+				    )
+				    SELECT coalesce(sum(ph.qty), 0) INTO v_BomQty
+				    FROM bom_product_hierarchy ph
+					WHERE M_Product_ID=CUR_PLine.M_Product_ID and ph.isstocked='Y';
+					-- SELECT coalesce(sum(ph.qty), 0) INTO v_BomQty
+					-- FROM m_get_bom_stock_prod_hierarchy(CUR_BOMLine.M_Product_ID) ph 
+					-- WHERE M_Product_ID=CUR_PLine.M_Product_ID and ph.isstocked='Y';
+                    v_QtyAcumulated := v_QtyAcumulated + v_BomQty;
+                  END LOOP;
+                END IF;
+                v_TotalBomQty = v_QtyAcumulated * CUR_PP.productionqty;
+                IF (v_ProductionType = 'B' AND ABS(CUR_PLine.movementqty)<>v_TotalBomQty) THEN
+                  v_Message:= '@ConsumeProductLineQty@' || ': ' || ABS(CUR_PLine.movementqty) || ' ' || '@Mismatch@' || ' ' || '@BomQty@' || ' : ' ||  v_TotalBomQty || ' - ' || CUR_PLine.name;
+                  RAISE_APPLICATION_ERROR(-20000, v_Message);
+                ELSIF (v_ProductionType = 'U' AND CUR_PLine.movementqty<>v_TotalBomQty) THEN 
+                  v_Message:= '@BuildProductLineQty@' || ': ' || CUR_PLine.movementqty || ' ' || '@Mismatch@' || ' ' || '@BomQty@' || ' : ' ||  v_TotalBomQty || ' - ' || CUR_PLine.name;
+                  RAISE_APPLICATION_ERROR(-20000, v_Message);
+                END IF;
+              END LOOP; 
+            END IF;
+          ELSE
+            IF (v_AllowQuantityChange<>'Y') THEN
+              --Build Qty
+			  SELECT coalesce(SUM(coalesce(confirmedqty, movementqty)), 0) INTO v_BuildQty FROM M_PRODUCTIONLINE WHERE M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID and coalesce(confirmedqty, movementqty)>0;
+			  --Consume Qty
+			  SELECT coalesce(SUM(coalesce(confirmedqty, movementqty)), 0) INTO v_ConsumeQty FROM M_PRODUCTIONLINE WHERE M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID and coalesce(confirmedqty, movementqty)<0;
+			  --BoM Qty
+			  v_QtyAcumulated = 0;
+			  --Sum of stocked bom lines qty
+			  SELECT coalesce(sum(bomqty), 0) INTO v_BomQty
+			  FROM M_PRODUCT_BOM pb 
+			  JOIN M_PRODUCTIONPLAN pp on pb.M_Product_ID=pp.M_Product_ID  
+			  JOIN M_PRODUCT p on pb.M_PRODUCTBOM_id=p.M_PRODUCT_ID
+			  WHERE pp.M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
+			  AND (p.isstocked='Y' OR p.IsBOM='N');
+			  v_QtyAcumulated := v_QtyAcumulated + v_BomQty;
+			  --Sum of non stocked bom lines qty
+			  SELECT COUNT(M_ProductionPlan_ID) INTO v_Count
+			  FROM M_PRODUCTIONPLAN pp
+			  JOIN M_PRODUCT_BOM pb ON pb.M_Product_ID=pp.M_Product_ID 
+			  JOIN M_PRODUCT p on pb.M_PRODUCTBOM_id=p.M_Product_ID 
+			  WHERE pp.M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID  
+			  AND p.isstocked='N' AND p.IsBOM='Y';
+			  IF (v_Count > 0) THEN
+			    FOR CUR_BOMLine IN (
+				  SELECT p.M_Product_ID
+				  FROM M_PRODUCTIONPLAN pp
+				  JOIN M_PRODUCT_BOM pb ON pb.M_Product_ID=pp.M_Product_ID 
+				  JOIN M_PRODUCT p on pb.M_PRODUCTBOM_id=p.M_Product_ID 
+				  WHERE pp.M_ProductionPlan_ID = CUR_PP.M_PRODUCTIONPLAN_ID 
+				  AND p.isstocked='N' AND p.IsBOM='Y'
+			    ) LOOP
+				  WITH RECURSIVE bom_product_hierarchy AS (
+				    SELECT p.m_product_id, p.name, p.isstocked, p.isBom, '1'::NUMERIC as qty
+				    FROM m_product p
+				    WHERE p.m_product_id = CUR_BOMLine.M_Product_ID
+				    UNION ALL
+				    SELECT p.m_product_id, p.name, p.isstocked, p.isBom, pb.bomqty::INT*ph.qty::NUMERIC as qty
+				    FROM m_product p
+				    JOIN M_PRODUCT_BOM pb ON p.m_product_id = pb.M_PRODUCTBOM_id
+				    JOIN bom_product_hierarchy ph ON pb.m_product_id = ph.m_product_id 
+				    where (ph.isstocked='N' and ph.isBom='Y')--Iterate Only if the product is non stocked BoM
+				  )
+				  SELECT coalesce(sum(ph.qty), 0) INTO v_BomQty FROM bom_product_hierarchy ph WHERE ph.isstocked='Y'; 
+				  -- SELECT coalesce(sum(ph.qty), 0) INTO v_BomQty FROM m_get_bom_stock_prod_hierarchy(CUR_BOMLine.M_Product_ID) ph WHERE ph.isstocked='Y'; 
+                  v_QtyAcumulated := v_QtyAcumulated + v_BomQty;
+                END LOOP;
+			  END IF;
+			  v_TotalBomQty = v_QtyAcumulated * CUR_PP.productionqty;
+			  IF (v_ProductionType = 'B') THEN
+			  	IF (v_BuildQty<>CUR_PP.productionqty) THEN
+			      v_Message:= '@TotalBuildProductQty@' || ': ' || v_BuildQty || ' ' || '@Mismatch@' || ' ' || '@ProductPlanQty@' || ' : ' ||  CUR_PP.productionqty;
+                  RAISE_APPLICATION_ERROR(-20000, v_Message);
+				ELSIF (ABS(v_ConsumeQty)<>v_TotalBomQty) THEN
+				  v_Message:= '@TotalConsumeProductQty@' || ': ' || ABS(v_ConsumeQty) || ' ' || '@Mismatch@' || ' ' || '@TotalBomQty@' || ' : ' ||  v_TotalBomQty;
+			      RAISE_APPLICATION_ERROR(-20000, v_Message);
+				END IF;
+			  ELSE
+			  	IF (ABS(v_ConsumeQty)<>CUR_PP.productionqty) THEN
+				  v_Message:= '@TotalConsumeProductQty@' || ': ' || ABS(v_ConsumeQty) || ' ' || '@Mismatch@' || ' ' || '@ProductPlanQty@' || ' : ' ||  CUR_PP.productionqty;
+				  RAISE_APPLICATION_ERROR(-20000, v_Message);
+				ELSIF (v_BuildQty<>v_TotalBomQty) THEN
+				  v_Message:= '@TotalBuildProductQty@' || ': ' || v_BuildQty || ' ' || '@Mismatch@' || ' ' || '@TotalBomQty@' || ' : ' ||  v_TotalBomQty;
+				  RAISE_APPLICATION_ERROR(-20000, v_Message);
+				END IF;
+			  END IF;
+            END IF;
+          END IF;
+        END LOOP;
+      END;
     END IF;
 
     DECLARE
@@ -630,7 +1125,7 @@ BEGIN --BODY
     -- All Production Lines
     FOR CUR_PL_Post IN (
         SELECT pl.M_ProductionLine_ID, pl.AD_Client_ID, pl.AD_Org_ID, p.MovementDate,
-            pl.M_Product_ID, pl.M_AttributeSetInstance_ID, pl.MovementQty, pl.M_Locator_ID,
+            pl.M_Product_ID, pl.M_AttributeSetInstance_ID, coalesce(pl.ConfirmedQty, pl.MovementQty) as MovementQty, pl.M_Locator_ID,
             pl.M_Product_UOM_ID, pl.QuantityOrder, pl.C_UOM_ID, pl.LINE
         FROM M_PRODUCTION p, M_PRODUCTIONLINE pl, M_PRODUCTIONPLAN pp, M_PRODUCT pro
         WHERE p.M_Production_ID=pp.M_Production_ID

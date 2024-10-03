@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+  <database name="TABLE M_PRODUCTIONBOM_TYPE">
+    <table name="M_PRODUCTIONBOM_TYPE" primaryKey="M_PRODUCTIONBOM_TYPE_PK">
+      <column name="M_PRODUCTIONBOM_TYPE_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="TYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="DESCRIPTION" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ALLOWQUANTITYCHANGE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="ALLOWPRODUCTCHANGE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCTIONBOM_TYPE_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="M_PRODUCTIONBOM_TYPE_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <index name="M_PRODUCTIONBOM_TYPE_B_IX" unique="true">
+        <index-column name="AD_ORG_ID"/>
+        <whereClause><![CDATA[TYPE='B' AND ISACTIVE='Y']]></whereClause>
+      </index>
+      <index name="M_PRODUCTIONBOM_TYPE_T_IX" unique="true">
+        <index-column name="AD_ORG_ID"/>
+        <whereClause><![CDATA[TYPE='T' AND ISACTIVE='Y']]></whereClause>
+      </index>
+      <index name="M_PRODUCTIONBOM_TYPE_U_IX" unique="true">
+        <index-column name="AD_ORG_ID"/>
+        <whereClause><![CDATA[TYPE='U' AND ISACTIVE='Y']]></whereClause>
+      </index>
+      <check name="M_PRODBOM_TYPE_ALLOWPRODCHANGE"><![CDATA[ALLOWPRODUCTCHANGE IN ('Y', 'N')]]></check>
+      <check name="M_PRODBOM_TYPE_ALLOWQTYCHANGE"><![CDATA[ALLOWQUANTITYCHANGE IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCTIONBOM_TYPE_ISACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+    </table>
+  </database>

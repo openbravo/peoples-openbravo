@@ -113,6 +113,20 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="M_PRODUCTIONBOM_TYPE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_USER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="M_PRODUCTIONBOM_TYPE" name="M_PROD_BOM_TYPE">
+        <reference local="M_PRODUCTIONBOM_TYPE_ID" foreign="M_PRODUCTIONBOM_TYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="M_PROD_TYPE_AD_USER">
+        <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCTION_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
