@@ -21,7 +21,7 @@ public enum DocumentType {
   QUOTATION("C_ORDER", "quotations/"),
   SALESORDER("C_ORDER", "orders/"),
   SALESINVOICE("C_INVOICE", "invoices/"),
-  SUBSTITUTIVEINVOICE("C_SUBSTITUTITVENVOICE", "substitutiveinvoices/"),
+  SUBSTITUTEINVOICE("C_SUBSTITUTIVEINVOICE", "substituteinvoices/"),
   SHIPMENT("M_INOUT", "shipments/"),
   PURCHASEORDER("C_ORDER", "purchaseorders/"),
   PAYMENT("FIN_PAYMENT", "payments/");

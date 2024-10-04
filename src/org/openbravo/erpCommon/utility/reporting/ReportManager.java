@@ -183,7 +183,7 @@ public class ReportManager {
         ReprintableSourceDocument<?> reprintableSource = null;
         if (DocumentType.SALESORDER.equals(documentType)) {
           reprintableSource = new ReprintableOrder(documentId);
-        } else if (DocumentType.SUBSTITUTIVEINVOICE.equals(documentType)) {
+        } else if (DocumentType.SUBSTITUTEINVOICE.equals(documentType)) {
           reprintableSource = new ReprintableSubstitutiveInvoice(documentId);
         } else {
           reprintableSource = new ReprintableInvoice(documentId);
@@ -214,8 +214,8 @@ public class ReportManager {
           jsonReprintable.put("documentId", documentId);
           if (DocumentType.SALESORDER.equals(documentType)) {
             jsonReprintable.put("documentType", "ORDER");
-          } else if (DocumentType.SUBSTITUTIVEINVOICE.equals(documentType)) {
-            jsonReprintable.put("documentType", "SUBSTITUTIVEINVOICE");
+          } else if (DocumentType.SUBSTITUTEINVOICE.equals(documentType)) {
+            jsonReprintable.put("documentType", "SUBSTITUTEINVOICE");
           } else {
             jsonReprintable.put("documentType", "INVOICE");
           }
@@ -256,7 +256,7 @@ public class ReportManager {
         orgId = OBDal.getInstance().get(Order.class, documentId).getOrganization().getId();
       } else if (DocumentType.SALESINVOICE.equals(documentType)) {
         orgId = OBDal.getInstance().get(Invoice.class, documentId).getOrganization().getId();
-      } else if (DocumentType.SUBSTITUTIVEINVOICE.equals(documentType)) {
+      } else if (DocumentType.SUBSTITUTEINVOICE.equals(documentType)) {
         orgId = OBDal.getInstance()
             .get(SubstitutiveInvoice.class, documentId)
             .getOrganization()

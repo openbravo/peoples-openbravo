@@ -158,8 +158,8 @@ public class PrintController extends HttpSecureAppServlet {
         strDocumentId = vars.getSessionValue(sessionValuePrefix + ".inpcInvoiceId");
       }
     }
-    if (request.getServletPath().toLowerCase().indexOf("substitutiveinvoices") != -1) {
-      documentType = DocumentType.SUBSTITUTIVEINVOICE;
+    if (request.getServletPath().toLowerCase().indexOf("substituteinvoices") != -1) {
+      documentType = DocumentType.SUBSTITUTEINVOICE;
       // The prefix PRINTSUBSTITUTIVEINVOICES is a fixed name based on the KEY of the
       // AD_PROCESS
       sessionValuePrefix = "PRINTSUBSTITUTIVEINVOICES";
@@ -286,7 +286,7 @@ public class PrintController extends HttpSecureAppServlet {
               .get(Invoice.class, documentIds[0])
               .getOrganization()
               .getId();
-        } else if (DocumentType.SUBSTITUTIVEINVOICE.equals(documentType)) {
+        } else if (DocumentType.SUBSTITUTEINVOICE.equals(documentType)) {
           sourceDocument = new ReprintableSubstitutiveInvoice(documentIds[0]);
           organizationId = OBDal.getInstance()
               .get(SubstitutiveInvoice.class, documentIds[0])
@@ -813,7 +813,7 @@ public class PrintController extends HttpSecureAppServlet {
         return PocData.getContactDetailsForOrders(this, strDocumentId);
       case SALESINVOICE:
         return PocData.getContactDetailsForInvoices(this, strDocumentId);
-      case SUBSTITUTIVEINVOICE:
+      case SUBSTITUTEINVOICE:
         return PocData.getContactDetailsForSubstitutiveInvoices(this, strDocumentId);
       case SHIPMENT:
         return PocData.getContactDetailsForShipments(this, strDocumentId);

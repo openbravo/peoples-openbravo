@@ -45,7 +45,7 @@ public class PrintSubstitutiveInvoices extends PrintController {
       throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    DocumentType documentType = DocumentType.SUBSTITUTIVEINVOICE;
+    DocumentType documentType = DocumentType.SUBSTITUTEINVOICE;
     // The prefix PRINTSUBSTITUTIVEINVOICES is a fixed name based on the KEY of the
     // AD_PROCESS
     String sessionValuePrefix = "PRINTSUBSTITUTIVEINVOICES";

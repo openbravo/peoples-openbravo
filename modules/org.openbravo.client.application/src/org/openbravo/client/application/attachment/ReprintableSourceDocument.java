@@ -38,7 +38,7 @@ public abstract class ReprintableSourceDocument<D extends BaseOBObject & ClientE
    * Supported document types that can be linked to a {@link ReprintableDocument}
    */
   public enum DocumentType {
-    INVOICE, ORDER, SUBSTITUTIVEINVOICE;
+    INVOICE, ORDER, SUBSTITUTEINVOICE;
   }
 
   /**
@@ -60,7 +60,7 @@ public abstract class ReprintableSourceDocument<D extends BaseOBObject & ClientE
         return new ReprintableInvoice(id);
       case ORDER:
         return new ReprintableOrder(id);
-      case SUBSTITUTIVEINVOICE:
+      case SUBSTITUTEINVOICE:
         return new ReprintableSubstitutiveInvoice(id);
       default:
         throw new IllegalArgumentException("Unknown document type");
@@ -85,7 +85,7 @@ public abstract class ReprintableSourceDocument<D extends BaseOBObject & ClientE
     }
     if (reprintableDocument.getSubstitutiveInvoice() != null) {
       return newSourceDocument(reprintableDocument.getSubstitutiveInvoice().getId(),
-          DocumentType.SUBSTITUTIVEINVOICE);
+          DocumentType.SUBSTITUTEINVOICE);
     }
     if (reprintableDocument.getOrder() != null) {
       return newSourceDocument(reprintableDocument.getOrder().getId(), DocumentType.ORDER);
