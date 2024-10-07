@@ -37,11 +37,13 @@ import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class FundsTransferUtility {
   private static final String BP_DEPOSIT = "BPD";
@@ -133,15 +135,11 @@ public class FundsTransferUtility {
     APRM_FundTransferRecords fundTransferRecord = OBProvider.getInstance()
         .get(APRM_FundTransferRecords.class);
 
-    // String fundsTransferNo = Utility.getDocumentNo(this, vars, strWindowNo, strTableName,
-    // strDocType_Id, strDocType_Id, false, false);
-    // String fundsTransferNo = Utility.getDocumentNo( OBDal.getInstance().getConnection(false),
-    // new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(),
-    // "A53EFC85A8064C108DBDA745A252E8EA",
-    // "APRM_FundTransferRecords", "", docTypeId, false, true);
+    String fundsTransferNo = Utility.getDocumentNo(new DalConnectionProvider(false),
+        OBContext.getOBContext().getCurrentClient().getId(), "APRM_FundTransferRecords", true);
 
     fundTransferRecord.setOrganization(organization);
-    fundTransferRecord.setFundTransferNo(1l);
+    fundTransferRecord.setFundTransferNo(fundsTransferNo);
     fundTransferRecord.setDate(trxDate);
     fundTransferRecord.setAmount(amount);
     fundTransferRecord.setFINAccFrom(fromAccount);
