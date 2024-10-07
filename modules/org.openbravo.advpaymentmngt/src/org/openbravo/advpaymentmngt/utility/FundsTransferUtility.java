@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.openbravo.advpaymentmngt.APRM_FundTransferRecords;
 import org.openbravo.advpaymentmngt.actionHandler.FundsTransferHookCaller;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.process.FIN_TransactionProcess;
@@ -37,6 +38,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -107,17 +109,46 @@ public class FundsTransferUtility {
         transactions.add(newTrx);
       }
 
+      // Fund transfer record
+      APRM_FundTransferRecords fundTransferRecord = createFundTransferRecord(
+          sourceTrx.getOrganization(), accountFrom, accountTo, trxDate, amount, description);
+
       OBDal.getInstance().flush();
       processTransactions(transactions);
 
       WeldUtils.getInstanceFromStaticBeanManager(FundsTransferHookCaller.class)
           .executeHook(transactions);
 
+      OBDal.getInstance().save(fundTransferRecord);
     } catch (Exception e) {
       String message = OBMessageUtils.parseTranslation(e.getMessage());
       OBDal.getInstance().rollbackAndClose();
       throw new OBException(message, e);
     }
+  }
+
+  private static APRM_FundTransferRecords createFundTransferRecord(Organization organization,
+      FIN_FinancialAccount fromAccount, FIN_FinancialAccount toAccount, Date trxDate,
+      BigDecimal amount, String description) {
+    APRM_FundTransferRecords fundTransferRecord = OBProvider.getInstance()
+        .get(APRM_FundTransferRecords.class);
+
+    // String fundsTransferNo = Utility.getDocumentNo(this, vars, strWindowNo, strTableName,
+    // strDocType_Id, strDocType_Id, false, false);
+    // String fundsTransferNo = Utility.getDocumentNo( OBDal.getInstance().getConnection(false),
+    // new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(),
+    // "A53EFC85A8064C108DBDA745A252E8EA",
+    // "APRM_FundTransferRecords", "", docTypeId, false, true);
+
+    fundTransferRecord.setOrganization(organization);
+    fundTransferRecord.setFundTransferNo(1l);
+    fundTransferRecord.setDate(trxDate);
+    fundTransferRecord.setAmount(amount);
+    fundTransferRecord.setFINAccFrom(fromAccount);
+    fundTransferRecord.setFINAccTo(toAccount);
+    fundTransferRecord.setStatus("CO");
+
+    return fundTransferRecord;
   }
 
   private static BigDecimal convertAmount(BigDecimal amount, FIN_FinancialAccount accountFrom,
