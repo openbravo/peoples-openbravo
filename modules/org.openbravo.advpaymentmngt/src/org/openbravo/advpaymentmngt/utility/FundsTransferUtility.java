@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.openbravo.advpaymentmngt.APRM_FundTransferRecords;
+import org.openbravo.advpaymentmngt.APRM_FundTransferRec;
 import org.openbravo.advpaymentmngt.actionHandler.FundsTransferHookCaller;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.process.FIN_TransactionProcess;
@@ -111,17 +111,23 @@ public class FundsTransferUtility {
         transactions.add(newTrx);
       }
 
-      // Fund transfer record
-      APRM_FundTransferRecords fundTransferRecord = createFundTransferRecord(
-          sourceTrx.getOrganization(), accountFrom, accountTo, trxDate, amount, description);
-
       OBDal.getInstance().flush();
       processTransactions(transactions);
 
       WeldUtils.getInstanceFromStaticBeanManager(FundsTransferHookCaller.class)
           .executeHook(transactions);
 
+      // Fund transfer record
+      APRM_FundTransferRec fundTransferRecord = createFundTransferRecord(
+          sourceTrx.getOrganization(), accountFrom, accountTo, trxDate, amount, description);
+
       OBDal.getInstance().save(fundTransferRecord);
+
+      for (FIN_FinaccTransaction transaction : transactions) {
+        transaction.setAprmFundTransferRec(fundTransferRecord);
+        OBDal.getInstance().save(transaction);
+      }
+
     } catch (Exception e) {
       String message = OBMessageUtils.parseTranslation(e.getMessage());
       OBDal.getInstance().rollbackAndClose();
@@ -129,14 +135,14 @@ public class FundsTransferUtility {
     }
   }
 
-  private static APRM_FundTransferRecords createFundTransferRecord(Organization organization,
+  private static APRM_FundTransferRec createFundTransferRecord(Organization organization,
       FIN_FinancialAccount fromAccount, FIN_FinancialAccount toAccount, Date trxDate,
       BigDecimal amount, String description) {
-    APRM_FundTransferRecords fundTransferRecord = OBProvider.getInstance()
-        .get(APRM_FundTransferRecords.class);
+    APRM_FundTransferRec fundTransferRecord = OBProvider.getInstance()
+        .get(APRM_FundTransferRec.class);
 
     String fundsTransferNo = Utility.getDocumentNo(new DalConnectionProvider(false),
-        OBContext.getOBContext().getCurrentClient().getId(), "APRM_FundTransferRecords", true);
+        OBContext.getOBContext().getCurrentClient().getId(), "APRM_FundTransferRec", true);
 
     fundTransferRecord.setOrganization(organization);
     fundTransferRecord.setFundTransferNo(fundsTransferNo);
