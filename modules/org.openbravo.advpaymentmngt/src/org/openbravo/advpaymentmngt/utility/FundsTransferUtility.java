@@ -73,7 +73,7 @@ public class FundsTransferUtility {
    * @param description
    *          description set by the user in the Funds Transfer Process.
    */
-  public static void createTransfer(Date date, FIN_FinancialAccount accountFrom,
+  public static APRM_FundTransferRec createTransfer(Date date, FIN_FinancialAccount accountFrom,
       FIN_FinancialAccount accountTo, GLItem glitem, BigDecimal amount,
       BigDecimal manualConversionRate, BigDecimal bankFeeFrom, BigDecimal bankFeeTo,
       String description) {
@@ -127,6 +127,8 @@ public class FundsTransferUtility {
         transaction.setAprmFundTransferRec(fundTransferRecord);
         OBDal.getInstance().save(transaction);
       }
+
+      return fundTransferRecord;
 
     } catch (Exception e) {
       String message = OBMessageUtils.parseTranslation(e.getMessage());
