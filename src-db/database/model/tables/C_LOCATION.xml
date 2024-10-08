@@ -33,11 +33,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ADDRESS1" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false">
+      <column name="ADDRESS1" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ADDRESS2" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false">
+      <column name="ADDRESS2" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
