@@ -149,14 +149,31 @@ public class BaseWebServiceServlet extends HttpServlet {
       }
 
     } else {
-      log.debug("WS accessed by unauthenticated user, requesting authentication");
+      log.debug("WS accessed by unauthenticated user");
       // not logged in
-      if (!"false".equals(request.getParameter("auth"))
-          && !apiAuthConfigProvider.existsApiAuthConfiguration()) {
+      if (isBasicAuthenticationAllowed(request)) {
+        log.debug("Requesting basic authentication");
         response.setHeader("WWW-Authenticate", "Basic realm=\"Openbravo\"");
       }
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
+  }
+
+  /**
+   * Determines if the basic authentication should be requested when the web service is accessed by
+   * an unauthenticated user. By default returns true if no "auth" request parameter is received
+   * with value "false" and also if there is no Authentication Provider Configuration defined for
+   * the API.
+   * 
+   * @param request
+   *          The received HTTP request
+   *
+   * @return true if the basic authentication should be requested when the web service is accessed
+   *         by an unauthenticated user or false otherwise.
+   */
+  protected boolean isBasicAuthenticationAllowed(HttpServletRequest request) {
+    return !"false".equals(request.getParameter("auth"))
+        && !apiAuthConfigProvider.existsApiAuthConfiguration();
   }
 
   private int getWSInactiveInterval() {
