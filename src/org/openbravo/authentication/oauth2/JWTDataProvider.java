@@ -100,6 +100,10 @@ class JWTDataProvider {
       Map<String, RSAPublicKey> publicKeys = new HashMap<>(keys.length());
       for (int i = 0; i < keys.length(); i += 1) {
         JSONObject key = keys.getJSONObject(i);
+        if (!key.has("n") || !key.has("e")) {
+          // not an RSA algorithm: missing modulus (n) or public exponent (e)
+          continue;
+        }
         String keyId = key.getString("kid");
         byte[] modulusBytes = Base64.decodeBase64(key.getString("n"));
         byte[] exponentBytes = Base64.decodeBase64(key.getString("e"));
@@ -167,13 +171,17 @@ class JWTDataProvider {
       throws NoSuchAlgorithmException, OAuth2TokenVerificationException {
     String algorithm = decodedJWT.getAlgorithm();
     String keyId = decodedJWT.getKeyId();
-    if ("RS256".equals(algorithm)) {
+    if ("RS256".equals(algorithm) || "RS512".equals(algorithm)) {
       RSAPublicKey publicKey = rsaPublicKeys.get(certificateURL).get(keyId);
       if (publicKey == null) {
         throw new OAuth2TokenVerificationException(
             "Error getting the RSA public key from " + certificateURL);
       }
-      return Algorithm.RSA256(publicKey);
+      if ("RS512".equals(algorithm)) {
+        return Algorithm.RSA512(publicKey);
+      } else {
+        return Algorithm.RSA256(publicKey);
+      }
     }
     throw new NoSuchAlgorithmException("Unsupported algorithm: " + algorithm);
   }
