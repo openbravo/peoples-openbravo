@@ -33,7 +33,7 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <column name="FUND_TRANSFER_NO" primaryKey="false" required="true" type="VARCHAR" size="30" autoIncrement="false">
+      <column name="DOCUMENTNO" primaryKey="false" required="true" type="VARCHAR" size="30" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -73,8 +73,5 @@
       <foreign-key foreignTable="AD_ORG" name="APRM_FTR_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <unique name="APRM_FTR_FUND_TRANSFER_NO_UN">
-        <unique-column name="FUND_TRANSFER_NO"/>
-      </unique>
     </table>
   </database>

@@ -144,10 +144,10 @@ public class FundsTransferUtility {
         .get(APRM_FundTransferRec.class);
 
     String fundsTransferNo = Utility.getDocumentNo(new DalConnectionProvider(false),
-        OBContext.getOBContext().getCurrentClient().getId(), "APRM_FundTransferRec", true);
+        OBContext.getOBContext().getCurrentClient().getId(), "APRM_Fund_Transfer_Rec", true);
 
     fundTransferRecord.setOrganization(organization);
-    fundTransferRecord.setFundTransferNo(fundsTransferNo);
+    fundTransferRecord.setDocumentNo(fundsTransferNo);
     fundTransferRecord.setDate(trxDate);
     fundTransferRecord.setAmount(amount);
     fundTransferRecord.setFINAccFrom(fromAccount);
