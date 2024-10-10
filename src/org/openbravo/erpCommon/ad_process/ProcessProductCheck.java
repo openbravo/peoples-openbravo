@@ -71,10 +71,10 @@ public class ProcessProductCheck extends DalBaseProcess {
 
       header.getMaterialMgmtInternalMovementLineList().add(line);
       OBDal.getInstance().save(header);
-      retProdCheck.setProcessed(true);
       OBDal.getInstance().save(retProdCheck);
 
       Utilities.processGoodsMovement(header.getId());
+      retProdCheck.setProcessed(true);
       if (retProdCheck.isRequireProductCheck()) {
         ProductCheck productCheck = OBProvider.getInstance().get(ProductCheck.class);
         productCheck.setOrganization(retProdCheck.getOrganization());
@@ -98,6 +98,8 @@ public class ProcessProductCheck extends DalBaseProcess {
       msg.setTitle(OBMessageUtils.messageBD("Error"));
       msg.setMessage(e.getMessage());
       log4j.error("Error Processing Returned Product Check", e);
+    } finally {
+      OBContext.restorePreviousMode();
     }
     bundle.setResult(msg);
   }
