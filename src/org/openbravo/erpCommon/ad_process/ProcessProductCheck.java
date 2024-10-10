@@ -77,11 +77,11 @@ public class ProcessProductCheck extends DalBaseProcess {
       Utilities.processGoodsMovement(header.getId());
       if (retProdCheck.isRequireProductCheck()) {
         ProductCheck productCheck = OBProvider.getInstance().get(ProductCheck.class);
+        productCheck.setOrganization(retProdCheck.getOrganization());
         productCheck.setOriginalDocumentno(
             retProdCheck.getSalesOrderLine().getSalesOrder().getDocumentNo());
         productCheck.setWarehouse(retProdCheck.getWarehouse());
-        productCheck
-            .setStorageBin(OBDal.getInstance().get(Locator.class, retProdCheck.getNewStorageBin()));
+        productCheck.setStorageBin(retProdCheck.getNewStorageBin());
         productCheck.setProduct(retProdCheck.getProduct());
         productCheck.setReturnReasonName(retProdCheck.getReturnReasonName());
         productCheck.setObc2UserInputValue(retProdCheck.getObc2UserInputValue());
