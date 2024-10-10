@@ -78,7 +78,6 @@ public class FundsTransferUtility {
       BigDecimal manualConversionRate, BigDecimal bankFeeFrom, BigDecimal bankFeeTo,
       String description) {
     List<FIN_FinaccTransaction> transactions = new ArrayList<FIN_FinaccTransaction>();
-    FIN_FinaccTransaction newTrx;
     Date trxDate = date;
 
     if (trxDate == null) {
@@ -95,20 +94,20 @@ public class FundsTransferUtility {
           glitem, amount, lineNoUtil, description);
       transactions.add(sourceTrx);
       if (bankFeeFrom != null && BigDecimal.ZERO.compareTo(bankFeeFrom) != 0) {
-        newTrx = createTransaction(accountFrom, BANK_FEE, trxDate, glitem, bankFeeFrom, lineNoUtil,
-            description);
-        transactions.add(newTrx);
+        FIN_FinaccTransaction sourceFeeTrx = createTransaction(accountFrom, BANK_FEE, trxDate,
+            glitem, bankFeeFrom, lineNoUtil, description);
+        transactions.add(sourceFeeTrx);
       }
 
       // Target Account
-      newTrx = createTransaction(accountTo, BP_DEPOSIT, trxDate, glitem, targetAmount, lineNoUtil,
-          sourceTrx, description);
-      transactions.add(newTrx);
+      FIN_FinaccTransaction destinationTrx = createTransaction(accountTo, BP_DEPOSIT, trxDate,
+          glitem, targetAmount, lineNoUtil, sourceTrx, description);
+      transactions.add(destinationTrx);
 
       if (bankFeeTo != null && BigDecimal.ZERO.compareTo(bankFeeTo) != 0) {
-        newTrx = createTransaction(accountTo, BANK_FEE, trxDate, glitem, bankFeeTo, lineNoUtil,
-            sourceTrx, description);
-        transactions.add(newTrx);
+        FIN_FinaccTransaction destinationFeeTrx = createTransaction(accountTo, BANK_FEE, trxDate,
+            glitem, bankFeeTo, lineNoUtil, sourceTrx, description);
+        transactions.add(destinationFeeTrx);
       }
 
       OBDal.getInstance().flush();
@@ -119,7 +118,8 @@ public class FundsTransferUtility {
 
       // Fund transfer record
       APRM_FundTransferRec fundTransferRecord = createFundTransferRecord(
-          sourceTrx.getOrganization(), accountFrom, accountTo, trxDate, amount, description);
+          sourceTrx.getOrganization(), accountFrom, accountTo, sourceTrx, destinationTrx, trxDate,
+          amount, description);
 
       OBDal.getInstance().save(fundTransferRecord);
 
@@ -138,8 +138,9 @@ public class FundsTransferUtility {
   }
 
   private static APRM_FundTransferRec createFundTransferRecord(Organization organization,
-      FIN_FinancialAccount fromAccount, FIN_FinancialAccount toAccount, Date trxDate,
-      BigDecimal amount, String description) {
+      FIN_FinancialAccount fromAccount, FIN_FinancialAccount toAccount,
+      FIN_FinaccTransaction fromTrx, FIN_FinaccTransaction toTrx, Date trxDate, BigDecimal amount,
+      String description) {
     APRM_FundTransferRec fundTransferRecord = OBProvider.getInstance()
         .get(APRM_FundTransferRec.class);
 
@@ -152,6 +153,8 @@ public class FundsTransferUtility {
     fundTransferRecord.setAmount(amount);
     fundTransferRecord.setFINAccFrom(fromAccount);
     fundTransferRecord.setFINAccTo(toAccount);
+    fundTransferRecord.setFINAccTranFrom(fromTrx);
+    fundTransferRecord.setFINAccTranTo(toTrx);
     fundTransferRecord.setStatus("CO");
 
     return fundTransferRecord;
