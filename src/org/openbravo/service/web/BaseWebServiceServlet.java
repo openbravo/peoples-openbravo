@@ -35,7 +35,6 @@ import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.authentication.ExternalAuthenticationManager;
 import org.openbravo.authentication.oauth2.ApiAuthConfigProvider;
-import org.openbravo.authentication.oauth2.OAuth2TokenAuthenticationManager;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.AllowedCrossDomainsHandler;
@@ -105,8 +104,8 @@ public class BaseWebServiceServlet extends HttpServlet {
     } catch (AuthenticationException e) {
       final boolean sessionCreated = !sessionExists && null != request.getSession(false);
       if (sessionCreated && AuthenticationManager.isStatelessRequest(request)) {
-        log.warn("Stateless request, still a session was created " + request.getRequestURL() + " "
-            + request.getQueryString());
+        log.warn("Stateless request, still a session was created {} {}", request.getRequestURL(),
+            request.getQueryString());
       }
 
       response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -118,7 +117,7 @@ public class BaseWebServiceServlet extends HttpServlet {
     }
 
     if (userId != null) {
-      log.debug("WS accessed by userId " + userId);
+      log.debug("WS accessed by userId {}", userId);
       OBContext.setOBContext(UserContextCache.getInstance().getCreateOBContext(userId));
       OBContext.setOBContextInSession(request, OBContext.getOBContext());
       SessionInfo.setUserId(userId);
@@ -129,8 +128,8 @@ public class BaseWebServiceServlet extends HttpServlet {
       } finally {
         final boolean sessionCreated = !sessionExists && null != request.getSession(false);
         if (sessionCreated && AuthenticationManager.isStatelessRequest(request)) {
-          log.warn("Stateless request, still a session was created " + request.getRequestURL() + " "
-              + request.getQueryString());
+          log.warn("Stateless request, still a session was created {} {}", request.getRequestURL(),
+              request.getQueryString());
         }
 
         HttpSession session = request.getSession(false);
@@ -149,14 +148,31 @@ public class BaseWebServiceServlet extends HttpServlet {
       }
 
     } else {
-      log.debug("WS accessed by unauthenticated user, requesting authentication");
+      log.debug("WS accessed by unauthenticated user");
       // not logged in
-      if (!"false".equals(request.getParameter("auth"))
-          && !apiAuthConfigProvider.existsApiAuthConfiguration()) {
+      if (isBasicAuthenticationAllowed(request)) {
+        log.debug("Requesting basic authentication");
         response.setHeader("WWW-Authenticate", "Basic realm=\"Openbravo\"");
       }
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
+  }
+
+  /**
+   * Determines if the basic authentication should be requested when the web service is accessed by
+   * an unauthenticated user. By default returns true if no "auth" request parameter is received
+   * with value "false" and also if there is no Authentication Provider Configuration defined for
+   * the API.
+   * 
+   * @param request
+   *          The received HTTP request
+   *
+   * @return true if the basic authentication should be requested when the web service is accessed
+   *         by an unauthenticated user or false otherwise.
+   */
+  protected boolean isBasicAuthenticationAllowed(HttpServletRequest request) {
+    return !"false".equals(request.getParameter("auth"))
+        && !apiAuthConfigProvider.existsApiAuthConfiguration();
   }
 
   private int getWSInactiveInterval() {
@@ -168,8 +184,9 @@ public class BaseWebServiceServlet extends HttpServlet {
       } catch (Exception e) {
         wsInactiveInterval = DEFAULT_WS_INACTIVE_INTERVAL;
       }
-      log.info("Sessions for WS calls expire after " + wsInactiveInterval
-          + " seconds. This can be configured with ws.maxInactiveInterval property.");
+      log.info(
+          "Sessions for WS calls expire after {} seconds. This can be configured with ws.maxInactiveInterval property.",
+          wsInactiveInterval);
     }
 
     return wsInactiveInterval;
@@ -194,14 +211,14 @@ public class BaseWebServiceServlet extends HttpServlet {
       if (OBContext.getOBContext() != null) {
         if (OBContext.getOBContext().isPortalRole()) {
           // Portal users are not granted to direct web services
-          log.error("Portal user " + OBContext.getOBContext().getUser() + " with role "
-              + OBContext.getOBContext().getRole()
-              + " is trying to access to non granted web service " + request.getRequestURL());
+          log.error("Portal user {} with role {} is trying to access to non granted web service {}",
+              OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(),
+              request.getRequestURL());
           throw new OBSecurityException("Web Services are not granted to Portal roles");
         } else if (!OBContext.getOBContext().isWebServiceEnabled()) {
-          log.error("User " + OBContext.getOBContext().getUser() + " with role "
-              + OBContext.getOBContext().getRole()
-              + " is trying to access to non granted web service " + request.getRequestURL());
+          log.error("User {} with role {} is trying to access to non granted web service {}",
+              OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(),
+              request.getRequestURL());
           throw new OBSecurityException(
               "Web Services are not granted to " + OBContext.getOBContext().getRole() + " role");
         }
@@ -243,25 +260,22 @@ public class BaseWebServiceServlet extends HttpServlet {
   }
 
   /**
-   * Retrieve the authentication manager to be on authentication while processing the servelet
-   * request. Depending on the configuration done in the authentication providers window the
-   * specific manager for openbravo will be used.
-   * 
-   * In case there is defined a provider with type, OAuth 2.0 Token, the
-   * {@link OAuth2TokenAuthenticationManager} will be used to manage authentication, otherwise, the
-   * one defined in openbravo properties file will be used instead
+   * Retrieve the authentication manager to be used to authenticate the web service request.
+   * Depending on the configuration done in the Authentication Provider Configuration window the
+   * specific authentication manager for the configured authentication type is used. If there is no
+   * configuration then the authentication manager is retrieved with the
+   * {@link AuthenticationManager#getAuthenticationManager(HttpServlet)} method.
    * 
    * @return authentication manager instance to be used on authentication
    */
   protected AuthenticationManager getAuthenticationManager() {
-    return apiAuthConfigProvider.existsApiAuthConfiguration()
-        ? (AuthenticationManager) ExternalAuthenticationManager.newInstance("OAUTH2TOKEN")
-            .map(m -> {
-              m.init(this);
-              return m;
-            })
+    return apiAuthConfigProvider.getApiAuthType()
+        .map(authType -> ExternalAuthenticationManager.newInstance(authType).map(m -> {
+          m.init(this);
+          return (AuthenticationManager) m;
+        })
             .orElseThrow(() -> new AuthenticationException(
-                "Could not find an ApiOAuth2TokenAuthenticationManager"))
-        : AuthenticationManager.getAuthenticationManager(this);
+                "Could not find an ApiOAuth2TokenAuthenticationManager")))
+        .orElse(AuthenticationManager.getAuthenticationManager(this));
   }
 }
