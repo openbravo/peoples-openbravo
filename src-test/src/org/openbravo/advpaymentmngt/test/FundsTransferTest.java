@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,8 +26,10 @@ import static org.junit.Assert.fail;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.criterion.Restrictions;
 import org.jboss.arquillian.junit.InSequence;
 import org.junit.After;
 import org.junit.Before;
@@ -39,6 +41,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
@@ -98,6 +101,7 @@ public class FundsTransferTest extends WeldBaseTest {
     banco_gbp.setName(banco_gbp.getName() + " - clone UK");
     Currency gbp_currency = OBDal.getInstance().get(Currency.class, "114");
     banco_gbp.setCurrency(gbp_currency);
+
     OBDal.getInstance().save(banco_gbp);
 
     // Random GL Item
@@ -117,6 +121,7 @@ public class FundsTransferTest extends WeldBaseTest {
     conversion_rate.setCurrency(from);
     conversion_rate.setToCurrency(to);
     conversion_rate.setMultipleRateBy(CONVERSION_RATE);
+    conversion_rate.setDivideRateBy(CONVERSION_RATE);
     conversion_rate.setValidFromDate(yesterday);
     OBDal.getInstance().save(conversion_rate);
     OBDal.getInstance().flush();
@@ -127,8 +132,11 @@ public class FundsTransferTest extends WeldBaseTest {
   public void testFundsTransferSameCurrency() {
     FundsTransferActionHandler.createTransfer(TODAY, caja_clone, banco_clone, glitem,
         TRANSACTION_AMT, null, null, null, null);
+    List<FIN_FinaccTransaction> original_trans = getFinancialTransaction(caja_clone);
+    List<FIN_FinaccTransaction> target_trans = getFinancialTransaction(banco_clone);
 
-    testTransactions(caja_clone, banco_clone, TRANSACTION_AMT, null, TRANSACTION_AMT, null);
+    testTransactions(caja_clone, banco_clone, TRANSACTION_AMT, null, TRANSACTION_AMT, null,
+        original_trans, target_trans);
   }
 
   @Test
@@ -137,7 +145,11 @@ public class FundsTransferTest extends WeldBaseTest {
     FundsTransferActionHandler.createTransfer(TODAY, caja_clone, banco_clone, glitem,
         TRANSACTION_AMT, null, FEE_AMT_FROM, null, null);
 
-    testTransactions(caja_clone, banco_clone, TRANSACTION_AMT, FEE_AMT_FROM, TRANSACTION_AMT, null);
+    List<FIN_FinaccTransaction> original_trans = getFinancialTransaction(caja_clone);
+    List<FIN_FinaccTransaction> target_trans = getFinancialTransaction(banco_clone);
+
+    testTransactions(caja_clone, banco_clone, TRANSACTION_AMT, FEE_AMT_FROM, TRANSACTION_AMT, null,
+        original_trans, target_trans);
   }
 
   @Test(expected = OBException.class)
@@ -155,8 +167,11 @@ public class FundsTransferTest extends WeldBaseTest {
 
     BigDecimal convertedAmount = TRANSACTION_AMT.multiply(CONVERSION_RATE)
         .setScale(2, RoundingMode.HALF_UP);
+    List<FIN_FinaccTransaction> original_trans = getFinancialTransaction(caja_clone);
+    List<FIN_FinaccTransaction> target_trans = getFinancialTransaction(banco_gbp);
 
-    testTransactions(caja_clone, banco_gbp, TRANSACTION_AMT, null, convertedAmount, null);
+    testTransactions(caja_clone, banco_gbp, TRANSACTION_AMT, null, convertedAmount, null,
+        original_trans, target_trans);
   }
 
   @Test
@@ -169,8 +184,11 @@ public class FundsTransferTest extends WeldBaseTest {
 
     BigDecimal convertedAmount = TRANSACTION_AMT.multiply(CONVERSION_RATE)
         .setScale(2, RoundingMode.HALF_UP);
+    List<FIN_FinaccTransaction> original_trans = getFinancialTransaction(caja_clone);
+    List<FIN_FinaccTransaction> target_trans = getFinancialTransaction(banco_gbp);
 
-    testTransactions(caja_clone, banco_gbp, TRANSACTION_AMT, null, convertedAmount, null);
+    testTransactions(caja_clone, banco_gbp, TRANSACTION_AMT, null, convertedAmount, null,
+        original_trans, target_trans);
   }
 
   @Test
@@ -181,19 +199,35 @@ public class FundsTransferTest extends WeldBaseTest {
 
     BigDecimal convertedAmount = TRANSACTION_AMT.multiply(CONVERSION_RATE)
         .setScale(2, RoundingMode.HALF_UP);
+    List<FIN_FinaccTransaction> original_trans = getFinancialTransaction(caja_clone);
+    List<FIN_FinaccTransaction> target_trans = getFinancialTransaction(banco_gbp);
 
-    testTransactions(caja_clone, banco_gbp, TRANSACTION_AMT, null, convertedAmount, FEE_AMT_TO);
+    testTransactions(caja_clone, banco_gbp, TRANSACTION_AMT, null, convertedAmount, FEE_AMT_TO,
+        original_trans, target_trans);
+  }
+
+  private List<FIN_FinaccTransaction> getFinancialTransaction(FIN_FinancialAccount acct) {
+    try {
+      final OBCriteria<FIN_FinaccTransaction> obcTrans = OBDal.getInstance()
+          .createCriteria(FIN_FinaccTransaction.class);
+      obcTrans.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_ACCOUNT, acct));
+      return obcTrans.list();
+
+    } catch (final Exception e) {
+      throw new OBException(e);
+    }
   }
 
   private void testTransactions(FIN_FinancialAccount origin_acct, FIN_FinancialAccount target_acct,
-      BigDecimal debit_amt, BigDecimal origin_fee, BigDecimal deposit_amt, BigDecimal target_fee) {
+      BigDecimal debit_amt, BigDecimal origin_fee, BigDecimal deposit_amt, BigDecimal target_fee,
+      List<FIN_FinaccTransaction> original_trans, List<FIN_FinaccTransaction> target_trans) {
     boolean debit_amt_checked = false;
     boolean origin_fee_checked = origin_fee == null;
     boolean deposit_amt_checked = false;
     boolean target_fee_checked = target_fee == null;
 
     OBDal.getInstance().refresh(origin_acct);
-    for (FIN_FinaccTransaction trans : origin_acct.getFINFinaccTransactionList()) {
+    for (FIN_FinaccTransaction trans : original_trans) {
       if (BP_WITHDRAWAL.equalsIgnoreCase(trans.getTransactionType())) {
         assertThat("Wrong debit", trans.getPaymentAmount(), closeTo(debit_amt, BigDecimal.ZERO));
         debit_amt_checked = true;
@@ -207,7 +241,7 @@ public class FundsTransferTest extends WeldBaseTest {
     }
 
     OBDal.getInstance().refresh(target_acct);
-    for (FIN_FinaccTransaction trans : target_acct.getFINFinaccTransactionList()) {
+    for (FIN_FinaccTransaction trans : target_trans) {
       if (BP_DEPOSIT.equalsIgnoreCase(trans.getTransactionType())) {
         assertThat("Wrong deposit", trans.getDepositAmount(),
             closeTo(deposit_amt, BigDecimal.ZERO));
@@ -238,14 +272,27 @@ public class FundsTransferTest extends WeldBaseTest {
     if (account == null) {
       return;
     }
-    OBDal.getInstance().refresh(account);
 
     reactivateTransactions(account);
-    OBDal.getInstance().remove(account);
+
+    deleteTransaction(account);
+
+    OBDal.getInstance().flush();
+  }
+
+  private void deleteTransaction(FIN_FinancialAccount account) {
+    List<FIN_FinaccTransaction> transac = (List<FIN_FinaccTransaction>) getFinancialTransaction(
+        account);
+    for (FIN_FinaccTransaction trans : transac) {
+      OBDal.getInstance().remove(trans);
+      account.getFINFinaccTransactionList().remove(trans);
+    }
   }
 
   private void reactivateTransactions(FIN_FinancialAccount account) {
-    for (FIN_FinaccTransaction trans : account.getFINFinaccTransactionList()) {
+    List<FIN_FinaccTransaction> transac = (List<FIN_FinaccTransaction>) getFinancialTransaction(
+        account);
+    for (FIN_FinaccTransaction trans : transac) {
       FIN_TransactionProcess.doTransactionProcess(REACTIVATE, trans);
     }
   }
