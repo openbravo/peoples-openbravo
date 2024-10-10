@@ -117,15 +117,18 @@ class AuthenticationProviderEventHandler extends EntityPersistenceEventObserver 
   }
 
   private void validateUniquenessApiConfiguration(AuthenticationProvider authProvider) {
-    AuthenticationProvider other = (AuthenticationProvider) OBDal.getInstance()
+    if (!API_APP.equals(authProvider.getApplication().getId())) {
+      return;
+    }
+    int count = OBDal.getInstance()
         .createCriteria(AuthenticationProvider.class)
         .add(Restrictions.eq(AuthenticationProvider.PROPERTY_APPLICATION,
             OBDal.getInstance().get(Application.class, API_APP)))
         .add(Restrictions
             .not(Restrictions.eq(AuthenticationProvider.PROPERTY_ID, authProvider.getId())))
         .setMaxResults(1)
-        .uniqueResult();
-    if (other != null) {
+        .count();
+    if (count > 0) {
       throw new OBException(OBMessageUtils.messageBD("AuthProviderApiAppNotUniqueConf"));
     }
   }
