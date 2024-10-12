@@ -94,12 +94,17 @@ public class PurchaseOrderDocumentLine extends IncomingGoodsDocumentLine<OrderLi
     List<String> naturalTree = OBContext.getOBContext()
         .getOrganizationStructureProvider()
         .getParentList(orderLine.getOrganization().getId(), true);
-
-    String hql = "as prpo where prpo.product.id = :productID and prpo.organization.id in :orgList";
+    // @formatter:off
+    String hql = "as prpo where prpo.product.id = :productID"
+        + " and prpo.organization.id in :orgList"
+        + " and prpo.businessPartner.id = :businessPartnerId";
+    // @formatter:on
     List<ApprovedVendor> approvedVendorList = OBDal.getInstance()
         .createQuery(ApprovedVendor.class, hql)
         .setNamedParameter("orgList", naturalTree)
         .setNamedParameter("productID", p.getId())
+        .setNamedParameter("businessPartnerId",
+            orderLine.getSalesOrder().getBusinessPartner().getId())
         .list();
 
     ApprovedVendor closestApprovedVendor = (ApprovedVendor) OBContext.getOBContext()

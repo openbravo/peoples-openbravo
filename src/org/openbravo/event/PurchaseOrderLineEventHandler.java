@@ -53,7 +53,12 @@ class PurchaseOrderLineEventHandler extends EntityPersistenceEventObserver {
     }
     boolean isSalesDocument = ((OrderLine) event.getTargetInstance()).getSalesOrder()
         .isSalesTransaction();
-    return !isSalesDocument;
+
+    boolean isReturnDocument = ((OrderLine) event.getTargetInstance()).getSalesOrder()
+        .getDocumentType()
+        .isReturn();
+
+    return !isSalesDocument && !isReturnDocument;
   }
 
   public void onSave(@Observes EntityNewEvent event) {
