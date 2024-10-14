@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.advpaymentmngt.APRM_FundTransferRec;
+import org.openbravo.advpaymentmngt.actionHandler.FundTransferRecordHookCaller;
 import org.openbravo.advpaymentmngt.actionHandler.FundsTransferHookCaller;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.process.FIN_TransactionProcess;
@@ -113,9 +114,6 @@ public class FundsTransferUtility {
       OBDal.getInstance().flush();
       processTransactions(transactions);
 
-      WeldUtils.getInstanceFromStaticBeanManager(FundsTransferHookCaller.class)
-          .executeHook(transactions);
-
       // Fund transfer record
       APRM_FundTransferRec fundTransferRecord = createFundTransferRecord(
           sourceTrx.getOrganization(), accountFrom, accountTo, sourceTrx, destinationTrx, trxDate,
@@ -127,6 +125,12 @@ public class FundsTransferUtility {
         transaction.setAprmFundTransferRec(fundTransferRecord);
         OBDal.getInstance().save(transaction);
       }
+
+      WeldUtils.getInstanceFromStaticBeanManager(FundsTransferHookCaller.class)
+          .executeHook(transactions);
+
+      WeldUtils.getInstanceFromStaticBeanManager(FundTransferRecordHookCaller.class)
+          .executeHook(fundTransferRecord);
 
       return fundTransferRecord;
 
