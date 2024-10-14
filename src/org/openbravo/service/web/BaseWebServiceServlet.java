@@ -228,24 +228,28 @@ public class BaseWebServiceServlet extends HttpServlet {
     } catch (final InvalidRequestException e) {
       SessionHandler.getInstance().setDoRollback(true);
       response.setStatus(400);
+      response.setContentType("text/plain");
       final Writer w = response.getWriter();
       w.write(WebServiceUtil.getInstance().createErrorXML(e));
       w.close();
     } catch (final InvalidContentException e) {
       SessionHandler.getInstance().setDoRollback(true);
       response.setStatus(409);
+      response.setContentType("text/plain");
       final Writer w = response.getWriter();
       w.write(WebServiceUtil.getInstance().createErrorXML(e));
       w.close();
     } catch (final ResourceNotFoundException e) {
       SessionHandler.getInstance().setDoRollback(true);
       response.setStatus(404);
+      response.setContentType("text/plain");
       final Writer w = response.getWriter();
       w.write(WebServiceUtil.getInstance().createErrorXML(e));
       w.close();
     } catch (final OBSecurityException e) {
       SessionHandler.getInstance().setDoRollback(true);
       response.setStatus(401);
+      response.setContentType("text/plain");
       final Writer w = response.getWriter();
       w.write(WebServiceUtil.getInstance().createErrorXML(e));
       w.close();
@@ -253,6 +257,7 @@ public class BaseWebServiceServlet extends HttpServlet {
       log.error(t.getMessage(), t);
       SessionHandler.getInstance().setDoRollback(true);
       response.setStatus(500);
+      response.setContentType("text/plain");
       final Writer w = response.getWriter();
       w.write(WebServiceUtil.getInstance().createErrorXML(t));
       w.close();
