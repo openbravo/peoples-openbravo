@@ -57,10 +57,6 @@
       <foreign-key foreignTable="M_WAREHOUSE" name="M_RETURNBIN_WAREHOUSE">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
-      <unique name="M_RETURNBIN_USERINVAL_UN">
-        <unique-column name="AD_ORG_ID"/>
-        <unique-column name="EM_OBC2_USER_INPUT_VALUE_ID"/>
-      </unique>
       <check name="M_RETURNBIN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_RETURNBIN_REQPROD_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
