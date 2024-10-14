@@ -14,6 +14,9 @@ import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -21,19 +24,20 @@ import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.UOMUtil;
+import org.openbravo.model.ad.process.ProcessInstance;
+import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.ProductCheck;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
 import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.service.db.CallProcess;
 import org.openbravo.service.db.DalBaseProcess;
-import org.openbravo.warehouse.advancedwarehouseoperations.utils.Utilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ProcessProductCheck extends DalBaseProcess {
-  private static final Logger log4j = LoggerFactory.getLogger(ProcessProductCheck.class);
+  private static final Logger log4j = LogManager.getLogger();
+  public final String PROCESS__M_MOVEMENT_POST = "122";
 
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {
@@ -73,20 +77,20 @@ public class ProcessProductCheck extends DalBaseProcess {
       OBDal.getInstance().save(header);
       OBDal.getInstance().save(retProdCheck);
 
-      Utilities.processGoodsMovement(header.getId());
+      processGoodsMovement(header.getId());
       retProdCheck.setProcessed(true);
       if (retProdCheck.isRequireProductCheck()) {
         ProductCheck productCheck = OBProvider.getInstance().get(ProductCheck.class);
         productCheck.setOrganization(retProdCheck.getOrganization());
         productCheck.setOriginalDocumentno(
-            retProdCheck.getSalesOrderLine().getSalesOrder().getDocumentNo());
+            retProdCheck.getReturnOrderLine().getSalesOrder().getDocumentNo());
         productCheck.setWarehouse(retProdCheck.getWarehouse());
         productCheck.setStorageBin(retProdCheck.getNewStorageBin());
         productCheck.setProduct(retProdCheck.getProduct());
         productCheck.setReturnReasonName(retProdCheck.getReturnReasonName());
         productCheck.setObc2UserInputValue(retProdCheck.getObc2UserInputValue());
         productCheck.setQtyreturned(retProdCheck.getQtyreturned());
-        productCheck.setSalesOrderLine(retProdCheck.getSalesOrderLine());
+        productCheck.setReturnOrderLine(retProdCheck.getReturnOrderLine());
         OBDal.getInstance().save(productCheck);
       }
 
@@ -113,5 +117,27 @@ public class ProcessProductCheck extends DalBaseProcess {
     return StringUtils.left(OBDateUtils.formatDate(today) + "_" + product.getSearchKey() + "_"
         + (confirmedLocatorFrom != null ? confirmedLocatorFrom.getIdentifier() : "")
         + (confirmedLocatorTo != null ? "_" + confirmedLocatorTo.getIdentifier() : ""), 60);
+  }
+
+  /**
+   * Process a Goods Movement (Internal Movement).
+   * 
+   * Throws OBException if not possible to process
+   * 
+   * @param goodsMovementId
+   *          goods movement id
+   */
+  private void processGoodsMovement(final String goodsMovementId) {
+    final Process process = OBDal.getInstance().get(Process.class, PROCESS__M_MOVEMENT_POST);
+    final ProcessInstance pinstance = CallProcess.getInstance()
+        .call(process, goodsMovementId, null);
+    final OBError result = OBMessageUtils.getProcessInstanceMessage(pinstance);
+    if (StringUtils.equals("Error", result.getType())) {
+      throw new OBException(
+          OBMessageUtils.messageBD("ErrorProcessingGoodMovement") + ": " + result.getMessage());
+    }
+    OBDal.getInstance().getSession().evict(process);
+    OBDal.getInstance().getSession().evict(pinstance);
+    log4j.debug("Processed Goods Movement id {}", goodsMovementId);
   }
 }
