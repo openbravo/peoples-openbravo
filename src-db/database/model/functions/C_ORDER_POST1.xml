@@ -119,10 +119,16 @@
   v_orderBlocking VARCHAR2(1):='N';
   v_bpartner_name c_bpartner.name%TYPE;
   v_productname m_product.name%TYPE;
-
+  
   v_iscashvat C_Order.IsCashVat%TYPE;
   v_recalculateDiscounts VARCHAR(1):='Y';
   v_isactive VARCHAR2(1):='N';
+
+  /**
+   Variables for Free Freight Minimum Check
+  */
+  v_skipFFC VARCHAR2(1):='N';
+  v_ffmok NUMBER:=0; --OBTG:VARCHAR2--
 
   BEGIN
     IF (p_PInstance_ID IS NOT NULL) THEN
@@ -1120,6 +1126,68 @@
           v_Line:=v_Line + 10;
         END LOOP;
       END IF;
+	  
+	/**
+	 * Check free freight minimum
+	 */
+
+	-- Check if the validation needs to be made
+	SELECT SKIPFFMCHECK 
+	INTO v_skipFFC
+	FROM c_order
+	WHERE c_order_id = v_Record_ID;
+
+	IF (v_skipFFC = 'N') THEN
+	    with ffm_list as (
+			select po.m_product_id, po.free_freight_min, po.ad_org_id as org_id, po.m_product_po_id
+			from m_product_po po
+			where po.discontinued = 'N'
+			AND po.isactive = 'Y'
+			AND po.c_bpartner_id = v_c_Bpartner_ID
+		),
+		order_lines as (
+			select ol.m_product_id, sum(ol.linenetamt) as linenetamt
+			from c_orderline ol
+			where ol.c_order_id = v_Record_ID
+			group by ol.m_product_id
+		),
+		org_tree as (
+			select ad_isorgincluded(v_Org_ID, o.ad_org_id, v_Client_ID) as lvl,
+			o.ad_org_id as org_id
+			from ad_org o
+			where ad_isorgincluded(v_Org_ID, o.ad_org_id, v_Client_ID) > 0
+			order by ad_isorgincluded(v_Org_ID, o.ad_org_id, v_Client_ID)
+		),
+		joint_values as(
+			select fl.m_product_id as f_product, ot.lvl, fl.free_freight_min, ol.linenetamt
+			from order_lines ol
+			inner join ffm_list fl on (ol.m_product_id = fl.m_product_id)
+			inner join org_tree ot on (ot.org_id = fl.org_id)
+		),
+		min_vals as (
+			select jv.f_product, min(jv.lvl) as min_value
+			from joint_values jv
+			group by jv.f_product
+		)
+
+		SELECT 
+			sum(CASE
+				WHEN coalesce(jv.free_freight_min,0) <= (jv.linenetamt) THEN 0
+				ELSE 1
+			END)
+		INTO v_ffmok
+		FROM joint_values jv
+		JOIN min_vals mv
+		ON jv.f_product = mv.f_product AND jv.lvl = mv.min_value;
+	
+	    IF (v_ffmok > 0) THEN
+	        RAISE_APPLICATION_ERROR(-20000, '@DoesNotMeetFFMAmount@');
+	    END IF;
+	END IF;
+
+	/**
+	 * End of the Free Freight Minimum check
+	 */
 
       /**
       * Convert to Target DocType
