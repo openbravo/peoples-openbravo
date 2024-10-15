@@ -126,6 +126,9 @@ public class FundsTransferUtility {
         OBDal.getInstance().save(transaction);
       }
 
+      // Needed the flush for the push api, if not it didn't found the register to export
+      OBDal.getInstance().flush();
+
       WeldUtils.getInstanceFromStaticBeanManager(FundsTransferHookCaller.class)
           .executeHook(transactions);
 
