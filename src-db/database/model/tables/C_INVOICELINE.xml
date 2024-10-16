@@ -229,10 +229,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_SUBSTITUTIVEINVOICE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_INVOICELINE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -271,9 +267,6 @@
       </foreign-key>
       <foreign-key foreignTable="C_PROJECTLINE" name="C_INVOICELINE_C_PROJECTLINE">
         <reference local="C_PROJECTLINE_ID" foreign="C_PROJECTLINE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_SUBSTITUTIVEINVOICE" name="C_INVOICELINE_C_SUBSINVOICE">
-        <reference local="C_SUBSTITUTIVEINVOICE_ID" foreign="C_SUBSTITUTIVEINVOICE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_TAX" name="C_INVOICELINE_C_TAX">
         <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
