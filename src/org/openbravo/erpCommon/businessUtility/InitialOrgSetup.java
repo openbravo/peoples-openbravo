@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2023 Openbravo SLU
+ * All portions are Copyright (C) 2010-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -134,6 +135,13 @@ public class InitialOrgSetup {
     if (!obResult.getType().equals(OKTYPE)) {
       return obResult;
     }
+
+    log4j.debug("createOrganization() - Checking if accounting file included");
+    obResult = checkAccountingFile(strOrgType, boCreateAccounting);
+    if (!obResult.getType().equals(OKTYPE)) {
+      return obResult;
+    }
+
     logEvent("@StartingOrg@" + NEW_LINE);
 
     if (boCreateAccounting) {
@@ -581,6 +589,21 @@ public class InitialOrgSetup {
       OBContext.restorePreviousMode();
     }
 
+    obResult.setType(OKTYPE);
+    return obResult;
+  }
+
+  private OBError checkAccountingFile(String strOrgType, boolean boCreateAccounting) {
+    OBError obResult = new OBError();
+    obResult.setType(ERRORTYPE);
+    if (StringUtils.equals(strOrgType, "1") && !boCreateAccounting) {
+      return logErrorAndRollback("@IncludeAccountingFile@",
+          "createOrganization() - ERROR - Accounting file has to be included ", null);
+    }
+    if (StringUtils.equals(strOrgType, "3") && boCreateAccounting) {
+      return logErrorAndRollback("@AccountFileCannotbeIncluded@",
+          "createOrganization() - ERROR - Accounting file cannot be included ", null);
+    }
     obResult.setType(OKTYPE);
     return obResult;
   }
