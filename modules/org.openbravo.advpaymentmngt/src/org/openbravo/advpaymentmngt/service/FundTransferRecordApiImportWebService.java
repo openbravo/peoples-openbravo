@@ -97,7 +97,7 @@ public class FundTransferRecordApiImportWebService extends JSONWebService {
       BigDecimal amount = new BigDecimal(jsonData.getString("amount"));
 
       // Description
-      String description = jsonData.getString("description");
+      String description = jsonData.optString("description");
 
       APRM_FundTransferRec fundTransferRecCreated = FundsTransferUtility.createTransfer(date,
           accountFrom, accountTo, glItem, amount, null, null, null, description);
