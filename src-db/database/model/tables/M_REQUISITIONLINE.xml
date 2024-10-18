@@ -165,6 +165,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="DEFAULT_ACTION" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault><![CDATA['PO']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_CLIENT_M_REQUISITIONLINE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
