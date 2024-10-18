@@ -131,6 +131,7 @@ import org.openbravo.test.modularity.MergePropertiesTest;
 import org.openbravo.test.modularity.TableNameTest;
 import org.openbravo.test.preference.PreferenceTest;
 import org.openbravo.test.pricelist.PriceListTest;
+import org.openbravo.test.process.order.OrderProcessFFMTest;
 import org.openbravo.test.process.order.OrderProcessTest;
 import org.openbravo.test.productStatus.ProductStatusTest;
 import org.openbravo.test.referencedinventory.NestedReferencedInventoryTestSuite;
@@ -458,6 +459,9 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
 
     // C_Order_Post
     OrderProcessTest.class,
+
+    // C_Order_Post Free Freigh Minimum checks
+    OrderProcessFFMTest.class,
 
     // Conversion Rate Document Unique constraint refactor
     ConversionRateDocUniqueTestSuite.class,
