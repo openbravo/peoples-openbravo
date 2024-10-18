@@ -24775,7 +24775,8 @@ By default the type is empty (null), which means the product characteristic does
 <!--4918EB53C2154DEF9088050325DDF77D-->  <COLUMNNAME><![CDATA[Qtyreturned]]></COLUMNNAME>
 <!--4918EB53C2154DEF9088050325DDF77D-->  <NAME><![CDATA[Quantity Returned]]></NAME>
 <!--4918EB53C2154DEF9088050325DDF77D-->  <PRINTNAME><![CDATA[Quantity Returned]]></PRINTNAME>
-<!--4918EB53C2154DEF9088050325DDF77D-->  <DESCRIPTION><![CDATA[Quantity Returned]]></DESCRIPTION>
+<!--4918EB53C2154DEF9088050325DDF77D-->  <DESCRIPTION><![CDATA[The Quantity Returned indicates the quantity of a product that was ordered.]]></DESCRIPTION>
+<!--4918EB53C2154DEF9088050325DDF77D-->  <HELP><![CDATA[The Quantity Returned indicates the quantity of a product that was ordered.]]></HELP>
 <!--4918EB53C2154DEF9088050325DDF77D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--4918EB53C2154DEF9088050325DDF77D-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--4918EB53C2154DEF9088050325DDF77D--></AD_ELEMENT>
@@ -33544,7 +33545,7 @@ Unique References: A Storage Detail can (optionally) have a reference number, an
 <!--973960C8360B4ACE91479D48FFC388CC-->  <NAME><![CDATA[Require Product Check]]></NAME>
 <!--973960C8360B4ACE91479D48FFC388CC-->  <PRINTNAME><![CDATA[Require Product Check]]></PRINTNAME>
 <!--973960C8360B4ACE91479D48FFC388CC-->  <DESCRIPTION><![CDATA[Yes/No flag to determine Product check for returned product]]></DESCRIPTION>
-<!--973960C8360B4ACE91479D48FFC388CC-->  <HELP><![CDATA[If it Yes, Product check up record will be created when return a product]]></HELP>
+<!--973960C8360B4ACE91479D48FFC388CC-->  <HELP><![CDATA[If it Yes, Returned Product check Up record will be created when return a product]]></HELP>
 <!--973960C8360B4ACE91479D48FFC388CC-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--973960C8360B4ACE91479D48FFC388CC-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--973960C8360B4ACE91479D48FFC388CC--></AD_ELEMENT>
