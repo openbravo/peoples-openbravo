@@ -20,7 +20,8 @@
 package org.openbravo.advpaymentmngt.service;
 
 import java.io.IOException;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,17 +30,19 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.APRM_FundTransferRec;
 import org.openbravo.advpaymentmngt.utility.FundsTransferUtility;
 import org.openbravo.api.service.JSONWebService;
 import org.openbravo.api.service.JSONWebServiceResult;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.mobile.core.process.JSONPropertyToEntity;
+import org.openbravo.model.financialmgmt.gl.GLItem;
+import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
+import org.openbravo.service.json.JsonUtils;
 
 /**
  * Create fund transfer record web service
@@ -72,28 +75,35 @@ public class FundTransferRecordApiImportWebService extends JSONWebService {
     try {
       // Get request data
       JSONArray rawData = FundTransferRecordApiUtils.getRequestContent(request);
+      JSONObject jsonData = rawData.getJSONObject(0);
 
-      // Execute hook methods before consumption, passing the rawData
-      executeFundTransferRecordApiHook(rawData);
+      // Format Date
+      String strDate = jsonData.optString("date");
+      Date date = "".equals(strDate) ? null : JsonUtils.createDateFormat().parse(strDate);
 
-      // Generate the import EDL request
-      JSONObject data = rawData.getJSONObject(0);
-      JSONObject result = WeldUtils
-          .getInstanceFromStaticBeanManager(FundTransferRecordExtension.class)
-          .exec(data);
+      // Account from
+      String strAccountFrom = jsonData.getString("accountFrom");
+      FIN_FinancialAccount accountFrom = this.getFinancialAccountByName(strAccountFrom);
 
-      FundsTransferUtility.createTransfer(result.get("date"), result.get("accountFrom"),
-          result.get("accountTo"), result.get("glItem"), result.get("amount"), null, null, null,
-          result.get("description"));
+      // Account to
+      String strAccountTo = jsonData.getString("accountTo");
+      FIN_FinancialAccount accountTo = this.getFinancialAccountByName(strAccountTo);
 
-      APRM_FundTransferRec fundTransferRecord = OBDal.getInstance()
-          .get(APRM_FundTransferRec.class, result.get("id"));
-      // Execute hook methods after consumption, passing the rawData
-      executeFundTransferRecordApiPostHook(rawData, fundTransferRecord);
+      // GL item
+      String strGlItem = jsonData.getString("glItem");
+      GLItem glItem = this.getGlItemByName(strGlItem);
 
-      setPropertiesFromJSON(fundTransferRecord, data);
+      // Amount
+      BigDecimal amount = new BigDecimal(jsonData.getString("amount"));
 
-      responseJSON.add(result);
+      // Description
+      String description = jsonData.getString("description");
+
+      APRM_FundTransferRec fundTransferRecCreated = FundsTransferUtility.createTransfer(date,
+          accountFrom, accountTo, glItem, amount, null, null, null, description);
+
+      responseJSON
+          .add((new JSONObject()).put("documentNo", fundTransferRecCreated.getDocumentNo()));
 
     } catch (IOException ex) {
       throw new OBException("Could not retrieve request body", ex);
@@ -110,28 +120,18 @@ public class FundTransferRecordApiImportWebService extends JSONWebService {
         .setSuccessStatus(HttpServletResponse.SC_OK);
   }
 
-  private void setPropertiesFromJSON(APRM_FundTransferRec fundTransfer, JSONObject data)
-      throws JSONException {
-    data.remove("client");
-    data.remove("organization");
-    JSONPropertyToEntity.fillBobFromJSON(fundTransfer.getEntity(), fundTransfer, data);
-
+  private FIN_FinancialAccount getFinancialAccountByName(String name) {
+    OBCriteria<FIN_FinancialAccount> fAccountQuery = OBDal.getInstance()
+        .createCriteria(FIN_FinancialAccount.class);
+    fAccountQuery.add(Restrictions.eq(FIN_FinancialAccount.PROPERTY_NAME, name));
+    fAccountQuery.setMaxResults(1);
+    return (FIN_FinancialAccount) fAccountQuery.uniqueResult();
   }
 
-  private void executeFundTransferRecordApiHook(JSONArray jsonFundTransfer) throws Exception {
-    List<FundTransferRecordApiHook> fundTransferRecordHooks = WeldUtils
-        .getInstances(FundTransferRecordApiHook.class);
-    for (FundTransferRecordApiHook proc : fundTransferRecordHooks) {
-      proc.exec(jsonFundTransfer);
-    }
-  }
-
-  private void executeFundTransferRecordApiPostHook(JSONArray jsonFundTransfer,
-      APRM_FundTransferRec fundTransfer) throws Exception {
-    List<FundTransferRecordApiPostHook> fundTransferRecordHooks = WeldUtils
-        .getInstances(FundTransferRecordApiPostHook.class);
-    for (FundTransferRecordApiPostHook proc : fundTransferRecordHooks) {
-      proc.exec(jsonFundTransfer, fundTransfer);
-    }
+  private GLItem getGlItemByName(String name) {
+    OBCriteria<GLItem> glItemQuery = OBDal.getInstance().createCriteria(GLItem.class);
+    glItemQuery.add(Restrictions.eq(GLItem.PROPERTY_NAME, name));
+    glItemQuery.setMaxResults(1);
+    return (GLItem) glItemQuery.uniqueResult();
   }
 }
