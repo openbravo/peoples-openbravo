@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.APRM_FundTransferRec;
 import org.openbravo.advpaymentmngt.actionHandler.FundTransferRecordHookCaller;
 import org.openbravo.advpaymentmngt.actionHandler.FundsTransferHookCaller;
@@ -36,10 +37,12 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
@@ -154,6 +157,12 @@ public class FundsTransferUtility {
     String fundsTransferNo = Utility.getDocumentNo(new DalConnectionProvider(false),
         OBContext.getOBContext().getCurrentClient().getId(), "APRM_Fund_Transfer_Rec", true);
 
+    if ("".equals(fundsTransferNo) && !existsSequence("APRM_Fund_Transfer_Rec")) {
+      createSequence("APRM_Fund_Transfer_Rec");
+      fundsTransferNo = Utility.getDocumentNo(new DalConnectionProvider(false),
+          OBContext.getOBContext().getCurrentClient().getId(), "APRM_Fund_Transfer_Rec", true);
+    }
+
     fundTransferRecord.setOrganization(organization);
     fundTransferRecord.setDocumentNo(fundsTransferNo);
     fundTransferRecord.setDate(trxDate);
@@ -251,6 +260,26 @@ public class FundsTransferUtility {
 
       return lineNo;
     }
+  }
+
+  private static boolean existsSequence(String name) {
+    String sequenceName = "DocumentNo_" + name;
+    OBCriteria<Sequence> sequenceQuery = OBDal.getInstance().createCriteria(Sequence.class);
+    sequenceQuery.add(Restrictions.eq(Sequence.PROPERTY_NAME, sequenceName));
+    sequenceQuery.setMaxResults(1);
+    Sequence sequence = (Sequence) sequenceQuery.uniqueResult();
+    if (sequence == null) {
+      return false;
+    }
+    return true;
+  }
+
+  private static void createSequence(String name) {
+    String sequenceName = "DocumentNo_" + name;
+    final Sequence newSequence = OBProvider.getInstance().get(Sequence.class);
+    newSequence.setName(sequenceName);
+    OBDal.getInstance().save(newSequence);
+    OBDal.getInstance().flush();
   }
 
 }
