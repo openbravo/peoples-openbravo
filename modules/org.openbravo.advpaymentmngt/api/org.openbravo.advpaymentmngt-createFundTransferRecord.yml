@@ -1,0 +1,113 @@
+openapi: 3.0.1
+info:
+  title: Create Fund Transfer Records Web Service API
+  description: This is the API for creating Fund Tranfer Records Web Service
+  contact:
+    name: Openbravo
+    url: https://www.openbravo.com
+  version: 1.0.0
+
+servers:
+  - url: ${contextURL}
+
+paths:
+  /ws/org.openbravo.advpaymentmngt.CreateFundTransferRecord:
+    post:
+      tags:
+        -  Create Fund Transfer Record Web Service
+      summary: Create Fund Transfer Record in Openbravo
+      description: The Create Fund Transfer Record api provides a webservice to create the fund tranfer records and its correspoding transacctions
+      operationId: create fund transfer record
+      security:
+        - ${AuthenticationName}: []
+      requestBody:
+        description: The fund tranfer record will be created with defined accounts and amount
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Request'
+            examples:
+              request1:
+                value: {
+                  "accountFrom": "Bank Account 1 - White Valley Spain",
+                  "accountTo": "Cashbook 2 - Posest Store",
+                  "glItem": "CTS Cash Differences",
+                  "amount": "100",
+                }
+                summary: Create a Fund Transfer Record.
+                description: Gives an example of creating a Fund Transfer Record with a minimal json.
+              request2:
+                value: {
+                  "date": "2024-05-25",
+                  "accountFrom": "Bank Account 1 - White Valley Spain",
+                  "accountTo": "Cashbook 2 - Posest Store",
+                  "glItem": "CTS Cash Differences",
+                  "amount": "100",
+                  "description": "fund transfer description"
+                }
+                summary: Create a Fund Transfer Record specifying the date and the description.
+                description: Gives an example of creating a Fund Transfer Record with spefic date and description.
+      responses:
+        200:
+          description: Shows the created Fund Transfer Record values
+          content:
+            application/json:
+              examples:
+                result1:
+                  value:
+                    data:
+                      data: {
+                        "documentNo": 1000003,
+                      }
+                    links: null
+                  summary: Shows the gift card has been successfully recredited
+                  description: Shows the gift card has been successfully recredited
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          description: Error Response
+          content:
+            application/json:
+              examples:
+                error1:
+                  value:
+                    status: 500
+                    title: "Error creating the Fund Transfer Record"
+                    detail: Error while creating the Fund Transfer Record
+components:
+  schemas:
+    Request:
+      type: object
+      properties:
+        date:
+          type: string
+          format: YYYY-MM-DD
+        accountFrom:
+          type: string
+        accountTo:
+          type: string
+        glItem:
+          type: string
+        amount:
+          type: string
+        description:
+          type: string
+
+      required:
+        - accountFrom
+        - accountTo
+        - glItem
+        - amount
+      description: Input for Create Fund Transfer Record transaction WS.
+  responses:
+    UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+  securitySchemes:
+    ${AuthenticationName}:
+      type: http
+      scheme: ${AuthScheme}
+      bearerFormat: ${AuthFormat}
