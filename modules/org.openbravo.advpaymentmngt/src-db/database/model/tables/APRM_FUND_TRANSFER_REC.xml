@@ -33,10 +33,6 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <column name="DOCUMENTNO" primaryKey="false" required="true" type="VARCHAR" size="30" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="DATE" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
         <default><![CDATA[SYSDATE]]></default>
         <onCreateDefault/>
@@ -66,6 +62,14 @@
         <onCreateDefault/>
       </column>
       <column name="OBPOS_APPLICATIONS_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="DOCUMENTNO" primaryKey="false" required="true" type="VARCHAR" size="30" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="REACTIVATE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
