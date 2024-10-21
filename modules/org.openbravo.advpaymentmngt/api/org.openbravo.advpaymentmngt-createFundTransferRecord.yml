@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: Create Fund Transfer Records Web Service API
-  description: This is the API for creating Fund Tranfer Records Web Service
+  description: This is the API for creating Fund Transfer Records Web Service
   contact:
     name: Openbravo
     url: https://www.openbravo.com
@@ -16,12 +16,12 @@ paths:
       tags:
         -  Create Fund Transfer Record Web Service
       summary: Create Fund Transfer Record in Openbravo
-      description: The Create Fund Transfer Record api provides a webservice to create the fund tranfer records and its correspoding transacctions
+      description: The Create Fund Transfer Record api provides a webservice to create the fund transfer records and its corresponding transactions
       operationId: create fund transfer record
       security:
         - ${AuthenticationName}: []
       requestBody:
-        description: The fund tranfer record will be created with defined accounts and amount
+        description: The fund transfer record will be created with defined accounts and amount
         content:
           application/json:
             schema:
@@ -46,7 +46,7 @@ paths:
                   "description": "fund transfer description"
                 }
                 summary: Create a Fund Transfer Record specifying the date and the description.
-                description: Gives an example of creating a Fund Transfer Record with spefic date and description.
+                description: Gives an example of creating a Fund Transfer Record with specific date and description.
       responses:
         200:
           description: Shows the created Fund Transfer Record values
