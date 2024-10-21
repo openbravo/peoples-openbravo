@@ -55,13 +55,75 @@ paths:
               examples:
                 result1:
                   value:
-                    data:
-                      data: {
-                        "documentNo": 1000003,
+                    "data": {
+                      "id": "15064868814340E38E7112EC77630E79",
+                      "client": "The White Valley Group",
+                      "organization": "White Valley Spain S.A",
+                      "organization_info": {
+                        "id": "BF129721D9FB4EB0819509934153E972",
+                        "name": "White Valley Spain S.A",
+                        "searchKey": "White Valley Spain S.A",
+                        "taxID": "B87654321",
+                        "organization_location": {
+                          "address1": "Pau Claris 138 1-1",
+                          "postalCode": "08009",
+                          "city": "Barcelona",
+                          "region": "BARCELONA  ",
+                          "countryCode": "ES"
+                        }
+                      },
+                      "date": "2024-10-21",
+                      "documentNo": "1000001",
+                      "creationDate": "2024-10-21 10:14:37",
+                      "updated": "2024-10-21 10:14:37",
+                      "createdBy": "Openbravo",
+                      "updatedBy": "Openbravo",
+                      "amount": 100,
+                      "status": "CO",
+                      "sourceTransaction": {
+                        "id": "6965DA031CD64665850A48084614AFAE",
+                        "client": "The White Valley Group",
+                        "organization": "White Valley Spain S.A",
+                        "organization_info": {
+                          "name": "White Valley Spain S.A",
+                          "searchKey": "White Valley Spain S.A",
+                          "id": "BF129721D9FB4EB0819509934153E972"
+                        },
+                        "financialAccount": {
+                          "name": "Bank Account 1 - White Valley Spain",
+                          "currency": "EUR",
+                          "type": "B"
+                        },
+                        "transactionType": "BPW",
+                        "transactionDate": "2024-10-21",
+                        "description": "Funds Transfer Transaction",
+                        "depositAmount": 0,
+                        "withdrawalAmount": 100
+                      },
+                      "destinationTransaction": {
+                        "id": "948DA69733AB461987D9267EFF5D26FC",
+                        "client": "The White Valley Group",
+                        "organization": "Posets Store",
+                        "organization_info": {
+                          "name": "Posets Store",
+                          "searchKey": "Posets Store",
+                          "id": "B5DE96143D6642228E3B9DEC69886A47"
+                        },
+                        "financialAccount": {
+                          "name": "Cashbook 2 - Posest Store",
+                          "currency": "USD",
+                          "type": "C"
+                        },
+                        "transactionType": "BPD",
+                        "transactionDate": "2024-10-21",
+                        "description": "Funds Transfer Transaction",
+                        "depositAmount": 131.42,
+                        "withdrawalAmount": 0
                       }
-                    links: null
-                  summary: Shows the gift card has been successfully recredited
-                  description: Shows the gift card has been successfully recredited
+                    }
+                    "links": null
+                  summary: Shows the Fund Transfer Record has been successfully created
+                  description: Shows the Fund Transfer Record has been successfully created
         401:
           $ref: '#/components/responses/UnauthorizedError'
         500:

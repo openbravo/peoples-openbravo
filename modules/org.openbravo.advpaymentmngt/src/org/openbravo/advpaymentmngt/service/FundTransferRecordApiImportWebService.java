@@ -34,6 +34,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.APRM_FundTransferRec;
 import org.openbravo.advpaymentmngt.utility.FundsTransferUtility;
+import org.openbravo.api.ApiExporter;
 import org.openbravo.api.service.JSONWebService;
 import org.openbravo.api.service.JSONWebServiceResult;
 import org.openbravo.base.exception.OBException;
@@ -42,6 +43,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
+import org.openbravo.service.external.integration.EntityMapping;
 import org.openbravo.service.json.JsonUtils;
 
 /**
@@ -50,6 +52,7 @@ import org.openbravo.service.json.JsonUtils;
 public class FundTransferRecordApiImportWebService extends JSONWebService {
 
   private static final Logger log = LogManager.getLogger();
+  private static final String FUND_TRANSFER_RECORD_MAPPING_ID = "A1D7C52538E347A2BE67BFFDF3C7DC49";
 
   @Override
   protected JSONWebServiceResult doGet(String path, HttpServletRequest request) {
@@ -84,14 +87,23 @@ public class FundTransferRecordApiImportWebService extends JSONWebService {
       // Account from
       String strAccountFrom = jsonData.getString("accountFrom");
       FIN_FinancialAccount accountFrom = this.getFinancialAccountByName(strAccountFrom);
+      if (accountFrom == null) {
+        throw new OBException("Source account not found");
+      }
 
       // Account to
       String strAccountTo = jsonData.getString("accountTo");
       FIN_FinancialAccount accountTo = this.getFinancialAccountByName(strAccountTo);
+      if (accountTo == null) {
+        throw new OBException("Destination account not found");
+      }
 
       // GL item
       String strGlItem = jsonData.getString("glItem");
       GLItem glItem = this.getGlItemByName(strGlItem);
+      if (glItem == null) {
+        throw new OBException("glItem not found");
+      }
 
       // Amount
       BigDecimal amount = new BigDecimal(jsonData.getString("amount"));
@@ -102,8 +114,13 @@ public class FundTransferRecordApiImportWebService extends JSONWebService {
       APRM_FundTransferRec fundTransferRecCreated = FundsTransferUtility.createTransfer(date,
           accountFrom, accountTo, glItem, amount, null, null, null, description);
 
-      responseJSON
-          .add((new JSONObject()).put("documentNo", fundTransferRecCreated.getDocumentNo()));
+      EntityMapping entityMapping = OBDal.getInstance()
+          .get(EntityMapping.class, FUND_TRANSFER_RECORD_MAPPING_ID);
+      JSONObject orderJsonObject = new ApiExporter(entityMapping, fundTransferRecCreated.getId())
+          .export()
+          .findFirst()
+          .get();
+      responseJSON.add(orderJsonObject);
 
     } catch (IOException ex) {
       throw new OBException("Could not retrieve request body", ex);
