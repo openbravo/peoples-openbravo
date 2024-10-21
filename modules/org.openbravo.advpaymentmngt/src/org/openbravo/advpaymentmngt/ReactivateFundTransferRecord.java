@@ -18,8 +18,17 @@
  */
 package org.openbravo.advpaymentmngt;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openbravo.base.exception.OBException;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalBaseProcess;
 
@@ -30,5 +39,39 @@ public class ReactivateFundTransferRecord extends DalBaseProcess {
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {
 
+    // Recover context and variables
+    ConnectionProvider conn = bundle.getConnection();
+    VariablesSecureApp varsAux = bundle.getContext().toVars();
+    HttpServletRequest request = RequestContext.get().getRequest();
+
+    OBContext.setOBContext(varsAux.getUser(), varsAux.getRole(), varsAux.getClient(),
+        varsAux.getOrg());
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+
+    try {
+
+      final String fundTransferRecordId = (String) bundle.getParams()
+          .get("Aprm_Fund_Transfer_Rec_ID");
+      APRM_FundTransferRec fundTransferRecord = OBDal.getInstance()
+          .get(APRM_FundTransferRec.class, fundTransferRecordId);
+      fundTransferRecord.setStatus("DR");
+
+      // OBDal.getInstance().flush();
+      // OBDal.getInstance().refresh(fundTransferRecord);
+
+      // OBError is also used for successful results
+      final OBError msg = new OBError();
+      msg.setType("Success");
+      msg.setTitle("@Success@");
+      bundle.setResult(msg);
+      OBDal.getInstance().commitAndClose();
+    } catch (final OBException e) {
+      final OBError msg = new OBError();
+      msg.setType("Error");
+      msg.setMessage(e.getMessage());
+      msg.setTitle("@Error@");
+      OBDal.getInstance().rollbackAndClose();
+      bundle.setResult(msg);
+    }
   }
 }
