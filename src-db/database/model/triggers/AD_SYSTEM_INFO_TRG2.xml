@@ -71,7 +71,7 @@ BEGIN
           null,'T','The Openbravo Public License Version 1.1 ("OBPL") consists of the Mozilla Public License Version 1.1, modified to be specific to Openbravo, with the Additional Terms in Exhibit B. The original Mozilla Public License 1.1 can be found at: http://www.mozilla.org/MPL/MPL-1.1.html',
           'Y','N',null,to_char(indTempPackage),
           'OtherOS',null,null,null,'Y','en_US','N',
-          'N','N',null,null,null);
+          'N','N',null,null);
         
         -- add dependency on the core module
         select version into coreVersion
