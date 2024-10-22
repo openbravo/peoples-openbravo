@@ -18,16 +18,13 @@
  */
 package org.openbravo.advpaymentmngt;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openbravo.advpaymentmngt.process.FIN_TransactionProcess;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalBaseProcess;
@@ -38,16 +35,9 @@ public class ReactivateFundTransferRecord extends DalBaseProcess {
 
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {
-
-    // Recover context and variables
-    ConnectionProvider conn = bundle.getConnection();
     VariablesSecureApp varsAux = bundle.getContext().toVars();
-    HttpServletRequest request = RequestContext.get().getRequest();
-
     OBContext.setOBContext(varsAux.getUser(), varsAux.getRole(), varsAux.getClient(),
         varsAux.getOrg());
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-
     try {
 
       final String fundTransferRecordId = (String) bundle.getParams()
@@ -56,8 +46,16 @@ public class ReactivateFundTransferRecord extends DalBaseProcess {
           .get(APRM_FundTransferRec.class, fundTransferRecordId);
       fundTransferRecord.setStatus("DR");
 
-      // OBDal.getInstance().flush();
-      // OBDal.getInstance().refresh(fundTransferRecord);
+      // Reactivate transactions before delete them, in this way we check that are not posted or
+      // reconciliated
+      FIN_TransactionProcess.doTransactionProcess("R", fundTransferRecord.getFINAccTranFrom());
+      FIN_TransactionProcess.doTransactionProcess("R", fundTransferRecord.getFINAccTranTo());
+
+      OBDal.getInstance().getSession().delete(fundTransferRecord.getFINAccTranFrom());
+      OBDal.getInstance().getSession().delete(fundTransferRecord.getFINAccTranTo());
+
+      fundTransferRecord.setFINAccTranFrom(null);
+      fundTransferRecord.setFINAccTranTo(null);
 
       // OBError is also used for successful results
       final OBError msg = new OBError();
