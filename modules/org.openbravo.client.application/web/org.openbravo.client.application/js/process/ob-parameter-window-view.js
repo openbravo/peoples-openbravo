@@ -438,7 +438,9 @@ isc.OBParameterWindowView.addProperties({
       additionalInfo;
 
     if (this.button && this.button.multiRecord) {
-      selectedRecords = this.buttonOwnerView.viewGrid.getSelectedRecords();
+      selectedRecords = this.buttonOwnerView.isShowingTree
+        ? this.buttonOwnerView.treeGrid.getSelectedRecords()
+        : this.buttonOwnerView.viewGrid.getSelectedRecords();
       recordIds = [];
       for (i = 0; i < selectedRecords.length; i++) {
         recordIds.push(selectedRecords.get(i).id);
