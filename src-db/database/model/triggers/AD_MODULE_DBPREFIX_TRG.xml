@@ -19,7 +19,6 @@
   * Contributor(s):  ______________________________________.
   ************************************************************************/
   V_Char char;
-  v_old_name varchar(60);
   v_type varchar2(60);
     
 BEGIN
@@ -35,10 +34,6 @@ BEGIN
 
    IF v_type = 'T' THEN
      RAISE_APPLICATION_ERROR(-20000, '@DBPrefixNotAllowedInTemplate@');
-   END IF;
-
-   IF (UPDATING) THEN
-     v_old_name := :OLD.NAME;
    END IF;
 
    --Check DB_Prefix
