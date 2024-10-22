@@ -147,6 +147,65 @@ public class FundsTransferUtility {
     }
   }
 
+  public static APRM_FundTransferRec completeTransfer(APRM_FundTransferRec fundTransferRecord) {
+    String fundsTransferNo = fundTransferRecord.getDocumentNo();
+    FIN_FinancialAccount accountFrom = fundTransferRecord.getFINAccFrom();
+    FIN_FinancialAccount accountTo = fundTransferRecord.getFINAccTo();
+    GLItem glitem = fundTransferRecord.getGLItem();
+    BigDecimal amount = fundTransferRecord.getAmount();
+    String description = fundTransferRecord.getDescription();
+
+    List<FIN_FinaccTransaction> transactions = new ArrayList<FIN_FinaccTransaction>();
+    Date trxDate = fundTransferRecord.getDate();
+
+    if (trxDate == null) {
+      trxDate = new Date();
+    }
+
+    try {
+      LineNumberUtil lineNoUtil = new LineNumberUtil();
+      BigDecimal targetAmount = convertAmount(amount, accountFrom, accountTo, trxDate, null);
+
+      // Source Account
+      FIN_FinaccTransaction sourceTrx = createTransaction(accountFrom, BP_WITHDRAWAL, trxDate,
+          glitem, amount, lineNoUtil, description);
+      transactions.add(sourceTrx);
+
+      // Target Account
+      FIN_FinaccTransaction destinationTrx = createTransaction(accountTo, BP_DEPOSIT, trxDate,
+          glitem, targetAmount, lineNoUtil, sourceTrx, description);
+      transactions.add(destinationTrx);
+
+      OBDal.getInstance().flush();
+      processTransactions(transactions);
+
+      // Fund transfer record
+      APRM_FundTransferRec newFundTransferRecord = completeFundTransferRecord(fundTransferRecord,
+          fundsTransferNo, accountFrom, accountTo, sourceTrx, destinationTrx, trxDate, amount,
+          description);
+
+      OBDal.getInstance().save(newFundTransferRecord);
+
+      for (FIN_FinaccTransaction transaction : transactions) {
+        transaction.setAprmFundTransferRec(newFundTransferRecord);
+        OBDal.getInstance().save(transaction);
+      }
+
+      // Needed the flush for the push api, if not it didn't found the register to export
+      OBDal.getInstance().flush();
+
+      WeldUtils.getInstanceFromStaticBeanManager(FundTransferRecordHookCaller.class)
+          .executeHook(newFundTransferRecord);
+
+      return fundTransferRecord;
+
+    } catch (Exception e) {
+      String message = OBMessageUtils.parseTranslation(e.getMessage());
+      OBDal.getInstance().rollbackAndClose();
+      throw new OBException(message, e);
+    }
+  }
+
   private static APRM_FundTransferRec createFundTransferRecord(Organization organization,
       FIN_FinancialAccount fromAccount, FIN_FinancialAccount toAccount,
       FIN_FinaccTransaction fromTrx, FIN_FinaccTransaction toTrx, Date trxDate, BigDecimal amount,
@@ -164,6 +223,24 @@ public class FundsTransferUtility {
     }
 
     fundTransferRecord.setOrganization(organization);
+    fundTransferRecord.setDocumentNo(fundsTransferNo);
+    fundTransferRecord.setDate(trxDate);
+    fundTransferRecord.setAmount(amount);
+    fundTransferRecord.setFINAccFrom(fromAccount);
+    fundTransferRecord.setFINAccTo(toAccount);
+    fundTransferRecord.setFINAccTranFrom(fromTrx);
+    fundTransferRecord.setFINAccTranTo(toTrx);
+    fundTransferRecord.setStatus("CO");
+
+    return fundTransferRecord;
+  }
+
+  private static APRM_FundTransferRec completeFundTransferRecord(
+      APRM_FundTransferRec fundTransferRecord, String fundsTransferNo,
+      FIN_FinancialAccount fromAccount, FIN_FinancialAccount toAccount,
+      FIN_FinaccTransaction fromTrx, FIN_FinaccTransaction toTrx, Date trxDate, BigDecimal amount,
+      String description) {
+
     fundTransferRecord.setDocumentNo(fundsTransferNo);
     fundTransferRecord.setDate(trxDate);
     fundTransferRecord.setAmount(amount);

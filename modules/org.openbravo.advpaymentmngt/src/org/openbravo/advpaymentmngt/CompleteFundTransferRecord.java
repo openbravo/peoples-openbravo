@@ -18,36 +18,22 @@
  */
 package org.openbravo.advpaymentmngt;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.openbravo.advpaymentmngt.utility.FundsTransferUtility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalBaseProcess;
 
 public class CompleteFundTransferRecord extends DalBaseProcess {
 
-  private static final Logger log = LogManager.getLogger();
-
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {
-
-    // Recover context and variables
-    ConnectionProvider conn = bundle.getConnection();
     VariablesSecureApp varsAux = bundle.getContext().toVars();
-    HttpServletRequest request = RequestContext.get().getRequest();
-
     OBContext.setOBContext(varsAux.getUser(), varsAux.getRole(), varsAux.getClient(),
         varsAux.getOrg());
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-
     try {
 
       final String fundTransferRecordId = (String) bundle.getParams()
@@ -56,8 +42,7 @@ public class CompleteFundTransferRecord extends DalBaseProcess {
           .get(APRM_FundTransferRec.class, fundTransferRecordId);
       fundTransferRecord.setStatus("CO");
 
-      // OBDal.getInstance().flush();
-      // OBDal.getInstance().refresh(fundTransferRecord);
+      FundsTransferUtility.completeTransfer(fundTransferRecord);
 
       // OBError is also used for successful results
       final OBError msg = new OBError();
