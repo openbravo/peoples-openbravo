@@ -120,7 +120,7 @@ public class FundsTransferUtility {
       // Fund transfer record
       APRM_FundTransferRec fundTransferRecord = createFundTransferRecord(
           sourceTrx.getOrganization(), accountFrom, accountTo, sourceTrx, destinationTrx, trxDate,
-          amount, description);
+          amount, glitem, description);
 
       OBDal.getInstance().save(fundTransferRecord);
 
@@ -181,8 +181,7 @@ public class FundsTransferUtility {
 
       // Fund transfer record
       APRM_FundTransferRec newFundTransferRecord = completeFundTransferRecord(fundTransferRecord,
-          fundsTransferNo, accountFrom, accountTo, sourceTrx, destinationTrx, trxDate, amount,
-          description);
+          sourceTrx, destinationTrx);
 
       OBDal.getInstance().save(newFundTransferRecord);
 
@@ -209,7 +208,7 @@ public class FundsTransferUtility {
   private static APRM_FundTransferRec createFundTransferRecord(Organization organization,
       FIN_FinancialAccount fromAccount, FIN_FinancialAccount toAccount,
       FIN_FinaccTransaction fromTrx, FIN_FinaccTransaction toTrx, Date trxDate, BigDecimal amount,
-      String description) {
+      GLItem glitem, String description) {
     APRM_FundTransferRec fundTransferRecord = OBProvider.getInstance()
         .get(APRM_FundTransferRec.class);
 
@@ -230,22 +229,17 @@ public class FundsTransferUtility {
     fundTransferRecord.setFINAccTo(toAccount);
     fundTransferRecord.setFINAccTranFrom(fromTrx);
     fundTransferRecord.setFINAccTranTo(toTrx);
+    fundTransferRecord.setGLItem(glitem);
+    fundTransferRecord.setDescription(description);
     fundTransferRecord.setStatus("CO");
 
     return fundTransferRecord;
   }
 
   private static APRM_FundTransferRec completeFundTransferRecord(
-      APRM_FundTransferRec fundTransferRecord, String fundsTransferNo,
-      FIN_FinancialAccount fromAccount, FIN_FinancialAccount toAccount,
-      FIN_FinaccTransaction fromTrx, FIN_FinaccTransaction toTrx, Date trxDate, BigDecimal amount,
-      String description) {
+      APRM_FundTransferRec fundTransferRecord, FIN_FinaccTransaction fromTrx,
+      FIN_FinaccTransaction toTrx) {
 
-    fundTransferRecord.setDocumentNo(fundsTransferNo);
-    fundTransferRecord.setDate(trxDate);
-    fundTransferRecord.setAmount(amount);
-    fundTransferRecord.setFINAccFrom(fromAccount);
-    fundTransferRecord.setFINAccTo(toAccount);
     fundTransferRecord.setFINAccTranFrom(fromTrx);
     fundTransferRecord.setFINAccTranTo(toTrx);
     fundTransferRecord.setStatus("CO");
