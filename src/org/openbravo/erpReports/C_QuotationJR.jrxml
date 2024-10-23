@@ -62,9 +62,9 @@
 	</parameter>
 	<parameter name="LOCALE" class="java.util.Locale" isForPrompting="false"/>
 	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat" isForPrompting="false"/>
-	<parameter name="SUBREP_C_OrderLinesJR" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
-	<parameter name="SUBREP_C_OrderLinesTaxIncludedJR" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
-	<parameter name="SUBREP_RptC_Order_TaxLines" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
+	<parameter name="SUBREP_C_OrderLinesJR_new" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
+	<parameter name="SUBREP_C_OrderLinesTaxIncludedJR_new" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
+	<parameter name="SUBREP_RptC_Order_TaxLines_new" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[SELECT C_ORDER.C_ORDER_ID, C_BPARTNER.NAME, L.ADDRESS1 ||
 (CASE WHEN (L.POSTAL||L.CITY||R.NAME) IS NOT NULL THEN (CHR(10)||L.POSTAL || (CASE WHEN L.POSTAL IS NOT NULL THEN (' - '||TO_CHAR(L.CITY)) END) ||
@@ -313,7 +313,7 @@ AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID]]>
 					<subreportParameterExpression><![CDATA[$F{ISTAXINCLUDED}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression><![CDATA[$P{SUBREP_C_OrderLinesJR}]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREP_C_OrderLinesJR_new}]]></subreportExpression>
 			</subreport>
 			<subreport isUsingCache="false">
 				<reportElement key="subreport-1" x="0" y="5" width="482" height="36" uuid="651e3bb0-902e-4030-b832-25091b43b101">
@@ -332,7 +332,7 @@ AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID]]>
 					<subreportParameterExpression><![CDATA[$F{ISTAXINCLUDED}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression><![CDATA[$P{SUBREP_C_OrderLinesTaxIncludedJR}]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREP_C_OrderLinesTaxIncludedJR_new}]]></subreportExpression>
 			</subreport>
 		</band>
 		<band height="27">
@@ -350,7 +350,7 @@ AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID]]>
 					<subreportParameterExpression><![CDATA[$F{C_ORDER_ID}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression><![CDATA[$P{SUBREP_RptC_Order_TaxLines}]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREP_RptC_Order_TaxLines_new}]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>
