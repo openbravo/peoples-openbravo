@@ -58,14 +58,6 @@ BEGIN
   END IF;
 
   IF UPDATING THEN
-    IF :new.IsRegistered ='Y'
-       AND (COALESCE(:NEW.NAME, '.') <> COALESCE(:NEW.NAME, '.')
-            OR COALESCE(:NEW.TYPE, '.') <> COALESCE(:NEW.TYPE, '.')
-            OR COALESCE(:NEW.JAVAPACKAGE, '.') <> COALESCE(:NEW.JAVAPACKAGE, '.')) THEN
-      RAISE_APPLICATION_ERROR(-20000, '@20534@');
-    END IF;
-
-
     IF(COALESCE(:old.License, '.') <> COALESCE(:NEW.License, '.')
        OR COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.')
        OR COALESCE(:old.Help, '.') <> COALESCE(:NEW.Help, '.'))

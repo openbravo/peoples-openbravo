@@ -142,9 +142,9 @@
                 SEQNO                , JAVAPACKAGE          , LICENSETYPE          ,                                                                                                                                                                          
                 AUTHOR               , STATUS               , UPDATE_AVAILABLE     ,                                                                                                                                                                          
                 ISTRANSLATIONREQUIRED, AD_LANGUAGE          , HASCHARTOFACCOUNTS   ,                                                                                                                                                                          
-                ISTRANSLATIONMODULE  , HASREFERENCEDATA     , ISREGISTERED         ,                                                                                                                                                                          
-                UPDATEINFO           , UPDATE_VER_ID        , REFERENCEDATAINFO    ,
-                ENABLED, ISCONFIGSCRIPTAPPLIED) 
+                ISTRANSLATIONMODULE  , HASREFERENCEDATA     , UPDATEINFO           ,
+                UPDATE_VER_ID        , REFERENCEDATAINFO    , ENABLED              ,
+                ISCONFIGSCRIPTAPPLIED)
        VALUES ( get_uuid(), '0', '0',                                                                                                                                                                          
                 'Y', NOW(), '0',                                                                                                                                                                          
                 NOW(), '0', ?,                                                                                                                                                                          
@@ -155,7 +155,7 @@
                 ?, ?, ?,                                                                                                                                                                          
                 ?, ?, ?,                                                                                                                                                                          
                 ?, ?, ?,                                                                                                                                                                          
-                ?, ?, ?,
+                ?, ?,
                 (COALESCE((SELECT ENABLED
                    FROM AD_MODULE 
                   WHERE AD_MODULE_ID = ?),'Y')), ?)
@@ -167,7 +167,7 @@
     <Parameter name="SEQNO"/>                <Parameter name="JAVAPACKAGE"/>  <Parameter name="LICENSETYPE"/>                                                                                                                                                                          
     <Parameter name="AUTHOR"/>               <Parameter name="STATUS"/>       <Parameter name="UPDATE_AVAILABLE"/>                                                                                                                                                                          
     <Parameter name="ISTRANSLATIONREQUIRED"/> <Parameter name="AD_LANGUAGE"/> <Parameter name="HASCHARTOFACCOUNTS"/>                                                                                                                                                                          
-    <Parameter name="ISTRANSLATIONMODULE"/>  <Parameter name="HASREFERENCEDATA"/> <Parameter name="ISREGISTERED"/>                                                                                                                                                                          
+    <Parameter name="ISTRANSLATIONMODULE"/>  <Parameter name="HASREFERENCEDATA"/>
     <Parameter name="UPDATEINFO"/>           <Parameter name="UPDATE_VER_ID"/> <Parameter name="REFERENCEDATAINFO"/>
     <Parameter name="AD_MODULE_ID"/>         <Parameter name="ISCONFIGSCRIPTAPPLIED"/>
    </SqlMethod>

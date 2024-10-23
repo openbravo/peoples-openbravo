@@ -62,7 +62,6 @@ public class CentralRepository {
 
   /** Defines available services in Central Repository */
   public enum Service {
-    REGISTER_MODULE("register", Method.POST),
     SEARCH_MODULES("search", Method.POST),
     MODULE_INFO("module", Method.GET),
     MATURITY_LEVEL("maturityLevel", Method.GET),

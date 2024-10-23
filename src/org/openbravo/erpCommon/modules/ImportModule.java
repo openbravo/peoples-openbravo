@@ -1315,9 +1315,9 @@ public class ImportModule implements Serializable {
           (String) module.get("STATUS"), (String) module.get("UPDATE_AVAILABLE"),
           (String) module.get("ISTRANSLATIONREQUIRED"), (String) module.get("AD_LANGUAGE"),
           (String) module.get("HASCHARTOFACCOUNTS"), (String) module.get("ISTRANSLATIONMODULE"),
-          (String) module.get("HASREFERENCEDATA"), (String) module.get("ISREGISTERED"),
-          (String) module.get("UPDATEINFO"), (String) module.get("UPDATE_VER_ID"),
-          (String) module.get("REFERENCEDATAINFO"), applyConfigScript);
+          (String) module.get("HASREFERENCEDATA"), (String) module.get("UPDATEINFO"),
+          (String) module.get("UPDATE_VER_ID"), (String) module.get("REFERENCEDATAINFO"),
+          applyConfigScript);
 
       // Set installed for modules being updated
       ImportModuleData.setModuleUpdated(pool, (String) module.get("AD_MODULE_ID"));

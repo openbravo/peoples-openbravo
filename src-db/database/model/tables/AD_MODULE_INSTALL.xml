@@ -117,10 +117,6 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="ISREGISTERED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="UPDATEINFO" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -163,7 +159,6 @@
       <check name="AD_MOD_INS_ISTRANSLATEABLE_CHK"><![CDATA[ISTRANSLATIONREQUIRED IN ('Y', 'N')]]></check>
       <check name="AD_MODULE_INS_APPLYCFG_CHK"><![CDATA[ISCONFIGSCRIPTAPPLIED IN ('Y', 'N')]]></check>
       <check name="AD_MODULE_INS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="AD_MODULE_INS_ISREGISTERED_CHK"><![CDATA[ISREGISTERED IN ('Y', 'N')]]></check>
       <check name="AD_MODULE_INS_TYPE_CHK"><![CDATA[TYPE IN ('M', 'P', 'T')]]></check>
       <check name="AD_MODULE_INSTALL_FFT_CHK"><![CDATA[ISTRIALALLOWED IN ('Y', 'N')]]></check>
       <check name="AD_MODULE_INSTALL_ISDEFAUL_CHK"><![CDATA[ISDEFAULT = 'N' OR ISDEFAULT = 'Y' AND ISINDEVELOPMENT = 'Y']]></check>
