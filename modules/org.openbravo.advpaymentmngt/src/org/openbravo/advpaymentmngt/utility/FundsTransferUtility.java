@@ -89,6 +89,11 @@ public class FundsTransferUtility {
     }
 
     try {
+
+      if (isDateBeforeOrEqualToReconciliationsDate(trxDate, accountFrom, accountTo)) {
+        throw new OBException("@APRM_DateFundTransferRecordBeforeReconciliations@");
+      }
+
       LineNumberUtil lineNoUtil = new LineNumberUtil();
       BigDecimal targetAmount = convertAmount(amount, accountFrom, accountTo, trxDate,
           manualConversionRate);
@@ -148,7 +153,6 @@ public class FundsTransferUtility {
   }
 
   public static APRM_FundTransferRec completeTransfer(APRM_FundTransferRec fundTransferRecord) {
-    String fundsTransferNo = fundTransferRecord.getDocumentNo();
     FIN_FinancialAccount accountFrom = fundTransferRecord.getFINAccFrom();
     FIN_FinancialAccount accountTo = fundTransferRecord.getFINAccTo();
     GLItem glitem = fundTransferRecord.getGLItem();
@@ -163,6 +167,11 @@ public class FundsTransferUtility {
     }
 
     try {
+
+      if (isDateBeforeOrEqualToReconciliationsDate(trxDate, accountFrom, accountTo)) {
+        throw new OBException("@APRM_DateFundTransferRecordBeforeReconciliations@");
+      }
+
       LineNumberUtil lineNoUtil = new LineNumberUtil();
       BigDecimal targetAmount = convertAmount(amount, accountFrom, accountTo, trxDate, null);
 
@@ -246,6 +255,15 @@ public class FundsTransferUtility {
 
     return fundTransferRecord;
   }
+
+  private static Boolean isDateBeforeOrEqualToReconciliationsDate(Date fundsTransferDate,
+      FIN_FinancialAccount accountFrom, FIN_FinancialAccount accountTo) {
+    return (!(accountFrom.getLastreconciliation() == null
+        || fundsTransferDate.after(accountFrom.getLastreconciliation())
+            && (accountTo.getLastreconciliation() == null
+                || fundsTransferDate.after(accountTo.getLastreconciliation()))));
+  }
+  // throw new OBException("@APRM_DateFundTransferRecordBeforeReconciliations@");
 
   private static BigDecimal convertAmount(BigDecimal amount, FIN_FinancialAccount accountFrom,
       FIN_FinancialAccount accountTo, Date date, BigDecimal rate) {
