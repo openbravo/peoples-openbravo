@@ -18,8 +18,6 @@
  */
 package org.openbravo.advpaymentmngt;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openbravo.advpaymentmngt.process.FIN_TransactionProcess;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -30,8 +28,6 @@ import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalBaseProcess;
 
 public class ReactivateFundTransferRecord extends DalBaseProcess {
-
-  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {
