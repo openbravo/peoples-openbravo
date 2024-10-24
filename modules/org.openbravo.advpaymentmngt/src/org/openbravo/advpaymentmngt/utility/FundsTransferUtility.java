@@ -263,7 +263,6 @@ public class FundsTransferUtility {
             && (accountTo.getLastreconciliation() == null
                 || fundsTransferDate.after(accountTo.getLastreconciliation()))));
   }
-  // throw new OBException("@APRM_DateFundTransferRecordBeforeReconciliations@");
 
   private static BigDecimal convertAmount(BigDecimal amount, FIN_FinancialAccount accountFrom,
       FIN_FinancialAccount accountTo, Date date, BigDecimal rate) {
