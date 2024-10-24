@@ -128,4 +128,12 @@ public class FundsTransferActionHandler extends BaseProcessActionHandler {
         manualConversionRate, bankFeeFrom, bankFeeTo, description);
   }
 
+  // Deprecated: do not call to this function, call instead to FundsTransferUtility.createTransfer
+  public static void createTransfer(Date date, FIN_FinancialAccount accountFrom,
+      FIN_FinancialAccount accountTo, GLItem glitem, BigDecimal amount,
+      BigDecimal manualConversionRate, BigDecimal bankFeeFrom, BigDecimal bankFeeTo) {
+    createTransfer(date, accountFrom, accountTo, glitem, amount, manualConversionRate, bankFeeFrom,
+        bankFeeTo, null);
+  }
+
 }
