@@ -133,7 +133,11 @@ public class OAuth2AuthorizationProvider
 
     HttpResponse<String> response;
     try {
+      log.trace("Requesting OAuth access token to {}", authServerURL);
+      long t = System.currentTimeMillis();
       response = httpClient.send(authRequest, HttpResponse.BodyHandlers.ofString());
+      log.trace("Received OAuth access token response {} from {}. Took: {} ms",
+          response.statusCode(), authServerURL, System.currentTimeMillis() - t);
     } catch (IOException ex) {
       throw new OAuth2AuthorizationError("Request to retrieve the access token failed", ex);
     } catch (InterruptedException ex) {
