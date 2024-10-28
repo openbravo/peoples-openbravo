@@ -9,8 +9,15 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_APRM_FUND_TRANSFER_REC_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="FIN_FINACC_TRANSACTION" name="EM_APRM_FINACC_TRANS_ORIGIN_FK">
         <reference local="EM_APRM_FINACC_TRANS_ORIGIN" foreign="FIN_FINACC_TRANSACTION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="APRM_FUND_TRANSFER_REC" name="EM_APRM_FTR_FK">
+        <reference local="EM_APRM_FUND_TRANSFER_REC_ID" foreign="APRM_FUND_TRANSFER_REC_ID"/>
       </foreign-key>
     </table>
   </database>

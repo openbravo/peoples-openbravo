@@ -126,7 +126,7 @@ public class FundsTransferTest extends WeldBaseTest {
   @InSequence(1)
   public void testFundsTransferSameCurrency() {
     FundsTransferActionHandler.createTransfer(TODAY, caja_clone, banco_clone, glitem,
-        TRANSACTION_AMT, null, null, null);
+        TRANSACTION_AMT, null, null, null, null);
 
     testTransactions(caja_clone, banco_clone, TRANSACTION_AMT, null, TRANSACTION_AMT, null);
   }
@@ -135,7 +135,7 @@ public class FundsTransferTest extends WeldBaseTest {
   @InSequence(2)
   public void testFundsTransferBankFee() {
     FundsTransferActionHandler.createTransfer(TODAY, caja_clone, banco_clone, glitem,
-        TRANSACTION_AMT, null, FEE_AMT_FROM, null);
+        TRANSACTION_AMT, null, FEE_AMT_FROM, null, null);
 
     testTransactions(caja_clone, banco_clone, TRANSACTION_AMT, FEE_AMT_FROM, TRANSACTION_AMT, null);
   }
@@ -144,14 +144,14 @@ public class FundsTransferTest extends WeldBaseTest {
   @InSequence(4)
   public void testFundsTransferConversionRateError() {
     FundsTransferActionHandler.createTransfer(TODAY, caja_clone, banco_gbp, glitem, TRANSACTION_AMT,
-        null, null, null);
+        null, null, null, null);
   }
 
   @Test
   @InSequence(5)
   public void testFundsTransferManualConversionRate() {
     FundsTransferActionHandler.createTransfer(TODAY, caja_clone, banco_gbp, glitem, TRANSACTION_AMT,
-        CONVERSION_RATE, null, null);
+        CONVERSION_RATE, null, null, null);
 
     BigDecimal convertedAmount = TRANSACTION_AMT.multiply(CONVERSION_RATE)
         .setScale(2, RoundingMode.HALF_UP);
@@ -165,7 +165,7 @@ public class FundsTransferTest extends WeldBaseTest {
     createConversionRate(caja_clone.getCurrency(), banco_gbp.getCurrency());
 
     FundsTransferActionHandler.createTransfer(TODAY, caja_clone, banco_gbp, glitem, TRANSACTION_AMT,
-        null, null, null);
+        null, null, null, null);
 
     BigDecimal convertedAmount = TRANSACTION_AMT.multiply(CONVERSION_RATE)
         .setScale(2, RoundingMode.HALF_UP);
@@ -177,7 +177,7 @@ public class FundsTransferTest extends WeldBaseTest {
   @InSequence(8)
   public void testFundsTransferTargetFee() {
     FundsTransferActionHandler.createTransfer(TODAY, caja_clone, banco_gbp, glitem, TRANSACTION_AMT,
-        CONVERSION_RATE, null, FEE_AMT_TO);
+        CONVERSION_RATE, null, FEE_AMT_TO, null);
 
     BigDecimal convertedAmount = TRANSACTION_AMT.multiply(CONVERSION_RATE)
         .setScale(2, RoundingMode.HALF_UP);
