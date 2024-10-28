@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2022 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -225,6 +225,17 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
       log.error("Error checking active session " + sessionId, e);
       return false;
     }
+  }
+
+  /**
+   * Indicates if a sessionId is in the current context
+   * 
+   * @param sessionId
+   *          session to check
+   * @return true in case it is in the context, false otherwise
+   */
+  public static boolean isSessionInContext(String sessionId) {
+    return sessionsInContext.contains(sessionId);
   }
 
 }
