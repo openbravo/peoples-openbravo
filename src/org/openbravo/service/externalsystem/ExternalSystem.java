@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2022-2023 Openbravo SLU
+ * All portions are Copyright (C) 2022-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,6 +36,7 @@ import javax.enterprise.context.Dependent;
 @Dependent
 public abstract class ExternalSystem implements AutoCloseable {
 
+  private String id;
   private String name;
   private String searchKey;
 
@@ -154,8 +155,16 @@ public abstract class ExternalSystem implements AutoCloseable {
    *           in case the external system cannot be properly configured
    */
   protected void configure(ExternalSystemData configuration) {
+    id = configuration.getId();
     name = configuration.getName();
     searchKey = configuration.getSearchKey();
+  }
+
+  /**
+   * @return the ID of the external system
+   */
+  protected String getId() {
+    return id;
   }
 
   /**
@@ -170,5 +179,10 @@ public abstract class ExternalSystem implements AutoCloseable {
    */
   protected String getSearchKey() {
     return searchKey;
+  }
+
+  @Override
+  public String toString() {
+    return "[" + id + "]";
   }
 }

@@ -86,7 +86,7 @@ public class HttpExternalSystem extends ExternalSystem implements Cacheable {
         .filter(HttpExternalSystemData::isActive)
         .findFirst()
         .orElseThrow(() -> new ExternalSystemConfigurationError(
-            "No HTTP configuration found for external system with ID " + configuration.getId()));
+            "No HTTP configuration found for external system with ID " + getId()));
 
     url = httpConfig.getURL();
     requestMethod = httpConfig.getRequestMethod();
@@ -339,5 +339,10 @@ public class HttpExternalSystem extends ExternalSystem implements Cacheable {
     // We do not need to manually close anything here because the resources are automatically
     // released when the HttpClient is no longer referenced. This should happen when this instance
     // is invalidated from the ExternalSystemProvider cache.
+  }
+
+  @Override
+  public String toString() {
+    return super.toString() + " " + url;
   }
 }
