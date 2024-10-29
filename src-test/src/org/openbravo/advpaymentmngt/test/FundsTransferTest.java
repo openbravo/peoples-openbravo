@@ -26,6 +26,7 @@ import static org.junit.Assert.fail;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -34,10 +35,13 @@ import org.jboss.arquillian.junit.InSequence;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openbravo.advpaymentmngt.APRM_FundTransferRec;
+import org.openbravo.advpaymentmngt.ReactivateFundTransferRecord;
 import org.openbravo.advpaymentmngt.actionHandler.FundsTransferActionHandler;
 import org.openbravo.advpaymentmngt.process.FIN_TransactionProcess;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -49,12 +53,15 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
+import org.openbravo.scheduling.ProcessBundle;
 
 public class FundsTransferTest extends WeldBaseTest {
   final private static String BP_DEPOSIT = "BPD";
   final private static String BP_WITHDRAWAL = "BPW";
   final private static String BANK_FEE = "BF";
   private static final String REACTIVATE = "R";
+  private static final String PROCESS_BUNDLE_PROCESS_IDENTIFIER = "task-assigment-test";
+
   // User Openbravo
   private final String USER_ID = "100";
   // Client F&B International Group
@@ -218,6 +225,18 @@ public class FundsTransferTest extends WeldBaseTest {
     }
   }
 
+  private void setNullForAllAPRMTransaction(APRM_FundTransferRec fundTransRec) {
+    final OBCriteria<FIN_FinaccTransaction> transactions = OBDal.getInstance()
+        .createCriteria(FIN_FinaccTransaction.class);
+    transactions
+        .add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_APRMFUNDTRANSFERREC, fundTransRec));
+    for (FIN_FinaccTransaction trans : transactions.list()) {
+      trans.setAprmFinaccTransOrigin(null);
+      trans.setAprmFundTransferRec(null);
+    }
+    OBDal.getInstance().flush();
+  }
+
   private void testTransactions(FIN_FinancialAccount origin_acct, FIN_FinancialAccount target_acct,
       BigDecimal debit_amt, BigDecimal origin_fee, BigDecimal deposit_amt, BigDecimal target_fee,
       List<FIN_FinaccTransaction> original_trans, List<FIN_FinaccTransaction> target_trans) {
@@ -284,9 +303,22 @@ public class FundsTransferTest extends WeldBaseTest {
     List<FIN_FinaccTransaction> transac = (List<FIN_FinaccTransaction>) getFinancialTransaction(
         account);
     for (FIN_FinaccTransaction trans : transac) {
-      OBDal.getInstance().remove(trans);
+      for (APRM_FundTransferRec fundTransfer : getFundTransferRec(trans)) {
+        reactivateFundTransfer(fundTransfer);
+        APRM_FundTransferRec fundTransferRecord = OBDal.getInstance()
+            .get(APRM_FundTransferRec.class, fundTransfer.getId());
+        fundTransferRecord.setFINAccTranFrom(null);
+        fundTransferRecord.setFINAccTranTo(null);
+        setNullForAllAPRMTransaction(fundTransferRecord);
+        OBDal.getInstance().flush();
+        OBDal.getInstance().remove(fundTransferRecord);
+      }
+      trans.setAprmFinaccTransOrigin(null);
+      trans.setAprmFundTransferRec(null);
+      OBDal.getInstance().flush();
       account.getFINFinaccTransactionList().remove(trans);
     }
+
   }
 
   private void reactivateTransactions(FIN_FinancialAccount account) {
@@ -300,6 +332,40 @@ public class FundsTransferTest extends WeldBaseTest {
   private void deleteConversionRate(ConversionRate conv_rate) {
     if (conv_rate != null) {
       OBDal.getInstance().remove(conv_rate);
+    }
+  }
+
+  private List<APRM_FundTransferRec> getFundTransferRec(FIN_FinaccTransaction trans) {
+    try {
+      final OBCriteria<APRM_FundTransferRec> aprmTrans = OBDal.getInstance()
+          .createCriteria(APRM_FundTransferRec.class);
+      aprmTrans
+          .add(Restrictions.or(Restrictions.eq(APRM_FundTransferRec.PROPERTY_FINACCTRANTO, trans),
+              Restrictions.eq(APRM_FundTransferRec.PROPERTY_FINACCTRANFROM, trans)));
+      return aprmTrans.list();
+    } catch (final Exception e) {
+      throw new OBException(e);
+    }
+  }
+
+  private void reactivateFundTransfer(APRM_FundTransferRec fundTransfer) {
+    try {
+      OBContext.setAdminMode();
+      HashMap<String, Object> parameters = new HashMap<String, Object>();
+      final OBContext obContext = OBContext.getOBContext();
+      final VariablesSecureApp vars = new VariablesSecureApp(obContext.getUser().getId(),
+          obContext.getCurrentClient().getId(), obContext.getCurrentOrganization().getId(),
+          obContext.getRole().getId(), obContext.getLanguage().getLanguage());
+      final ProcessBundle processBundle = new ProcessBundle(PROCESS_BUNDLE_PROCESS_IDENTIFIER,
+          vars);
+      parameters.put("Aprm_Fund_Transfer_Rec_ID", fundTransfer.getId());
+      processBundle.setParams(parameters);
+      ReactivateFundTransferRecord reactivate = new ReactivateFundTransferRecord();
+      reactivate.execute(processBundle);
+    } catch (Exception e) {
+      throw new OBException(e);
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 }
