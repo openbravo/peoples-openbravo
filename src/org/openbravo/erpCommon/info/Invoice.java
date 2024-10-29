@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -300,40 +300,24 @@ public class Invoice extends HttpSecureAppServlet {
         // New filter of first load
         if (localStrNewFilter.equals("1") || localStrNewFilter.equals("")) {
           // calculate params for sql limit/offset or rownum clause
-          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-            rownum = "ROWNUM";
-          } else {
-            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-          }
-          strNumRows = InvoiceData.countRows(this, rownum,
+          String pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          strNumRows = InvoiceData.countRows(this,
               Utility.getContext(this, vars, "#User_Client", "Invoice"),
               Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strBpartnerId,
               strOrder, strDateFrom, DateTimeData.nDaysAfter(this, strFechaTo, "1"), strCal1,
-              strCalc2, strSOTrx, pgLimit, oraLimit1, oraLimit2);
+              strCalc2, strSOTrx, pgLimit);
           vars.setSessionValue("Invoice.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("Invoice.numrows");
         }
 
         // Filtering result
-        if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
-          data = InvoiceData.select(this, "ROWNUM", vars.getSqlDateFormat(),
-              Utility.getContext(this, vars, "#User_Client", "Invoice"),
-              Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strBpartnerId,
-              strOrder, strDateFrom, DateTimeData.nDaysAfter(this, strFechaTo, "1"), strCal1,
-              strCalc2, strSOTrx, strOrderBy, oraLimit, "");
-        } else {
-          String pgLimit = pageSize + " OFFSET " + offset;
-          data = InvoiceData.select(this, "1", vars.getSqlDateFormat(),
-              Utility.getContext(this, vars, "#User_Client", "Invoice"),
-              Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strBpartnerId,
-              strOrder, strDateFrom, DateTimeData.nDaysAfter(this, strFechaTo, "1"), strCal1,
-              strCalc2, strSOTrx, strOrderBy, "", pgLimit);
-        }
+        String pgLimit = pageSize + " OFFSET " + offset;
+        data = InvoiceData.select(this, vars.getSqlDateFormat(),
+            Utility.getContext(this, vars, "#User_Client", "Invoice"),
+            Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strBpartnerId,
+            strOrder, strDateFrom, DateTimeData.nDaysAfter(this, strFechaTo, "1"), strCal1,
+            strCalc2, strSOTrx, strOrderBy, pgLimit);
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
         e.printStackTrace();

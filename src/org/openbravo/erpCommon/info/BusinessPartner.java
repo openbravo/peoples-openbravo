@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -134,18 +134,13 @@ public class BusinessPartner extends HttpSecureAppServlet {
       // - exactly one row (and row content is needed)
       // - zero or more than one row (row content not needed)
       // so limit <= 2 records to get both info from result without needing to fetch all rows
-      String oraLimit1 = null, pgLimit = null;
-      if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-        oraLimit1 = "2";
-      } else {
-        pgLimit = "2";
-      }
+      String pgLimit = "2";
 
       final BusinessPartnerData[] data = BusinessPartnerData.selectKey(this,
           Utility.getContext(this, vars, "#User_Client", "BusinessPartner"),
           Utility.getSelectorOrgs(this, vars, strOrg),
           (strSelected.equals("customer") ? "clients" : ""),
-          (strSelected.equals("vendor") ? "vendors" : ""), strKeyValue + "%", pgLimit, oraLimit1);
+          (strSelected.equals("vendor") ? "vendors" : ""), strKeyValue + "%", pgLimit);
       if (data != null && data.length == 1) {
         printPageKey(response, vars, data);
       } else {
@@ -338,44 +333,24 @@ public class BusinessPartner extends HttpSecureAppServlet {
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
         // New filter or first load
         if (localStrNewFilter.equals("1") || localStrNewFilter.equals("")) {
-          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-            rownum = "ROWNUM";
-          } else {
-            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-          }
-          strNumRows = BusinessPartnerData.countRows(this, rownum,
+          String pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          strNumRows = BusinessPartnerData.countRows(this,
               Utility.getContext(this, vars, "#User_Client", "BusinessPartner"),
               Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strContact, strZIP,
               strProvincia, (strBpartners.equals("customer") ? "clients" : ""),
-              (strBpartners.equals("vendor") ? "vendors" : ""), strCity, pgLimit, oraLimit1,
-              oraLimit2);
+              (strBpartners.equals("vendor") ? "vendors" : ""), strCity, pgLimit);
           vars.setSessionValue("BusinessPartnerInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("BusinessPartnerInfo.numrows");
         }
 
         // Filtering result
-        if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit1 = String.valueOf(offset + pageSize);
-          String oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-          data = BusinessPartnerData.select(this, "ROWNUM",
-              Utility.getContext(this, vars, "#User_Client", "BusinessPartner"),
-              Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strContact, strZIP,
-              strProvincia, (strBpartners.equals("customer") ? "clients" : ""),
-              (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, "", oraLimit1,
-              oraLimit2);
-        } else {
-          final String pgLimit = pageSize + " OFFSET " + offset;
-          data = BusinessPartnerData.select(this, "1",
-              Utility.getContext(this, vars, "#User_Client", "BusinessPartner"),
-              Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strContact, strZIP,
-              strProvincia, (strBpartners.equals("customer") ? "clients" : ""),
-              (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, pgLimit, "",
-              "");
-        }
+        final String pgLimit = pageSize + " OFFSET " + offset;
+        data = BusinessPartnerData.select(this,
+            Utility.getContext(this, vars, "#User_Client", "BusinessPartner"),
+            Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strContact, strZIP,
+            strProvincia, (strBpartners.equals("customer") ? "clients" : ""),
+            (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, pgLimit);
       } catch (final ServletException e) {
         log4j.error("Error in print page data: " + e);
         e.printStackTrace();

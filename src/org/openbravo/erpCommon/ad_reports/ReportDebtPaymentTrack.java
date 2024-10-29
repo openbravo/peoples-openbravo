@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -175,10 +175,10 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
     } else {
       String strDocTypes = "'" + strInvoice + "','" + strDPCNA + "','" + strDPCA + "','" + strDPGNA
           + "','" + strDPGA + "','" + strDPM + "','" + strDPC + "','" + strDPB + "'";
-      data = ReportDebtPaymentTrackData.select(this, "0", vars.getLanguage(),
+      data = ReportDebtPaymentTrackData.select(this, vars.getLanguage(),
           Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment"), strcBpartnerId,
-          strDateFrom, strDateTo, strAmtFrom, strAmtTo, strDocTypes, null, null, null);
+          strDateFrom, strDateTo, strAmtFrom, strAmtTo, strDocTypes, null);
       String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportDebtPaymentTracker.jrxml";
       renderJR(vars, response, strReportName, "pdf", null, data, null);
     }
@@ -198,19 +198,9 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
     int intRecordRange = (strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange));
     String strInitRecord = vars.getSessionValue("ReportDebtPaymentTrack.initRecordNumber");
     int initRecordNumber = (strInitRecord.equals("") ? 0 : Integer.parseInt(strInitRecord));
-    String rowNum = "0";
-    String oraLimit1 = null;
-    String oraLimit2 = null;
     String pgLimit = null;
     if (intRecordRange != 0) {
-      if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-        rowNum = "ROWNUM";
-        oraLimit1 = String.valueOf(initRecordNumber + intRecordRange);
-        oraLimit2 = (initRecordNumber + 1) + " AND " + oraLimit1;
-      } else {
-        rowNum = "0";
-        pgLimit = intRecordRange + " OFFSET " + initRecordNumber;
-      }
+      pgLimit = intRecordRange + " OFFSET " + initRecordNumber;
     }
 
     PrintWriter out = response.getWriter();
@@ -226,10 +216,10 @@ public class ReportDebtPaymentTrack extends HttpSecureAppServlet {
     } else {
       String strDocTypes = "'" + strInvoice + "','" + strDPCNA + "','" + strDPCA + "','" + strDPGNA
           + "','" + strDPGA + "','" + strDPM + "','" + strDPC + "','" + strDPB + "'";
-      data = ReportDebtPaymentTrackData.select(this, rowNum, vars.getLanguage(),
+      data = ReportDebtPaymentTrackData.select(this, vars.getLanguage(),
           Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportDebtPayment"), strcBpartnerId,
-          strDateFrom, strDateTo, strAmtFrom, strAmtTo, strDocTypes, oraLimit1, oraLimit2, pgLimit);
+          strDateFrom, strDateTo, strAmtFrom, strAmtTo, strDocTypes, pgLimit);
     }
     xmlDocument = xmlEngine
         .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportDebtPaymentTrack", discard)

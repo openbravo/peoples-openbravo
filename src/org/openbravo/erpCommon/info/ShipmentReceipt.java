@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -294,19 +294,12 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
           // or
           // first
           // load
-          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-            rownum = "ROWNUM";
-          } else {
-            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-          }
-          strNumRows = ShipmentReceiptData.countRows(this, rownum,
+          String pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
+          strNumRows = ShipmentReceiptData.countRows(this,
               Utility.getContext(this, vars, "#User_Client", "ShipmentReceipt"),
               Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strBpartnerId,
               strOrderReference, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-              strSalesTransaction, pgLimit, oraLimit1, oraLimit2);
+              strSalesTransaction, pgLimit);
           // strNumRows = String.valueOf(data.length);
           vars.setSessionValue("ShipmentReceipt.numrows", strNumRows);
         } else {
@@ -314,21 +307,12 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
         }
 
         // Filtering result
-        if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
-          data = ShipmentReceiptData.select(this, "ROWNUM",
-              Utility.getContext(this, vars, "#User_Client", "ShipmentReceipt"),
-              Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strBpartnerId,
-              strOrderReference, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-              strSalesTransaction, strOrderBy, oraLimit, "");
-        } else {
-          String pgLimit = pageSize + " OFFSET " + offset;
-          data = ShipmentReceiptData.select(this, "1",
-              Utility.getContext(this, vars, "#User_Client", "ShipmentReceipt"),
-              Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strBpartnerId,
-              strOrderReference, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-              strSalesTransaction, strOrderBy, "", pgLimit);
-        }
+        String pgLimit = pageSize + " OFFSET " + offset;
+        data = ShipmentReceiptData.select(this,
+            Utility.getContext(this, vars, "#User_Client", "ShipmentReceipt"),
+            Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strBpartnerId,
+            strOrderReference, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+            strSalesTransaction, strOrderBy, pgLimit);
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
         e.printStackTrace();

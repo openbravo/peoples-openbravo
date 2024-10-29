@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -60,22 +60,15 @@ public class ClassicSelectorTest extends OBBaseTest {
   private void checkBpartnerMultiple(String client, String org, String key, String name,
       String contact, String postCode, String province, String clients, String vendors,
       String ciudad, String orderBy) throws ServletException {
-    String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
+    String pgLimit = null;
     long offset = 0;
-    if (getConnectionProvider().getRDBMS().equalsIgnoreCase("ORACLE")) {
-      oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-      oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-      rownum = "ROWNUM";
-    } else {
-      pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-    }
+    pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
 
     BusinessPartnerMultipleData data[] = BusinessPartnerMultipleData.select(getConnectionProvider(),
-        rownum, client, org, key, name, contact, postCode, province, clients, vendors, ciudad,
-        orderBy, pgLimit, oraLimit1, oraLimit2);
-    String strCount = BusinessPartnerMultipleData.countRows(getConnectionProvider(), rownum, client,
-        org, key, name, contact, postCode, province, clients, vendors, ciudad, pgLimit, oraLimit1,
-        oraLimit2);
+        client, org, key, name, contact, postCode, province, clients, vendors, ciudad, orderBy,
+        pgLimit);
+    String strCount = BusinessPartnerMultipleData.countRows(getConnectionProvider(), client, org,
+        key, name, contact, postCode, province, clients, vendors, ciudad, pgLimit);
     long count = Long.valueOf(strCount);
 
     // check implicit consistency requirement: both select & selectCount methods must agree on

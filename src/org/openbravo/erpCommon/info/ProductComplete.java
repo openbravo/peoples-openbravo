@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -149,33 +149,24 @@ public class ProductComplete extends HttpSecureAppServlet {
       // - exactly one row (and row content is needed)
       // - zero or more than one row (row content not needed)
       // so limit <= 2 records to get both info from result without needing to fetch all rows
-      String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-      if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-        oraLimit1 = "2";
-        oraLimit2 = "1 AND 2";
-        rownum = "ROWNUM";
-      } else {
-        pgLimit = "2";
-      }
+      String pgLimit = "2";
 
       if (strStore.equals("Y")) {
         if (vars.getLanguage().equals("en_US")) {
-          data = ProductCompleteData.select(this, rownum, strKeyValue, "", strWarehouse,
-              isCalledFromProduction, vars.getRole(), strBpartner, strClients, "1", pgLimit,
-              oraLimit1, oraLimit2);
+          data = ProductCompleteData.select(this, strKeyValue, "", strWarehouse,
+              isCalledFromProduction, vars.getRole(), strBpartner, strClients, "1", pgLimit);
         } else {
-          data = ProductCompleteData.selecttrl(this, vars.getLanguage(), rownum, strKeyValue, "",
+          data = ProductCompleteData.selecttrl(this, vars.getLanguage(), strKeyValue, "",
               strWarehouse, isCalledFromProduction, vars.getRole(), strBpartner, strClients, "1",
-              pgLimit, oraLimit1, oraLimit2);
+              pgLimit);
         }
       } else {
         if (vars.getLanguage().equals("en_US")) {
-          data = ProductCompleteData.selectNotStored(this, rownum, strKeyValue, "", strBpartner,
-              strClients, strOrgs, isCalledFromProduction, "1", pgLimit, oraLimit1, oraLimit2);
+          data = ProductCompleteData.selectNotStored(this, strKeyValue, "", strBpartner, strClients,
+              strOrgs, isCalledFromProduction, "1", pgLimit);
         } else {
-          data = ProductCompleteData.selectNotStoredtrl(this, rownum, vars.getLanguage(),
-              strKeyValue, "", strBpartner, strClients, strOrgs, isCalledFromProduction, "1",
-              pgLimit, oraLimit1, oraLimit2);
+          data = ProductCompleteData.selectNotStoredtrl(this, vars.getLanguage(), strKeyValue, "",
+              strBpartner, strClients, strOrgs, isCalledFromProduction, "1", pgLimit);
         }
       }
       if (data != null && data.length == 1) {
@@ -406,26 +397,17 @@ public class ProductComplete extends HttpSecureAppServlet {
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
         // New filter or first load
         if (localStrNewFilter.equals("1") || localStrNewFilter.equals("")) {
-          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-            rownum = "ROWNUM";
-          } else {
-            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-          }
+          String pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
           if (strStore.equals("Y")) {
             // countRows is the same in en_US and +trl case, so a
             // single countRows method is used
-            strNumRows = ProductCompleteData.countRows(this, rownum, strKey, strName, strWarehouse,
-                strIsCalledFromProduction, vars.getRole(), strBpartner, strClients, pgLimit,
-                oraLimit1, oraLimit2);
+            strNumRows = ProductCompleteData.countRows(this, strKey, strName, strWarehouse,
+                strIsCalledFromProduction, vars.getRole(), strBpartner, strClients, pgLimit);
           } else {
             // countRowsNotStored is the same in en_US and +trl case, so a
             // single countRows method is used
-            strNumRows = ProductCompleteData.countRowsNotStored(this, rownum, strKey, strName,
-                strBpartner, strClients, strOrgs, strIsCalledFromProduction, pgLimit, oraLimit1,
-                oraLimit2);
+            strNumRows = ProductCompleteData.countRowsNotStored(this, strKey, strName, strBpartner,
+                strClients, strOrgs, strIsCalledFromProduction, pgLimit);
           }
 
           vars.setSessionValue("ProductComplete.numrows", strNumRows);
@@ -434,56 +416,28 @@ public class ProductComplete extends HttpSecureAppServlet {
         }
 
         // Filtering result
-        if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit1 = String.valueOf(offset + pageSize);
-          String oraLimit2 = (offset + 1) + " AND " + oraLimit1;
+        String pgLimit = pageSize + " OFFSET " + offset;
 
-          if (strStore.equals("Y")) {
-            if (vars.getLanguage().equals("en_US")) {
-              data = ProductCompleteData.select(this, "ROWNUM", strKey, strName, strWarehouse,
-                  strIsCalledFromProduction, vars.getRole(), strBpartner, strClients, strOrderBy,
-                  "", oraLimit1, oraLimit2);
-            } else {
-              data = ProductCompleteData.selecttrl(this, vars.getLanguage(), "ROWNUM", strKey,
-                  strName, strWarehouse, strIsCalledFromProduction, vars.getRole(), strBpartner,
-                  strClients, strOrderBy, "", oraLimit1, oraLimit2);
-            }
+        if (strStore.equals("Y")) {
+          if (vars.getLanguage().equals("en_US")) {
+            data = ProductCompleteData.select(this, strKey, strName, strWarehouse,
+                strIsCalledFromProduction, vars.getRole(), strBpartner, strClients, strOrderBy,
+                pgLimit);
           } else {
-            if (vars.getLanguage().equals("en_US")) {
-              data = ProductCompleteData.selectNotStored(this, "ROWNUM", strKey, strName,
-                  strBpartner, strClients, strOrgs, strIsCalledFromProduction, strOrderBy, "",
-                  oraLimit1, oraLimit2);
-            } else {
-              data = ProductCompleteData.selectNotStoredtrl(this, "ROWNUM", vars.getLanguage(),
-                  strKey, strName, strBpartner, strClients, strOrgs, strIsCalledFromProduction,
-                  strOrderBy, "", oraLimit1, oraLimit2);
-            }
+            data = ProductCompleteData.selecttrl(this, vars.getLanguage(), strKey, strName,
+                strWarehouse, strIsCalledFromProduction, vars.getRole(), strBpartner, strClients,
+                strOrderBy, pgLimit);
           }
         } else {
-          String pgLimit = pageSize + " OFFSET " + offset;
-
-          if (strStore.equals("Y")) {
-            if (vars.getLanguage().equals("en_US")) {
-              data = ProductCompleteData.select(this, "1", strKey, strName, strWarehouse,
-                  strIsCalledFromProduction, vars.getRole(), strBpartner, strClients, strOrderBy,
-                  pgLimit, "", "");
-            } else {
-              data = ProductCompleteData.selecttrl(this, vars.getLanguage(), "1", strKey, strName,
-                  strWarehouse, strIsCalledFromProduction, vars.getRole(), strBpartner, strClients,
-                  strOrderBy, pgLimit, "", "");
-            }
+          if (vars.getLanguage().equals("en_US")) {
+            data = ProductCompleteData.selectNotStored(this, strKey, strName, strBpartner,
+                strClients, strOrgs, strIsCalledFromProduction, strOrderBy, pgLimit);
           } else {
-            if (vars.getLanguage().equals("en_US")) {
-              data = ProductCompleteData.selectNotStored(this, "1", strKey, strName, strBpartner,
-                  strClients, strOrgs, strIsCalledFromProduction, strOrderBy, pgLimit, "", "");
-            } else {
-              data = ProductCompleteData.selectNotStoredtrl(this, "1", vars.getLanguage(), strKey,
-                  strName, strBpartner, strClients, strOrgs, strIsCalledFromProduction, strOrderBy,
-                  pgLimit, "", "");
-            }
+            data = ProductCompleteData.selectNotStoredtrl(this, vars.getLanguage(), strKey, strName,
+                strBpartner, strClients, strOrgs, strIsCalledFromProduction, strOrderBy, pgLimit);
           }
-
         }
+
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
         e.printStackTrace();

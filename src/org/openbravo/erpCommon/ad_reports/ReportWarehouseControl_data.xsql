@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -70,7 +70,6 @@
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[ AND M_TRANSACTION.MOVEMENTDATE < to_date(?)]]></Parameter>
     <Parameter name="reference" optional="true" after="AND 1=1"><![CDATA[ AND UPPER(M_ATTRIBUTESETINSTANCE.DESCRIPTION) LIKE '%'||UPPER(?)||'%']]></Parameter>
     <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
-    <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="set" type="constant" return="multiple">

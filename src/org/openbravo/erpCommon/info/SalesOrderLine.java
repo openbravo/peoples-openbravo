@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -374,30 +374,23 @@ public class SalesOrderLine extends HttpSecureAppServlet {
         // New filter or first load
         if (localStrNewFilter.equals("1") || localStrNewFilter.equals("")) {
           // calculate params for sql limit/offset or rownum clause
-          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-            rownum = "ROWNUM";
-          } else {
-            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-          }
+          String pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
 
-          strNumRows = SalesOrderLineData.countRows(this, rownum,
+          strNumRows = SalesOrderLineData.countRows(this,
               Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"),
               Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription, strOrder,
               strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1,
               strCalc2, strProduct, (strDelivered.equals("Y") ? "isdelivered" : ""),
               (strInvoiced.equals("Y") ? "isinvoiced" : ""), ("Y".equals(strSOTrx) ? "Y" : "N"),
-              pgLimit, oraLimit1, oraLimit2);
+              pgLimit);
 
           if (!"Y".equals(strSOTrx)) {
-            data = SalesOrderLineData.selectSOTrx(this, "1",
+            data = SalesOrderLineData.selectSOTrx(this,
                 Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"),
                 Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
                 strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
                 strCal1, strCalc2, strProduct, (strDelivered.equals("Y") ? "isdelivered" : ""),
-                (strInvoiced.equals("Y") ? "isinvoiced" : ""), strOrderBy, "", "");
+                (strInvoiced.equals("Y") ? "isinvoiced" : ""), strOrderBy, "");
           }
 
           vars.setSessionValue("SalesOrderLine.numrows", strNumRows);
@@ -406,41 +399,21 @@ public class SalesOrderLine extends HttpSecureAppServlet {
         }
 
         // Filtering result
-        if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
-          if (strSOTrx.equals("Y")) {
-            data = SalesOrderLineData.select(this, "ROWNUM",
-                Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"),
-                Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
-                strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-                strCal1, strCalc2, strProduct, (strDelivered.equals("Y") ? "isdelivered" : ""),
-                (strInvoiced.equals("Y") ? "isinvoiced" : ""), strOrderBy, oraLimit, "");
-          } else {
-            data = SalesOrderLineData.selectSOTrx(this, "ROWNUM",
-                Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"),
-                Utility.getContext(this, vars, "#User_Org", "SalesOrderLine"), strDocumentNo,
-                strDescription, strOrder, strBpartnerId, strDateFrom,
-                DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1, strCalc2, strProduct,
-                (strDelivered.equals("Y") ? "isdelivered" : ""),
-                (strInvoiced.equals("Y") ? "isinvoiced" : ""), strOrderBy, oraLimit, "");
-          }
+        String pgLimit = pageSize + " OFFSET " + offset;
+        if (strSOTrx.equals("Y")) {
+          data = SalesOrderLineData.select(this,
+              Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription, strOrder,
+              strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1,
+              strCalc2, strProduct, (strDelivered.equals("Y") ? "isdelivered" : ""),
+              (strInvoiced.equals("Y") ? "isinvoiced" : ""), strOrderBy, pgLimit);
         } else {
-          String pgLimit = pageSize + " OFFSET " + offset;
-          if (strSOTrx.equals("Y")) {
-            data = SalesOrderLineData.select(this, "1",
-                Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"),
-                Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
-                strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-                strCal1, strCalc2, strProduct, (strDelivered.equals("Y") ? "isdelivered" : ""),
-                (strInvoiced.equals("Y") ? "isinvoiced" : ""), strOrderBy, "", pgLimit);
-          } else {
-            data = SalesOrderLineData.selectSOTrx(this, "1",
-                Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"),
-                Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription,
-                strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-                strCal1, strCalc2, strProduct, (strDelivered.equals("Y") ? "isdelivered" : ""),
-                (strInvoiced.equals("Y") ? "isinvoiced" : ""), strOrderBy, "", pgLimit);
-          }
+          data = SalesOrderLineData.selectSOTrx(this,
+              Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strDocumentNo, strDescription, strOrder,
+              strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1,
+              strCalc2, strProduct, (strDelivered.equals("Y") ? "isdelivered" : ""),
+              (strInvoiced.equals("Y") ? "isinvoiced" : ""), strOrderBy, pgLimit);
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);

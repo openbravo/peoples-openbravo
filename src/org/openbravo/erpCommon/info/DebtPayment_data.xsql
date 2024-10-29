@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -62,7 +62,6 @@
         <Field name="position" value="count"/>
         <Parameter name="language"/>
         <Parameter name="language"/>
-        <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />        
         <Parameter name="adUserClient" type="replace" optional="true" after="DP.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="DP.AD_Org_ID IN (" text="'1'"/>
         <Parameter name="businesPartner" optional="true" after="AND DP.IsValid='Y'"><![CDATA[ AND b.C_BPartner_ID=? ]]></Parameter>
@@ -77,7 +76,6 @@
         <Parameter name="orderId" ignoreValue="%" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND o.documentno like ? ]]></Parameter>
         <Parameter name="isPending" type="replace" optional="true" after="END " text="= ''"/>
         <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="DP.C_DEBT_PAYMENT_ID" />
-        <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
         <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
    </SqlMethod>
 
@@ -107,7 +105,6 @@
       ) A 
         ]]>
         </Sql>
-         <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Field name="position" value="count"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="DP.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="DP.AD_Org_ID IN (" text="'1'"/>
@@ -123,8 +120,6 @@
         <Parameter name="orderId" ignoreValue="%" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND o.documentno like ? ]]></Parameter>
         <Parameter name="isPending" type="replace" optional="true" after="END " text="= ''"/>
         <Parameter name="pgLimit" type="argument" optional="true" after="AND 1=1"><![CDATA[LIMIT ]]></Parameter>
-        <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
-        <Parameter name="oraLimit2" type="argument" optional="true" after=") A "><![CDATA[WHERE RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
 
 </SqlClass>

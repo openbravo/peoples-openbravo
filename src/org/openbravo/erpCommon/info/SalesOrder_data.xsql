@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -52,7 +52,6 @@
         ]]>
         </Sql>
         <Field name="position" value="count"/>
-		    <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="o.AD_Org_ID IN (" text="'1'"/>
         <Parameter name="key" ignoreValue="%" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.DocumentNo) LIKE UPPER(?) ]]></Parameter>
@@ -64,7 +63,6 @@
         <Parameter name="grandTotalFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.GrandTotal >= TO_NUMBER(?) ]]></Parameter>
         <Parameter name="grandTotalTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.GrandTotal <= ? ]]></Parameter>
 		    <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="o.C_Order_ID" />
-        <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
         <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
    </SqlMethod>
 
@@ -85,7 +83,6 @@
         
         ]]>
         </Sql>
-        <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Field name="position" value="count"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="o.AD_Org_ID IN (" text="'1'"/>
@@ -98,8 +95,6 @@
         <Parameter name="grandTotalFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.GrandTotal >= TO_NUMBER(?) ]]></Parameter>
         <Parameter name="grandTotalTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.GrandTotal <= ? ]]></Parameter>
         <Parameter name="pgLimit" type="argument" optional="true" after="AND 1=1"><![CDATA[LIMIT ]]></Parameter>
-        <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
-        <Parameter name="oraLimit2" type="argument" optional="true" after=") A "><![CDATA[WHERE RN1 BETWEEN ]]></Parameter>
         
    </SqlMethod>
 

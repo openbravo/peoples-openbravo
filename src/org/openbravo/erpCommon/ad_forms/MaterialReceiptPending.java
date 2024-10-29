@@ -169,19 +169,13 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           .createXmlDocument();
 
       limit = Integer.parseInt(Utility.getPreference(vars, "FormsLimit", ""));
-      String pgLimit = null, oraLimit = null;
-      if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-        oraLimit = String.valueOf(limit + 1);
-      } else {
-        pgLimit = String.valueOf(limit + 1);
-      }
+      String pgLimit = String.valueOf(limit + 1);
       String strDateFormat = vars.getSessionValue("#AD_SqlDateFormat");
       data = MaterialReceiptPendingData.selectLines(this, strDateFormat, vars.getLanguage(),
           Utility.getContext(this, vars, "#User_Client", "MaterialReceiptPending"),
           Tree.getMembers(this, strTreeOrg, strAD_Org_ID),
           Utility.getContext(this, vars, "#User_Org", "MaterialReceiptPending"), strDateFrom,
-          DateTimeData.nDaysAfter(this, strDateTo, "1"), strC_BPartner_ID, strDocumentNo, pgLimit,
-          oraLimit);
+          DateTimeData.nDaysAfter(this, strDateTo, "1"), strC_BPartner_ID, strDocumentNo, pgLimit);
     }
 
     boolean preference = UOMUtil.isUomManagementEnabled();

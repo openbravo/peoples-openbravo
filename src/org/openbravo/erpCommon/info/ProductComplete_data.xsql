@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -66,7 +66,6 @@
       ]]></Sql>
         <Field name="position" value="count"/>
         <Field name="rowkey" value="void"/>
-        <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="key" ignoreValue="%" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Value) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="name" ignoreValue="%" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Name) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="warehouse" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND W.M_Warehouse_ID = ? ]]></Parameter>
@@ -76,8 +75,6 @@
         <Parameter name="adUserClient" type="replace" optional="true" after="W.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="P.VALUE" />
         <Parameter name="pgLimit" type="argument" optional="true" after="ORDER BY P.VALUE"><![CDATA[LIMIT ]]></Parameter>
-        <Parameter name="oraLimit1" type="argument" optional="true" after=") A "><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
-        <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
 
 	<SqlMethod name="countRows" type="preparedStatement" return="String">
@@ -106,7 +103,6 @@
       ]]></Sql>
         <Field name="position" value="count"/>
         <Field name="rowkey" value="void"/>
-        <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="key" ignoreValue="%" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Value) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="name" ignoreValue="%" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Name) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="warehouse" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND W.M_Warehouse_ID = ? ]]></Parameter>
@@ -115,8 +111,6 @@
         <Parameter name="cBpartnerId"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="W.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="pgLimit" type="argument" optional="true" after="AND 1=1"><![CDATA[LIMIT ]]></Parameter>
-        <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
-        <Parameter name="oraLimit2" type="argument" optional="true" after=") A "><![CDATA[WHERE RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
 
    <SqlMethod name="selecttrl" type="preparedStatement" return="multiple">
@@ -163,7 +157,6 @@
       ]]></Sql>
         <Field name="position" value="count"/>
         <Parameter name="adLanguage"/>
-        <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="key" ignoreValue="%" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Value) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="name" ignoreValue="%" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Name) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="warehouse" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND W.M_Warehouse_ID = ? ]]></Parameter>
@@ -173,8 +166,6 @@
         <Parameter name="adUserClient" type="replace" optional="true" after="W.AD_CLIENT_ID IN (" text="'1'"/>  
         <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="P.VALUE" />
         <Parameter name="pgLimit" type="argument" optional="true" after="ORDER BY P.VALUE"><![CDATA[LIMIT ]]></Parameter>    
-        <Parameter name="oraLimit1" type="argument" optional="true" after=") A "><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
-        <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
 
    <SqlMethod name="countRowsNotStored" type="preparedStatement" return="String">
@@ -195,7 +186,6 @@
         ) A 
       ]]></Sql>
         <Field name="position" value="count"/>
-        <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="key" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(P.Value) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="name" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(P.Name) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="cBpartnerId"/>
@@ -203,8 +193,6 @@
         <Parameter name="adUserOrg" type="replace" optional="true" after="P.AD_ORG_ID IN (" text="'1'"/>
         <Parameter name="production" type="none" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND P.production = 'Y' ]]></Parameter>
 		<Parameter name="pgLimit" type="argument" optional="true" after="AND 1=1"><![CDATA[LIMIT ]]></Parameter>
-        <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
-        <Parameter name="oraLimit2" type="argument" optional="true" after=") A "><![CDATA[WHERE RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
 
    <SqlMethod name="selectNotStored" type="preparedStatement" return="multiple">
@@ -234,7 +222,6 @@
       WHERE 1=1   
       ]]></Sql>
         <Field name="position" value="count"/>
-        <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="key" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(P.Value) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="name" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(P.Name) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="cBpartnerId"/>
@@ -243,8 +230,6 @@
         <Parameter name="production" type="none" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND P.production = 'Y' ]]></Parameter>
         <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="P.VALUE" />
         <Parameter name="pgLimit" type="argument" optional="true" after="ORDER BY P.VALUE"><![CDATA[LIMIT ]]></Parameter>
-        <Parameter name="oraLimit1" type="argument" optional="true" after=") A "><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
-        <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
 
    <SqlMethod name="selectNotStoredtrl" type="preparedStatement" return="multiple">
@@ -275,7 +260,6 @@
       WHERE 1=1 
       ]]></Sql>
         <Field name="position" value="count"/>
-        <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="adLanguage"/>
         <Parameter name="key" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(P.Value) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="name" ignoreValue="%" optional="true" after="WHERE "><![CDATA[ UPPER(P.Name) LIKE UPPER(?) AND ]]></Parameter>
@@ -285,8 +269,6 @@
         <Parameter name="production" type="none" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND P.production = 'Y' ]]></Parameter>
         <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="P.VALUE" />
         <Parameter name="pgLimit" type="argument" optional="true" after="ORDER BY P.VALUE"><![CDATA[LIMIT ]]></Parameter>
-        <Parameter name="oraLimit1" type="argument" optional="true" after=") A "><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
-        <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
 
 </SqlClass>

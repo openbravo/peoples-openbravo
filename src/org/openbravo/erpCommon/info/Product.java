@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -172,18 +172,11 @@ public class Product extends HttpSecureAppServlet {
       // - exactly one row (and row content is needed)
       // - zero or more than one row (row content not needed)
       // so limit <= 2 records to get both info from result without needing to fetch all rows
-      String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-      if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-        oraLimit1 = "2";
-        oraLimit2 = "1 AND 2";
-        rownum = "ROWNUM";
-      } else {
-        pgLimit = "2";
-      }
-      ProductData[] data = ProductData.select(this, strWarehouse, rownum, strKeyValue + "%", "",
+      String pgLimit = "2";
+      ProductData[] data = ProductData.select(this, strWarehouse, strKeyValue + "%", "",
           Utility.getContext(this, vars, "#User_Client", "Product"),
-          Utility.getContext(this, vars, "#User_Org", "Product"), strPriceListVersion, "1", pgLimit,
-          oraLimit1, oraLimit2);
+          Utility.getContext(this, vars, "#User_Org", "Product"), strPriceListVersion, "1",
+          pgLimit);
       if (data != null && data.length == 1) {
         printPageKey(response, vars, data, strWarehouse, strPriceListVersion);
       } else {
@@ -428,38 +421,21 @@ public class Product extends HttpSecureAppServlet {
         // New filter or first load
         if (localStrNewFilter.equals("1") || localStrNewFilter.equals("")) {
 
-          String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-          if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-            oraLimit1 = String.valueOf(offset + TableSQLData.maxRowsPerGridPage);
-            oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-            rownum = "ROWNUM";
-          } else {
-            pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
-          }
+          String pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
 
-          strNumRows = ProductData.countRows(this, rownum, strKey, strName, strPriceListVersion,
+          strNumRows = ProductData.countRows(this, strKey, strName, strPriceListVersion,
               Utility.getContext(this, vars, "#User_Client", "Product"),
-              Utility.getSelectorOrgs(this, vars, strOrg), pgLimit, oraLimit1, oraLimit2);
+              Utility.getSelectorOrgs(this, vars, strOrg), pgLimit);
           vars.setSessionValue("Product.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("Product.numrows");
         }
 
         // Filtering result
-        if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-          String oraLimit1 = String.valueOf(offset + pageSize);
-          String oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-          data = ProductData.select(this, strWarehouse, "ROWNUM", strKey, strName,
-              Utility.getContext(this, vars, "#User_Client", "Product"),
-              Utility.getSelectorOrgs(this, vars, strOrg), strPriceListVersion, strOrderBy, "",
-              oraLimit1, oraLimit2);
-        } else {
-          String pgLimit = pageSize + " OFFSET " + offset;
-          data = ProductData.select(this, strWarehouse, "1", strKey, strName,
-              Utility.getContext(this, vars, "#User_Client", "Product"),
-              Utility.getSelectorOrgs(this, vars, strOrg), strPriceListVersion, strOrderBy, pgLimit,
-              "", "");
-        }
+        String pgLimit = pageSize + " OFFSET " + offset;
+        data = ProductData.select(this, strWarehouse, strKey, strName,
+            Utility.getContext(this, vars, "#User_Client", "Product"),
+            Utility.getSelectorOrgs(this, vars, strOrg), strPriceListVersion, strOrderBy, pgLimit);
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
         e.printStackTrace();

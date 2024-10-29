@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -52,7 +52,6 @@
         ]]>
         </Sql>
         <Field name="position" value="count"/>
-				<Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="adUserClient" type="replace" optional="true" after="m.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="m.AD_ORG_ID IN (" text="'1'"/>
         <Parameter name="documentno" ignoreValue="%" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND UPPER(m.DocumentNo) LIKE UPPER(?) ]]></Parameter>
@@ -64,7 +63,6 @@
         <Parameter name="product" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND ml.M_Product_ID=? ]]></Parameter>
         <Parameter name="isinvoiced"/>
 				<Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="ml.M_INOUTLINE_ID" />
-        <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
         <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
    </SqlMethod>
    <SqlMethod name="countRows" type="preparedStatement" return="String">
@@ -95,7 +93,6 @@
         ]]>
         </Sql>
         <Field name="position" value="count"/>
-                <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="adUserClient" type="replace" optional="true" after="m.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="m.AD_ORG_ID IN (" text="'1'"/>
         <Parameter name="documentno" ignoreValue="%" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND UPPER(m.DocumentNo) LIKE UPPER(?) ]]></Parameter>
@@ -107,8 +104,6 @@
         <Parameter name="product" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND ml.M_Product_ID = ? ]]></Parameter>
         <Parameter name="isinvoiced"/>
         <Parameter name="pgLimit" type="argument" optional="true" after="AND 1=1"><![CDATA[LIMIT ]]></Parameter>
-        <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
-        <Parameter name="oraLimit2" type="argument" optional="true" after=") A "><![CDATA[WHERE RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
    <SqlMethod name="countRowsSO" type="preparedStatement" return="String">
       <SqlMethodComment></SqlMethodComment>
@@ -131,7 +126,6 @@
                ) B ) A 
         ]]>
         </Sql>
-                <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Field name="position" value="count"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="m.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="m.AD_ORG_ID IN (" text="'1'"/>
@@ -144,8 +138,6 @@
         <Parameter name="product" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND ml.M_Product_ID = ? ]]></Parameter>
         <Parameter name="isinvoiced" optional="true" type="replace" after="(ml.MOVEMENTQTY - COALESCE(SUM(mi.QTY),0)) " text="="/>
         <Parameter name="pgLimit" type="argument" optional="true" after=" = 0 "><![CDATA[LIMIT ]]></Parameter>
-        <Parameter name="oraLimit1" type="argument" optional="true" after=") B "><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
-        <Parameter name="oraLimit2" type="argument" optional="true" after=") A "><![CDATA[WHERE RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
    <SqlMethod name="selectSOTrx" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -177,7 +169,6 @@
         ]]>
         </Sql>
         <Field name="position" value="count"/>
-				<Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="adUserClient" type="replace" optional="true" after="m.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="m.AD_ORG_ID IN (" text="'1'"/>
         <Parameter name="documentno" ignoreValue="%" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND UPPER(m.DocumentNo) LIKE UPPER(?) ]]></Parameter>
@@ -189,7 +180,6 @@
         <Parameter name="product" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND ml.M_Product_ID=? ]]></Parameter>
         <Parameter name="isinvoiced" optional="true" type="replace" after="(ml.MOVEMENTQTY - COALESCE(SUM(mi.QTY),0)) " text="="/>
 				<Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="ml.M_INOUTLINE_ID" />
-        <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
         <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
    </SqlMethod>
    <SqlMethod name="selectKey" type="preparedStatement" return="multiple">

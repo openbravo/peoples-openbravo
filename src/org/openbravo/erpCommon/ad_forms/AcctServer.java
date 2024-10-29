@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2019 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2024 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -407,9 +407,7 @@ public abstract class AcctServer {
           .getChildTree(AD_Org_ID, true);
       String strOrgs = Utility.getInStrSet(orgSet);
       // Send limit manually to SQL because auto-generated query doesn't limit properly
-      String limit = StringUtils.equals(connectionProvider.getRDBMS(), "ORACLE")
-          ? " AND ROWNUM < " + batchSize
-          : " LIMIT " + batchSize;
+      String limit = " LIMIT " + batchSize;
       data = AcctServerData.select(connectionProvider, tableName, strDateColumn, AD_Client_ID,
           strOrgs, strDateFrom, strDateTo, limit);
       if (data != null && data.length > 0) {

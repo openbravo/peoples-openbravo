@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,7 +27,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
@@ -168,18 +167,13 @@ public class ReportMaterialTransactionEditionJR extends HttpSecureAppServlet {
       log4j.debug("Output: dataSheet");
     }
 
-    String pgLimit = null, oraLimit = null;
-    if (StringUtils.equalsIgnoreCase(readOnlyCP.getRDBMS(), "ORACLE")) {
-      oraLimit = String.valueOf(limit + 1);
-    } else {
-      pgLimit = String.valueOf(limit + 1);
-    }
+    String pgLimit = String.valueOf(limit + 1);
     String discard[] = { "discard" };
     data = InoutEditionData.select(readOnlyCP, vars.getLanguage(),
         Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
             "ReportMaterialTransactionEditionJR"),
         Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportMaterialTransactionEditionJR"),
-        strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId, strcProjectId, pgLimit, oraLimit);
+        strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId, strcProjectId, pgLimit);
 
     if (data == null || data.length == 0) {
       discard[0] = "selEliminar";

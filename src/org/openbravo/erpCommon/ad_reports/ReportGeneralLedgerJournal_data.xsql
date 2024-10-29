@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2019 Openbravo SLU
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -70,7 +70,6 @@
       ) C WHERE 1=1
       ]]></Sql>
     <Field name="rownum" value="count"/>
-    <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
     <Parameter name="descriptionGrouping" type="replace" optional="true" after="AS NAME, CASE WHEN " text="'Y'"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="WHERE F.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND F.AD_ORG_ID IN(" text="'1'"/>
@@ -98,8 +97,6 @@
     <Parameter name="regularization" optional="true" type="none" after="2=2" text=" AND F.FactAcctType = 'R'"/>
     <Parameter name="opening" optional="true" type="none" after="2=2" text=" AND F.FactAcctType = 'O'"/-->
     <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
-    <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
-    <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[ AND RN1 BETWEEN ]]></Parameter>
   </SqlMethod>
   <SqlMethod name="selectCountNoOfRecords" type="preparedStatement" return="string" default="0">
     <SqlMethodComment></SqlMethodComment>
@@ -200,7 +197,6 @@
       ) H WHERE 1=1
       ]]></Sql>
     <Field name="rownum" value="count"/>
-    <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
     <Parameter name="adUserClient" type="replace" optional="true" after="WHERE F.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND F.AD_ORG_ID IN(" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[ AND f.dateacct >= TO_DATE(?)]]></Parameter>
@@ -222,8 +218,6 @@
     <Parameter name="orgFamily" type="replace" optional="true" after="AND AD_ORG_ID IN(" text="'4'"/>
     <Parameter name="checks" type="replace" optional="true" after="AND FactAcctType IN (" text="'C','N','O','R','D'"/>
     <Parameter name="pgLimit" type="argument" optional="true" after=") G"><![CDATA[LIMIT ]]></Parameter>
-    <Parameter name="oraLimit1" type="argument" optional="true" after=") G"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
-    <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[ AND RN1 BETWEEN ]]></Parameter>
   </SqlMethod>
   <SqlMethod name="selectCount" type="preparedStatement" return="string" default="0">
     <SqlMethodComment></SqlMethodComment>
@@ -324,7 +318,6 @@
       ) C WHERE 1=1
       ]]></Sql>
     <Field name="rownum" value="count"/>
-    <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
     <Parameter name="descriptionGrouping" type="replace" optional="true" after="AS NAME, CASE WHEN " text="'Y'"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="WHERE F.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND F.AD_ORG_ID IN(" text="'1'"/>
@@ -336,8 +329,6 @@
     <Parameter name="descriptionGrouping" type="replace" optional="true" after="F.ACCTDESCRIPTION, CASE WHEN " text="'Y'"/>
     <Parameter name="paramLanguage"></Parameter>
     <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
-    <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[WHERE ROWNUM <= ]]></Parameter>
-    <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[ AND RN1 BETWEEN ]]></Parameter>
   </SqlMethod>
   <SqlMethod name="selectCountDirect" type="preparedStatement" return="string" default="0">
     <SqlMethodComment></SqlMethodComment>
