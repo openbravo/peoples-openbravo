@@ -39116,6 +39116,9 @@ For details - http://wiki.openbravo.com/wiki/Role#Permissions_Inheritance]]></HE
 <!--E189C54FFCD19351E040007F01004C07-->  <COLUMNNAME><![CDATA[UOM_Type]]></COLUMNNAME>
 <!--E189C54FFCD19351E040007F01004C07-->  <NAME><![CDATA[UOM Type]]></NAME>
 <!--E189C54FFCD19351E040007F01004C07-->  <PRINTNAME><![CDATA[UOM Type]]></PRINTNAME>
+<!--E189C54FFCD19351E040007F01004C07-->  <DESCRIPTION><![CDATA[If it is empty, the unit of measure will behave like Unit. If it has value,  the unit of measure will behave as Bulk]]></DESCRIPTION>
+<!--E189C54FFCD19351E040007F01004C07-->  <HELP><![CDATA[If it is empty, the unit of measure will behave like Unit.
+If it has value,  the unit of measure will behave as Bulk.]]></HELP>
 <!--E189C54FFCD19351E040007F01004C07-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--E189C54FFCD19351E040007F01004C07-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--E189C54FFCD19351E040007F01004C07--></AD_ELEMENT>
