@@ -81,6 +81,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
+      <column name="RETURN_TO_BIN" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_LOCATION" name="C_LOCATION_WAREHOUSE">
         <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>
       </foreign-key>
