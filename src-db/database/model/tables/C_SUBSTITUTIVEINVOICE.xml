@@ -140,6 +140,12 @@
       <foreign-key foreignTable="M_PRICELIST" name="C_SUBSINV_FK_M_PRICELIST_ID">
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
       </foreign-key>
+      <index name="C_SUBSTITUTIVEINVOICE_DATE_DOC" unique="false">
+        <index-column name="DATEINVOICED"/>
+        <index-column name="DOCUMENTNO"/>
+        <index-column name="AD_ORG_ID"/>
+        <index-column name="AD_CLIENT_ID"/>
+      </index>
       <index name="C_SUBSTITUTIVEINVOICE_DOCNO" unique="false">
         <index-column name="DOCUMENTNO"/>
       </index>
