@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2023 Openbravo SLU
+ * All portions are Copyright (C) 2011-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,11 +26,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -209,13 +211,14 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
 
   private void setQueryParameters(Query<Tuple> selQuery, Map<String, Object> namedParameters,
       List<Object> typedParameters, int startRow, int endRow) {
-    selQuery.setParameterList("clients", (String[]) namedParameters.get("clients"));
-    if (namedParameters.containsKey("orgs")) {
-      selQuery.setParameterList("orgs", (String[]) namedParameters.get("orgs"));
-    }
-    if (namedParameters.containsKey("distinctCriteriaValue")) {
-      selQuery.setParameter("distinctCriteriaValue",
-          (String) namedParameters.get("distinctCriteriaValue"));
+    for (Entry<String, Object> parameter : namedParameters.entrySet()) {
+      if (parameter.getValue() instanceof Collection) {
+        selQuery.setParameterList(parameter.getKey(), (Collection<?>) parameter.getValue());
+      } else if (parameter.getValue() instanceof String[]) {
+        selQuery.setParameterList(parameter.getKey(), (String[]) parameter.getValue());
+      } else {
+        selQuery.setParameter(parameter.getKey(), parameter.getValue());
+      }
     }
 
     for (int i = 0; i < typedParameters.size(); i++) {
