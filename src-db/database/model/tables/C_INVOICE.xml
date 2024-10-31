@@ -101,6 +101,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_SUBSTITUTIVEINVOICE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="C_BPARTNER_LOCATION_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -360,6 +364,9 @@
       <foreign-key foreignTable="C_PROJECT" name="C_INVOICE_C_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_SUBSTITUTIVEINVOICE" name="C_INVOICE_C_SUBSINVOICE">
+        <reference local="C_SUBSTITUTIVEINVOICE_ID" foreign="C_SUBSTITUTIVEINVOICE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_WITHHOLDING" name="C_INVOICE_C_WITHHOLDING">
         <reference local="C_WITHHOLDING_ID" foreign="C_WITHHOLDING_ID"/>
       </foreign-key>
@@ -417,6 +424,10 @@
       <index name="C_INVOICE_SALESREP" unique="false">
         <index-column name="SALESREP_ID"/>
         <whereClause><![CDATA[SALESREP_ID IS NOT NULL]]></whereClause>
+      </index>
+      <index name="C_INVOICE_SUBSINVOICE" unique="false">
+        <index-column name="C_SUBSTITUTIVEINVOICE_ID"/>
+        <whereClause><![CDATA[C_SUBSTITUTIVEINVOICE_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="C_INVOICE_UPDATED" unique="false">
         <index-column name="UPDATED"/>
