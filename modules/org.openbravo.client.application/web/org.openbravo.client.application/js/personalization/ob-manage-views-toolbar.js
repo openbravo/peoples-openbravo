@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2019 Openbravo SLU
+ * All portions are Copyright (C) 2011-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): ___________
  ************************************************************************
@@ -123,7 +123,9 @@
         }
 
         item = {
-          title: view.viewDefinition.name,
+          title:
+            view.viewDefinition.name.convertTags &&
+            view.viewDefinition.name.convertTags(),
           icon: icon,
           personalizationId: view.personalizationId,
           viewDefinition: view.viewDefinition
