@@ -92,19 +92,6 @@
 <!--800009-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
 <!--800009--></AD_FORM>
 
-<!--800011--><AD_FORM>
-<!--800011-->  <AD_FORM_ID><![CDATA[800011]]></AD_FORM_ID>
-<!--800011-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800011-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800011-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800011-->  <NAME><![CDATA[SQL Query]]></NAME>
-<!--800011-->  <DESCRIPTION><![CDATA[Execute SQL query and view results within the Openbravo application.]]></DESCRIPTION>
-<!--800011-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--800011-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.SQLExecutor]]></CLASSNAME>
-<!--800011-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800011-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--800011--></AD_FORM>
-
 <!--800014--><AD_FORM>
 <!--800014-->  <AD_FORM_ID><![CDATA[800014]]></AD_FORM_ID>
 <!--800014-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
