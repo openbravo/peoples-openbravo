@@ -245,7 +245,8 @@ public class FIN_Utility {
 
   /**
    * Returns the DocumentType defined for the Organization (or parent organization tree) and
-   * document category.
+   * document category. It could return any type (return or not) see getRegularDocumentType and
+   * getReturnDocumentType information
    * 
    * @param org
    *          the Organization for which the Document Type is defined. The Document Type can belong
@@ -267,17 +268,7 @@ public class FIN_Utility {
 
     OBContext.setAdminMode(false);
     try {
-      // @formatter:off
-      final String where = ""
-          + " as dt"
-          + " where dt.organization.id in (:orgIdList)"
-          + "   and dt.client.id = :clientId"
-          + "   and dt.documentCategory = :docCategory"
-          + " order by ad_isorgincluded(:orgId, dt.organization.id, :clientId)"
-          + "   , dt.default desc"
-          + "   , dt.id desc";
-
-      // @formatter:on
+      final String where = getDocumentTypeHQLQuery();
       OBQuery<DocumentType> dt = OBDal.getInstance().createQuery(DocumentType.class, where);
       dt.setFilterOnReadableClients(false);
       dt.setFilterOnReadableOrganization(false);
@@ -294,6 +285,120 @@ public class FIN_Utility {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  /**
+   * Returns the regular DocumentType type (not return) defined for the Organization (or parent
+   * organization tree) and document category.
+   * 
+   * @param org
+   *          the Organization for which the Document Type is defined. The Document Type can belong
+   *          to the parent organization tree of the specified Organization.
+   * @param docCategory
+   *          the document category of the Document Type.
+   * 
+   * @return the Document Type
+   */
+  public static DocumentType getRegularDocumentType(Organization org, String docCategory) {
+
+    Client client = null;
+    if ("0".equals(org.getId())) {
+      client = OBContext.getOBContext().getCurrentClient();
+      if ("0".equals(client.getId())) {
+        return null;
+      }
+    } else {
+      client = org.getClient();
+    }
+
+    OBContext.setAdminMode(false);
+    try {
+      String where = getDocumentTypeHQLQuery();
+      where = where.replace("1=1", "dt.return = false");
+      OBQuery<DocumentType> dt = OBDal.getInstance().createQuery(DocumentType.class, where);
+      dt.setFilterOnReadableClients(false);
+      dt.setFilterOnReadableOrganization(false);
+      dt.setMaxResult(1);
+      dt.setNamedParameter("orgIdList",
+          OBContext.getOBContext()
+              .getOrganizationStructureProvider()
+              .getParentTree(org.getId(), true));
+      dt.setNamedParameter("clientId", client.getId());
+      dt.setNamedParameter("docCategory", docCategory);
+      dt.setNamedParameter("orgId", org.getId());
+
+      return dt.uniqueResult();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Returns the DocumentType type returns defined for the Organization (or parent organization
+   * tree) and document category.
+   * 
+   * @param org
+   *          the Organization for which the Document Type is defined. The Document Type can belong
+   *          to the parent organization tree of the specified Organization.
+   * @param docCategory
+   *          the document category of the Document Type.
+   * 
+   * @return the Document Type
+   */
+  public static DocumentType getReturnDocumentType(Organization org, String docCategory) {
+    Client client = null;
+    if ("0".equals(org.getId())) {
+      client = OBContext.getOBContext().getCurrentClient();
+      if ("0".equals(client.getId())) {
+        return null;
+      }
+    } else {
+      client = org.getClient();
+    }
+
+    OBContext.setAdminMode(false);
+    try {
+      String where = getDocumentTypeHQLQuery();
+      where = where.replace("1=1", "dt.return = true");
+      OBQuery<DocumentType> dt = OBDal.getInstance().createQuery(DocumentType.class, where);
+      dt.setFilterOnReadableClients(false);
+      dt.setFilterOnReadableOrganization(false);
+      dt.setMaxResult(1);
+      dt.setNamedParameter("orgIdList",
+          OBContext.getOBContext()
+              .getOrganizationStructureProvider()
+              .getParentTree(org.getId(), true));
+      dt.setNamedParameter("clientId", client.getId());
+      dt.setNamedParameter("docCategory", docCategory);
+      dt.setNamedParameter("orgId", org.getId());
+
+      return dt.uniqueResult();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * 
+   * Returns the HQL query for retrieving the document type.
+   * 
+   * @return the HQL query for retrieving the document type
+   */
+  private static String getDocumentTypeHQLQuery() {
+    // @formatter:off
+    final String where = ""
+        + " as dt"
+        + " where dt.organization.id in (:orgIdList)"
+        + "   and dt.client.id = :clientId"
+        + "   and dt.documentCategory = :docCategory"
+        + "   and 1=1" 
+        + " order by ad_isorgincluded(:orgId, dt.organization.id, :clientId)"
+        + "   , dt.default desc"
+        + "   , dt.id desc";
+
+    // @formatter:on
+
+    return where;
   }
 
   /**
