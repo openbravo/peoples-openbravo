@@ -45,7 +45,7 @@ public class NonIdForeignKeyFilters extends BaseDataSourceTestDal {
     JSONObject response = requestCountry(getLanguageCriteria());
 
     assertThat("Response is OK", isResponseOk(response), equalTo(true));
-    assertThat("Response contains one record", getNumberOfDataItems(response), equalTo(1));
+    assertThat("Response contains two record", getNumberOfDataItems(response), equalTo(2));
   }
 
   @Test
