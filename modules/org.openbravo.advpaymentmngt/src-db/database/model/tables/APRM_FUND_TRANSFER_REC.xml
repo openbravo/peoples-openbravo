@@ -29,8 +29,12 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ISACTIVE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="DOCUMENTNO" primaryKey="false" required="true" type="VARCHAR" size="30" autoIncrement="false">
+        <default/>
         <onCreateDefault/>
       </column>
       <column name="DATE" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
@@ -58,10 +62,6 @@
         <onCreateDefault/>
       </column>
       <column name="FIN_ACC_TRAN_TO_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="DOCUMENTNO" primaryKey="false" required="true" type="VARCHAR" size="30" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -102,5 +102,6 @@
       <foreign-key foreignTable="AD_ORG" name="APRM_FTR_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="APRM_FTR_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
