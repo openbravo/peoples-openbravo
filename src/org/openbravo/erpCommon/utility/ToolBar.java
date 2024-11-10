@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -268,19 +268,6 @@ public class ToolBar {
     if (!excelScript.equals("")) {
       buttons.put("EXCEL", new ToolBar_Button(base_direction, "Excel",
           Utility.messageBD(conn, "ExportExcel", language), excelScript));
-    }
-  }
-
-  public void prepareQueryTemplate(boolean hasPrevious, boolean hasNext, boolean isTest) {
-    if (!hasPrevious) {
-      removeElement("PREVIOUS_RELATION");
-    } else {
-      removeElement("PREVIOUS_RELATION_DISABLED");
-    }
-    if (!hasNext) {
-      removeElement("NEXT_RELATION");
-    } else {
-      removeElement("NEXT_RELATION_DISABLED");
     }
   }
 
