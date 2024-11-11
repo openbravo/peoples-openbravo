@@ -297,8 +297,6 @@ public class PrintController extends HttpSecureAppServlet {
         }
 
         if (reprintableManager.isReprintDocumentsEnabled(organizationId)) {
-          Report report = buildReport(response, vars, documentIds[0], reportManager, documentType,
-              Report.OutputTypeEnum.PRINT);
           Optional<ReprintableDocument> reprintableDocument = sourceDocument
               .getReprintableDocument();
           if (reprintableDocument.isPresent()) {
@@ -307,12 +305,14 @@ public class PrintController extends HttpSecureAppServlet {
             if (format != Format.PDF && !reprintableManager.canTransformIntoFormat(Format.PDF)) {
               throw new ServletException("@CODE=UnsupportedReprintDocumentFormat@");
             }
-            response.setHeader("Content-disposition",
-                "attachment" + "; filename=" + report.getFilename());
+            response.setHeader("Content-disposition", "attachment" + "; filename="
+                + addPdfExtension(reprintableDocument.get().getName()));
             try (OutputStream os = response.getOutputStream()) {
               reprintableManager.download(sourceDocument, os, Format.PDF);
             }
           } else {
+            Report report = buildReport(response, vars, documentIds[0], reportManager, documentType,
+                Report.OutputTypeEnum.PRINT);
             // persist and print
             JasperPrint jasperPrintForDuplicate = reportManager.processReport(report, vars,
                 Map.of("IS_DUPLICATE", true));
@@ -363,6 +363,9 @@ public class PrintController extends HttpSecureAppServlet {
         if (vars.commandIn("DEFAULT")) {
           reports = new HashMap<String, Report>();
           for (int index = 0; index < documentIds.length; index++) {
+            if (request.getServletPath().toLowerCase().indexOf(REPRINT_PATH) != -1) {
+              continue;
+            }
             final String documentId = documentIds[index];
             if (log4j.isDebugEnabled()) {
               log4j.debug("Processing document with id: " + documentId);
@@ -567,6 +570,20 @@ public class PrintController extends HttpSecureAppServlet {
       bdErrorGeneralPopUp(request, response, "Error",
           Utility.translateError(this, vars, vars.getLanguage(), e.getMessage()).getMessage());
     }
+  }
+
+  /**
+   * Adds the ".pdf" extension to the given filename if it does not already have it.
+   *
+   * @param filename
+   *          the name of the file to which the extension should be added
+   * @return the filename with the ".pdf" extension appended if not present
+   */
+  private String addPdfExtension(String filename) {
+    if (filename != null && !filename.toLowerCase().endsWith(".pdf")) {
+      return filename.concat(".pdf");
+    }
+    return filename;
   }
 
   /**
