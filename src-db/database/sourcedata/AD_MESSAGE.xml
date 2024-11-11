@@ -20062,7 +20062,7 @@ This column is already checked as key: ]]></MSGTEXT>
 <!--4DE71F4475474764BFB54889A9254453-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--4DE71F4475474764BFB54889A9254453-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--4DE71F4475474764BFB54889A9254453-->  <VALUE><![CDATA[AccountFileCannotbeIncluded]]></VALUE>
-<!--4DE71F4475474764BFB54889A9254453-->  <MSGTEXT><![CDATA[Include accounting file cannot be included for legal without accounting organization type]]></MSGTEXT>
+<!--4DE71F4475474764BFB54889A9254453-->  <MSGTEXT><![CDATA[Accounting module and accounting file cannot be included for legal without accounting organization type]]></MSGTEXT>
 <!--4DE71F4475474764BFB54889A9254453-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--4DE71F4475474764BFB54889A9254453-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--4DE71F4475474764BFB54889A9254453-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>

@@ -77,7 +77,6 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       org.openbravo.erpCommon.businessUtility.InitialOrgSetup ios = new org.openbravo.erpCommon.businessUtility.InitialOrgSetup(
           OBContext.getOBContext().getCurrentClient());
 
-      log4j.debug("createOrganization() - Checking if accounting file included");
       OBError obeResult = checkAccountingFile(strOrgType, isTrue(strCreateAccounting), strModules,
           ios);
 
@@ -222,30 +221,33 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
 
   private OBError checkAccountingFile(String strOrgType, boolean boCreateAccounting,
       String strModules, org.openbravo.erpCommon.businessUtility.InitialOrgSetup ios) {
+    log4j.debug("Checking if accounting file included");
     OBError obResult = new OBError();
     obResult.setType(OKTYPE);
     try {
       if (StringUtils.equals(strOrgType, "1") && !boCreateAccounting) {
-        obResult.setMessage("@IncludeAccountingFile@");
         obResult.setType(ERRORTYPE);
+        obResult.setMessage("@IncludeAccountingFile@");
       }
       if (StringUtils.equals(strOrgType, "3")
           && (boCreateAccounting || StringUtils.isNotEmpty(strModules))) {
         if (boCreateAccounting) {
-          obResult.setMessage("@AccountFileCannotbeIncluded@");
           obResult.setType(ERRORTYPE);
+          obResult.setMessage("@AccountFileCannotbeIncluded@");
         }
         if (StringUtils.isNotEmpty(strModules)) {
           String localStrModules = ios.cleanUpStrModules(strModules);
           List<Module> lCoaModules = InitialSetupUtility.getCOAModules(localStrModules);
           // Modules with CoA are retrieved.
           if (lCoaModules.size() > 0) {
-            obResult.setMessage("@AccountFileCannotbeIncluded@");
             obResult.setType(ERRORTYPE);
+            obResult.setMessage("@AccountFileCannotbeIncluded@");
           }
         }
       }
     } catch (Exception e) {
+      obResult.setType(ERRORTYPE);
+      obResult.setMessage("@ExceptionInCommit@");
       return null;
     }
     return obResult;
