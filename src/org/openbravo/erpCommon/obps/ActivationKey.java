@@ -939,6 +939,11 @@ public class ActivationKey {
     String sessionId = expiredSession.getId();
     HttpSession session = SessionListener.getActiveSession(sessionId);
     if (session == null) {
+      boolean isSessionInContext = SessionListener.isSessionInContext(sessionId);
+      if (isSessionInContext) {
+        // Session found in context but no longer active
+        return true;
+      }
       log4j.debug("Session " + sessionId + " not found in context");
       // we cannot deactivate this session because it might have been created in a different node
       // from cluster and we cannot know when was used last time
