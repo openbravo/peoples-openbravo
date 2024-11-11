@@ -25,8 +25,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
@@ -138,7 +138,6 @@ public class InitialOrgSetup {
 
     log4j.debug("createOrganization() - Checking if accounting file included");
     obResult = checkAccountingFile(strOrgType, boCreateAccounting);
-    System.out.println("OKTYPE :" + obResult.getType());
     if (!obResult.getType().equals(OKTYPE)) {
       return obResult;
     }
@@ -597,8 +596,6 @@ public class InitialOrgSetup {
   private OBError checkAccountingFile(String strOrgType, boolean boCreateAccounting) {
     OBError obResult = new OBError();
     obResult.setType(ERRORTYPE);
-    System.out.println("strOrgType :" + strOrgType);
-    System.out.println("boCreateAccounting :" + boCreateAccounting);
     if (StringUtils.equals(strOrgType, "1") && !boCreateAccounting) {
       return logErrorAndRollback("@IncludeAccountingFile@",
           "createOrganization() - ERROR - Accounting file has to be included ", null);
