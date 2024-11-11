@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2018-2024 Openbravo SLU
+ * All portions are Copyright (C) 2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -64,9 +64,8 @@ class ADOrgPersistInfoUtility {
       String currencyId) {
     long number = System.currentTimeMillis();
     InitialOrgSetup initialOrg = new InitialOrgSetup(OBContext.getOBContext().getCurrentClient());
-    boolean boCreateAccounting = StringUtils.equals(newOrgType, "1");
-    initialOrg.createOrganization("Test_" + number, "", newOrgType, strParentOrg, "", "", "",
-        boCreateAccounting, null, "", false, false, false, false, false);
+    initialOrg.createOrganization("Test_" + number, "", newOrgType, strParentOrg, "", "", "", false,
+        null, "", false, false, false, false, false);
     Organization org = OBDal.getInstance().get(Organization.class, initialOrg.getOrgId());
     org.setSummaryLevel(summary);
     if (StringUtils.equals(newOrgType, ADOrgPersistInfoConstants.ORGTYPE_LEGALWITHACCOUNTING)) {
