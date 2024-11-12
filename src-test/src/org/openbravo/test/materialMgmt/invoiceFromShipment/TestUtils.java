@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018-2021 Openbravo SLU
+ * All portions are Copyright (C) 2018-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -198,7 +198,7 @@ public class TestUtils {
    *          docNo to set to the new Goods Receipt/Shipment
    * @return a Goods Receipt/Shipment not completed
    */
-  static ShipmentInOut cloneReceiptShipment(final String mInoutId, final String docNo) {
+  public static ShipmentInOut cloneReceiptShipment(final String mInoutId, final String docNo) {
     final ShipmentInOut oldInOut = OBDal.getInstance().get(ShipmentInOut.class, mInoutId);
     final ShipmentInOut newInOut = (ShipmentInOut) DalUtil.copy(oldInOut, false);
     int numberOfShipmentsWithSameDocNo = getNumberOfShipments(docNo) + 1;
