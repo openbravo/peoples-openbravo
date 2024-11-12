@@ -233,7 +233,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
           && (boCreateAccounting || StringUtils.isNotEmpty(strModules))) {
         if (boCreateAccounting) {
           obResult.setType(ERRORTYPE);
-          obResult.setMessage("@AccountFileCannotbeIncluded@");
+          obResult.setMessage("@AccountingFileCannotnotbeSet@");
         }
         if (StringUtils.isNotEmpty(strModules)) {
           String localStrModules = ios.cleanUpStrModules(strModules);
