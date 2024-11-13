@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2022 Openbravo SLU
+ * All portions are Copyright (C) 2008-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,17 +20,20 @@ package org.openbravo.erpCommon.ad_forms;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.InitialSetupUtility;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ModuleReferenceDataOrgTree;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
@@ -39,11 +42,13 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class InitialOrgSetup extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private static final String OKTYPE = "Success";
+  private static final String ERRORTYPE = "Error";
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -72,9 +77,14 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       org.openbravo.erpCommon.businessUtility.InitialOrgSetup ios = new org.openbravo.erpCommon.businessUtility.InitialOrgSetup(
           OBContext.getOBContext().getCurrentClient());
 
-      OBError obeResult = ios.createOrganization(strOrganization, strOrgUser, strOrgType,
-          strParentOrg, strcLocationId, strPassword, strModules, isTrue(strCreateAccounting),
-          fileCoAFilePath, strCurrency, bBPartner, bProduct, bProject, bCampaign, bSalesRegion);
+      OBError obeResult = checkAccountingFile(strOrgType, isTrue(strCreateAccounting), strModules,
+          ios);
+
+      if (obeResult.getType().equals(OKTYPE)) {
+        obeResult = ios.createOrganization(strOrganization, strOrgUser, strOrgType, strParentOrg,
+            strcLocationId, strPassword, strModules, isTrue(strCreateAccounting), fileCoAFilePath,
+            strCurrency, bBPartner, bProduct, bProject, bCampaign, bSalesRegion);
+      }
       if (!obeResult.getType().equals(OKTYPE)) {
         OBContext.getOBContext().removeWritableOrganization(ios.getOrgId());
         OBContext.getOBContext().removeFromWritableOrganization(ios.getOrgId());
@@ -208,4 +218,39 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     out.println(xmlDocument.print());
     out.close();
   }
+
+  private OBError checkAccountingFile(String strOrgType, boolean boCreateAccounting,
+      String strModules, org.openbravo.erpCommon.businessUtility.InitialOrgSetup ios) {
+    log4j.debug("Checking if accounting file included");
+    OBError obResult = new OBError();
+    obResult.setType(OKTYPE);
+    try {
+      if (StringUtils.equals(strOrgType, "1") && !boCreateAccounting) {
+        obResult.setType(ERRORTYPE);
+        obResult.setMessage("@IncludeAccountingFile@");
+      }
+      if (StringUtils.equals(strOrgType, "3")
+          && (boCreateAccounting || StringUtils.isNotEmpty(strModules))) {
+        if (boCreateAccounting) {
+          obResult.setType(ERRORTYPE);
+          obResult.setMessage("@AccountingFileCannotnotbeSet@");
+        }
+        if (StringUtils.isNotEmpty(strModules)) {
+          String localStrModules = ios.cleanUpStrModules(strModules);
+          List<Module> lCoaModules = InitialSetupUtility.getCOAModules(localStrModules);
+          // Modules with CoA are retrieved.
+          if (lCoaModules.size() > 0) {
+            obResult.setType(ERRORTYPE);
+            obResult.setMessage("@AccountFileCannotbeIncluded@");
+          }
+        }
+      }
+    } catch (Exception e) {
+      obResult.setType(ERRORTYPE);
+      obResult.setMessage("@ExceptionInCommit@");
+      return null;
+    }
+    return obResult;
+  }
+
 }
