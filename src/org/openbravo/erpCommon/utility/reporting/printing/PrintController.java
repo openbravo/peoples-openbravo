@@ -305,8 +305,15 @@ public class PrintController extends HttpSecureAppServlet {
             if (format != Format.PDF && !reprintableManager.canTransformIntoFormat(Format.PDF)) {
               throw new ServletException("@CODE=UnsupportedReprintDocumentFormat@");
             }
-            response.setHeader("Content-disposition", "attachment" + "; filename="
-                + addPdfExtension(reprintableDocument.get().getName()));
+            String fileName;
+            try {
+              fileName = buildReport(response, vars, documentIds[0], reportManager, documentType,
+                  Report.OutputTypeEnum.PRINT).getFilename();
+            } catch (Exception ex) {
+              // no template found to get the file name, so lets use the reprintable document name
+              fileName = reprintableDocument.get().getName().replaceAll("\\.xml$", ".pdf");
+            }
+            response.setHeader("Content-disposition", "attachment" + "; filename=" + fileName);
             try (OutputStream os = response.getOutputStream()) {
               reprintableManager.download(sourceDocument, os, Format.PDF);
             }
@@ -361,16 +368,13 @@ public class PrintController extends HttpSecureAppServlet {
             true);
       } else {
         if (vars.commandIn("DEFAULT")) {
-          reports = new HashMap<String, Report>();
+          reports = new HashMap<>();
           for (int index = 0; index < documentIds.length; index++) {
             if (request.getServletPath().toLowerCase().indexOf(REPRINT_PATH) != -1) {
               continue;
             }
             final String documentId = documentIds[index];
-            if (log4j.isDebugEnabled()) {
-              log4j.debug("Processing document with id: " + documentId);
-            }
-
+            log4j.debug("Processing document with id: {}", documentId);
             try {
               final Report report = new Report(documentType, documentId, vars.getLanguage(),
                   "default", multiReports, OutputTypeEnum.DEFAULT);
@@ -396,7 +400,6 @@ public class PrintController extends HttpSecureAppServlet {
             } catch (final ReportingException exception) {
               throw new ServletException(exception);
             }
-
           }
 
           vars.setSessionObject(sessionValuePrefix + ".Documents", reports);
@@ -573,20 +576,6 @@ public class PrintController extends HttpSecureAppServlet {
   }
 
   /**
-   * Adds the ".pdf" extension to the given filename if it does not already have it.
-   *
-   * @param filename
-   *          the name of the file to which the extension should be added
-   * @return the filename with the ".pdf" extension appended if not present
-   */
-  private String addPdfExtension(String filename) {
-    if (filename != null && !filename.toLowerCase().endsWith(".pdf")) {
-      return filename.concat(".pdf");
-    }
-    return filename;
-  }
-
-  /**
    * Checks the different document type IDs. If all the selected documents have the same document
    * type ID, the template selector should appear.
    * 
@@ -747,21 +736,17 @@ public class PrintController extends HttpSecureAppServlet {
       String strDocumentId, final ReportManager reportManager, DocumentType documentType,
       OutputTypeEnum outputType, String templateId, boolean multiReports) {
     String localStrDocumentId = strDocumentId;
-    Report report = null;
     if (localStrDocumentId != null) {
       localStrDocumentId = localStrDocumentId.replaceAll("\\(|\\)|'", "");
     }
     try {
-      report = new Report(documentType, localStrDocumentId, vars.getLanguage(), templateId,
+      Report report = new Report(documentType, localStrDocumentId, vars.getLanguage(), templateId,
           multiReports, outputType);
-    } catch (final ReportingException e) {
-      log4j.error(e);
-    } catch (final ServletException e) {
-      log4j.error(e);
+      reportManager.setTargetDirectory(report);
+      return report;
+    } catch (Exception ex) {
+      throw new OBException(ex.getMessage(), ex);
     }
-
-    reportManager.setTargetDirectory(report);
-    return report;
   }
 
   public void buildReport(HttpServletResponse response, VariablesSecureApp vars,
