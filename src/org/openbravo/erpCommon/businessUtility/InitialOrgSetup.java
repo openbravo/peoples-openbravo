@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2023 Openbravo SLU
+ * All portions are Copyright (C) 2010-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -497,7 +497,7 @@ public class InitialOrgSetup {
     return obeResult;
   }
 
-  private String cleanUpStrModules(String strModulesProvided) {
+  public String cleanUpStrModules(String strModulesProvided) {
     String strModules = "";
     if (strModulesProvided != null && !strModulesProvided.equals("")) {
       // Remove ( ) characters from the In string as it causes a failure
