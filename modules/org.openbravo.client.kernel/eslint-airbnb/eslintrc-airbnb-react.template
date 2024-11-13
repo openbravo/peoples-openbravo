@@ -26,6 +26,7 @@
     "jest/no-conditional-expect": "off",
     "react/jsx-no-bind": "off",
     "react/no-unused-prop-types": "off",
+    "react/require-default-props": "off",
     "import/no-extraneous-dependencies": [
       "error",
       {
