@@ -297,8 +297,6 @@ public class PrintController extends HttpSecureAppServlet {
         }
 
         if (reprintableManager.isReprintDocumentsEnabled(organizationId)) {
-          Report report = buildReport(response, vars, documentIds[0], reportManager, documentType,
-              Report.OutputTypeEnum.PRINT);
           Optional<ReprintableDocument> reprintableDocument = sourceDocument
               .getReprintableDocument();
           if (reprintableDocument.isPresent()) {
@@ -307,12 +305,21 @@ public class PrintController extends HttpSecureAppServlet {
             if (format != Format.PDF && !reprintableManager.canTransformIntoFormat(Format.PDF)) {
               throw new ServletException("@CODE=UnsupportedReprintDocumentFormat@");
             }
-            response.setHeader("Content-disposition",
-                "attachment" + "; filename=" + report.getFilename());
+            String fileName;
+            try {
+              fileName = buildReport(response, vars, documentIds[0], reportManager, documentType,
+                  Report.OutputTypeEnum.PRINT).getFilename();
+            } catch (Exception ex) {
+              // no template found to get the file name, so lets use the reprintable document name
+              fileName = reprintableDocument.get().getName().replaceAll("\\.xml$", ".pdf");
+            }
+            response.setHeader("Content-disposition", "attachment" + "; filename=" + fileName);
             try (OutputStream os = response.getOutputStream()) {
               reprintableManager.download(sourceDocument, os, Format.PDF);
             }
           } else {
+            Report report = buildReport(response, vars, documentIds[0], reportManager, documentType,
+                Report.OutputTypeEnum.PRINT);
             // persist and print
             JasperPrint jasperPrintForDuplicate = reportManager.processReport(report, vars,
                 Map.of("IS_DUPLICATE", true));
@@ -361,13 +368,14 @@ public class PrintController extends HttpSecureAppServlet {
             true);
       } else {
         if (vars.commandIn("DEFAULT")) {
-          reports = new HashMap<String, Report>();
+          if (request.getServletPath().toLowerCase().indexOf(REPRINT_PATH) != -1) {
+            createPrintOptionsPage(request, response, vars, getComaSeparatedString(documentIds));
+            return;
+          }
+          reports = new HashMap<>();
           for (int index = 0; index < documentIds.length; index++) {
             final String documentId = documentIds[index];
-            if (log4j.isDebugEnabled()) {
-              log4j.debug("Processing document with id: " + documentId);
-            }
-
+            log4j.debug("Processing document with id: {}", documentId);
             try {
               final Report report = new Report(documentType, documentId, vars.getLanguage(),
                   "default", multiReports, OutputTypeEnum.DEFAULT);
@@ -393,14 +401,12 @@ public class PrintController extends HttpSecureAppServlet {
             } catch (final ReportingException exception) {
               throw new ServletException(exception);
             }
-
           }
 
           vars.setSessionObject(sessionValuePrefix + ".Documents", reports);
 
           if (request.getServletPath().toLowerCase().indexOf(PRINT_PATH) != -1) {
-            createPrintOptionsPage(request, response, vars, documentType,
-                getComaSeparatedString(documentIds), reports);
+            createPrintOptionsPage(request, response, vars, getComaSeparatedString(documentIds));
           } else if (request.getServletPath().toLowerCase().indexOf(SEND_PATH) != -1
               || request.getServletPath().toLowerCase().indexOf(RESEND_PATH) != -1) {
             createEmailOptionsPage(request, response, vars, documentType, documentIds, reports,
@@ -409,8 +415,7 @@ public class PrintController extends HttpSecureAppServlet {
 
         } else if (vars.commandIn("ADD")) {
           if (request.getServletPath().toLowerCase().indexOf(PRINT_PATH) != -1) {
-            createPrintOptionsPage(request, response, vars, documentType,
-                getComaSeparatedString(documentIds), reports);
+            createPrintOptionsPage(request, response, vars, getComaSeparatedString(documentIds));
           } else {
             createEmailOptionsPage(request, response, vars, documentType, documentIds, reports,
                 checks, fullDocumentIdentifier);
@@ -730,21 +735,17 @@ public class PrintController extends HttpSecureAppServlet {
       String strDocumentId, final ReportManager reportManager, DocumentType documentType,
       OutputTypeEnum outputType, String templateId, boolean multiReports) {
     String localStrDocumentId = strDocumentId;
-    Report report = null;
     if (localStrDocumentId != null) {
       localStrDocumentId = localStrDocumentId.replaceAll("\\(|\\)|'", "");
     }
     try {
-      report = new Report(documentType, localStrDocumentId, vars.getLanguage(), templateId,
+      Report report = new Report(documentType, localStrDocumentId, vars.getLanguage(), templateId,
           multiReports, outputType);
-    } catch (final ReportingException e) {
-      log4j.error(e);
-    } catch (final ServletException e) {
-      log4j.error(e);
+      reportManager.setTargetDirectory(report);
+      return report;
+    } catch (Exception ex) {
+      throw new OBException(ex.getMessage(), ex);
     }
-
-    reportManager.setTargetDirectory(report);
-    return report;
   }
 
   public void buildReport(HttpServletResponse response, VariablesSecureApp vars,
@@ -1005,8 +1006,7 @@ public class PrintController extends HttpSecureAppServlet {
   }
 
   void createPrintOptionsPage(HttpServletRequest request, HttpServletResponse response,
-      VariablesSecureApp vars, DocumentType documentType, String strDocumentId,
-      Map<String, Report> reports) throws IOException, ServletException {
+      VariablesSecureApp vars, String strDocumentId) throws IOException {
     XmlDocument xmlDocument = null;
     xmlDocument = xmlEngine
         .readXmlTemplate("org/openbravo/erpCommon/utility/reporting/printing/PrintOptions")
