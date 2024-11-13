@@ -61,9 +61,9 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AD_ENABLEDFUNDSTRANSFER" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="AD_ENABLEDFUNDSTRANSFER" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_GLITEM_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
