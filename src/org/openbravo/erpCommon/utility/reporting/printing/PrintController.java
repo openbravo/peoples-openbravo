@@ -368,11 +368,12 @@ public class PrintController extends HttpSecureAppServlet {
             true);
       } else {
         if (vars.commandIn("DEFAULT")) {
+          if (request.getServletPath().toLowerCase().indexOf(REPRINT_PATH) != -1) {
+            createPrintOptionsPage(request, response, vars, getComaSeparatedString(documentIds));
+            return;
+          }
           reports = new HashMap<>();
           for (int index = 0; index < documentIds.length; index++) {
-            if (request.getServletPath().toLowerCase().indexOf(REPRINT_PATH) != -1) {
-              continue;
-            }
             final String documentId = documentIds[index];
             log4j.debug("Processing document with id: {}", documentId);
             try {
@@ -405,8 +406,7 @@ public class PrintController extends HttpSecureAppServlet {
           vars.setSessionObject(sessionValuePrefix + ".Documents", reports);
 
           if (request.getServletPath().toLowerCase().indexOf(PRINT_PATH) != -1) {
-            createPrintOptionsPage(request, response, vars, documentType,
-                getComaSeparatedString(documentIds), reports);
+            createPrintOptionsPage(request, response, vars, getComaSeparatedString(documentIds));
           } else if (request.getServletPath().toLowerCase().indexOf(SEND_PATH) != -1
               || request.getServletPath().toLowerCase().indexOf(RESEND_PATH) != -1) {
             createEmailOptionsPage(request, response, vars, documentType, documentIds, reports,
@@ -415,8 +415,7 @@ public class PrintController extends HttpSecureAppServlet {
 
         } else if (vars.commandIn("ADD")) {
           if (request.getServletPath().toLowerCase().indexOf(PRINT_PATH) != -1) {
-            createPrintOptionsPage(request, response, vars, documentType,
-                getComaSeparatedString(documentIds), reports);
+            createPrintOptionsPage(request, response, vars, getComaSeparatedString(documentIds));
           } else {
             createEmailOptionsPage(request, response, vars, documentType, documentIds, reports,
                 checks, fullDocumentIdentifier);
@@ -1007,8 +1006,7 @@ public class PrintController extends HttpSecureAppServlet {
   }
 
   void createPrintOptionsPage(HttpServletRequest request, HttpServletResponse response,
-      VariablesSecureApp vars, DocumentType documentType, String strDocumentId,
-      Map<String, Report> reports) throws IOException, ServletException {
+      VariablesSecureApp vars, String strDocumentId) throws IOException {
     XmlDocument xmlDocument = null;
     xmlDocument = xmlEngine
         .readXmlTemplate("org/openbravo/erpCommon/utility/reporting/printing/PrintOptions")
