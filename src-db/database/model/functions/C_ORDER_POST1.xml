@@ -1132,10 +1132,14 @@
 	 */
 
 	-- Check if the validation needs to be made
-	SELECT SKIPFFMCHECK 
+	SELECT 
+		CASE
+			WHEN doc.isreturn = 'Y' THEN 'Y'
+			ELSE rtv.SKIPFFMCHECK END
 	INTO v_skipFFC
-	FROM c_order
-	WHERE c_order_id = v_Record_ID;
+	FROM c_order rtv
+	inner join c_doctype doc on (doc.c_doctype_id = rtv.c_doctypetarget_id)
+	WHERE rtv.c_order_id = v_Record_ID;
 
 	IF (v_skipFFC = 'N') THEN
 	    with ffm_list as (
