@@ -353,6 +353,18 @@ build.war: build a war file in the lib directory.
       <fileset file="${basedir}/org/openbravo/erpReports/jasperreports.properties" />
     </copy>
     <antcall target="build.local.context" inheritAll="true" inheritrefs="true" />
+
+    <antcall target="post.build.hooks" inheritAll="true" inheritrefs="true" />
+  </target>
+
+  <target name="post.build.hooks">
+    <java classname="org.openbravo.buildscript.BuildHookExecutor" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" failonerror="true">
+      <arg line="'${base.modules}'" />
+      <classpath refid="project.class.path" />
+      <syspropertyset>
+         <propertyref name="java.security.egd" />
+      </syspropertyset>
+    </java>
   </target>
 
   <target name="postsrc.modules">

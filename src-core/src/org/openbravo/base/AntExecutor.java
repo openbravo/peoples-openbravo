@@ -19,11 +19,14 @@
 package org.openbravo.base;
 
 import java.io.File;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Vector;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 
@@ -125,6 +128,31 @@ public class AntExecutor {
       project.executeTargets(tasks);
     } catch (final BuildException e) {
       logger.error(e.getMessage(), e);
+    }
+  }
+
+  /** Determines whether current build file has a given target. */
+  public boolean hasTarget(String targetName) {
+    return project.getTargets().containsKey(targetName);
+  }
+
+  /** Configures this executor to log output to stdout/stderr */
+  public void logOutput() {
+    DefaultLogger consoleLogger = new DefaultLogger();
+    consoleLogger.setErrorPrintStream(System.err);
+    consoleLogger.setOutputPrintStream(System.out);
+    consoleLogger.setMessageOutputLevel(Project.MSG_INFO);
+    project.addBuildListener(consoleLogger);
+  }
+
+  /**
+   * Makes the project of this AntExecutor to inherit all the properties set in the other executor.
+   */
+  public void inheritPropertiesFrom(AntExecutor otherExecutor) {
+    project.copyInheritedProperties(otherExecutor.project);
+    Map<String, Object> props = otherExecutor.project.getProperties();
+    for (Entry<String, Object> prop : props.entrySet()) {
+      project.setInheritedProperty(prop.getKey(), (String) prop.getValue());
     }
   }
 }
