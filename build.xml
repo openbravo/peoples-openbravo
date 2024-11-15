@@ -405,10 +405,18 @@ export.database: exports database structure and data to xml files.
     <antcall target="build.deploy.class" />
   </target>
 
+  <!-- Set deployDir based on deploy.tomcat10 -->
+  <condition property="deployDir" value="webapps-javaee">
+    <equals arg1="${deploy.tomcat10}" arg2="true" />
+  </condition>
+  <condition property="deployDir" value="webapps">
+    <equals arg1="${deploy.tomcat10}" arg2="false" />
+  </condition>
+
   <target name="build.deploy.class" if="mode.class">
     <ant dir="${base.src}" target="copy.files" inheritAll="true" inheritRefs="true" />
-    <mkdir dir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" />
-    <copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" file="${build.core.lib}/openbravo-core.jar" encoding="UTF-8" />
+    <mkdir dir="${jakarta.base}/${deployDir}/${context.name}/WEB-INF/lib" />
+    <copy todir="${jakarta.base}/${deployDir}/${context.name}/WEB-INF/lib" file="${build.core.lib}/openbravo-core.jar" encoding="UTF-8" />
   </target>
 
   <target name="build.deploy.war" if="mode.war">

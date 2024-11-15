@@ -620,8 +620,8 @@ build.war: build a war file in the lib directory.
   </target>
 
   <target name="copy.files" if="mode.class">
-    <mkdir dir="${jakarta.base}/webapps/${context.name}" />
-    <sync todir="${jakarta.base}/webapps/${context.name}">
+    <mkdir dir="${jakarta.base}/${deployDir}/${context.name}" />
+    <sync todir="${jakarta.base}/${deployDir}/${context.name}">
       <!-- sync occurs in 2 steps because origin files are in different directories
            keep in 1st step classes, that will be copied in 2nd step in order to to
            delete them all to be re-copied afterward.
@@ -632,13 +632,13 @@ build.war: build a war file in the lib directory.
       <fileset dir="${base.context}" />
     </sync>
 
-    <mkdir dir="${jakarta.base}/webapps/${context.name}/WEB-INF/classes" />
+    <mkdir dir="${jakarta.base}/${deployDir}/${context.name}/WEB-INF/classes" />
 
-    <sync todir="${jakarta.base}/webapps/${context.name}/WEB-INF/classes">
+    <sync todir="${jakarta.base}/${deployDir}/${context.name}/WEB-INF/classes">
       <fileset dir="${build}" />
     </sync>
     
-  	<copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" file="${build.core.lib}/openbravo-core.jar" encoding="UTF-8"/>
+    <copy todir="${jakarta.base}/${deployDir}/${context.name}/WEB-INF/lib" file="${build.core.lib}/openbravo-core.jar" encoding="UTF-8"/>
   </target>
 
   <target name="compile.development" depends="generate.entities, compile, copy.files">
