@@ -339,6 +339,10 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/callout/customerAddressOnchange.js",
         ComponentResource.APP_OB3));
 
+    // Event Handler
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/eventhandler/discountValidation.js", false));
+
     // Styling
     globalResources
         .add(createStyleSheetResource("web/org.openbravo.userinterface.smartclient/openbravo/skins/"
