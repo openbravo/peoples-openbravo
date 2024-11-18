@@ -109,9 +109,11 @@ public class ReferencedInventoryStatusProcessor {
   private void changeStatusInCascade(ReferencedInventory handlingUnit,
       ReferencedInventoryStatus status) {
     handlingUnit.setStatus(status.name());
-    ReferencedInventoryUtil.getDirectChildReferencedInventories(handlingUnit)
-        .filter(ReferencedInventoryStatus::isNotDestroyed)
-        .forEach(child -> changeStatusInCascade(child, status));
+    if (status.equals(ReferencedInventoryStatus.CLOSED)) {
+      ReferencedInventoryUtil.getDirectChildReferencedInventories(handlingUnit)
+          .filter(ReferencedInventoryStatus::isNotDestroyed)
+          .forEach(child -> changeStatusInCascade(child, status));
+    }
   }
 
   private void triggerHandlingUnitStatusChangeEvent(ReferencedInventory handlingUnit,
