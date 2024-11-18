@@ -102,6 +102,14 @@
       <foreign-key foreignTable="AD_ORG" name="APRM_FTR_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="APRM_FTR_I_DOC" unique="false">
+        <index-column name="DOCUMENTNO"/>
+      </index>
+      <index name="APRM_FTR_I_ORDER_AND_DATE" unique="false">
+        <index-column name="DATE"/>
+        <index-column name="CREATED"/>
+        <index-column name="APRM_FUND_TRANSFER_REC_ID"/>
+      </index>
       <check name="APRM_FTR_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

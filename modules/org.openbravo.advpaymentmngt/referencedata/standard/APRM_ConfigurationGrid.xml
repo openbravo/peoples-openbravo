@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><ob:Openbravo xmlns:ob="http://www.openbravo.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <OBUIAPP_GC_Field id="5BC815F4E1AC4814945EFF28D5CAFEE3" identifier="Document No. - Fund Transfer Record - Fund Transfer Record">
+    <id>5BC815F4E1AC4814945EFF28D5CAFEE3</id>
+    <active>true</active>
+    <creationDate transient="true">2024-11-08T15:47:03.305Z</creationDate>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updated transient="true">2024-11-08T15:48:58.707Z</updated>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <obuiappGcTab id="53A4072878C640B5822075E100E3162F" entity-name="OBUIAPP_GC_Tab" identifier="Fund Transfer Record - Fund Transfer Record"/>
+    <field id="F6261A7178C94CE7AD7A524EC8323D0D" entity-name="ADField" identifier="Document No. - Fund Transfer Record - Fund Transfer Record"/>
+    <filterable>D</filterable>
+    <sortable>N</sortable>
+    <textFilterBehavior>E</textFilterBehavior>
+    <filterOnChange>D</filterOnChange>
+    <thresholdToFilter xsi:nil="true"/>
+    <allowFilterByIdentifier>D</allowFilterByIdentifier>
+    <isFkDropdownUnfiltered>D</isFkDropdownUnfiltered>
+    <disableFkCombo>D</disableFkCombo>
+  </OBUIAPP_GC_Field>
+  <OBUIAPP_GC_Tab id="53A4072878C640B5822075E100E3162F" identifier="Fund Transfer Record - Fund Transfer Record">
+    <id>53A4072878C640B5822075E100E3162F</id>
+    <active>true</active>
+    <creationDate transient="true">2024-11-08T15:31:35.527Z</creationDate>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updated transient="true">2024-11-08T15:35:26.685Z</updated>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <tab id="E3B675C33D1540A69A2F92C99AEEC10C" entity-name="ADTab" identifier="Fund Transfer Record - Fund Transfer Record"/>
+    <filterable>D</filterable>
+    <sortable>N</sortable>
+    <textFilterBehavior>D</textFilterBehavior>
+    <thresholdToFilter xsi:nil="true"/>
+    <isLazyFiltering>Y</isLazyFiltering>
+    <filterOnChange>D</filterOnChange>
+    <allowFilterByIdentifier>D</allowFilterByIdentifier>
+    <isFkDropDownUnfiltered>Y</isFkDropDownUnfiltered>
+    <disableFkCombo>D</disableFkCombo>
+    <seqno>10</seqno>
+    <allowSummaryFunctions>N</allowSummaryFunctions>
+    <showstoredates>D</showstoredates>
+  </OBUIAPP_GC_Tab>
+</ob:Openbravo>
