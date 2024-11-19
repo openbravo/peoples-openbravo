@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2019 Openbravo S.L.U.
+ * Copyright (C) 2001-2022 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -32,6 +32,7 @@ import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.base.secureApp.VariablesHistory;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
@@ -197,49 +198,5 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
     if (!response.isCommitted()) {
       response.sendRedirect(HttpBaseUtils.getLocalAddress(request));
     }
-  }
-
-  /**
-   * Checks the expiration password date from userId, throws
-   * AuthenticationExpirationPasswordException in case that expiration date is reached
-   * 
-   * @param userId
-   *          The userId of the user to check expiration password date
-   * @param language
-   *          Default language for the user
-   * @throws AuthenticationExpirationPasswordException
-   *           AuthenticationExpirationPasswordException is thrown in case that expiration date is
-   *           reached
-   * 
-   */
-  protected void checkIfPasswordExpired(String userId, String language)
-      throws AuthenticationExpirationPasswordException {
-
-    Date total = null;
-
-    final OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
-    obc.setFilterOnReadableClients(false);
-    obc.setFilterOnReadableOrganization(false);
-    obc.add(Restrictions.eq(User.PROPERTY_ID, userId));
-    final User userOB = (User) obc.uniqueResult();
-    Date lastUpdatePassword = userOB.getLastPasswordUpdate();
-    Long validityDays = userOB.getClient().getDaysToPasswordExpiration();
-
-    if (validityDays != null && validityDays > 0) {
-      Calendar expirationDate = Calendar.getInstance();
-      expirationDate.setTimeInMillis(lastUpdatePassword.getTime());
-      expirationDate.add(Calendar.DATE, validityDays.intValue());
-      total = expirationDate.getTime();
-    }
-
-    Date today = new Date();
-    if ((total != null && total.compareTo(today) <= 0) || userOB.isPasswordExpired()) {
-      OBError errorMsg = new OBError();
-      errorMsg.setType("Error");
-      errorMsg.setTitle(Utility.messageBD(conn, "CPExpirationPassword", language));
-      errorMsg.setMessage(Utility.messageBD(conn, "CPUpdatePassword", language));
-      throw new AuthenticationExpirationPasswordException(errorMsg.getTitle(), errorMsg, true);
-    }
-
   }
 }
