@@ -133,6 +133,7 @@ import org.openbravo.test.preference.PreferenceTest;
 import org.openbravo.test.pricelist.PriceListTest;
 import org.openbravo.test.process.order.OrderProcessFFMTest;
 import org.openbravo.test.process.order.OrderProcessTest;
+import org.openbravo.test.process.order.PurchaseOrderStatusTransitionTest;
 import org.openbravo.test.productStatus.ProductStatusTest;
 import org.openbravo.test.referencedinventory.NestedReferencedInventoryTestSuite;
 import org.openbravo.test.referencedinventory.ReferencedInventoryTestSuite;
@@ -470,7 +471,10 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     OBDateUtilsTest.class,
 
     // Email Configuration by differents organization
-    SendEmailTest.class
+    SendEmailTest.class,
+
+    // Purchase Order Status Transition Test
+    PurchaseOrderStatusTransitionTest.class
 
 })
 
