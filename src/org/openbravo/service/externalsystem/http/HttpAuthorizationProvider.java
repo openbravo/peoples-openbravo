@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2022-2023 Openbravo SLU 
+ * All portions are Copyright (C) 2022-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -44,8 +44,10 @@ public interface HttpAuthorizationProvider {
    * 
    * @param configuration
    *          A BaseOBObject with the configuration data of an HTTP protocol based external system
+   * @param additionalSettings
+   *          Additional settings that can be used to configure the provider
    */
-  public default void init(BaseOBObject configuration) {
+  public default void init(BaseOBObject configuration, Map<String, Object> additionalSettings) {
     throw new UnsupportedOperationException(
         "This provider cannot be initialized with the entity " + configuration.getEntityName());
   }

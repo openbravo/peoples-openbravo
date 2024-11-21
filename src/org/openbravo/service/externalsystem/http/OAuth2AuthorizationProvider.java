@@ -46,12 +46,13 @@ public class OAuth2AuthorizationProvider
     implements HttpAuthorizationProvider, HttpAuthorizationRequestHeaderProvider {
 
   private static final Logger log = LogManager.getLogger();
-  private static final int TIMEOUT = 10;
+  private static final int DEFAULT_TIMEOUT = 10;
   private static final int ONE_HOUR = 3600;
 
   private String clientId;
   private String clientSecret;
   private String authServerURL;
+  private int timeout;
   private HttpClient httpClient;
   private OAuth2AccessToken accessToken;
   private boolean isCacheableToken;
@@ -68,7 +69,8 @@ public class OAuth2AuthorizationProvider
       throw new ExternalSystemConfigurationError(
           "Error decrypting OAuth2 Client Secret of HTTP configuration " + configuration.getId());
     }
-    httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(TIMEOUT)).build();
+    timeout = DEFAULT_TIMEOUT;
+    httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(timeout)).build();
     isCacheableToken = true;
     accessToken = null;
   }
@@ -88,7 +90,7 @@ public class OAuth2AuthorizationProvider
    *           if there is an error decrypting the provided client secret
    */
   @Override
-  public void init(BaseOBObject configuration) {
+  public void init(BaseOBObject configuration, Map<String, Object> additionalSettings) {
     clientId = (String) configuration.get("oauth2ClientIdentifier");
     authServerURL = (String) configuration.get("oauth2AuthServerUrl");
     try {
@@ -100,7 +102,8 @@ public class OAuth2AuthorizationProvider
       throw new ExternalSystemConfigurationError(
           "Error decrypting OAuth2 Client Secret of HTTP configuration " + configuration.get("id"));
     }
-    httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(TIMEOUT)).build();
+    timeout = (int) additionalSettings.getOrDefault("timeout", DEFAULT_TIMEOUT);
+    httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(timeout)).build();
     isCacheableToken = false;
     accessToken = null;
   }
@@ -127,7 +130,7 @@ public class OAuth2AuthorizationProvider
         .header("Content-Type", "application/x-www-form-urlencoded")
         .header("Authorization",
             "Basic " + Base64.getEncoder().encodeToString(credentials.getBytes()))
-        .timeout(Duration.ofSeconds(TIMEOUT))
+        .timeout(Duration.ofSeconds(timeout))
         .POST(HttpRequest.BodyPublishers.ofString("grant_type=client_credentials"))
         .build();
 
