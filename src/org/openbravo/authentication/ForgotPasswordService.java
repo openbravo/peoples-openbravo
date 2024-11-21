@@ -9,6 +9,7 @@
 package org.openbravo.authentication;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -43,6 +44,7 @@ import org.openbravo.model.common.enterprise.Organization;
 @SuppressWarnings("serial")
 public class ForgotPasswordService extends WebServiceAbstractServlet {
   private static final Logger log = LogManager.getLogger();
+  public static final String EVT_FORGOT_PASSWORD = "forgotPassword";
 
   @Inject
   private EmailEventManager emailManager;
@@ -105,11 +107,12 @@ public class ForgotPasswordService extends WebServiceAbstractServlet {
         }
 
         User user = users.get(0);
-        generateAndPersistToken(user, client, org);
-        // JSONObject test = new JSONObject();
-        // test.put("a", "aaaaaaaaaa");
-        // emailManager.sendEmail("passwordRequest", user.getEmail(), test);
+        String token = generateAndPersistToken(user, client, org);
 
+        Map<String, Object> emailData = new HashMap<String, Object>();
+        emailData.put("token", token);
+
+        emailManager.sendEmail(EVT_FORGOT_PASSWORD, user.getEmail(), emailData, emailConfig);
       }
     } catch (JSONException ex) {
       log.error("Error parsing JSON", ex);
@@ -123,7 +126,7 @@ public class ForgotPasswordService extends WebServiceAbstractServlet {
     }
   }
 
-  private void generateAndPersistToken(User user, Client client, Organization org) {
+  private String generateAndPersistToken(User user, Client client, Organization org) {
     String token = UUID.randomUUID().toString();
     UserPasswordResetToken resetToken = OBProvider.getInstance().get(UserPasswordResetToken.class);
     resetToken.setClient(client);
@@ -132,6 +135,7 @@ public class ForgotPasswordService extends WebServiceAbstractServlet {
     resetToken.setUser(user);
 
     OBDal.getInstance().save(resetToken);
+    return token;
   }
 
   private boolean checkUser(User user) {
