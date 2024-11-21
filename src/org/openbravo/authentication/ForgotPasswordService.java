@@ -91,7 +91,7 @@ public class ForgotPasswordService extends WebServiceAbstractServlet {
             .setFilterOnReadableOrganization(false)
             .list();
 
-        if (users == null) {
+        if (users == null || users.size() == 0) {
           return;
         }
         if (users.size() > 1) {
@@ -119,8 +119,8 @@ public class ForgotPasswordService extends WebServiceAbstractServlet {
       result = new JSONObject(Map.of("error", ex.getMessage()));
     } finally {
       OBContext.restorePreviousMode();
+      writeResult(response, new JSONObject(Map.of("response", result)).toString());
     }
-    writeResult(response, new JSONObject(Map.of("response", result)).toString());
   }
 
   private void generateAndPersistToken(User user, Client client, Organization org) {
