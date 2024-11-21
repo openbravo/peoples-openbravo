@@ -95,8 +95,8 @@ public class ForgotPasswordService extends WebServiceAbstractServlet {
           return;
         }
         if (users.size() > 1) {
-          // More than one user has the same email, so in this case no email has to be sent
-          throw new Exception("More than one user has the same email configured");
+          log.info("Forgot password service: More than one user has the same email configured");
+          return;
         }
 
         boolean userCompliesWithRules = checkUser(users.get(0));
