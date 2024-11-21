@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+  <database name="TABLE OBRETCO_PRODUCTCATEGORY">
+    <table name="OBRETCO_PRODUCTCATEGORY" primaryKey="OBRETCO_PRODUCTCATEGORY_KEY">
+      <column name="OBRETCO_PRODUCTCATEGORY_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="OBRETCO_PRODUCTLIST_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="M_PRODUCT_CATEGORY_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="AD_CLIENT" name="OBRETCO_PRODUCTCATEGORY_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="OBRETCO_PRODUCTCATEGORY_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="OBRETCO_PRODUCTCATEGORY_PCAT">
+        <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBRETCO_PRODUCTLIST" name="OBRETCO_PRODUCTCATEGORY_PL">
+        <reference local="OBRETCO_PRODUCTLIST_ID" foreign="OBRETCO_PRODUCTLIST_ID"/>
+      </foreign-key>
+      <index name="OBRETCO_PRCAT_PROD_CAT_IDX" unique="false">
+        <index-column name="M_PRODUCT_CATEGORY_ID"/>
+      </index>
+      <index name="OBRETCO_PRCAT_PROD_LIST_IDX" unique="false">
+        <index-column name="OBRETCO_PRODUCTLIST_ID"/>
+      </index>
+      <unique name="OBRETCO_PRODUCTCATEGORY_UN">
+        <unique-column name="AD_CLIENT_ID"/>
+        <unique-column name="M_PRODUCT_CATEGORY_ID"/>
+        <unique-column name="OBRETCO_PRODUCTLIST_ID"/>
+      </unique>
+      <check name="OBRETCO_PRODUCTCATEGORY_ISACTI"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+    </table>
+  </database>

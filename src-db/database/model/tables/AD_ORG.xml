@@ -117,6 +117,90 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBRETCO_RETAILORGTYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBRETCO_PRICELIST_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBRETCO_PRODUCTLIST_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBRETCO_C_BPARTNER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBRETCO_C_BP_LOCATION_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBRETCO_M_WAREHOUSE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBRETCO_DBP_IRULESID" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBRETCO_DBP_PTERMID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBRETCO_DBP_PMETHODID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBRETCO_DBP_BPCATID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBRETCO_DBP_COUNTRYID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBRETCO_DBP_ORGID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBRETCO_SHOWTAXID" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
+      <column name="EM_OBRETCO_SHOWBPCATEGORY" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
+      <column name="EM_OBRETCO_CUSTOMERSEQ_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBRETCO_CROSS_STORE" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBRETCO_EXTENDEDPRODLIST_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBRETCO_SEARCH_TARGET" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[InStore]]></default>
+        <onCreateDefault><![CDATA['InStore']]></onCreateDefault>
+      </column>
+      <column name="EM_OBRETCO_CS_RETURN" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA[(CASE WHEN (EM_OBRETCO_CROSS_STORE IS NOT NULL) THEN 'Y' ELSE 'N' END)]]></onCreateDefault>
+      </column>
+      <column name="EM_OBRETCO_CS_VISIBILITY" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA[(CASE WHEN (EM_OBRETCO_CROSS_STORE IS NOT NULL) THEN 'Y' ELSE 'N' END)]]></onCreateDefault>
+      </column>
+      <column name="EM_OBRETCO_CS_SALES" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA[(CASE WHEN (EM_OBRETCO_CROSS_STORE IS NOT NULL) THEN 'Y' ELSE 'N' END)]]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_ORG_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -156,6 +240,49 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_PERIODCNTRLALLOWED_ORG">
         <reference local="AD_PERIODCONTROLALLOWED_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="EM_OBRETCO_CROSS_STORE">
+        <reference local="EM_OBRETCO_CROSS_STORE" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="EM_OBRETCO_ORG_BPARTNER">
+        <reference local="EM_OBRETCO_C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_COUNTRY" name="EM_OBRETCO_ORG_BPCOUNTRY">
+        <reference local="EM_OBRETCO_DBP_COUNTRYID" foreign="C_COUNTRY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BP_GROUP" name="EM_OBRETCO_ORG_BPGROUP">
+        <reference local="EM_OBRETCO_DBP_BPCATID" foreign="C_BP_GROUP_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER_LOCATION" name="EM_OBRETCO_ORG_BPLOCATION">
+        <reference local="EM_OBRETCO_C_BP_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="EM_OBRETCO_ORG_BPORG">
+        <reference local="EM_OBRETCO_DBP_ORGID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_SEQUENCE" name="EM_OBRETCO_ORG_CUSTSEQUENCE">
+        <reference local="EM_OBRETCO_CUSTOMERSEQ_ID" foreign="AD_SEQUENCE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBRETCO_PRODUCTLIST" name="EM_OBRETCO_ORG_EXTENDED">
+        <reference local="EM_OBRETCO_EXTENDEDPRODLIST_ID" foreign="OBRETCO_PRODUCTLIST_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="FIN_PAYMENTMETHOD" name="EM_OBRETCO_ORG_PAYMETHOD">
+        <reference local="EM_OBRETCO_DBP_PMETHODID" foreign="FIN_PAYMENTMETHOD_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PAYMENTTERM" name="EM_OBRETCO_ORG_PAYTERM">
+        <reference local="EM_OBRETCO_DBP_PTERMID" foreign="C_PAYMENTTERM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBRETCO_PRODUCTLIST" name="EM_OBRETCO_ORG_PL">
+        <reference local="EM_OBRETCO_PRODUCTLIST_ID" foreign="OBRETCO_PRODUCTLIST_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_WAREHOUSE" name="EM_OBRETCO_ORG_WAREHOUSE">
+        <reference local="EM_OBRETCO_M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRICELIST" name="EM_OBRETCO_PRICEL">
+        <reference local="EM_OBRETCO_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
+      </foreign-key>
+      <index name="EM_OBRETCO_ORG_CROSSSTORE_IDX" unique="false">
+        <index-column name="EM_OBRETCO_CROSS_STORE"/>
+        <whereClause><![CDATA[EM_OBRETCO_CROSS_STORE IS NOT NULL]]></whereClause>
+      </index>
       <unique name="AD_ORG_VALUE">
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="VALUE"/>
@@ -165,5 +292,10 @@
       <check name="AD_ORG_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_ORG_ISPERIODCONTROL_CHECK"><![CDATA[ISPERIODCONTROLALLOWED IN ('Y', 'N')]]></check>
       <check name="AD_ORG_ISREADY_CHECK"><![CDATA[ISREADY IN ('Y', 'N')]]></check>
+      <check name="EM_OBRETCO_CS_RETURN_CHECK"><![CDATA[EM_OBRETCO_CS_RETURN IN ('Y', 'N')]]></check>
+      <check name="EM_OBRETCO_CS_SALES_CHECK"><![CDATA[EM_OBRETCO_CS_SALES IN ('Y', 'N')]]></check>
+      <check name="EM_OBRETCO_CS_VIS_CHECK"><![CDATA[EM_OBRETCO_CS_VISIBILITY IN ('Y', 'N')]]></check>
+      <check name="EM_OBRETCO_ORG_POS_CHK"><![CDATA[EM_OBRETCO_RETAILORGTYPE = 'S' AND EM_OBRETCO_C_BPARTNER_ID IS NOT NULL AND EM_OBRETCO_C_BP_LOCATION_ID IS NOT NULL OR EM_OBRETCO_RETAILORGTYPE <> 'S']]></check>
+      <check name="EM_OBRETCO_ORG_TYPE_CHK"><![CDATA[EM_OBRETCO_RETAILORGTYPE = 'S' AND AD_ORGTYPE_ID <> '0' OR EM_OBRETCO_RETAILORGTYPE <> 'S']]></check>
     </table>
   </database>

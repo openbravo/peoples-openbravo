@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+  <database name="TABLE OBRETCO_ORG_SPECIALSCHEDULE">
+    <table name="OBRETCO_ORG_SPECIALSCHEDULE" primaryKey="OBRETCO_ORG_SSCHEDULE_KEY">
+      <column name="OBRETCO_ORG_SPECIALSCHEDULE_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="SPECIALDATE" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="OPEN" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="STARTTIME" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ENDTIME" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="AD_CLIENT" name="OBRETCO_ORG_SSCHEDULE_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="OBRETCO_ORG_SSCHEDULE_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <index name="OBRETCO_ORG_SSCHEDULE_ORG" unique="false">
+        <index-column name="AD_ORG_ID"/>
+      </index>
+      <check name="OBRETCO_ORG_SSCHEDULE_ACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="OBRETCO_ORG_SSCHEDULE_CHECK"><![CDATA[OPEN = 'Y' AND STARTTIME IS NOT NULL AND ENDTIME IS NOT NULL OR OPEN = 'N' AND STARTTIME IS NULL AND ENDTIME IS NULL]]></check>
+      <check name="OBRETCO_ORG_SSCHEDULE_OPEN"><![CDATA[OPEN IN ('Y', 'N')]]></check>
+    </table>
+  </database>

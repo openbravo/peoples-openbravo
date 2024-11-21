@@ -57,6 +57,10 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault><![CDATA['0']]></onCreateDefault>
       </column>
+      <column name="EM_OBRETCO_AVAILABLECROSSSTORE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA[Available]]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_INVENTORYSTATUS_CLIENT_FK">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -66,6 +70,9 @@
       <foreign-key foreignTable="AD_ORG" name="M_INVENTORYSTATUS_ORG_FK">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="EM_OBRETCO_AVAILABLECROSSS_IDX" unique="false">
+        <index-column name="EM_OBRETCO_AVAILABLECROSSSTORE"/>
+      </index>
       <index name="M_INVENTORYSTATUS_AVAIL_IDX" unique="false">
         <index-column name="AVAILABLE"/>
       </index>
@@ -79,6 +86,8 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
+      <check name="EM_OBRETCO_AVAILABLECROSS"><![CDATA[AVAILABLE = 'Y' OR EM_OBRETCO_AVAILABLECROSSSTORE = 'N']]></check>
+      <check name="EM_OBRETCO_AVAILABLECROSS_CHK"><![CDATA[EM_OBRETCO_AVAILABLECROSSSTORE IN ('Y', 'N')]]></check>
       <check name="M_INVENTORYSTATUS_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_INVSTATUS_AVAILABLE_CHK"><![CDATA[AVAILABLE IN ('Y', 'N')]]></check>
       <check name="M_INVSTATUS_NETTABLE_CHK"><![CDATA[NETTABLE IN ('Y', 'N')]]></check>
