@@ -76,17 +76,19 @@ public class ReferencedInventoryStatusProcessorTest extends WeldBaseTest {
     assertThat(pallet.getStatus(), equalTo(newStatus.name()));
     assertThat(box.getStatus(), equalTo(newStatus.name()));
 
+    // Opening packages is not a cascade operation
     newStatus = ReferencedInventoryStatus.OPEN;
     statusProcessor.changeStatus(container, newStatus);
     assertThat(container.getStatus(), equalTo(newStatus.name()));
-    assertThat(pallet.getStatus(), equalTo(newStatus.name()));
-    assertThat(box.getStatus(), equalTo(newStatus.name()));
+    assertThat(pallet.getStatus(), equalTo(ReferencedInventoryStatus.CLOSED.name()));
+    assertThat(box.getStatus(), equalTo(ReferencedInventoryStatus.CLOSED.name()));
 
+    // Destroying packages is not a cascade operation
     newStatus = ReferencedInventoryStatus.DESTROYED;
     statusProcessor.changeStatus(container, newStatus);
     assertThat(container.getStatus(), equalTo(newStatus.name()));
-    assertThat(pallet.getStatus(), equalTo(newStatus.name()));
-    assertThat(box.getStatus(), equalTo(newStatus.name()));
+    assertThat(pallet.getStatus(), equalTo(ReferencedInventoryStatus.CLOSED.name()));
+    assertThat(box.getStatus(), equalTo(ReferencedInventoryStatus.CLOSED.name()));
   }
 
   @Test
@@ -109,6 +111,7 @@ public class ReferencedInventoryStatusProcessorTest extends WeldBaseTest {
   public void changeStatusAtDifferentLevels() {
     statusProcessor.changeStatus(container, ReferencedInventoryStatus.CLOSED);
     statusProcessor.changeStatus(container, ReferencedInventoryStatus.OPEN);
+    statusProcessor.changeStatus(pallet, ReferencedInventoryStatus.OPEN);
     statusProcessor.changeStatus(box, ReferencedInventoryStatus.DESTROYED);
     statusProcessor.changeStatus(pallet, ReferencedInventoryStatus.CLOSED);
 
@@ -196,13 +199,17 @@ public class ReferencedInventoryStatusProcessorTest extends WeldBaseTest {
   public void eventIsTriggeredWhenExpected() {
     changeStatusAndVerifyEventIsTriggered(container, ReferencedInventoryStatus.CLOSED);
     changeStatusAndVerifyEventIsNotTriggered(container, ReferencedInventoryStatus.CLOSED);
+    changeStatusAndVerifyEventIsNotTriggered(pallet, ReferencedInventoryStatus.CLOSED);
+    changeStatusAndVerifyEventIsNotTriggered(box, ReferencedInventoryStatus.CLOSED);
+
     changeStatusAndVerifyEventIsTriggered(container, ReferencedInventoryStatus.OPEN);
-    changeStatusAndVerifyEventIsNotTriggered(container, ReferencedInventoryStatus.OPEN);
-    changeStatusAndVerifyEventIsNotTriggered(pallet, ReferencedInventoryStatus.OPEN);
-    changeStatusAndVerifyEventIsNotTriggered(box, ReferencedInventoryStatus.OPEN);
+    changeStatusAndVerifyEventIsTriggered(pallet, ReferencedInventoryStatus.OPEN);
+    changeStatusAndVerifyEventIsTriggered(box, ReferencedInventoryStatus.OPEN);
+
     changeStatusAndVerifyEventIsTriggered(box, ReferencedInventoryStatus.DESTROYED);
-    changeStatusAndVerifyEventIsTriggered(pallet, ReferencedInventoryStatus.CLOSED);
+
     changeStatusAndVerifyEventIsTriggered(container, ReferencedInventoryStatus.CLOSED);
+    changeStatusAndVerifyEventIsNotTriggered(pallet, ReferencedInventoryStatus.CLOSED);
   }
 
   private void changeStatusAndVerifyEventIsTriggered(ReferencedInventory handlingUnit,

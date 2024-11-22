@@ -67,8 +67,7 @@ public class ReferencedInventoryStatusProcessor {
    * @throws OBException
    *           if the handling unit is destroyed or if the parent of the handling unit is closed
    */
-  public void changeStatus(ReferencedInventory handlingUnit,
-      ReferencedInventoryStatus newStatus) {
+  public void changeStatus(ReferencedInventory handlingUnit, ReferencedInventoryStatus newStatus) {
     if (newStatus.isStatusOf(handlingUnit)) {
       log.warn("Skipping status change. The current status of the handling unit {} is already {}",
           handlingUnit.getSearchKey(), newStatus);
@@ -77,7 +76,7 @@ public class ReferencedInventoryStatusProcessor {
     checkIsDestroyed(handlingUnit);
     checkIsAnyAncestorClosed(handlingUnit);
     changeStatusInCascade(handlingUnit, newStatus);
-    triggerHandlingUnitStatusChangeEvent(handlingUnit);
+    triggerHandlingUnitStatusChangeEvent(handlingUnit, newStatus);
   }
 
   private void checkIsDestroyed(ReferencedInventory handlingUnit) {
@@ -110,12 +109,49 @@ public class ReferencedInventoryStatusProcessor {
   private void changeStatusInCascade(ReferencedInventory handlingUnit,
       ReferencedInventoryStatus status) {
     handlingUnit.setStatus(status.name());
-    ReferencedInventoryUtil.getDirectChildReferencedInventories(handlingUnit)
-        .filter(ReferencedInventoryStatus::isNotDestroyed)
-        .forEach(child -> changeStatusInCascade(child, status));
+    if (status.equals(ReferencedInventoryStatus.CLOSED)) {
+      ReferencedInventoryUtil.getDirectChildReferencedInventories(handlingUnit)
+          .filter(ReferencedInventoryStatus::isNotDestroyed)
+          .forEach(child -> changeStatusInCascade(child, status));
+    }
   }
 
-  private void triggerHandlingUnitStatusChangeEvent(ReferencedInventory handlingUnit) {
+  /**
+   * Triggers a handling unit status change event based on the new status of the handling unit.
+   * <p>
+   * This method manages specific events related to handling unit status changes. Depending on the
+   * {@link ReferencedInventoryStatus} provided, it triggers one of the predefined events for the
+   * "CLOSED" or "DESTROYED" statuses. Additionally, it always triggers a general status change
+   * event.
+   * </p>
+   * <p>
+   * Note: Although this implementation creates a dependency with the Business API module due to the
+   * hardcoded event names (e.g., "API_HandlingUnitStatusToClosed"), it avoids the complexity of
+   * introducing an abstraction layer with hooks to be implemented by external modules.
+   * </p>
+   *
+   * @param handlingUnit
+   *          the {@link ReferencedInventory} instance representing the handling unit whose status
+   *          is changing
+   * @param newStatus
+   *          the {@link ReferencedInventoryStatus} representing the new status of the handling unit
+   */
+  private void triggerHandlingUnitStatusChangeEvent(ReferencedInventory handlingUnit,
+      ReferencedInventoryStatus newStatus) {
+    switch (newStatus) {
+      case CLOSED: {
+        SynchronizationEvent.getInstance()
+            .triggerEvent("API_HandlingUnitStatusToClosed", handlingUnit.getId());
+        break;
+      }
+      case DESTROYED: {
+        SynchronizationEvent.getInstance()
+            .triggerEvent("API_HandlingUnitStatusToDestroyed", handlingUnit.getId());
+        break;
+      }
+      default:
+        break;
+    }
     SynchronizationEvent.getInstance()
         .triggerEvent("API_HandlingUnitStatusChange", handlingUnit.getId());
   }
