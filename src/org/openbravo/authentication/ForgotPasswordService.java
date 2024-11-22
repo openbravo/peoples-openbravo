@@ -73,57 +73,75 @@ public class ForgotPasswordService extends WebServiceAbstractServlet {
       Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
       Client client = OBDal.getInstance().get(Client.class, strClientId);
 
-      EmailServerConfiguration emailConfig = EmailUtils.getEmailConfiguration(org, client);
-      if (emailConfig == null) {
-        emailConfig = EmailUtils.getEmailConfiguration(org);
-        if (emailConfig == null) {
-          result.put("hasEmailConfiguration", false);
-        }
-      }
+      EmailServerConfiguration emailConfig = getEmailConfiguration(result, org, client);
 
       if (emailConfig != null) {
         result.put("hasEmailConfiguration", true);
-        String userOrEmail = body.getString("userOrEmail");
-        List<User> users = OBDal.getInstance()
-            .createCriteria(User.class)
-            .add(Restrictions.or(Restrictions.eq(User.PROPERTY_USERNAME, userOrEmail),
-                Restrictions.eq(User.PROPERTY_EMAIL, userOrEmail)))
-            .setFilterOnActive(true)
-            .setFilterOnReadableClients(false)
-            .setFilterOnReadableOrganization(false)
-            .list();
 
-        if (users == null || users.size() == 0) {
-          return;
-        }
-        if (users.size() > 1) {
-          log.info("Forgot password service: More than one user has the same email configured");
-          return;
-        }
+        Runnable r = () -> {
+          try {
+            OBContext.setAdminMode(true);
+            String userOrEmail = body.getString("userOrEmail");
+            List<User> users = OBDal.getInstance()
+                .createCriteria(User.class)
+                .add(Restrictions.or(Restrictions.eq(User.PROPERTY_USERNAME, userOrEmail),
+                    Restrictions.eq(User.PROPERTY_EMAIL, userOrEmail)))
+                .setFilterOnActive(true)
+                .setFilterOnReadableClients(false)
+                .setFilterOnReadableOrganization(false)
+                .list();
 
-        boolean userCompliesWithRules = checkUser(users.get(0));
-        if (!userCompliesWithRules) {
-          throw new Exception("The selected user does not comply with the expected rules");
-        }
+            if (users == null || users.size() == 0) {
+              return;
+            }
+            if (users.size() > 1) {
+              log.info("Forgot password service: More than one user has the same email configured");
+              return;
+            }
 
-        User user = users.get(0);
-        String token = generateAndPersistToken(user, client, org);
+            boolean userCompliesWithRules = checkUser(users.get(0));
+            if (!userCompliesWithRules) {
+              throw new Exception("The selected user does not comply with the expected rules");
+            }
 
-        Map<String, Object> emailData = new HashMap<String, Object>();
-        emailData.put("token", token);
+            User user = users.get(0);
+            String token = generateAndPersistToken(user, client, org);
 
-        emailManager.sendEmail(EVT_FORGOT_PASSWORD, user.getEmail(), emailData, emailConfig);
+            Map<String, Object> emailData = new HashMap<String, Object>();
+            emailData.put("user", user);
+            emailData.put("changePasswordURL", token); // TODO: create a url with the token
+
+            emailManager.sendEmail(EVT_FORGOT_PASSWORD, user.getEmail(), emailData, emailConfig);
+          } catch (JSONException ex) {
+            log.error("Error parsing JSON", ex);
+          } catch (Exception ex) {
+            log.error("Error with forgot password service", ex);
+          } finally {
+            OBContext.restorePreviousMode();
+          }
+        };
+        new Thread(r).start();
       }
     } catch (JSONException ex) {
       log.error("Error parsing JSON", ex);
-      result = new JSONObject(Map.of("error", ex.getMessage()));
     } catch (Exception ex) {
       log.error("Error with forgot password service", ex);
-      result = new JSONObject(Map.of("error", ex.getMessage()));
     } finally {
       OBContext.restorePreviousMode();
       writeResult(response, new JSONObject(Map.of("response", result)).toString());
     }
+  }
+
+  private EmailServerConfiguration getEmailConfiguration(JSONObject result, Organization org,
+      Client client) throws JSONException {
+    EmailServerConfiguration emailConfig = EmailUtils.getEmailConfiguration(org, client);
+    if (emailConfig == null) {
+      emailConfig = EmailUtils.getEmailConfiguration(org);
+      if (emailConfig == null) {
+        result.put("hasEmailConfiguration", false);
+      }
+    }
+    return emailConfig;
   }
 
   private String generateAndPersistToken(User user, Client client, Organization org) {

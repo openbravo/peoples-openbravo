@@ -19,12 +19,12 @@
 */
 
 -->
-<p>Hello @firstname, </p>
+<p>Hello ${data.user.username}, </p>
 
 <p>We’ve received a request to regenerate your password for your Openbravo - Orisha Retail Chain Account. </p>
 
-<p>Click on the link below to create your new password. </p>
-<p>@urltoreachthepagetorecreatethepassword </p>
+<p>Click on the link below to create your new password. <br>
+${data.changePasswordURL} </p>
 
 <p>If you have not been requesting a new password, please contact your IT system to alert them about this request. </p>
 

@@ -27,6 +27,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.email.EmailEventContentGenerator;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.model.ad.access.User;
 
 /**
  * Convenience class that provides a set of common utilities for templates of emails sent by portal
@@ -76,8 +77,12 @@ public class ForgotPasswordEmailBody extends BaseTemplateComponent {
     return this;
   }
 
-  public String getToken() {
-    return (String) this.data.get("token");
+  public User getUser() {
+    return (User) this.data.get("user");
+  }
+
+  public String getChangePasswordURL() {
+    return (String) this.data.get("changePasswordURL");
   }
 
   @Override
