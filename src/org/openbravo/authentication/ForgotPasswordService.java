@@ -109,7 +109,7 @@ public class ForgotPasswordService extends WebServiceAbstractServlet {
 
             Map<String, Object> emailData = new HashMap<String, Object>();
             emailData.put("user", user);
-            emailData.put("changePasswordURL", token); // TODO: create a url with the token
+            emailData.put("changePasswordURL", generateChangePasswordURL(token));
 
             emailManager.sendEmail(EVT_FORGOT_PASSWORD, user.getEmail(), emailData, emailConfig);
           } catch (JSONException ex) {
@@ -154,6 +154,10 @@ public class ForgotPasswordService extends WebServiceAbstractServlet {
 
     OBDal.getInstance().save(resetToken);
     return token;
+  }
+
+  private String generateChangePasswordURL(String token) {
+    return String.format("http://localhost:3000/?token=%s", token); // TODO: Set custom url
   }
 
   private boolean checkUser(User user) {
