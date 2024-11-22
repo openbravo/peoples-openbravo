@@ -25,9 +25,11 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.email.EmailEventException;
 import org.openbravo.email.EmailEventManager;
 import org.openbravo.email.EmailUtils;
 import org.openbravo.mobile.core.process.WebServiceAbstractServlet;
@@ -78,42 +80,22 @@ public class ForgotPasswordService extends WebServiceAbstractServlet {
       if (emailConfig != null) {
         result.put("hasEmailConfiguration", true);
 
+        String userOrEmail = body.getString("userOrEmail");
+        List<User> users = OBDal.getInstance()
+            .createCriteria(User.class)
+            .add(Restrictions.or(Restrictions.eq(User.PROPERTY_USERNAME, userOrEmail),
+                Restrictions.eq(User.PROPERTY_EMAIL, userOrEmail)))
+            .setFilterOnActive(true)
+            .setFilterOnReadableClients(false)
+            .setFilterOnReadableOrganization(false)
+            .list();
+
         Runnable r = () -> {
           try {
             OBContext.setAdminMode(true);
-            String userOrEmail = body.getString("userOrEmail");
-            List<User> users = OBDal.getInstance()
-                .createCriteria(User.class)
-                .add(Restrictions.or(Restrictions.eq(User.PROPERTY_USERNAME, userOrEmail),
-                    Restrictions.eq(User.PROPERTY_EMAIL, userOrEmail)))
-                .setFilterOnActive(true)
-                .setFilterOnReadableClients(false)
-                .setFilterOnReadableOrganization(false)
-                .list();
-
-            if (users == null || users.size() == 0) {
-              return;
-            }
-            if (users.size() > 1) {
-              log.info("Forgot password service: More than one user has the same email configured");
-              return;
-            }
-
-            boolean userCompliesWithRules = checkUser(users.get(0));
-            if (!userCompliesWithRules) {
-              throw new Exception("The selected user does not comply with the expected rules");
-            }
-
-            User user = users.get(0);
-            String token = generateAndPersistToken(user, client, org);
-
-            Map<String, Object> emailData = new HashMap<String, Object>();
-            emailData.put("user", user);
-            emailData.put("changePasswordURL", generateChangePasswordURL(token));
-
-            emailManager.sendEmail(EVT_FORGOT_PASSWORD, user.getEmail(), emailData, emailConfig);
-          } catch (JSONException ex) {
-            log.error("Error parsing JSON", ex);
+            sendChangePasswordEmail(org, client, emailConfig, users);
+          } catch (EmailEventException ex) {
+            log.error("Error sending the email", ex);
           } catch (Exception ex) {
             log.error("Error with forgot password service", ex);
           } finally {
@@ -124,8 +106,10 @@ public class ForgotPasswordService extends WebServiceAbstractServlet {
       }
     } catch (JSONException ex) {
       log.error("Error parsing JSON", ex);
+      result = new JSONObject(Map.of("error", ex.getMessage()));
     } catch (Exception ex) {
       log.error("Error with forgot password service", ex);
+      result = new JSONObject(Map.of("error", ex.getMessage()));
     } finally {
       OBContext.restorePreviousMode();
       writeResult(response, new JSONObject(Map.of("response", result)).toString());
@@ -144,6 +128,38 @@ public class ForgotPasswordService extends WebServiceAbstractServlet {
     return emailConfig;
   }
 
+  private void sendChangePasswordEmail(Organization org, Client client,
+      EmailServerConfiguration emailConfig, List<User> users)
+      throws OBException, EmailEventException {
+    if (users == null || users.size() == 0) {
+      throw new OBException(
+          "Forgot password service: No user has the selected name or email configured");
+    }
+    if (users.size() > 1) {
+      throw new OBException(
+          "Forgot password service: More than one user has the same email configured");
+    }
+
+    User user = users.get(0);
+    boolean userCompliesWithRules = checkUser(user);
+    if (!userCompliesWithRules) {
+      throw new OBException(
+          "Forgot password service: The selected user does not comply with the expected rules");
+    }
+
+    String token = generateAndPersistToken(user, client, org);
+
+    Map<String, Object> emailData = new HashMap<String, Object>();
+    emailData.put("user", user);
+    emailData.put("changePasswordURL", generateChangePasswordURL(token));
+
+    emailManager.sendEmail(EVT_FORGOT_PASSWORD, user.getEmail(), emailData, emailConfig);
+  }
+
+  private boolean checkUser(User user) {
+    return user.isActive() && !user.getEmail().isEmpty() && !user.isLocked() && !user.isSsoonly();
+  }
+
   private String generateAndPersistToken(User user, Client client, Organization org) {
     String token = UUID.randomUUID().toString();
     UserPasswordResetToken resetToken = OBProvider.getInstance().get(UserPasswordResetToken.class);
@@ -158,10 +174,6 @@ public class ForgotPasswordService extends WebServiceAbstractServlet {
 
   private String generateChangePasswordURL(String token) {
     return String.format("http://localhost:3000/?token=%s", token); // TODO: Set custom url
-  }
-
-  private boolean checkUser(User user) {
-    return user.isActive() && !user.getEmail().isEmpty() && !user.isLocked() && !user.isSsoonly();
   }
 
 }
