@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -283,7 +283,11 @@ public class ParameterUtils {
     Object result = OBScriptEngine.getInstance().eval(expression, bindings);
     if (result instanceof Map) {
       // complex js object, convert it into a JSON
-      result = new JSONObject((Map) result);
+      try {
+        result = new JSONObject((Map) result);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
     }
     return result;
   }

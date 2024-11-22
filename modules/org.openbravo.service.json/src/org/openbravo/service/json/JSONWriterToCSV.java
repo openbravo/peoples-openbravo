@@ -496,10 +496,11 @@ public class JSONWriterToCSV extends DefaultJsonDataService.QueryResultWriter {
 
   private Object checkKeyValueDate(String key, Object keyValue) throws ParseException {
     Object keyValueDate = keyValue;
-    if (dateCols.contains(key) && keyValue != null && !keyValue.toString().equals("null")) {
+    if (dateCols.contains(key) && keyValue != null && keyValue.toString() != null
+        && !keyValue.toString().equals("null")) {
       Date date = JsonUtils.createDateFormat().parse(keyValue.toString());
       keyValueDate = UIDefinitionController.DATE_UI_DEFINITION.convertToClassicString(date);
-    } else if (dateTimeCols.contains(key) && keyValue != null
+    } else if (dateTimeCols.contains(key) && keyValue != null && keyValue.toString() != null
         && !keyValue.toString().equals("null")) {
       final String repairedString = JsonUtils.convertFromXSDToJavaFormat(keyValue.toString());
       Date localDate = JsonUtils.createDateTimeFormat().parse(repairedString);
@@ -507,7 +508,8 @@ public class JSONWriterToCSV extends DefaultJsonDataService.QueryResultWriter {
       clientTimezoneDate = convertFromLocalToClientTimezone(localDate);
       keyValueDate = ((DateTimeUIDefinition) UIDefinitionController.DATETIME_UI_DEFINITION)
           .convertToClassicStringInLocalTime(clientTimezoneDate);
-    } else if (timeCols.contains(key) && keyValue != null && !keyValue.toString().equals("null")) {
+    } else if (timeCols.contains(key) && keyValue != null && keyValue.toString() != null
+        && !keyValue.toString().equals("null")) {
       Date dateUTC = JsonUtils.createTimeFormatWithoutGMTOffset().parse(keyValue.toString());
       Date clientTimezoneDate = null;
       clientTimezoneDate = convertFromUTCToClientTimezone(dateUTC);
@@ -520,7 +522,7 @@ public class JSONWriterToCSV extends DefaultJsonDataService.QueryResultWriter {
 
   private String getOutputValue(String key, Object keyValue, boolean isNumeric) {
     String outputValue;
-    if (keyValue != null && !keyValue.toString().equals("null")) {
+    if (keyValue != null && keyValue.toString() != null && !keyValue.toString().equals("null")) {
       outputValue = keyValue.toString().replace("\"", "\"\"");
       if (!isNumeric && StringUtils.startsWithAny(outputValue, CSV_FORMULA_PREFIXES)) {
         // escape formulas

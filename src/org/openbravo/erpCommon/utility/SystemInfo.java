@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -54,6 +54,7 @@ import javax.servlet.ServletException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
@@ -553,7 +554,11 @@ public class SystemInfo {
           qUsage.add(Restrictions.ge(SessionUsageAudit.PROPERTY_CREATIONDATE, startOfPeriod));
           modInfo.add(Integer.toString(qUsage.count()));
         }
-        mods.put(modInfo);
+        try {
+          mods.put(modInfo);
+        } catch (JSONException e) {
+          e.printStackTrace();
+        }
       }
       return mods.toString();
     } finally {

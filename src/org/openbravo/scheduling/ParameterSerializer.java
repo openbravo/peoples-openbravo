@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2019 Openbravo SLU 
+ * All portions are Copyright (C) 2019-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,7 +49,13 @@ class ParameterSerializer {
 
     checkParameters(parameters);
 
-    return new JSONObject(parameters).toString();
+    String json = null;
+    try {
+      json = new JSONObject(parameters).toString();
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
+    return json;
   }
 
   private void checkParameters(Map<String, Object> parameters) {

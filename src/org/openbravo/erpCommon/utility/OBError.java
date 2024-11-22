@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -88,10 +88,11 @@ public class OBError implements Serializable {
 
   public JSONObject toJSON() {
     JSONObject obError = new JSONObject();
-    JSONObject data = new JSONObject(toMap());
     try {
+      JSONObject data = new JSONObject(toMap());
       obError.put("OBError", data);
-    } catch (JSONException ignore) {
+    } catch (JSONException e) {
+      e.printStackTrace();
     }
     return obError;
   }
