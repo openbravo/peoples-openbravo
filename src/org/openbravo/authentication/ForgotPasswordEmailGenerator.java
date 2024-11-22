@@ -32,7 +32,7 @@ public class ForgotPasswordEmailGenerator implements EmailEventContentGenerator 
 
   @Override
   public String getSubject(Object data, String event) {
-    String msg = "Subject_ForgotPassword";
+    String msg = "ForgottenPasswordSubject";
     return OBMessageUtils.getI18NMessage(msg,
         new String[] { OBContext.getOBContext().getCurrentClient().getName() });
   }
