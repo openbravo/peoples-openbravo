@@ -78,6 +78,7 @@ public class CloneOrderActionHandler extends BaseActionHandler {
   private Order cloneOrder(final User currentUser, final Order objOrder) throws Exception {
     Order objCloneOrder = (Order) DalUtil.copy(objOrder, false);
     objCloneOrder.setDocumentAction("CO");
+    objCloneOrder.setProcessPo("CO");
     objCloneOrder.setDocumentStatus("DR");
     objCloneOrder.setPosted("N");
     objCloneOrder.setProcessed(false);
