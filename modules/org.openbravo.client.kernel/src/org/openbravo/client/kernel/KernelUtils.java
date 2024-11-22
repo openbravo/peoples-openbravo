@@ -345,7 +345,7 @@ public class KernelUtils {
     return tree;
   }
 
-  private Set<String> getAncestorsDependencyTree(Module module) {
+  public Set<String> getAncestorsDependencyTree(Module module) {
     Set<String> tree = new HashSet<>();
 
     for (Module m : KernelUtils.getInstance().getModulesOrderedByDependency()) {
