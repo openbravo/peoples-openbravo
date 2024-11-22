@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2023 Openbravo SLU
+ * All portions are Copyright (C) 2014-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -312,17 +312,23 @@ public class OBBaseTest extends MockableBaseTest {
    */
   protected static final String DOLLAR_ID = "100";
 
+  @BeforeClass
+  public static void classSetUp() throws Exception {
+    mainClassSetUp(false);
+  }
+
   /**
    * Initializes DAL, it also creates a log appender that can be used to assert on logs. This log
    * appender is disabled by default, to activate it set the level with
    * {@link OBBaseTest#setTestLogAppenderLevel(Level)}.
-   * 
+   *
    * @see TestLogAppender
    */
-  @BeforeClass
-  public static void classSetUp() throws Exception {
+  protected static void mainClassSetUp(boolean skipDalInitialization) throws Exception {
     initializeTestLogAppender();
-    staticInitializeDalLayer();
+    if (!skipDalInitialization) {
+      staticInitializeDalLayer();
+    }
     initializeDisabledTestCases();
   }
 
@@ -434,8 +440,12 @@ public class OBBaseTest extends MockableBaseTest {
     if (sqlFunctions == null || sqlFunctions.isEmpty()) {
       return true;
     }
-    Map<String, SQLFunction> registeredFunctions = SessionFactoryController.getInstance()
-        .getConfiguration()
+    SessionFactoryController sessionFactoryController = SessionFactoryController.getInstance();
+    if (sessionFactoryController == null) {
+      return false;
+    }
+
+    Map<String, SQLFunction> registeredFunctions = sessionFactoryController.getConfiguration()
         .getSqlFunctions();
     if (registeredFunctions == null) {
       return false;
