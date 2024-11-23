@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2018 Openbravo SLU
+ * All portions are Copyright (C) 2013-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -78,7 +78,11 @@ public class EmailEventManager {
     // Retrieves the Email Server configuration
     Organization currenctOrg = OBContext.getOBContext().getCurrentOrganization();
     final EmailServerConfiguration mailConfig = EmailUtils.getEmailConfiguration(currenctOrg);
+    return sendEmail(event, recipient, data, mailConfig);
+  }
 
+  public boolean sendEmail(String event, final String recipient, Object data,
+      EmailServerConfiguration mailConfig) throws EmailEventException {
     if (mailConfig == null) {
       log.warn("Couldn't find email configuarion");
       throw new EmailEventException(
