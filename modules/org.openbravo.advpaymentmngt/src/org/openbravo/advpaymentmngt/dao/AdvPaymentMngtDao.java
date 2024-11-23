@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
@@ -1268,15 +1268,6 @@ public class AdvPaymentMngtDao {
     obcPayment.addOrderBy(FIN_Payment.PROPERTY_PAYMENTDATE, false);
     obcPayment.addOrderBy(FIN_Payment.PROPERTY_DOCUMENTNO, false);
     return obcPayment.list();
-  }
-
-  public boolean existsAPRMReadyPreference() {
-    OBCriteria<Preference> obcPreference = OBDal.getInstance().createCriteria(Preference.class);
-    obcPreference.setFilterOnReadableClients(false);
-    obcPreference.setFilterOnReadableOrganization(false);
-    obcPreference.add(Restrictions.eq(Preference.PROPERTY_ATTRIBUTE, "APRM_Ready"));
-
-    return obcPreference.count() > 0;
   }
 
   /**
