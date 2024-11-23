@@ -52,12 +52,12 @@ public class ResetPasswordWithTokenService extends WebServiceAbstractServlet {
 
       String token = body.optString("token");
       if (!isValidUUID(token)) {
-        throw new Exception("The UUID provided is not valid!");
+        throw new ChangePasswordException("The UUID provided is not valid!");
       }
 
       String newPwd = body.optString("newPassword");
       if (!passwordStrengthChecker.isStrongPassword(newPwd)) {
-        throw new Exception(
+        throw new ChangePasswordException(
             "Please provide a stronger one. Passwords must have at least 8 characters and contain at least three of the following: uppercase letters, lowercase letters, numbers and symbols.");
       }
 
@@ -77,9 +77,9 @@ public class ResetPasswordWithTokenService extends WebServiceAbstractServlet {
       Boolean isRedeemed = (Boolean) tokenEntry.get(1);
       Timestamp creationDate = (Timestamp) tokenEntry.get(2);
 
-      // if (!checkExpirationOfToken(creationDate, isRedeemed)) {
-      // throw new ChangePasswordException("The token has expired");
-      // }
+      if (!checkExpirationOfToken(creationDate, isRedeemed)) {
+        throw new ChangePasswordException("The token has expired");
+      }
 
       // All checks have been successfully passed
       User user = OBDal.getInstance().get(User.class, userId);
@@ -108,7 +108,7 @@ public class ResetPasswordWithTokenService extends WebServiceAbstractServlet {
   private boolean checkExpirationOfToken(Timestamp creationDate, boolean isRedeemed) {
     LocalDateTime tokenDate = creationDate.toLocalDateTime();
 
-    return isRedeemed && Duration.between(tokenDate, LocalDateTime.now()).toMinutes() < 15;
+    return !isRedeemed && Duration.between(tokenDate, LocalDateTime.now()).toSeconds() < 15 * 60;
   }
 
   private JSONObject generateError(String errorMsg) throws JSONException {
