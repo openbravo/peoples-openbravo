@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2016 Openbravo SLU
+ * All portions are Copyright (C) 2013-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -19,12 +19,15 @@
 package org.openbravo.materialmgmt.actionhandler;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -38,6 +41,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.VariantChDescUpdateProcess;
+import org.openbravo.materialmgmt.utility.EANUtility;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.plm.Characteristic;
 import org.openbravo.model.common.plm.CharacteristicValue;
@@ -57,6 +61,9 @@ public class ManageVariants extends BaseProcessActionHandler {
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     JSONObject jsonRequest = null;
+    List<String> warnProducts = new ArrayList<String>();
+    String severity = "success";
+    String title = OBMessageUtils.messageBD("Success");
     OBContext.setAdminMode(true);
     try {
       jsonRequest = new JSONObject(content);
@@ -73,20 +80,36 @@ public class ManageVariants extends BaseProcessActionHandler {
         if (!isVariantCreated) {
           createVariant(row, generic);
         } else {
-          updateVariant(row);
+          Optional.ofNullable(updateVariant(row)).ifPresent(warnProducts::add);
         }
       }
 
       Map<String, String> map = new HashMap<String, String>();
       map.put("productNumer", Integer.toString(0));
+      String text = OBMessageUtils.parseTranslation(title, map);
 
-      String messageText = OBMessageUtils.messageBD("Success");
+      if (!warnProducts.isEmpty()) {
+        String prodList = "";
+        severity = "warning";
+        title = OBMessageUtils.messageBD("Warning");
+
+        for (String prod : warnProducts) {
+          prodList += prod + ", ";
+        }
+        prodList = prodList.substring(0, prodList.length() - 2);
+        text = OBMessageUtils.getI18NMessage("ProductVariantEanAlreadyDefined",
+            new String[] { prodList });
+      }
+
       JSONObject msg = new JSONObject();
-      msg.put("severity", "success");
-      msg.put("text", OBMessageUtils.parseTranslation(messageText, map));
+      msg.put("severity", severity);
+      msg.put("title", title);
+      msg.put("text", text);
       jsonRequest.put("message", msg);
 
-    } catch (Exception e) {
+    } catch (
+
+    Exception e) {
       log.error("Error in Manage Variants Action Handler", e);
 
       try {
@@ -121,6 +144,9 @@ public class ManageVariants extends BaseProcessActionHandler {
     }
     variant.setName(variantProperties.getString("name"));
     variant.setSearchKey(variantProperties.getString("searchKey"));
+    if (generic.isGenerateVariantEAN()) {
+      variant.setUPCEAN(EANUtility.generateEAN(generic.getSequence()));
+    }
 
     JSONArray variantValues = variantProperties.getJSONArray("characteristicArray");
     OBDal.getInstance().save(variant);
@@ -154,12 +180,23 @@ public class ManageVariants extends BaseProcessActionHandler {
 
   }
 
-  private void updateVariant(JSONObject variantProperties) throws JSONException {
+  private String updateVariant(JSONObject variantProperties) throws JSONException {
+    String warnProduct = null;
     final String strProductId = variantProperties.getString("variantId");
     Product variant = OBDal.getInstance().get(Product.class, strProductId);
     variant.setName(variantProperties.getString("name"));
     variant.setSearchKey(variantProperties.getString("searchKey"));
+    Product generic = variant.getGenericProduct();
+    if (generic.isGenerateVariantEAN()) {
+      if (variant.getUPCEAN() == null || StringUtils.isEmpty(variant.getUPCEAN())) {
+        variant.setUPCEAN(EANUtility.generateEAN(generic.getSequence()));
+      } else {
+        warnProduct = variant.getSearchKey();
+      }
+    }
     OBDal.getInstance().save(variant);
+
+    return warnProduct;
   }
 
   private void setPrice(Product variant, BigDecimal price, String strPriceListType) {

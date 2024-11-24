@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2021 Openbravo SLU
+ * All portions are Copyright (C) 2013-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -166,6 +166,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         variantMap.put("updated", new Date());
         variantMap.put("updatedBy", OBContext.getOBContext().getUser());
         variantMap.put("name", product.getName());
+        variantMap.put("upcean", "");
         variantMap.put("variantCreated", false);
         variantMap.put("obSelected", false);
 
@@ -234,6 +235,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
           variantMap.put("variantCreated", true);
           variantMap.put("variantId", existingProduct.getId());
           variantMap.put("id", existingProduct.getId());
+          variantMap.put("upcean", existingProduct.getUPCEAN());
         }
         if (StringUtils.isNotEmpty(selectedFilters.getSearchKey())) {
           StringBuilder matchedRegex = new StringBuilder(".*");
@@ -249,6 +251,14 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
           matchedRegex.append(selectedFilters.getName().trim().toLowerCase().replace(" ", ".*"));
           matchedRegex.append(".*");
           includeInResult = includeInResult && ((String) variantMap.get("name")).trim()
+              .toLowerCase()
+              .matches(matchedRegex.toString());
+        }
+        if (StringUtils.isNotEmpty(selectedFilters.getUpcean())) {
+          StringBuilder matchedRegex = new StringBuilder(".*");
+          matchedRegex.append(selectedFilters.getUpcean().trim().toLowerCase().replace(" ", ".*"));
+          matchedRegex.append(".*");
+          includeInResult = includeInResult && ((String) variantMap.get("upcean")).trim()
               .toLowerCase()
               .matches(matchedRegex.toString());
         }
@@ -355,6 +365,8 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         selectedFilters.setName(value);
       } else if (fieldName.equals("searchKey")) {
         selectedFilters.setSearchKey(value);
+      } else if (fieldName.equals("upcean")) {
+        selectedFilters.setUpcean(value);
       } else if (fieldName.equals("id")) {
         selectedFilters.addSelectedID(value);
       } else if (fieldName.equals("variantCreated")) {
@@ -485,6 +497,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
     private HashMap<String, List<CharacteristicValue>> selectedChValues;
     private String name;
     private String searchKey;
+    private String upcean;
     private Boolean isVariantCreated;
 
     ProductChSelectedFilters() {
@@ -492,6 +505,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
       selectedChValues = new HashMap<String, List<CharacteristicValue>>();
       name = null;
       searchKey = null;
+      upcean = null;
       isVariantCreated = null;
     }
 
@@ -509,6 +523,10 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
 
     public void setSearchKey(String searchKeyFilterParam) {
       searchKey = searchKeyFilterParam;
+    }
+
+    public void setUpcean(String upceanFilterParam) {
+      upcean = upceanFilterParam;
     }
 
     public void setIsVariantCreated(boolean variantCreatedParam) {
@@ -529,6 +547,10 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
 
     public String getSearchKey() {
       return searchKey;
+    }
+
+    public String getUpcean() {
+      return upcean;
     }
 
     public Boolean isVariantCreated() {

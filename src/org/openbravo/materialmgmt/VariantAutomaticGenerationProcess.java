@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2023 Openbravo SLU
+ * All portions are Copyright (C) 2013-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -44,6 +44,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.materialmgmt.utility.EANUtility;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.plm.Product;
@@ -178,6 +179,9 @@ public class VariantAutomaticGenerationProcess implements Process {
         }
         searchKey += productNo;
         variant.setSearchKey(searchKey);
+        if (product.isGenerateVariantEAN()) {
+          variant.setUPCEAN(EANUtility.generateEAN(product.getSequence()));
+        }
         OBDal.getInstance().save(variant);
         String strChDesc = "";
         for (i = 0; i < chNumber; i++) {
