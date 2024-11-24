@@ -34,6 +34,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
@@ -292,18 +293,12 @@ public class AttachmentUtils {
       throws OBException {
     Tab tab = adcs.getTab(tabId);
     Entity entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
-    //@formatter:off
-    final String hql = 
-            "select a." + parameter.getPropertyPath() +
-            "  from " + entity.getName() + " as a " +
-            " where a.id=:recordId";
-    //@formatter:on
-    final Query<Object> query = OBDal.getInstance()
-        .getSession()
-        .createQuery(hql, Object.class)
-        .setParameter("recordId", recordId);
     try {
-      return query.uniqueResult();
+      BaseOBObject bob = (BaseOBObject) OBDal.getInstance()
+          .createCriteria(entity.getName())
+          .add(Restrictions.eq("id", recordId))
+          .uniqueResult();
+      return bob.get(parameter.getPropertyPath());
     } catch (Exception e) {
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_PropPathNotOneRecord"), e);
     }
