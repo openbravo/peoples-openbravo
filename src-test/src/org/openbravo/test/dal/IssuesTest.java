@@ -74,6 +74,7 @@ import org.openbravo.data.UtilSql;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.datamodel.Table;
+import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.system.Client;
@@ -777,6 +778,18 @@ public class IssuesTest extends OBBaseTest {
     final OBQuery<OrderLine> ols = OBDal.getInstance().createQuery(OrderLine.class, whereClause);
     ols.setMaxResult(1);
     assertTrue(ols.list().size() >= 0);
+  }
+
+  @Test
+  @Issue("45316")
+  public void test45316() {
+    setTestAdminContext();
+    Preference preference = OBDal.getInstance()
+        .get(Preference.class, "5307987D3B5148ACAAC178956997CFB1");
+    String identifier = IdentifierProvider.getInstance().getIdentifier(preference);
+
+    // ensure that its identifier is the one expected
+    assertEquals("Enable Negative Stock Corrections", identifier);
   }
 
   private static class Test22235 extends DalBaseProcess {
