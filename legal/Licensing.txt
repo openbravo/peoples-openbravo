@@ -86,6 +86,7 @@ http://people.apache.org/~andyc/neko/doc/html/
 # ant-1.9.2.jar
 # ant-launcher-1.9.2.jar
 # ant-nodeps.jar
+# barcode4j-2.1.jar
 # catalina-ant.jar
 # commons-beanutils-1.9.4.jar
 # commons-betwixt-0.8.jar
